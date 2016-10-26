@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="lzp.yw.com.medioplayer">
+
+    <application
+        android:name=".baselayer.BaseApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+        <!-- 基础activity //Android:theme="@android:style/Theme.NoTitleBar" @android:style/Theme.NoTitleBar.Fullscreen -->
+        <activity
+            android:name=".baselayer.BaseActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
+        <!-- 配置服务器信息页面 -->
+        <activity android:name=".wostools.ToolsActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- 测试 activity -->
+        <activity android:name=".rxjave_retrofit.MainActivity">
+
+        </activity>
+
+    </application>
+
+    <!-- 权限 -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+</manifest>

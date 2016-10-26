@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:background="@android:color/white"
+    >
+
+
+    <LinearLayout
+        android:layout_width="288dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+            <TextView
+                android:layout_width="88dp"
+                android:layout_height="wrap_content"
+                android:text="服务器地址:"
+                android:textStyle="bold"
+                >
+            </TextView>
+            <EditText
+                android:id="@+id/serverip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text=""
+                android:layout_weight="1">
+                <requestFocus />
+            </EditText>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+            <TextView
+                android:layout_width="88dp"
+                android:layout_height="wrap_content"
+                android:text="服务器端口:"
+                android:textStyle="bold"
+                >
+            </TextView>
+            <EditText
+                android:id="@+id/serverport"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text=""
+                android:layout_weight="1">
+                <requestFocus />
+            </EditText>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+            <TextView
+                android:layout_width="88dp"
+                android:layout_height="wrap_content"
+                android:text="公司ID:"
+                android:textStyle="bold"
+                >
+            </TextView>
+            <EditText
+                android:id="@+id/companyid"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text=""
+                android:layout_weight="1">
+                <requestFocus />
+            </EditText>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+            <TextView
+                android:layout_width="88dp"
+                android:layout_height="wrap_content"
+                android:text="终端ID:"
+                android:textStyle="bold"
+                >
+            </TextView>
+            <EditText
+                android:id="@+id/terminalNo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text=""
+                android:layout_weight="1">
+                <requestFocus />
+            </EditText>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+            <TextView
+                android:layout_width="88dp"
+                android:layout_height="wrap_content"
+                android:text="本地 路径:"
+                android:textStyle="bold"
+                >
+            </TextView>
+            <EditText
+                android:id="@+id/BasePath"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text=""
+                android:layout_weight="1">
+                <requestFocus />
+            </EditText>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+            <TextView
+                android:layout_width="88dp"
+                android:layout_height="wrap_content"
+                android:text="心跳时间:"
+                android:textStyle="bold"
+                >
+            </TextView>
+            <EditText
+                android:id="@+id/HeartBeatInterval"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text=""
+                android:layout_weight="1">
+                <requestFocus />
+            </EditText>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+            <Button
+                android:id="@+id/btnGetID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="88dp"
+                android:onClick="getId"
+                android:text="获取ID" />
+            <Button
+                android:id="@+id/btnSaveData"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="saveData"
+                android:text="保存" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <ImageButton
+                android:id="@+id/btnRestartTime"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:onClick="restartTime"
+                android:background="@android:color/white"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/layotu_restartbeattime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            >
+            <LinearLayout
+
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+                <TextView
+                    android:layout_width="88dp"
+                    android:layout_height="wrap_content"
+                    android:text="重启时间:"
+                    android:textStyle="bold"
+                    >
+                </TextView>
+                <EditText
+                    android:id="@+id/RestartBeatInterval"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:text="30"
+                    android:inputType="number"
+                    android:layout_weight="1">
+                    <requestFocus />
+                </EditText>
+                </LinearLayout>
+            <Button
+                android:id="@+id/btnRestartComplete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="确定"
+                />
+
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
