@@ -1,20 +1,18 @@
 package lzp.yw.com.medioplayer.rxjave_retrofit.httptools;
 
 
-
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.concurrent.TimeUnit;
 
+import lzp.yw.com.medioplayer.baselayer.Logs;
 import okhttp3.Headers;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
-import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.internal.Platform;
 import okio.Buffer;
 
 /**
@@ -37,8 +35,8 @@ import okio.Buffer;
 public class HttpLoggingInterceptor implements Interceptor {
 
     private static final Charset UTF8 = Charset.forName("UTF-8");
+    private static final String TAG = "HttpLoggingInterceptor";
 
-    private volatile Level level = Level.BODY;
 
     public enum Level {
         /**
@@ -99,6 +97,9 @@ public class HttpLoggingInterceptor implements Interceptor {
         BODY
 
     }
+
+
+    private volatile Level level = Level.BODY;
     /**
      * Change the level at which this interceptor logs.
      * 改变该拦截器记录的水平。
@@ -110,71 +111,41 @@ public class HttpLoggingInterceptor implements Interceptor {
         return this;
     }
 
-
-    /**
-     * okhttp log 接口
-     */
-    public interface Logger {
-        void log(String message);
-
-        /**
-         * A {@link Logger} defaults output appropriate for the current platform.
-         */
-        Logger DEFAULT = new Logger() {
-            @Override
-            public void log(String message) {
-                Platform.get().log(message);
-            }
-        };
-    }
-
-
-    private final Logger logger;
-    /*
-       构造
-        */
-    public HttpLoggingInterceptor() {
-        this(Logger.DEFAULT);
-    }
-
-    /**
-     * 构造 2
-     * @param logger  okhttp log 接口
-     */
-    public HttpLoggingInterceptor(Logger logger) {
-        this.logger = logger;
-    }
-
     @Override
     public Response intercept(Interceptor.Chain chain) throws IOException {
-        Level level = this.level;//日志等级
+
 
         Request request = chain.request();//请求
+        RequestBody requestBody = request.body();
+
+        Level level = this.level;//日志等级
         if (level == Level.NONE) {
             return chain.proceed(request);
         }
 
         boolean logBody = (level == Level.BODY);
+
         boolean logHeaders = (logBody || level == Level.HEADERS);
 
-        RequestBody requestBody = request.body();
         boolean hasRequestBody = (requestBody != null);
 
         String requestStartMessage = request.method() + ' ' + request.url();
+
         if (!logHeaders && hasRequestBody) {
-            requestStartMessage += " (" + requestBody.contentLength() + "-byte body)";
+            requestStartMessage += " (" + requestBody.contentLength() + "- byte body)";
         }
-        logger.log(requestStartMessage);
+        Logs.i(TAG,requestStartMessage);
+
 
         if (logHeaders) {
 
             if (!logBody || !hasRequestBody) {
-                logger.log("--> END " + request.method());
+                Logs.i(TAG,"END " + request.method());
             } else if (bodyEncoded(request.headers())) {
-                logger.log("--> END " + request.method() + " (encoded body omitted)");
+                Logs.i(TAG,"END " + request.method() + " (encoded body omitted)");
             } else if (request.body() instanceof MultipartBody) {
                 //如果是MultipartBody，会log出一大推乱码的东东
-
+                Logs.i(TAG, "request.body() instanceof MultipartBody = "  + request.method());
             } else {
                 Buffer buffer = new Buffer();
                 requestBody.writeTo(buffer);
@@ -184,17 +155,15 @@ public class HttpLoggingInterceptor implements Interceptor {
                 if (contentType != null) {
                     contentType.charset(UTF8);
                 }
-
-                logger.log(buffer.readString(charset));
-
-//                logger.log(request.method() + " (" + requestBody.contentLength() + "-byte body)");
+                Logs.i(TAG,buffer.readString(charset));
             }
         }
 
         long startNs = System.nanoTime();
         Response response = chain.proceed(request);
         long tookMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs);
-        logger.log(response.code() + ' ' + response.message() + " (" + tookMs + "ms" + ')');
+        Logs.i(response.code() + " - " + response.message() + "-  (用时 :" + tookMs + "ms" + ')');
+       // Logs.d("服务器返回值:\n"+response.body().contentType() +" ; length: "+ response.body().contentLength() +"\n "+response.body().source().readString(UTF8));
 
         return response;
     }
@@ -203,10 +172,5 @@ public class HttpLoggingInterceptor implements Interceptor {
         String contentEncoding = headers.get("Content-Encoding");
         return contentEncoding != null && !contentEncoding.equalsIgnoreCase("identity");
     }
-
-    private static String protocol(Protocol protocol) {
-        return protocol == Protocol.HTTP_1_0 ? "HTTP/1.0" : "HTTP/1.1";
-    }
-
 
 }

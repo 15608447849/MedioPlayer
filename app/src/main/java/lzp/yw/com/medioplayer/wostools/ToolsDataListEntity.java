@@ -37,8 +37,8 @@ public class ToolsDataListEntity extends DataListEntiy{
     {   map.put("connectionType",ToolsUtils.GetKey("connectionType", "HTTP"));
         //ui配置项
         map.put("terminalNo",ToolsUtils.GetKey("terminalNo", ""));
-        map.put("serverip",  ToolsUtils.GetKey("serverip", "127.0.0.1"));
-        map.put("serverport",  ToolsUtils.GetKey("serverport", "8000"));
+        map.put("serverip",  ToolsUtils.GetKey("serverip", "172.16.0.17"));
+        map.put("serverport",  ToolsUtils.GetKey("serverport", "9000"));
         map.put("companyid",  ToolsUtils.GetKey("companyid", "999"));
         map.put("HeartBeatInterval",  ToolsUtils.GetKey("HeartBeatInterval", "30"));
         map.put("basepath",  ToolsUtils.GetKey("basepath", "/mnt/sdcard/"));

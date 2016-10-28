@@ -2,9 +2,12 @@ package lzp.yw.com.medioplayer.baselayer;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 
 import lzp.yw.com.medioplayer.R;
 import rx.Subscriber;
@@ -18,6 +21,40 @@ public class BaseActivity extends Activity {
      */
     protected CompositeSubscription mCompositeSubscription;
 
+    public static ArrayList<Activity> atyArr = new ArrayList<Activity>();
+
+    //添加 create 添加
+   public void addActivityOnArr(Activity a){
+
+       //是否存在, 存在删除 ;添加到队列末尾
+       removeActivityOnArr(a);
+       atyArr.add(a);
+       Logs.i("添加 activity [ "+ a.toString() +" ]");
+   }
+    //删除 destory調用
+    public boolean removeActivityOnArr(Activity a){
+
+        boolean f = false;
+        if (atyArr.contains(a)){
+            atyArr.remove(a);
+            f = true;
+            Logs.i("刪除 activity [ "+ a.toString() +" ]");
+        }
+        return f;
+    }
+    //finish 一個activity stop調用
+    public void stopActivityOnArr(Activity a){
+
+        if (atyArr.contains(a)){
+            atyArr.get(atyArr.indexOf(a)).finish();
+            Logs.i("停用 activity [ "+ a.toString() +" ]");
+        }
+    }
+
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,6 +62,13 @@ public class BaseActivity extends Activity {
         setFullScreen(true);
         setContentView(R.layout.activity_base);
         mCompositeSubscription = new CompositeSubscription();
+        addActivityOnArr(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        stopActivityOnArr(this);
     }
 
     @Override
@@ -43,6 +87,7 @@ public class BaseActivity extends Activity {
         mCompositeSubscription.add(subscription);
          */
         mCompositeSubscription.unsubscribe();
+        removeActivityOnArr(this);
     }
 
 
@@ -91,7 +136,7 @@ public class BaseActivity extends Activity {
     }
 
     /**
-     * 创建观察者
+     * 创建观察者,订阅者
      *
      * @param onNext
      * @param <T>
@@ -101,7 +146,9 @@ public class BaseActivity extends Activity {
         return new Subscriber<T>() {
             @Override
             public void onCompleted() {
-                hideLoadingDialog();
+                Logs.d("onCompleted()");
+              //  hideLoadingDialog();
+
             }
             @Override
             public void onError(Throwable e) {
@@ -110,7 +157,9 @@ public class BaseActivity extends Activity {
             }
             @Override
             public void onNext(T t) {
+                hideLoadingDialog();
                 if (!mCompositeSubscription.isUnsubscribed()) {
+                    Logs.d("onNext()");
                     onNext.call(t);
                 }
             }
@@ -120,6 +169,15 @@ public class BaseActivity extends Activity {
 
 
 
+    // 返回键
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) { // 如果是手机上的返回键
+           Logs.e(TAG," 点击了 back Key ");
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 
 
 

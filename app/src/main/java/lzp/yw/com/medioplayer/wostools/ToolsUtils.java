@@ -23,7 +23,7 @@ public class ToolsUtils {
      * @return
      */
     public static String readShareData(String key) {
-        SharedPreferences preferences =BaseApplication.appContext.getSharedPreferences(SHARED_FILE_NAME, Context.MODE_WORLD_READABLE + Context.MODE_WORLD_WRITEABLE);
+        SharedPreferences preferences =BaseApplication.appContext.getSharedPreferences(SHARED_FILE_NAME, Context.MODE_PRIVATE);//MODE_WORLD_READABLE + Context.MODE_WORLD_WRITEABLE
         String result = preferences.getString(key, "");
         return result;
     }

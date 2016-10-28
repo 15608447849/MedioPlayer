@@ -1,7 +1,9 @@
 package lzp.yw.com.medioplayer.wostools;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
@@ -11,6 +13,7 @@ import lzp.yw.com.medioplayer.R;
 import lzp.yw.com.medioplayer.baselayer.BaseActivity;
 import lzp.yw.com.medioplayer.baselayer.BaseApplication;
 import lzp.yw.com.medioplayer.baselayer.Logs;
+import lzp.yw.com.medioplayer.viewlayer.MainActivity;
 import lzp.yw.com.medioplayer.rxjave_retrofit.resultEntitys.WosResult;
 import lzp.yw.com.medioplayer.rxjave_retrofit.serverProxy.HttpProxy;
 import rx.Subscriber;
@@ -36,6 +39,8 @@ public class ToolsActivity extends BaseActivity{
     public EditText BasePath;
     @Bind(R.id.HeartBeatInterval)
     public EditText heartbeattime;
+    @Bind(R.id.btnGetID)
+    public Button btnGetID;
 
     @Bind(R.id.layotu_restartbeattime)
     public LinearLayout restartLayout;
@@ -43,6 +48,8 @@ public class ToolsActivity extends BaseActivity{
     private ToolsDataListEntity dataList;
 
     private Subscriber subscriber ;
+    //fang wen fu wu qi zhong .
+    private boolean isGetIdin = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +58,7 @@ public class ToolsActivity extends BaseActivity{
         ButterKnife.bind(this);
         //初始化数据
         initData();
+        gotoApp();
         //初始化控件信息
         initViewValue();
 
@@ -74,8 +82,8 @@ public class ToolsActivity extends BaseActivity{
     {
         try
         {
-            serverip.setText(dataList.GetStringDefualt("serverip", "127.0.0.1"));
-            serverport.setText(dataList.GetStringDefualt("serverport", "8000"));
+            serverip.setText(dataList.GetStringDefualt("serverip", "172.16.0.14"));
+            serverport.setText(dataList.GetStringDefualt("serverport", "9000"));
             companyid.setText(dataList.GetStringDefualt("companyid", "999"));
             terminalNo.setText(dataList.GetStringDefualt("terminalNo", ""));
             heartbeattime.setText(dataList.GetStringDefualt("HeartBeatInterval", "30"));
@@ -121,6 +129,7 @@ public class ToolsActivity extends BaseActivity{
                     terminalNo.setText(result.getTerminalNo());
                     showToast(" -- 获取终端完成 --");
                     dataList.put("terminalNo", result.getTerminalNo());
+                    btnGetID.setEnabled(false);
                 }
             }
         });
@@ -144,13 +153,13 @@ public class ToolsActivity extends BaseActivity{
      */
     public void getTerminal() {
         HttpProxy.getInstance()
-                .init(
-                        BaseApplication.appContext,
+                .initProxy(
                         dataList.GetStringDefualt("serverip","127.0.0.1"),
-                        dataList.GetStringDefualt("serverport","8000")
-                                );
-        initSubscriber();
-       HttpProxy.getInstance().getTerminal(subscriber);
+                        dataList.GetStringDefualt("serverport","8000"),
+                        BaseApplication.appContext
+                        );
+       initSubscriber();
+       HttpProxy.getInstance().getTerminal(subscriber,dataList.GetStringDefualt("companyid","999"));
     }
 
 
@@ -163,15 +172,48 @@ public class ToolsActivity extends BaseActivity{
         if (!"".equals(terminalNo.getText().toString())){
             ToolsUtils.settingServerInfo(true);
             showToast("保存完成");
-            //进入应用
+        }else{
+            ToolsUtils.settingServerInfo(false);
+            showToast("-- 保存失败 --");
         }
     }
 
+    /**
+     * 点击保存数据
+     * @param view
+     */
+    public void saveData(View view){
+        if (!isGetIdin){
+            save();
+            //进入应用
+            gotoApp();
+        }
 
+//        this.finish();
+    }
 
+    /**
+     * 进入应用界面
+     */
+    private void gotoApp() {
+        if (ToolsUtils.isSettingServerInfo()){
+            // 已设置过服务器信息
+            Intent intent = new Intent(this, MainActivity.class);
+            this.startActivity(intent);
+        }
+    }
 
+    @Override
+    protected void showLoadingDialog() {
+        super.showLoadingDialog();
+        btnGetID.setEnabled(false);
+        isGetIdin=true;
+    }
 
-
-
-
+    @Override
+    protected void hideLoadingDialog() {
+        super.hideLoadingDialog();
+        btnGetID.setEnabled(true);
+        isGetIdin=false;
+    }
 }

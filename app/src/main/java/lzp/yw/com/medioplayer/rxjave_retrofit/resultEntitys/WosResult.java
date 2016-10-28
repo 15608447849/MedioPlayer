@@ -10,12 +10,21 @@ public class WosResult {
      */
 
     private String terminalNo;
-
     public String getTerminalNo() {
         return terminalNo;
     }
-
     public void setTerminalNo(String terminalNo) {
         this.terminalNo = terminalNo;
     }
+
+
+
+
+
+
+
+
+
+
+
 }
