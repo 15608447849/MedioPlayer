@@ -9,9 +9,9 @@ import rx.Observable;
  */
 
 public interface HttpServerInterface {
-
-
     /**
+     *
+     *
      * 申请终端
      * 参数
      * {"version":"18.7.3",
@@ -19,13 +19,7 @@ public interface HttpServerInterface {
      "mac":"D0-92-91-AD-3F-F9",
      "screenResolutionWidth":"1024",
      "screenResolutionHeight":"1024"
-     }
-     * @return
-     */
-    @GET("")
-    Observable<String> getTerminalId(@Url String url);
-
-    /**
+     *
      * 上线
      * get
      * http://192.168.6.14:9000/
@@ -36,10 +30,13 @@ public interface HttpServerInterface {
      SYTI:2016-10-27 12:16:35
      SHDO:false
      UPSC:http://192.168.6.14:9000/terminal/1/schedule
+     *
+     * 心跳 HRBT
+     * http://172.16.0.17:9000/terminal/heartBeat?cmd=HRBT%3A10000090
+     *
      */
     @GET("")
-    Observable<String> sendOnfi(@Url String url);
-
+    Observable<String> sendCMD(@Url String url);
 
 
 

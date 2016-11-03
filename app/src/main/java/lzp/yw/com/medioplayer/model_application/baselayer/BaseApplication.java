@@ -6,6 +6,7 @@ import android.content.Intent;
 
 import lzp.yw.com.medioplayer.model_command_mission.CommandPostServer;
 import lzp.yw.com.medioplayer.model_communication.CommunicationServer;
+import lzp.yw.com.medioplayer.model_download.DownloadServer;
 import lzp.yw.com.medioplayer.model_universal.Logs;
 
 /**
@@ -31,6 +32,7 @@ public class BaseApplication extends Application{
         //打开 命令分发服务
         startAppServer(CommandPostServer.class);
         //打开 下载服务
+        startAppServer(DownloadServer.class);
     }
 
 

@@ -4,6 +4,12 @@
 
     <!-- 权限 -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+
 
     <application
         android:name=".model_application.baselayer.BaseApplication"
@@ -38,12 +44,15 @@
         <service
             android:name=".model_communication.CommunicationServer"
             android:persistent="true"
-            android:process="yw.communication.server" />
-
+            android:process="lzp.yw.communicate.server" />
         <!-- 派发任务 服务 -->
         <service
             android:name=".model_command_mission.CommandPostServer"
-            android:process="yw.commandpost.server" />
+            android:process="yw.command.server" />
+        <!-- 下载服务 -->
+        <service
+            android:name=".model_download.DownloadServer"
+            android:process="lzp.yw.download.server"/>
     </application>
 
 </manifest>

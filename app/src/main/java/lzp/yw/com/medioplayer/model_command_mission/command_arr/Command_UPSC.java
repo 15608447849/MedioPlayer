@@ -1,5 +1,10 @@
 package lzp.yw.com.medioplayer.model_command_mission.command_arr;
 
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -8,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
+import lzp.yw.com.medioplayer.model_application.baselayer.DataListEntiyStore;
+import lzp.yw.com.medioplayer.model_download.DownloadBroad;
 import lzp.yw.com.medioplayer.model_universal.CONTENT_TYPE;
 import lzp.yw.com.medioplayer.model_universal.Logs;
 import lzp.yw.com.medioplayer.model_universal.appTools;
@@ -42,14 +49,19 @@ import static lzp.yw.com.medioplayer.model_universal.appTools.uriTranslationStri
  */
 public class Command_UPSC implements iCommand {
 
+    private Context context;
+    private DataListEntiyStore dl;
+
+    public Command_UPSC(Context context){
+       this.context = context;
+    }
+
     private static final String TAG = "_UPSC";
-
     private static ReentrantLock lock = new ReentrantLock();
-
-    private List<String> loadingList = null;
+    private ArrayList<CharSequence> loadingList = null;
     private void initLoadingList(){
         if (loadingList==null){
-            loadingList = new ArrayList<String>();
+            loadingList = new ArrayList<CharSequence>();
         }else{
             loadingList.clear();
             Logs.d(TAG,"任务清空,当前数量:" + loadingList.size());
@@ -70,25 +82,13 @@ public class Command_UPSC implements iCommand {
         }
         if(!loadingList.contains(url)){
             loadingList.add(url);
-            //sendTask(url);
+
             Logs.w(TAG," add task is succsee !");
         }else{
             Logs.e(TAG," add task failt ,because is exist !!!");
         }
     }
 
-    /**
-     * 发送任务到下载服务广播
-     * @param url
-     */
-    private void sendTask(String url) {
-      /*  if (BaseApplication.appContext!=null){
-            Intent intent = new Intent();
-            intent.setAction(LoaderServer.LoaderServerReceiveNotification.ACTION);
-            intent.putExtra(LoaderServer.LoaderServerReceiveNotification.key,url);
-            BaseApplication.appContext.sendBroadcast(intent);
-        }*/
-    }
 
     /**
      *  组件具体内容 具体分析 队列
@@ -116,13 +116,14 @@ public class Command_UPSC implements iCommand {
             contentArray.add(contentArr);
         }
     }
-
     //结果
-    String res;
-
+    private String res;
     @Override
     public void Execute(String param) {
-
+        if (dl==null){
+            dl = new DataListEntiyStore(context);
+        }
+        dl.ReadShareData();
         try{
             lock.lock();
             Logs.d(TAG,"同步访问  uri : "  + param);
@@ -328,13 +329,11 @@ public class Command_UPSC implements iCommand {
     }
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-    private Object obj = new Object();
+    /**
+     * 循环具体内容 处理...
+     */
     private void  loopContentArray(){
-
         if (contentArray!=null && contentArray.size()>0){
-
-                indexFlags = 0;
-
                 for (String[] arr : contentArray){
                         try {
                             parseContentSourece(arr[0],arr[1]);
@@ -342,10 +341,13 @@ public class Command_UPSC implements iCommand {
                             e.printStackTrace();
                         }
                 }
-
         }
-        Logs.d(TAG,"----------------------------------任务队列大小 : "+loadingList.size()+" \n "+loadingList);
+        Logs.d(TAG,"----------------------------------任务队列大小 : " + loadingList.size()+" \n "+loadingList);
+        sendTaskList();
     }
+
+
+
 
     /**
      * 解析具体内容 来源
@@ -497,6 +499,22 @@ public class Command_UPSC implements iCommand {
     private void getNewsSource(String contentSource) {
           getGallarySource(contentSource);
     }
-    private int indexFlags = 0;
 
+    Intent intent = new Intent();
+    Bundle bundle = new Bundle();
+    /**
+     * 发送任务到下载服务广播
+     */
+    private void sendTaskList() {
+        if (context!=null && dl!=null){
+            Log.e(""," == "+ dl.GetStringDefualt("terminalNo","0000")+","+ dl.GetStringDefualt("basepath", "mnt/"));
+            bundle.clear();
+            intent.setAction(DownloadBroad.ACTION);
+            bundle.putCharSequenceArrayList(DownloadBroad.PARAM1,loadingList);
+            bundle.putString(DownloadBroad.PARAM2, dl.GetStringDefualt("terminalNo","0000"));
+            bundle.putString(DownloadBroad.PARAM3, dl.GetStringDefualt("basepath", "mnt/sdcard/upsd/"));
+            intent.putExtras(bundle);
+            context.sendBroadcast(intent);
+        }
+    }
 }

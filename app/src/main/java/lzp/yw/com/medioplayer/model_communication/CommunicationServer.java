@@ -12,9 +12,12 @@ import android.util.Log;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.StringTokenizer;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import lzp.yw.com.medioplayer.model_application.baselayer.DataListEntiyStore;
 import lzp.yw.com.medioplayer.model_command_mission.CommandPostBroad;
+import lzp.yw.com.medioplayer.model_command_mission.command_arr.Command_SYTI;
 import lzp.yw.com.medioplayer.model_universal.Logs;
 import lzp.yw.com.medioplayer.model_universal.httpconnect.HttpProxy;
 import rx.functions.Action1;
@@ -101,6 +104,7 @@ public class CommunicationServer extends Service {
         super.onDestroy();
         Logs.e(TAG,"----------------------------------------onDestroy()");
         unregistBroad();
+        stopHeartbeat();
     }
 
 
@@ -112,28 +116,34 @@ public class CommunicationServer extends Service {
      * 如果已经配置了服务器信息
      * 发送上线指令
      */
-    private void initparam() {
+    private void initparam() {//String otherPackage
+        Logs.d(TAG," initparam() : "+ DataListEntiyStore.isSettingServerInfo(getApplicationContext()));
+
         if (DataListEntiyStore.isSettingServerInfo(getApplicationContext())){
             // 已设置过服务器信息
             if (dataList==null){
                 dataList = new DataListEntiyStore(this.getApplicationContext());
                 dataList.ReadShareData();
-                makeOnlineUri();
-                sendOnline(makeOnlineUri());
+                initData();
+                sendCmds(makeOnlineUri());
+                startLoopHeartbeat();
             }
         }
     }
-    //上线 url
-    private String makeOnlineUri() {
-        //http://192.168.6.14:9000/terminal/heartBeat?cmd=HRBT%3A10000555
-        return "http://"+dataList.GetStringDefualt("serverip","127.0.0.1")
-                +":"+
-                dataList.GetStringDefualt("serverport","8000")
-                +"/terminal/heartBeat?cmd=ONLI"+
-                ":"+
-               // dataList.GetStringDefualt("terminalNo","0000");
-                "10001103";
+    private String ip = null;
+    private String port = null;
+    private String terminalId = null;
+    private int heartBeatTime = 0;
+
+    private void initData() {
+        if (dataList!=null){
+            ip = dataList.GetStringDefualt("serverip","127.0.0.1");
+            port = dataList.GetStringDefualt("serverport","8000");
+            terminalId = "10000090";//dataList.GetStringDefualt("terminalNo","0000");
+            heartBeatTime = dataList.GetIntDefualt("HeartBeatInterval",1);
+        }
     }
+
 
 
     /**
@@ -167,7 +177,7 @@ public class CommunicationServer extends Service {
      *  收到一个app给我的消息到服务器
      */
     public void receiveAppMsg(String mothername,String msg){
-        Logs.e(TAG,mothername+" app -> communication server msg: "+ msg);
+        Logs.e(TAG,"反射调用 : " + mothername+"("+ msg+")");
         invokeMother(mothername,msg);
     }
     /**
@@ -197,9 +207,11 @@ public class CommunicationServer extends Service {
         try {
             Method method = null;
             if(url == null ){
+                Logs.d(TAG,"invoke not param");
                 method = this.getClass().getDeclaredMethod(motherName);
                 method.invoke(this) ;
             }else{
+                Logs.d(TAG,"invoke one param");
                 method = this.getClass().getDeclaredMethod(motherName,String.class);
                 method.invoke(this, url);
             }
@@ -237,19 +249,27 @@ public class CommunicationServer extends Service {
      * 终端可以上线
      */
     public void sendTerminaOnline(){
+        Logs.d(TAG,"sendTerminaOnline()");
         initparam();
     }
 
-
+    //上线 url
+    private String makeOnlineUri() {
+        //http://192.168.6.14:9000/terminal/heartBeat?cmd=HRBT%3A10000555
+        return "http://"+ip+":"+port+"/terminal/heartBeat?cmd=ONLI:"+terminalId;
+    }
     /**
      * 发送 上线指令
+     * 发送 心跳指令
      */
-    public void sendOnline(String url){
-        HttpProxy.getInstant().sendONFI(url, new Action1<String>() {
+    public void sendCmds(String url){
+        HttpProxy.getInstant().sendCmd(url, new Action1<String>() {
             @Override
             public void call(String s) {
                 Logs.i(TAG," 访问服务器 结果:\n" + s);
-                receiveServerMsg(2,s);
+                if (s!=null && !s.equals("")){
+                    receiveServerMsg(2,s);
+                }
             }
         });
     }
@@ -295,7 +315,57 @@ public class CommunicationServer extends Service {
         getApplicationContext().sendBroadcast(i);
     }
 
+    //
+    /**
+     * 开始轮询
+     *  定时器
+     */
+    private void startLoopHeartbeat() {
+        startHeartbeat();
+    }
+
+    private String getHearbeatUri(){
+        //http://localhost:9000/terminal/heartBeat?cmd=HRBT%3A100000001
+        return "http://" +ip+":"+port+"/terminal/heartBeat?cmd=HRBT:"+terminalId;
+    }
+
+    //发送心跳定时器
+    private Timer timer = null;
+    private TimerTask timertask = null;
+
+    //关闭心跳
+    private void stopHeartbeat(){
+        if (timer != null){
+            //关闭定时器
+            timer.cancel();
+            timer = null;
+        }
+        if (timertask!=null){
+            timertask.cancel();
+            timertask = null;
+        }
+    }
 
 
+    //开启 心跳
+    private void startHeartbeat(){
+        stopHeartbeat();
+        timer = new Timer();
+        timertask  =  new TimerTask() {
+            @Override
+            public void run() {
+                sendHearbeating();
+            }
+        };
+        //创建定时器任务 发送心跳
+        timer.schedule(timertask, heartBeatTime*1000, heartBeatTime*1000);
+    }
+    /**
+     * 发送心跳
+     */
+    private void sendHearbeating(){
+        Logs.d(TAG,"当前时间:" + Command_SYTI.getSystemTime() +" HRBT:"+terminalId);
+        sendCmds(getHearbeatUri());
+    }
 
 }

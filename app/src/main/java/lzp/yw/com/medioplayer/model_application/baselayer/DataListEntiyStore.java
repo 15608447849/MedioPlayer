@@ -19,6 +19,15 @@ public class DataListEntiyStore extends DataListEntiy{
     private static final String SHARED_STTING_FILE_NAME = "_appOneStting";
     private static final String oneSttingKey = "onesFlag";
 
+
+    /**
+     * 获取一个shared prefernces
+     */
+    private static SharedPreferences getSharedPreferences(Context context){
+        return context.getSharedPreferences(SHARED_FILE_NAME,  Context.MODE_WORLD_READABLE + Context.MODE_WORLD_WRITEABLE
+                + Context.MODE_MULTI_PROCESS);//Context.MODE_WORLD_WRITEABLE);
+    }
+
     /**
      * 写数据到 shared
      * @param context
@@ -26,7 +35,7 @@ public class DataListEntiyStore extends DataListEntiy{
      * @param value
      */
     public static void writeShareData(Context context, String key, String value) {
-        SharedPreferences preferences = context.getSharedPreferences(SHARED_FILE_NAME, Context.MODE_WORLD_READABLE + Context.MODE_WORLD_WRITEABLE);
+        SharedPreferences preferences = getSharedPreferences(context);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(key, value);
         editor.commit();
@@ -37,7 +46,7 @@ public class DataListEntiyStore extends DataListEntiy{
      * @return
      */
     public static String readShareData(Context context,String key) {
-        SharedPreferences preferences =context.getSharedPreferences(SHARED_FILE_NAME, Context.MODE_PRIVATE);//MODE_WORLD_READABLE + Context.MODE_WORLD_WRITEABLE
+        SharedPreferences preferences = getSharedPreferences(context);
         String result = preferences.getString(key, "");
         return result;
     }
@@ -64,7 +73,7 @@ public class DataListEntiyStore extends DataListEntiy{
      * @param flag
      */
     public static void settingServerInfo(Context context,boolean flag){
-        SharedPreferences preferences = context.getSharedPreferences(SHARED_STTING_FILE_NAME, Context.MODE_WORLD_READABLE + Context.MODE_WORLD_WRITEABLE);
+        SharedPreferences preferences = getSharedPreferences(context);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(oneSttingKey, flag);
         editor.commit();
@@ -73,11 +82,9 @@ public class DataListEntiyStore extends DataListEntiy{
      * 读取 是否设置服务器信息
      */
     public static boolean isSettingServerInfo(Context context){
-        SharedPreferences preferences = context.getSharedPreferences(SHARED_STTING_FILE_NAME, Context.MODE_WORLD_READABLE + Context.MODE_WORLD_WRITEABLE);
+        SharedPreferences preferences = getSharedPreferences(context);
         return preferences.getBoolean(oneSttingKey, false);
     }
-
-
 
 
     private Context context = null;

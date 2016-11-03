@@ -223,7 +223,7 @@ public class appTools {
               result = sb.toString();
             return result;
         } catch (IOException e) {
-            Log.e("",""+ "uriTranslationXml() get input stream error:" +  e.getMessage());
+            Log.e("",""+ "uriTranslationString() get input stream error:" +  e.getMessage());
             return result;
         } finally {
             try {

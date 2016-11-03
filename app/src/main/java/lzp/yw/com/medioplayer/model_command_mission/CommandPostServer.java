@@ -25,6 +25,7 @@ public class CommandPostServer extends Service {
     public void onCreate() {
         super.onCreate();
         Logs.e(TAG,"############################## onCreate() ");
+        initData();
         registBroad();
     }
     @Override
@@ -39,8 +40,8 @@ public class CommandPostServer extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private static HashMap<String, iCommand> commandList = new HashMap<String, iCommand>();
-    static {
+    private HashMap<String, iCommand> commandList = new HashMap<String, iCommand>();
+    private void initData() {
         //syncTime
         commandList.put(CMD_INFO.SYTI,new Command_SYTI());
         // 音量控制
@@ -48,7 +49,7 @@ public class CommandPostServer extends Service {
         //关闭终端
         commandList.put(CMD_INFO.SHDO, new Command_SHDO());
         //收到排期
-        commandList.put(CMD_INFO.UPSC, new Command_UPSC());
+        commandList.put(CMD_INFO.UPSC, new Command_UPSC(getApplicationContext()));
     }
 
 

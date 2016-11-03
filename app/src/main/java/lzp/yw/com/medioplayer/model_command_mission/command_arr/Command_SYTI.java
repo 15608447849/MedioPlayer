@@ -99,7 +99,7 @@ public class Command_SYTI implements iCommand {
     /**
      * 获取系统时间
      */
-    private String getSystemTime(){
+    public static String getSystemTime(){
         long time= System.currentTimeMillis();
         final Calendar mCalendar= Calendar.getInstance();
         mCalendar.setTimeInMillis(time);

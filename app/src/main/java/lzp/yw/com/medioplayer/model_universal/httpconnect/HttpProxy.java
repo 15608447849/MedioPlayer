@@ -127,7 +127,7 @@ public class HttpProxy {
 
 完整的就是 ExampleAPI.subscribeOn(io).observeOn(MainThread).unsubscribeOn(io) 。*/
         try{
-            movieService.getTerminalId(url)
+            movieService.sendCMD(url)
                     .subscribeOn(Schedulers.io())
                     .unsubscribeOn(Schedulers.io())
 //                    .observeOn(AndroidSchedulers.mainThread())
@@ -141,10 +141,11 @@ public class HttpProxy {
     /**
      * 上线 ONFI
      * cmd=ONLI:{terminalid}
+     * 心跳 HRBT
      */
-    public void sendONFI(String url,final Action1<String> onNext){
+    public void sendCmd(String url,final Action1<String> onNext){
         try{
-            movieService.sendOnfi(url)
+            movieService.sendCMD(url)
                     .subscribeOn(Schedulers.io())
                     .unsubscribeOn(Schedulers.io())
                     //.observeOn(AndroidSchedulers.mainThread())
@@ -153,10 +154,4 @@ public class HttpProxy {
             Logs.e(TAG,e.getMessage());
         }
     }
-
-
-
-
-
-
 }

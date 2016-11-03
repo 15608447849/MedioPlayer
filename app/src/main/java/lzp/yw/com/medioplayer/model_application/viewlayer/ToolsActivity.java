@@ -186,7 +186,7 @@ public class ToolsActivity extends BaseActivity {
         dataList.SaveShareData();
         if (!"".equals(terminalNo.getText().toString())){
             DataListEntiyStore.settingServerInfo(getApplicationContext(),true);
-            showToast("保存完成");
+            showToast("---保存完成---");
             return true;
         }else{
             DataListEntiyStore.settingServerInfo(getApplicationContext(),false);
@@ -203,7 +203,7 @@ public class ToolsActivity extends BaseActivity {
         if (!isGetDataing){ //不在获取数据中
             if(save()){
                 //发送上线指令
-                sendMsgCommServer("sendTerminaOnline", "");
+                sendMsgCommServer("sendTerminaOnline", null);
                 //进入应用
                 gotoApp();
             };
