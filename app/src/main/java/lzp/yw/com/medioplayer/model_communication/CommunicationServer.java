@@ -195,7 +195,6 @@ public class CommunicationServer extends Service {
             case 2:
                 //处理字符串   >> 发送广播
                 processingResults(msg);
-
                 break;
         }
     }
@@ -207,12 +206,14 @@ public class CommunicationServer extends Service {
         try {
             Method method = null;
             if(url == null ){
-                Logs.d(TAG,"invoke not param");
+//                Logs.d(TAG,"invoke not param");
                 method = this.getClass().getDeclaredMethod(motherName);
+                method.setAccessible(true);// 调用private方法的关键一句话
                 method.invoke(this) ;
             }else{
-                Logs.d(TAG,"invoke one param");
+//                Logs.d(TAG,"invoke one param");
                 method = this.getClass().getDeclaredMethod(motherName,String.class);
+                method.setAccessible(true);// 调用private方法的关键一句话
                 method.invoke(this, url);
             }
         } catch (NoSuchMethodException e) {
@@ -223,13 +224,10 @@ public class CommunicationServer extends Service {
             e.printStackTrace();
         }
     }
-
-
     /**
      * 获取终端Id
      */
-    public void GetTerminalId(String url){
-
+    private void GetTerminalId(String url){
         HttpProxy.getInstant().getTerminalId(url, new Action1<String>() {
             @Override
             public void call(String s) {
@@ -241,28 +239,39 @@ public class CommunicationServer extends Service {
                 receiveServerMsg(1,"failure");
             }
         });
-
     }
-
-
     /**
      * 终端可以上线
      */
-    public void sendTerminaOnline(){
-        Logs.d(TAG,"sendTerminaOnline()");
+    private void sendTerminaOnline(){
         initparam();
     }
-
     //上线 url
     private String makeOnlineUri() {
         //http://192.168.6.14:9000/terminal/heartBeat?cmd=HRBT%3A10000555
         return "http://"+ip+":"+port+"/terminal/heartBeat?cmd=ONLI:"+terminalId;
     }
     /**
-     * 发送 上线指令
-     * 发送 心跳指令
+     * 文件下载进度,状态
      */
-    public void sendCmds(String url){
+    private void fileDownloadSpeedOrState(String url){
+//        Logs.e(TAG,"call fileDownloadSpeedOrState() success ,param :"+url);
+        sendCmds(generateUri(url));
+    }
+    //文件下载生成url
+    private String generateUri(String param) {
+//        http://192.168.6.14:9000/terminal/heartBeat?cmd=HRBT%3A10000555
+        return "http://"+ip+":"+port+"/terminal/heartBeat?cmd="+param;
+    }
+    /**
+     *
+     * 1 .发送 上线指令
+     * 2 .发送 心跳指令
+     * 3. 发送 文件下载状态
+     * 4. 发送 文件下载进度
+     */
+    private void sendCmds(String url){
+        //URLEncoder.encode
         HttpProxy.getInstant().sendCmd(url, new Action1<String>() {
             @Override
             public void call(String s) {
@@ -273,30 +282,38 @@ public class CommunicationServer extends Service {
             }
         });
     }
-    /**
-     * 处理结果
-     * @param t
-     */
-    private void processingResults(String t) {
-        if (t.trim().equals("cmd:error")){
-            return;
-        }
-        /*
+
+    /*
          *
          VOLU:10
          SYTI:2016-10-27 12:16:35
          SHDO:false
          UPSC:http://192.168.6.14:9000/terminal/1/schedule
          */
-        StringTokenizer stz = new StringTokenizer(t,"\n\r");
-        String message = null;
-        String cmd = null;
-        String param = null;
-        while(stz.hasMoreElements()){
-            message = stz.nextToken();
-            cmd = message.substring(0, 5);
-            param = message.substring(5);
-            postTask(cmd,param);
+    StringTokenizer stz = null;
+    String message = null;
+    String cmd = null;
+    String param = null;
+
+    /**
+     * 处理结果
+     * @param t
+     */
+    private void processingResults(String t) {
+        if (t.trim().equals("cmd:error") || t.trim().equals("cmd:sucess")){
+
+            return;
+        }
+        try {
+            stz = new StringTokenizer(t,"\n\r");
+            while(stz.hasMoreElements()){
+                message = stz.nextToken();
+                cmd = message.substring(0, 5);
+                param = message.substring(5);
+                postTask(cmd,param);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
     /**

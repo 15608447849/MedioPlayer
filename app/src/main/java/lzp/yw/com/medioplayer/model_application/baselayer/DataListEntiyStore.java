@@ -119,13 +119,10 @@ public class DataListEntiyStore extends DataListEntiy{
         map.put("serverport",  GetKey("serverport", "9000"));//服务器端口
         map.put("companyid",  GetKey("companyid", "999"));//公司id
         map.put("HeartBeatInterval",  GetKey("HeartBeatInterval", "30"));//心跳时间
-        map.put("basepath",  GetKey("basepath", "/mnt/sdcard/"));//资源保存路径
-        map.put("sleepTime",GetKey("sleepTime", "30"));//休眠时间
+        map.put("sleepTime",GetKey("sleepTime", "30"));//重启时间
+        map.put("storageLimits",GetKey("storageLimits","50"));//sdka 容量达到多少时 会清理资源
+        map.put("basepath",  GetKey("basepath", "sourceDir"));//资源保存路径
+
         Logs.i(TAG,"ToolsDataListEntity_ReadShareData() \n --------------------------------------------------读取配置信息------------------------------- \n 成功");
     }
-
-
-
-
-
-}
+    }

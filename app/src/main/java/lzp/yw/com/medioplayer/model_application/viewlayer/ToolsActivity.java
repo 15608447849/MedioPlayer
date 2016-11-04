@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +15,7 @@ import lzp.yw.com.medioplayer.R;
 import lzp.yw.com.medioplayer.model_application.baselayer.BaseActivity;
 import lzp.yw.com.medioplayer.model_application.baselayer.DataListEntiyStore;
 import lzp.yw.com.medioplayer.model_universal.Logs;
+import lzp.yw.com.medioplayer.model_universal.SdCardTools;
 import lzp.yw.com.medioplayer.model_universal.appTools;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.TerminalNo;
 import rx.android.schedulers.AndroidSchedulers;
@@ -41,31 +41,33 @@ public class ToolsActivity extends BaseActivity {
     public EditText BasePath;
     @Bind(R.id.HeartBeatInterval)
     public EditText heartbeattime;
+    @Bind(R.id.StorageLimits)
+    public EditText StorageLimits;
+    @Bind(R.id.RestartBeatInterval)
+    public EditText RestartBeatInterval;
+
     @Bind(R.id.btnGetID)
     public Button btnGetID;
     @Bind(R.id.btnSaveData)
     public Button btnSaveData;
 
-    @Bind(R.id.layotu_restartbeattime)
-    public LinearLayout restartLayout;
-
     private DataListEntiyStore dataList;
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wostools);
-        initAllServer();//开启全部服务
+        //检测sdCard
+        SdCardTools.checkSdCard(getApplicationContext());
+        //开启全部服务
+        initAllServer();
+
         ButterKnife.bind(this);
         gotoApp();
         //初始化数据
         initData();
         //初始化控件信息
         initViewValue();
-
         mBindCommuniServer();//绑定通讯服务
 
     }
@@ -92,8 +94,10 @@ public class ToolsActivity extends BaseActivity {
             serverport.setText(dataList.GetStringDefualt("serverport", "9000"));
             companyid.setText(dataList.GetStringDefualt("companyid", "999"));
             terminalNo.setText(dataList.GetStringDefualt("terminalNo", ""));
-            heartbeattime.setText(dataList.GetStringDefualt("HeartBeatInterval", "30"));
-            BasePath.setText(dataList.GetStringDefualt("basepath", "mnt/sdcard"));
+            heartbeattime.setText(dataList.GetStringDefualt("HeartBeatInterval", "30"));//心跳
+            StorageLimits.setText(dataList.GetStringDefualt("storageLimits","50"));//sdcard 阔值
+            RestartBeatInterval.setText(dataList.GetStringDefualt("RestartBeatInterval","30"));//重启时间
+            BasePath.setText(catPathfile(dataList.GetStringDefualt("basepath", "")));
             //焦点默认在这个控件上
             serverip.setFocusable(true);
         }catch(Exception e)
@@ -101,7 +105,10 @@ public class ToolsActivity extends BaseActivity {
             Logs.e(TAG, e.getMessage());
         }
     }
-
+    //获取资源文件名
+    private String catPathfile(String path){
+        return path.substring(path.lastIndexOf("/")+1);
+    }
     /**
      * 获取控件传入的数据并封装
      */
@@ -111,13 +118,23 @@ public class ToolsActivity extends BaseActivity {
         dataList.put("serverip",  serverip.getText().toString());
         dataList.put("serverport",  serverport.getText().toString());
         dataList.put("companyid",  companyid.getText().toString());
+        dataList.put("storageLimits",StorageLimits.getText().toString());//sdcard 清理阔值
+        dataList.put("RestartBeatInterval",RestartBeatInterval.getText().toString()); //重启时间
         dataList.put("HeartBeatInterval",  heartbeattime.getText().toString());
-        String basepath=BasePath.getText().toString();
+
+        String basepath=BasePath.getText().toString();//资源存储的 文件名
+        //例: xxx前缀 /basepath/资源1
+        if (!basepath.startsWith("/")){
+            basepath = "/"+basepath;
+        }
         if(!basepath.endsWith("/"))
         {
             basepath=basepath+"/";
         }
+
+        basepath = SdCardTools.getAppSourceDir(this) + basepath;
         dataList.put("basepath",  basepath);
+        SdCardTools.MkDir(basepath);
     }
 
     /**

@@ -1,5 +1,8 @@
 package lzp.yw.com.medioplayer.model_download.singedownload;
 
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.lidroid.xutils.HttpUtils;
@@ -7,10 +10,7 @@ import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 
-import org.apache.commons.io.FileUtils;
-
 import java.io.File;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
+import lzp.yw.com.medioplayer.model_communication.CommuniReceiverMsgBroadCasd;
 import lzp.yw.com.medioplayer.model_download.FtpTools.ActiveFtpUtils;
 import lzp.yw.com.medioplayer.model_download.FtpTools.fileUtils;
 import lzp.yw.com.medioplayer.model_universal.Logs;
@@ -30,7 +31,7 @@ import rx.schedulers.Schedulers;
 
 /**
  * Created by user on 2016/11/3.
- *
+ *lzp
  */
 public class Loader {
 
@@ -43,13 +44,16 @@ public class Loader {
     public static int loadcount = 2 ;//每次下载的数量
 
 
+    private Context context ;
+
     //资源保存的路径
     private String savepath ;
     //终端id
     private String terminalNo ;
 
     //构造
-    public Loader(String savepath,String terminalNo){
+    public Loader(Context context,String savepath,String terminalNo){
+        this.context = context;
        this.savepath = savepath;
        this.terminalNo =terminalNo;
     }
@@ -232,9 +236,6 @@ public class Loader {
             caller.Call(filePath);
         }
     }
-
-
-
     /**
      * 加入等待隊列
      */
@@ -249,16 +250,13 @@ public class Loader {
         //如果存在 每次只執行 至多 5 個
         if (loadingTaskList.size()==0){
             if (waitList.size()>0){
-                //ArrayList<Loader> waitload = new ArrayList<Loader>();
                 Iterator<Loader> itr = waitList.iterator();
                 int i = 0;
                 while(itr.hasNext()){
                     Loader o = itr.next();
-//                    waitload.add(o);
                     o.LoadingUriResource(o.muri,null);
                     itr.remove();
                     i++;
-
                     if (i==loadcount){
                         break;
                     }
@@ -280,13 +278,15 @@ public class Loader {
     }
 
     /**
-     * 生成 进度
+     * 生成 状态
      *
      * 2 3 4
      *
      */
     private void nitifyMsg(String filename, int type){
-//        wosPlayerApp.sendMsgToServer("FTPS:"+terminalNo+";" + filename+ ";"+type);
+//        FTPS:100000001;1004562123.jpg;2
+
+            sendMsgToServer("FTPS:"+terminalNo+";" + filename+ ";"+type);
 
     }
 
@@ -342,9 +342,9 @@ public class Loader {
             String fps = localFileDir + fns;//全路径
 
             final String finalFps = fps;
-            if (!uri.trim().startsWith("file://") && fileIsExist(fps)) {
-                Logs.i(TAG, "文件存在 \n 任务:" + uri + "\n" +
-                        " 本地所在路径" + finalFps + "");
+            if (fileIsExist(fps)) {
+                Logs.i(TAG, " -- 文件存在 -- \n 任务:" + uri + "\n" +
+                        " 本地所在路径 " + finalFps );
                 ioThread.schedule(new Action0() {
                     @Override
                     public void call() {
@@ -358,15 +358,14 @@ public class Loader {
                 return;
             }
 
-            Logs.e(TAG," ------------------------------开始访问网络---------------- " );
+            Logs.e(TAG," ------------------------------开始访问网络---------------------- " );
 
             //判断路径i
             if (uri.startsWith("http://")) {
                 HttpLoad(uri, finalFps);
 
             } else if (uri.startsWith("ftp://")) {
-                // ftp://ftp:FTPmedia@21.89.68.163/uploads/1466573392435.png
-
+                // ftp://ftp:FTPmedia@21.89.68.163:21/uploads/1466573392435.png
                 String str = uri.substring(uri.indexOf("//") + 2);
                 final String name = str.substring(0, str.indexOf(":"));
                 final String password = str.substring(str.indexOf(":") + 1, str.indexOf("@"));
@@ -381,22 +380,7 @@ public class Loader {
                         FTPload(host,port, name, password, path, filename, localPath,null);
                     }
                 });
-            }else if (uri.startsWith("file://")){
-
-                File jhFile = new File( new URI(uri));
-                //本地文件
-//            File jhFile = new File(uri);
-                if (jhFile.exists()){
-                    Log.e(TAG,"建行资源文件:\n"+jhFile.getAbsolutePath());
-                    FileUtils.copyFile(jhFile, new File(fps));
-                    loadFileRecall(fps);
-                }else{
-                    Log.e(TAG,"建行资源文件不存在:\n"+uri);
-                    loadFileRecall("loaderr");
-                }
-
             }
-
         }catch (Exception e){
             Logs.e(TAG,e.getMessage());
         }finally {
@@ -413,7 +397,7 @@ public class Loader {
     }
     private int getPort(String str){
         int port = 0;
-            str = str.substring(str.indexOf(":"));
+            str = str.substring(str.indexOf(":")+1);
         try {
             port = Integer.parseInt(str);
         }catch (Exception e){
@@ -474,13 +458,10 @@ public class Loader {
                 }
         );
     }
-    //生成 http下载进度
+    //生成 下载进度
     private void notifyProgress(String filename, String process, String speed){
-
-//        String command = "PRGS:" +  terminalNo //wosPlayerApp.config.GetStringDefualt("terminalNo", "0000")
-//                + "," + filename + ","
-//                + process + "," + speed;
-//        wosPlayerApp.sendMsgToServer(command);
+        //文件下载进度上报(PRGS:10000001,1004562123.jpg,0.56,200kb/s)
+        sendMsgToServer( "PRGS:" +terminalNo + ","+filename+ ","+ process + "," + speed);
     }
 
 
@@ -585,4 +566,22 @@ public class Loader {
                     }
                 });
     }
+
+    /**
+     * ---------------------------------------------------发送信息到通讯服务
+     */
+    Intent intent = new Intent();
+    Bundle bundle = new Bundle();
+    private void sendMsgToServer(String param){
+        if (context!=null && terminalNo!=null){
+            bundle.clear();
+            intent.setAction(CommuniReceiverMsgBroadCasd.ACTION);
+            bundle.putString(CommuniReceiverMsgBroadCasd.PARAM1, "fileDownloadSpeedOrState");
+            bundle.putString(CommuniReceiverMsgBroadCasd.PARAM2, param);
+            intent.putExtras(bundle);
+            context.sendBroadcast(intent);
+        }
+    }
+
+
 }

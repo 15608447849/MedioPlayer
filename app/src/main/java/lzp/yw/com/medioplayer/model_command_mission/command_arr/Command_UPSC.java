@@ -3,7 +3,6 @@ package lzp.yw.com.medioplayer.model_command_mission.command_arr;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -17,6 +16,7 @@ import lzp.yw.com.medioplayer.model_application.baselayer.DataListEntiyStore;
 import lzp.yw.com.medioplayer.model_download.DownloadBroad;
 import lzp.yw.com.medioplayer.model_universal.CONTENT_TYPE;
 import lzp.yw.com.medioplayer.model_universal.Logs;
+import lzp.yw.com.medioplayer.model_universal.SdCardTools;
 import lzp.yw.com.medioplayer.model_universal.appTools;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.AdBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
@@ -51,7 +51,8 @@ public class Command_UPSC implements iCommand {
 
     private Context context;
     private DataListEntiyStore dl;
-
+    private Long startTime ;
+    private Long endTime ;
     public Command_UPSC(Context context){
        this.context = context;
     }
@@ -118,6 +119,11 @@ public class Command_UPSC implements iCommand {
     }
     //结果
     private String res;
+
+    /**
+     *   入口-------------------------------------------------------------------------------------------------------------------------------------------------
+     * @param param
+     */
     @Override
     public void Execute(String param) {
         if (dl==null){
@@ -126,16 +132,31 @@ public class Command_UPSC implements iCommand {
         dl.ReadShareData();
         try{
             lock.lock();
-            Logs.d(TAG,"同步访问  uri : "  + param);
+
+            Logs.d(TAG," - - 同步访问  uri : "  + param);
             res = null;
             res = uriTranslationString(param);
             if (res!=null){
+
                 //解析json
                 List<ScheduleBean> list =  parseJsonToList(res);
                 if (list!=null){
+
                  initLoadingList();
+                 startTime = System.currentTimeMillis();
                  parseScheduleList(list);
                  loopContentArray();
+                 endTime = System.currentTimeMillis();
+                 Logs.e(TAG,"解析排期 用时 : "+(endTime - startTime)+" 毫秒 ");
+
+                 Logs.d(TAG,"----------------------------------任务队列大小 : " + loadingList.size()+" \n "+loadingList);
+
+                 startTime = System.currentTimeMillis();
+                 clearSdcardSource();
+                 endTime = System.currentTimeMillis();
+                 Logs.e(TAG,"清理资源 用时 : "+(endTime - startTime)+" 毫秒 ");
+
+                 sendTaskList();
                 }
             }
             }catch (Exception e){
@@ -169,6 +190,7 @@ public class Command_UPSC implements iCommand {
             parseSchedule(schedule);
             Logs.e(TAG,"解析完一个排期\n\r-----------------------------------------------------------------------------------------------------------");
         }
+
     }
 
     /**
@@ -333,6 +355,7 @@ public class Command_UPSC implements iCommand {
      * 循环具体内容 处理...
      */
     private void  loopContentArray(){
+
         if (contentArray!=null && contentArray.size()>0){
                 for (String[] arr : contentArray){
                         try {
@@ -342,11 +365,27 @@ public class Command_UPSC implements iCommand {
                         }
                 }
         }
-        Logs.d(TAG,"----------------------------------任务队列大小 : " + loadingList.size()+" \n "+loadingList);
-        sendTaskList();
+
     }
 
 
+    /**
+     * 清理资源
+     */
+    private void clearSdcardSource() {
+        //如果 true  清理!
+        if(SdCardTools.justFileBlockVolume(dl.GetStringDefualt("basepath","")
+                ,dl.GetStringDefualt("storageLimits","50"))){
+
+            List<String> keepList = new ArrayList<String>();
+            for (CharSequence car :loadingList){
+                keepList.add(car.toString());
+            }
+
+            SdCardTools.clearTargetDir(dl.GetStringDefualt("basepath",""),keepList);
+            keepList=null;
+        }
+    }
 
 
     /**
@@ -507,12 +546,11 @@ public class Command_UPSC implements iCommand {
      */
     private void sendTaskList() {
         if (context!=null && dl!=null){
-            Log.e(""," == "+ dl.GetStringDefualt("terminalNo","0000")+","+ dl.GetStringDefualt("basepath", "mnt/"));
             bundle.clear();
             intent.setAction(DownloadBroad.ACTION);
             bundle.putCharSequenceArrayList(DownloadBroad.PARAM1,loadingList);
             bundle.putString(DownloadBroad.PARAM2, dl.GetStringDefualt("terminalNo","0000"));
-            bundle.putString(DownloadBroad.PARAM3, dl.GetStringDefualt("basepath", "mnt/sdcard/upsd/"));
+            bundle.putString(DownloadBroad.PARAM3, dl.GetStringDefualt("basepath", ""));
             intent.putExtras(bundle);
             context.sendBroadcast(intent);
         }

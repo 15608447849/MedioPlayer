@@ -2,6 +2,8 @@ package lzp.yw.com.medioplayer.model_universal.httpconnect;
 
 import android.util.Log;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.concurrent.TimeUnit;
 
 import lzp.yw.com.medioplayer.model_universal.Logs;
@@ -142,10 +144,13 @@ public class HttpProxy {
      * 上线 ONFI
      * cmd=ONLI:{terminalid}
      * 心跳 HRBT
+     * 文件下载情况上播   FTPS:100000001;1004562123.jpg;2
+     * 文件下载进度上报(PRGS:10000001,1004562123.jpg,0.56,200kb/s)
      */
     public void sendCmd(String url,final Action1<String> onNext){
         try{
-            movieService.sendCMD(url)
+
+            movieService.sendCMD(encodeUrlParam("cmd",url))
                     .subscribeOn(Schedulers.io())
                     .unsubscribeOn(Schedulers.io())
                     //.observeOn(AndroidSchedulers.mainThread())
@@ -154,4 +159,20 @@ public class HttpProxy {
             Logs.e(TAG,e.getMessage());
         }
     }
+    /**
+     * encode param
+     */
+    private static String encodeUrlParam(String key,String url){
+        // http://192.168.6.14:9000/terminal/heartBeat?cmd=HRBT%3A10000555
+        if (url.contains(key)){
+            try {
+                return url.substring(0,url.indexOf(key)+key.length()+1)  +
+                        URLEncoder.encode(url.substring(url.indexOf(key)+key.length()+1),"UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+        return url;
+    }
+
 }

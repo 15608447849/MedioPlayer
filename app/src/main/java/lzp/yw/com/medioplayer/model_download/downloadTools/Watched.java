@@ -74,19 +74,9 @@ public class Watched implements Observer{
         sumCount = list.size();
 
         for (CharSequence url : list){
-            loader = new Loader(savepath,terminalNo);
+            loader = new Loader(c,savepath,terminalNo);
             loader.settingCaller(call);//设置回调
             loader.LoadingUriResource((String)url,null);// 开始任务
         }
     }
-
-
-
-
-
-
-
-
-
-
 }

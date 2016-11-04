@@ -19,10 +19,9 @@ public class BaseApplication extends Application{
         super.onCreate();
         Logs.i("###################### app start ######################");
         appContext = this.getApplicationContext();
+//        checkSdCard();
        // initStartServer();
     }
-
-
     /**
      * 初始化 打开所有服务
      */
@@ -34,10 +33,6 @@ public class BaseApplication extends Application{
         //打开 下载服务
         startAppServer(DownloadServer.class);
     }
-
-
-
-
 
     /**
      * 打开一个服务
@@ -52,6 +47,7 @@ public class BaseApplication extends Application{
     public void closeAppServer(Class<?> serverClass){
         stopService(new Intent(appContext,serverClass));
     }
+
 
 
 
