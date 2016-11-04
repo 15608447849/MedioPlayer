@@ -38,6 +38,7 @@ public class Loader {
     private static final String TAG = " _download_loader";
     private static ReentrantLock locker = new ReentrantLock();//同步锁
     private static ReentrantLock lock_repeat = new ReentrantLock();// 重复队列 同步锁
+    private static ReentrantLock waitlistLock = new ReentrantLock();//等待队列 同步锁
     //工作线程
     private final static Scheduler.Worker ioThread = Schedulers.io().createWorker();
     private final static Scheduler.Worker notifyThread = Schedulers.io().createWorker();
@@ -247,23 +248,30 @@ public class Loader {
      * 通知 等待隊列 執行
      */
     private static void notifyWaitList(){
-        //如果存在 每次只執行 至多 5 個
-        if (loadingTaskList.size()==0){
-            if (waitList.size()>0){
-                Iterator<Loader> itr = waitList.iterator();
-                int i = 0;
-                while(itr.hasNext()){
-                    Loader o = itr.next();
-                    o.LoadingUriResource(o.muri,null);
-                    itr.remove();
-                    i++;
-                    if (i==loadcount){
-                        break;
+        try{
+        waitlistLock.lock();
+            //如果存在 每次只執行 至多 5 個
+            if (loadingTaskList.size()==0){
+                if (waitList.size()>0){
+                    Iterator<Loader> itr = waitList.iterator();
+                    int i = 0;
+                    while(itr.hasNext()){
+                        Loader o = itr.next();
+                        o.LoadingUriResource(o.muri,null);
+                        itr.remove();
+                        i++;
+                        if (i==loadcount){
+                            break;
+                        }
                     }
-                }
 
-                Logs.i(TAG," ----------------------- 完成一次 等待隊列的執行 ----------------------------------------");
+                    Logs.i(TAG," ----------------------- 完成一次 等待隊列的執行 ----------------------------------------");
+                }
             }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            waitlistLock.unlock();
         }
     }
 

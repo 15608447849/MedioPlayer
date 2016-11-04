@@ -23,6 +23,7 @@ public class MainActivity extends BaseActivity {
     }
 
     public void backTop(View v){
+        this.finish();
     }
 
     public void serverStart(View v){
