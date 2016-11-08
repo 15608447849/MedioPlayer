@@ -18,15 +18,19 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
+import static android.support.v7.widget.StaggeredGridLayoutManager.TAG;
+
 /**
  * Created by user on 2016/10/26.
  */
-public class appTools {
+public class AppsTools {
 
     private static String callCmd(String cmd,String filter) {
         String result = "";
@@ -179,12 +183,20 @@ public class appTools {
             return Arrays.asList(array);
         }
 
-
     /**
-     * http 同步请求
-     * lzp
+     * 判断是否时base64 加密
+     * 去除baseUri
      *
      */
+    public static String justUriIsBase64GetUrl(String url){
+
+
+        if (url.trim().lastIndexOf("=Base64")!=-1){
+            url=url.trim().substring(0,url.lastIndexOf("=Base64"));
+            Logs.e(TAG," delete Base64 -> url  "+url);
+        }
+        return url.trim();
+    };
 
     /**
      * 把url转化为xml格式数据

@@ -233,4 +233,11 @@ public class CMD_INFO {
      * 建行xml数据 转换 本地xml数据
      */
     public static final String TSLT = "TSLT:";
+
+
+    /**
+     * 本地使用 保存 json 数据
+     *
+     */
+    public static final String SORE ="SORE:";
 }

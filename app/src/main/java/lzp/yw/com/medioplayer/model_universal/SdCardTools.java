@@ -10,7 +10,13 @@ import android.os.StatFs;
 import android.os.storage.StorageManager;
 import android.util.Log;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -75,15 +81,12 @@ public class SdCardTools {
     public static  final String Construction_Bank_dir_source ="/construction_bank/source/";
     public static  final String Construction_Bank_dir_xmlfile ="/construction_bank/xml/";
     private static String appSourcePath = null;
-    public static void setAppSourceDir(String path){
-        if (path==null){
 
-        }else{
-            appSourcePath = path;
-        }
 
-    }
+
     public static String getAppSourceDir(Context context){
+        //检测sdCard
+        SdCardTools.checkSdCard(context);
         return appSourcePath==null?getDataDataAppDir(context):appSourcePath;
     }
     private static String getDataDataAppDir(Context context){
@@ -313,6 +316,20 @@ public class SdCardTools {
             }
         }
   }
+    /**
+     * 删除文件夹下所有内容
+     */
+    public static void deleteTargetDir(String dirpath){
+        File dir = new File(dirpath);
+        File []sub = dir.listFiles();
+        if (sub!=null && sub.length>0){
+            for (File f:sub){
+                f.delete();
+            }
+            Log.i("","删除目录下所有文件 :"+dirpath);
+        }
+
+    }
 
     /**
      * 如果最后修改时间 在 三天内 不删除 返回 false
@@ -362,26 +379,24 @@ public class SdCardTools {
         String tags = "#file_sdcard";
         if(!SdCardTools.existSDCard()){
             Log.e(tags," sdcard is no exist ! ");
-
             Log.e(tags," application store dir-> "+getAppSourceDir(context));
-//            System.exit(0);
         }else{
             String [] paths = SdCardTools.getVolumePaths(context);
             if (paths!=null && paths.length>0){
                 Log.i(tags,"---------------------------------- sd card path info ------------------------------------");
                 Log.i(tags," 当前 sdcard path:"+ getSDPath() +"\n 可存贮的所有路径数量:"+paths.length);
-                SdCardTools.setAppSourceDir(getSDPath());
+                appSourcePath=getSDPath();
 
                 for (String path : paths){
                     Log.i(tags,"  "+ path);
                     if (path.equals("/mnt/external_sd")){
-                        SdCardTools.setAppSourceDir(path);
+                     appSourcePath = path;
                         break;
                     }
                 }
             }
         }
-        SdCardTools.setAppSourceDir(getAppSourceDir(context)+SdCardTools.app_dir);
+        appSourcePath += SdCardTools.app_dir;
         MkDir(appSourcePath);
     }
 
@@ -402,6 +417,100 @@ public class SdCardTools {
             Log.i("MkDir", e.getMessage());
         }
     }
+
+
+    /**
+     * 写入数据进入文件
+     */
+    public static void writeJsonToSdcard(String storePath,String filename,String _sContent) {
+//        Log.e("","filename: "+filename +"\n  "+_sContent);
+        FileOutputStream outStream = null;
+        try {
+            outStream = new FileOutputStream(storePath + filename);
+            outStream.write(_sContent.getBytes("UTF-8"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (outStream != null) {
+                try {
+                    outStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                outStream = null;
+            }
+        }
+    }
+
+
+    /**
+     * 获取指定文件的数据
+     */
+    public static String readerJsonToMemory(String storePath,String filename){
+        String content = null;
+        FileInputStream inStream = null;
+        try {
+            File f = new File(storePath+filename);
+            if (f.exists()){
+                //读取数据
+                inStream = new FileInputStream(f);
+                StringBuffer sb = new StringBuffer();
+                byte[] bytes = new byte[1024];
+                int len = 0;
+                while((len=inStream.read(bytes))!=-1){
+                  sb.append(new String(bytes,0,len,"UTF-8"));
+                }
+                content = sb.toString();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            if (inStream != null) {
+                try {
+                    inStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                inStream = null;
+            }
+        }
+        return content;
+    }
+
+
+    /**
+     * 文件夹 备份
+     */
+    public static void backupFileDir(String sourcePath,String bakPath) throws IOException {
+        //文件放入 备份文件夹
+        File dir_bak = new File(bakPath);
+        if (!dir_bak.exists()){
+            SdCardTools.MkDir(bakPath);
+        }
+
+        //源文件目录
+        File sourceDirectory = new File(sourcePath);
+
+        if (!sourceDirectory.exists()){
+            Log.e("","备份文件 - 源文件 不存在 -> "+sourcePath);
+            return;
+        }
+
+        if (sourceDirectory.isDirectory()){
+            File []subFiles = sourceDirectory.listFiles();
+            for (File sfile : subFiles){
+                FileUtils.copyFileToDirectory(sfile, dir_bak);
+            }
+            Log.i("","备份数据完成");
+        }
+    }
+
+
+
+
+
 
 
 

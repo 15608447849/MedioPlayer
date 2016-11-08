@@ -25,7 +25,7 @@ public class CommandPostServer extends Service {
     public void onCreate() {
         super.onCreate();
         Logs.e(TAG,"############################## onCreate() ");
-        initData();
+
         registBroad();
     }
     @Override
@@ -40,8 +40,9 @@ public class CommandPostServer extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private HashMap<String, iCommand> commandList = new HashMap<String, iCommand>();
+    private HashMap<String, iCommand> commandList = null;
     private void initData() {
+
         //syncTime
         commandList.put(CMD_INFO.SYTI,new Command_SYTI());
         // 音量控制
@@ -50,6 +51,8 @@ public class CommandPostServer extends Service {
         commandList.put(CMD_INFO.SHDO, new Command_SHDO());
         //收到排期
         commandList.put(CMD_INFO.UPSC, new Command_UPSC(getApplicationContext()));
+        //下载完资源 保存json数据
+        commandList.put(CMD_INFO.SORE,JsonDataStore.getInstent(getApplicationContext()));
     }
 
 
@@ -97,6 +100,10 @@ public class CommandPostServer extends Service {
     public void reserveCmd(String cmd,String param){
         Logs.i(TAG,"收到一个命令 ["+cmd+ " ] -  参数: [ "+ param+" ]");
 
+        if (commandList==null){
+            commandList = new HashMap<>();
+            initData();
+        }
         if (commandList.containsKey(cmd)) {
             Logs.i(TAG,"准备 执行指令:"+cmd +" \n 所在线程:"+Thread.currentThread().getName()+" - 当前线程数:"+Thread.getAllStackTraces().size());
 

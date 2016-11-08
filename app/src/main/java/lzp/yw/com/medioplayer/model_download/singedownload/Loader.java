@@ -62,12 +62,12 @@ public class Loader {
     /**
      * 调用者实现的回调
      */
-    private LoaderCaller other_caller;
+    private LoaderResultCall other_caller;
     /**
      * 设置数据回调
      * @param calle
      */
-    public void settingCaller(LoaderCaller calle){
+    public void settingCaller(LoaderResultCall calle){
         this.other_caller = calle;
     }
 
@@ -76,18 +76,18 @@ public class Loader {
      */
     private static int callCount = 0;
 
-    private LoaderCaller caller = new LoaderCaller() {
+    private LoaderResultCall caller = new LoaderResultCall() {
         @Override
-        public void Call(String filePath) {
+        public void downloadResult(String filePath) {
 
-            Logs.i(TAG, "Call: 当前一个回调结果[ "+Loader.this.muri+" ]");
+            Logs.i(TAG, "downloadResult: 当前一个回调结果[ "+Loader.this.muri+" ]");
 
-            Logs.i(TAG, "loader Call(): 执行线程"+ Thread.currentThread().getName()+" \n thread size:"+ Thread.getAllStackTraces().size());
+            Logs.i(TAG, "loader downloadResult(): 执行线程"+ Thread.currentThread().getName()+" \n thread size:"+ Thread.getAllStackTraces().size());
 
             if (other_caller!=null){
                 try {
-                    Logs.i(TAG,"Call:传递到 子监听回调 , count:"+ callCount++);
-                    other_caller.Call(filePath);
+                    Logs.i(TAG,"downloadResult:传递到 子监听回调 , count:"+ callCount++);
+                    other_caller.downloadResult(filePath);
 
                 }catch (Exception e){
                     Logs.e(TAG,"传递子监听回调err:"+e.toString());
@@ -162,7 +162,6 @@ public class Loader {
             e.printStackTrace();
         }
     }
-
     /**
      * 删除一个进行中任务
      */
@@ -234,7 +233,7 @@ public class Loader {
         boolean f =  u.equals(t);
         Logs.w(TAG,  u+ " < - >"+t+"结果:{"+f+"}");
         if(f){
-            caller.Call(filePath);
+            caller.downloadResult(filePath);
         }
     }
     /**
@@ -277,14 +276,12 @@ public class Loader {
 
 
 /************************************************************************************下载具体执行*********************************************************************************/
-
     /**
      * 判断一个文件是不是已经存在
      */
-    public boolean fileIsExist(String filename){
+    private boolean fileIsExist(String filename){
         return   fileUtils.checkFileExists(filename);
     }
-
     /**
      * 生成 状态
      *
@@ -293,9 +290,7 @@ public class Loader {
      */
     private void nitifyMsg(String filename, int type){
 //        FTPS:100000001;1004562123.jpg;2
-
             sendMsgToServer("FTPS:"+terminalNo+";" + filename+ ";"+type);
-
     }
 
     /**
@@ -310,7 +305,7 @@ public class Loader {
             notifyThread.schedule(new Action0() {
                 @Override
                 public void call() {
-                    caller.Call("404");
+                    caller.downloadResult("404");
                 }
             });
         } else {
@@ -318,12 +313,11 @@ public class Loader {
             notifyThread.schedule(new Action0() {
                 @Override
                 public void call() {
-                    caller.Call(Filepath);
+                    caller.downloadResult(Filepath);
                 }
             });
         }
     }
-
 
     /**
      * 请放入io 线程
@@ -356,7 +350,7 @@ public class Loader {
                 ioThread.schedule(new Action0() {
                     @Override
                     public void call() {
-                        caller.Call(finalFps);
+                        caller.downloadResult(finalFps);
                         nitifyMsg(uri.substring(uri.lastIndexOf("/") + 1), 1);
                         nitifyMsg(uri.substring(uri.lastIndexOf("/") + 1), 2);
                         nitifyMsg(uri.substring(uri.lastIndexOf("/") + 1), 3);
@@ -494,82 +488,81 @@ public class Loader {
                 localPath,
                 fileName,
                 3,//重新链接次数
-                new ActiveFtpUtils.DownLoadProgressListener() {
-                    @Override
-                    public void onDownLoadProgress(String currentStep, long downProcess, String speed, File file) {
+                (currentStep, downProcess, speed, file) -> {
 
-                        if(currentStep.equals(ActiveFtpUtils.FTP_DOWN_SUCCESS)){
-                            //成功
-                            Logs.i(TAG, "ftp下载succsee -["+fileName+"] - 线程 - "+ Thread.currentThread().getName());
+                    //下载中
+                    if (currentStep.equals(ActiveFtpUtils.FTP_DOWN_LOADING)){
+                        notifyProgress(fileName,downProcess+"",speed);
+                    }
 
-                            if (fileName.contains(".apk")){
-                                //APK文件
-                                //caller.Call(file.getAbsolutePath());
-                                loadFileRecall(file.getAbsolutePath());
-                                nitifyMsg(fileName,3);
+                    //ftp远程文件不存在
+                    if (currentStep.equals(ActiveFtpUtils.FTP_FILE_NOTEXISTS)){
+                        Logs.e(TAG,"ftp服务器 不存在文件 <<" + fileName+">>");
+                        loadFileRecall("loaderr");
+                        nitifyMsg(fileName,4);
+                    }
+                    //连接失败
+                    if(currentStep.equals(ActiveFtpUtils.FTP_CONNECT_FAIL)){
+                        Logs.e(TAG,"ftp 连接失败 ");
+                        loadFileRecall("loaderr");
+                        nitifyMsg(fileName,4);
+                    }
+                    //下载失败
+                    if (currentStep.equals(ActiveFtpUtils.FTP_DOWN_FAIL)){
+                        Logs.e(TAG,"ftp 下载失败 :"+fileName);
+                        loadFileRecall("loaderr");
+                        nitifyMsg(fileName,4);
+
+                    }
+                    //连接成功
+                    if (currentStep.equals(ActiveFtpUtils.FTP_CONNECT_SUCCESSS)){
+                        Logs.i(TAG,"ftp 连接成功 - "+ fileName);
+                        nitifyMsg(fileName,1);
+                        nitifyMsg(fileName,2);
+                    }
+                    //下载成功
+                    if(currentStep.equals(ActiveFtpUtils.FTP_DOWN_SUCCESS)){
+
+                        Logs.i(TAG, "ftp下载succsee -["+fileName+"] - 线程 - "+ Thread.currentThread().getName());
+                        //APK文件
+                        if (fileName.contains(".apk")){
+                            loadFileRecall(file.getAbsolutePath());
+                            nitifyMsg(fileName,3);
+                            return;
+                        }
+                        //MD5文件
+                        if (fileName.contains(".md5")){
+
+                            Logs.i(TAG,"资源文件 - 本地 - 对应的md5文件 -路径: "+ file.getAbsolutePath());
+                            String source_file = MD5Util.getFileMD5String((File)ob).trim();// 源文件本地生成的md5 code
+                            if (source_file == null){
+                                Logs.e(TAG,"文件: "+((File)ob).getName()+ "- 资源文件生成 md5 code失败 ");
+                                loadFileRecall("loaderr");
+                                nitifyMsg(((File)ob).getName(),4);
                                 return;
                             }
-
-                            if (fileName.contains(".md5")){
-                                //MD5文件
-                                Logs.i(TAG,"资源文件 在服务器上 对应md5文件 : "+ file.getAbsolutePath());
-                                String sp = ((File)ob).getAbsolutePath();//源文件
-                                String dp = file.getAbsolutePath();//源文件MD5文件
-                                int sut =  MD5Util.FTPMD5(sp,dp);
-
-                                if (sut==0){
-                                    Logs.e(TAG,"文件:"+((File)ob).getName()+ " md5 效验成功");
-                                    loadFileRecall(sp);
-                                    nitifyMsg(((File)ob).getName(),3);
-                                }else{
-                                    Logs.e(TAG,"文件:"+((File)ob).getName()+ " md5 效验失败!");
-                                    loadFileRecall("loaderr");
-                                    nitifyMsg(((File)ob).getName(),4);
-                                }
-
+                            //源文件MD5文件(服务器下载来的)对比中
+                            if (MD5Util.FTPMD5(source_file, file.getAbsolutePath()) == 0 ){
+                                Logs.e(TAG,"文件:"+((File)ob).getName()+ " md5 效验成功");
+                                loadFileRecall(((File)ob).getAbsolutePath());
+                                nitifyMsg(((File)ob).getName(),3);
                             }else{
-                                //资源文件
-                                Logs.i(TAG,"资源文件 : "+ file.getAbsolutePath());
-                                File msd5file = MD5Util.getFileMD5String(file);
-                                if (msd5file == null){
-                                    Logs.e(TAG,"文件:"+((File)ob).getName()+ " 资源文件生成md5文件 失败 ");
-                                    loadFileRecall("loaderr");
-                                    nitifyMsg(((File)ob).getName(),4);
-                                    return;
-                                }
-                                //下载 md5
-                                FTPload(host,port,user,pass,remotePath,fileName+".md5",localPath,msd5file);
+                                Logs.e(TAG,"文件:"+((File)ob).getName()+ " md5 效验失败!");
+                                loadFileRecall("loaderr");
+                                nitifyMsg(((File)ob).getName(),4);
                             }
-                        }
-                        if (currentStep.equals(ActiveFtpUtils.FTP_DOWN_LOADING)){
-                            //下载中
-                            notifyProgress(fileName,downProcess+"",speed);
-                        }
-
-                        //ftp远程文件不存在
-                        if (currentStep.equals(ActiveFtpUtils.FTP_FILE_NOTEXISTS)){
-                            Logs.e(TAG,"ftp服务器 不存在文件 <<" + fileName+">>");
-                            loadFileRecall("loaderr");
-                            nitifyMsg(fileName,4);
-                        }
-                        //连接失败
-                        if(currentStep.equals(ActiveFtpUtils.FTP_CONNECT_FAIL)){
-                            Logs.e(TAG,"ftp 连接失败 ");
-                            loadFileRecall("loaderr");
-                            nitifyMsg(fileName,4);
-                        }
-                        //下载失败
-                        if (currentStep.equals(ActiveFtpUtils.FTP_DOWN_FAIL)){
-                            Logs.e(TAG,"ftp 下载失败 :"+fileName);
-                            loadFileRecall("loaderr");
-                            nitifyMsg(fileName,4);
-
-                        }
-
-                        if (currentStep.equals(ActiveFtpUtils.FTP_CONNECT_SUCCESSS)){
-                            Logs.i(TAG,"ftp 连接成功 - "+ fileName);
-                            nitifyMsg(fileName,1);
-                            nitifyMsg(fileName,2);
+                        }else{
+                            //资源文件
+                            if (file == null) {
+                                Logs.e(TAG,"资源文件下载失败");
+                                loadFileRecall("loaderr");
+                                nitifyMsg(fileName,4);
+                                return;
+                            }
+                            Logs.d(TAG,"资源文件 path : "+ file.getAbsolutePath() );
+                            //下载 md5
+                            // 资源文件的 md5文件名 ,资源文件本身
+                            FTPload(host,port,user,pass,remotePath,fileName+".md5",localPath,file);
                         }
                     }
                 });

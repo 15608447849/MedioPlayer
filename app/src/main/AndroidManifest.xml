@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="lzp.yw.com.medioplayer">
-
     <!-- 权限 -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -9,8 +8,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
-
-
     <application
         android:name=".model_application.baselayer.BaseApplication"
         android:allowBackup="true"
@@ -35,6 +32,14 @@
 
         <!-- 主界面 -->
         <activity android:name=".model_application.viewlayer.MainActivity" />
+        <!-- 读取排期 广播 -->
+        <receiver android:name=".model_application.schedule.ScheduleReadBroad" >
+            <intent-filter>
+                <action android:name="com.broad.schedule.read"/>
+            </intent-filter>
+
+        </receiver>
+
 
         <!--
         通讯服务 android:label="_medioplayerServer" android:process=":remote"
@@ -44,15 +49,15 @@
         <service
             android:name=".model_communication.CommunicationServer"
             android:persistent="true"
-            android:process="lzp.yw.communicate.server" />
+            android:process="lzp.yw.communication" />
         <!-- 派发任务 服务 -->
         <service
             android:name=".model_command_mission.CommandPostServer"
-            android:process="yw.command.server" />
+            android:process="lzp.yw.communication" />
         <!-- 下载服务 -->
         <service
             android:name=".model_download.DownloadServer"
-            android:process="lzp.yw.download.server"/>
+            android:process="lzp.yw.download"/>
     </application>
 
 </manifest>

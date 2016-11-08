@@ -177,7 +177,7 @@ public class CommunicationServer extends Service {
      *  收到一个app给我的消息到服务器
      */
     public void receiveAppMsg(String mothername,String msg){
-        Logs.e(TAG,"反射调用 : " + mothername+"("+ msg+")");
+//        Logs.e(TAG,"反射调用 : " + mothername+"("+ msg+")");
         invokeMother(mothername,msg);
     }
     /**
@@ -300,7 +300,7 @@ public class CommunicationServer extends Service {
      * @param t
      */
     private void processingResults(String t) {
-        if (t.trim().equals("cmd:error") || t.trim().equals("cmd:sucess")){
+        if (t.trim().equals("cmd:error") || t.trim().equals("cmd:success")){
 
             return;
         }

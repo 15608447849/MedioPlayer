@@ -16,7 +16,7 @@ import lzp.yw.com.medioplayer.model_application.baselayer.BaseActivity;
 import lzp.yw.com.medioplayer.model_application.baselayer.DataListEntiyStore;
 import lzp.yw.com.medioplayer.model_universal.Logs;
 import lzp.yw.com.medioplayer.model_universal.SdCardTools;
-import lzp.yw.com.medioplayer.model_universal.appTools;
+import lzp.yw.com.medioplayer.model_universal.AppsTools;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.TerminalNo;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
@@ -39,6 +39,8 @@ public class ToolsActivity extends BaseActivity {
     public EditText terminalNo;
     @Bind(R.id.BasePath)
     public EditText BasePath;
+    @Bind(R.id.SchudulePath)
+    public EditText SchudulePath;
     @Bind(R.id.HeartBeatInterval)
     public EditText heartbeattime;
     @Bind(R.id.StorageLimits)
@@ -57,11 +59,9 @@ public class ToolsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wostools);
-        //检测sdCard
-        SdCardTools.checkSdCard(getApplicationContext());
+
         //开启全部服务
         initAllServer();
-
         ButterKnife.bind(this);
         gotoApp();
         //初始化数据
@@ -97,7 +97,8 @@ public class ToolsActivity extends BaseActivity {
             heartbeattime.setText(dataList.GetStringDefualt("HeartBeatInterval", "30"));//心跳
             StorageLimits.setText(dataList.GetStringDefualt("storageLimits","50"));//sdcard 阔值
             RestartBeatInterval.setText(dataList.GetStringDefualt("RestartBeatInterval","30"));//重启时间
-            BasePath.setText(catPathfile(dataList.GetStringDefualt("basepath", "")));
+            BasePath.setText(catPathfile(dataList.GetStringDefualt("basepath", "")));//资源文件夹
+            SchudulePath.setText(catPathfile(dataList.GetStringDefualt("jsonStore","")));//排期文件夹
             //焦点默认在这个控件上
             serverip.setFocusable(true);
         }catch(Exception e)
@@ -107,7 +108,11 @@ public class ToolsActivity extends BaseActivity {
     }
     //获取资源文件名
     private String catPathfile(String path){
-        return path.substring(path.lastIndexOf("/")+1);
+        if (path.contains("/")){
+            path = path.substring(0,path.lastIndexOf("/"));
+            path = path.substring(path.lastIndexOf("/")+1);
+        }
+        return path.equals("")?"playlist":path;
     }
     /**
      * 获取控件传入的数据并封装
@@ -121,21 +126,26 @@ public class ToolsActivity extends BaseActivity {
         dataList.put("storageLimits",StorageLimits.getText().toString());//sdcard 清理阔值
         dataList.put("RestartBeatInterval",RestartBeatInterval.getText().toString()); //重启时间
         dataList.put("HeartBeatInterval",  heartbeattime.getText().toString());
-
-        String basepath=BasePath.getText().toString();//资源存储的 文件名
-        //例: xxx前缀 /basepath/资源1
-        if (!basepath.startsWith("/")){
-            basepath = "/"+basepath;
-        }
-        if(!basepath.endsWith("/"))
-        {
-            basepath=basepath+"/";
-        }
-
-        basepath = SdCardTools.getAppSourceDir(this) + basepath;
-        dataList.put("basepath",  basepath);
-        SdCardTools.MkDir(basepath);
+        String dirpath = SdCardTools.getAppSourceDir(this) + completePath(BasePath.getText().toString());
+        dataList.put("basepath", dirpath );//资源存储的 文件名
+        SdCardTools.MkDir(dirpath);
+        dirpath = SdCardTools.getAppSourceDir(this) + completePath(SchudulePath.getText().toString());
+        dataList.put("jsonStore", dirpath );//资源存储的 文件名
+        SdCardTools.MkDir(dirpath);
     }
+
+    private String completePath(String path){
+        //例: xxx前缀 /basepath/资源1
+        if (!path.startsWith("/")){
+            path = "/"+path;
+        }
+        if(!path.endsWith("/"))
+        {
+            path=path+"/";
+        }
+        return path;
+    }
+
 
     /**
      *  是否正在获取数据中
@@ -181,18 +191,18 @@ public class ToolsActivity extends BaseActivity {
         }else{
             param.clear();
         }
-        param.put("version",String.valueOf(appTools.getLocalVersionCode(getApplicationContext())));
+        param.put("version",String.valueOf(AppsTools.getLocalVersionCode(getApplicationContext())));
         param.put("corpId",dataList.GetStringDefualt("companyid","999"));
         param.put("code",dataList.GetStringDefualt("companyid","999"));
-        param.put("ip", appTools.getLocalIpAddress());
-        param.put("mac",appTools.getLocalMacAddressFromBusybox());
+        param.put("ip", AppsTools.getLocalIpAddress());
+        param.put("mac", AppsTools.getLocalMacAddressFromBusybox());
         if (screenSize==null){
-            screenSize = appTools.getScreenSize(getApplicationContext());
+            screenSize = AppsTools.getScreenSize(getApplicationContext());
         }
         param.put("screenResolutionWidth",String.valueOf(screenSize[0]));
       param.put("screenResolutionHeight",String.valueOf(screenSize[1]));
 
-       return appTools.mapTanslationUri(dataList.GetStringDefualt("serverip","127.0.0.1"),dataList.GetStringDefualt("serverport","8000"),param);
+       return AppsTools.mapTanslationUri(dataList.GetStringDefualt("serverip","127.0.0.1"),dataList.GetStringDefualt("serverport","8000"),param);
     }
 
     /**
@@ -223,7 +233,7 @@ public class ToolsActivity extends BaseActivity {
                 sendMsgCommServer("sendTerminaOnline", null);
                 //进入应用
                 gotoApp();
-            };
+            }
         }
     }
 
@@ -245,7 +255,7 @@ public class ToolsActivity extends BaseActivity {
             @Override
             public void call() {
                 if (!result.equals("failure")){
-                    TerminalNo teln = appTools.parseJsonWithGson(result,TerminalNo.class);
+                    TerminalNo teln = AppsTools.parseJsonWithGson(result,TerminalNo.class);
                     if (teln != null){
                         terminalNo.setText(teln.getTerminalNo());
                         showToast(" -- 获取终端完成 --");

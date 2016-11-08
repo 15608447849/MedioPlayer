@@ -24,7 +24,6 @@ public class CommandPostBroad extends BroadcastReceiver{
     public void onReceive(Context context, Intent intent) {
         msgCmd = intent.getExtras().getString(PARAM1);
         msgParam =  intent.getExtras().getString(PARAM2);
-        if (msgParam==null) return;
         server.reserveCmd(msgCmd,msgParam);
     }
 }

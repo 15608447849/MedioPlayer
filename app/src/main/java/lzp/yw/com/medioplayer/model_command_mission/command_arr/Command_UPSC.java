@@ -13,11 +13,12 @@ import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 import lzp.yw.com.medioplayer.model_application.baselayer.DataListEntiyStore;
+import lzp.yw.com.medioplayer.model_command_mission.JsonDataStore;
 import lzp.yw.com.medioplayer.model_download.DownloadBroad;
 import lzp.yw.com.medioplayer.model_universal.CONTENT_TYPE;
 import lzp.yw.com.medioplayer.model_universal.Logs;
 import lzp.yw.com.medioplayer.model_universal.SdCardTools;
-import lzp.yw.com.medioplayer.model_universal.appTools;
+import lzp.yw.com.medioplayer.model_universal.AppsTools;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.AdBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
@@ -28,38 +29,38 @@ import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ScheduleBea
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.content_gallary.DataObjsBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.content_gallary.GallaryBean;
 
-import static lzp.yw.com.medioplayer.model_universal.appTools.uriTranslationString;
+import static lzp.yw.com.medioplayer.model_universal.AppsTools.uriTranslationString;
 
 /**
  * Created by user on 2016/10/27.
  * lzp
  * 读取排期
- *"id": "1", "code": "image", "label": "图片",
- *"id": "2","code": "text","label": "文本控件",
- *"id": "3","code": "video","label": "视频",
- *"id": "4","code": "media""label": "流媒体",
- *"id": "5","code": "clock","label": "时钟控件",
- *"id": "6","code": "weather","label": "天气控件",
- *"id": "7","code": "epaper","label": "电子报",
- *"id": "8","code": "image","label": "商品信息",
- *"id": "11","code": "image","label": "二维码",
- *"id": "12","code": "marquee","label": "跑马灯",
- *"id": "13","code": "gallary", "label": "图集",
- *"id": "14", "code": "news", "label": "资讯",
  */
 public class Command_UPSC implements iCommand {
-
+    private static final String TAG = "_UPSC";
     private Context context;
     private DataListEntiyStore dl;
+    private  String basePath = null;
+    private  String terminalNo = null;
+    private  String storageLimits = null;
     private Long startTime ;
     private Long endTime ;
+
     public Command_UPSC(Context context){
        this.context = context;
-    }
+        dl = new DataListEntiyStore(context);
+        dl.ReadShareData();
+        basePath = dl.GetStringDefualt("basepath","");
+        terminalNo =dl.GetStringDefualt("terminalNo","");
+        storageLimits = dl.GetStringDefualt("storageLimits","");
 
-    private static final String TAG = "_UPSC";
+    }
     private static ReentrantLock lock = new ReentrantLock();
+
     private ArrayList<CharSequence> loadingList = null;
+    /**
+     * 初始化下载列表
+     */
     private void initLoadingList(){
         if (loadingList==null){
             loadingList = new ArrayList<CharSequence>();
@@ -83,20 +84,16 @@ public class Command_UPSC implements iCommand {
         }
         if(!loadingList.contains(url)){
             loadingList.add(url);
-
             Logs.w(TAG," add task is succsee !");
         }else{
             Logs.e(TAG," add task failt ,because is exist !!!");
         }
     }
-
-
     /**
-     *  组件具体内容 具体分析 队列
-     *
+     *  组件具体内容 队列
      */
     private ArrayList<String []> contentArray = null;
-    //初始化
+    //初始化内容列表
     private void initContentArray(){
       if (contentArray == null){
           contentArray = new ArrayList<String []>();
@@ -126,22 +123,19 @@ public class Command_UPSC implements iCommand {
      */
     @Override
     public void Execute(String param) {
-        if (dl==null){
-            dl = new DataListEntiyStore(context);
-        }
-        dl.ReadShareData();
+
         try{
             lock.lock();
-
             Logs.d(TAG," - - 同步访问  uri : "  + param);
             res = null;
             res = uriTranslationString(param);
             if (res!=null){
-
+                //保存json数据
+                JsonDataStore.getInstent(context).addEntity("main",param,false);
+                JsonDataStore.getInstent(context).addEntity(param,res);
                 //解析json
                 List<ScheduleBean> list =  parseJsonToList(res);
                 if (list!=null){
-
                  initLoadingList();
                  startTime = System.currentTimeMillis();
                  parseScheduleList(list);
@@ -166,7 +160,12 @@ public class Command_UPSC implements iCommand {
             }
     }
 
-    private List<ScheduleBean> parseJsonToList(String jsondata) {
+    /**
+     *  排期json -> 对象
+     * @param jsondata
+     * @return
+     */
+    public static List<ScheduleBean> parseJsonToList(String jsondata) {
         try {
             List<ScheduleBean> listBean = new ArrayList<ScheduleBean>();
             Gson gson=new Gson();
@@ -374,16 +373,16 @@ public class Command_UPSC implements iCommand {
      */
     private void clearSdcardSource() {
         //如果 true  清理!
-        if(SdCardTools.justFileBlockVolume(dl.GetStringDefualt("basepath","")
-                ,dl.GetStringDefualt("storageLimits","50"))){
+        if(SdCardTools.justFileBlockVolume(basePath
+                ,storageLimits)){
 
             List<String> keepList = new ArrayList<String>();
             for (CharSequence car :loadingList){
                 keepList.add(car.toString());
             }
 
-            SdCardTools.clearTargetDir(dl.GetStringDefualt("basepath",""),keepList);
-            keepList=null;
+            SdCardTools.clearTargetDir(basePath,keepList);
+
         }
     }
 
@@ -439,20 +438,7 @@ public class Command_UPSC implements iCommand {
 
 
 
-    /**
-     * 判断是否时base64 加密
-     * 去除baseUri
-     *
-     */
-    private String justUriIsBase64GetUrl(String url){
 
-
-        if (url.trim().lastIndexOf("=Base64")!=-1){
-            url=url.trim().substring(0,url.lastIndexOf("=Base64"));
-            Logs.e(TAG," delete Base64 -> url  "+url);
-        }
-        return url.trim();
-    };
     /**
      * 获取图集资源
      * @param contentSource
@@ -460,11 +446,12 @@ public class Command_UPSC implements iCommand {
     private void getGallarySource(String contentSource) {
 
         try {
-            contentSource = justUriIsBase64GetUrl(contentSource);//URL
+            contentSource = AppsTools.justUriIsBase64GetUrl(contentSource);//URL
             res= null;
-            res = appTools.uriTranslationString(contentSource);
+            res = AppsTools.uriTranslationString(contentSource);
             if (res!=null){
-                GallaryBean gallaryBean = appTools.parseJsonWithGson(res,GallaryBean.class);
+                JsonDataStore.getInstent(context).addEntity(contentSource,res);
+                GallaryBean gallaryBean = AppsTools.parseJsonWithGson(res,GallaryBean.class);
                 if (gallaryBean!=null){
                     parseContentGallarys(gallaryBean);
                 }
@@ -534,7 +521,7 @@ public class Command_UPSC implements iCommand {
             e.printStackTrace();
         }
     }
-    // news
+    // news 新闻电子报
     private void getNewsSource(String contentSource) {
           getGallarySource(contentSource);
     }
@@ -549,8 +536,8 @@ public class Command_UPSC implements iCommand {
             bundle.clear();
             intent.setAction(DownloadBroad.ACTION);
             bundle.putCharSequenceArrayList(DownloadBroad.PARAM1,loadingList);
-            bundle.putString(DownloadBroad.PARAM2, dl.GetStringDefualt("terminalNo","0000"));
-            bundle.putString(DownloadBroad.PARAM3, dl.GetStringDefualt("basepath", ""));
+            bundle.putString(DownloadBroad.PARAM2, terminalNo);
+            bundle.putString(DownloadBroad.PARAM3, basePath);
             intent.putExtras(bundle);
             context.sendBroadcast(intent);
         }

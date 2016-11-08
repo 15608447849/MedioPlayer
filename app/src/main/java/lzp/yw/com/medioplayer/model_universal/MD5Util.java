@@ -8,9 +8,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * 
@@ -21,6 +21,7 @@ import java.security.MessageDigest;
  * @date 下午3:06:56
  */
 public class MD5Util {
+    private static String TAG = "MD5_UTILS";
 
 	public static char[] hexChar = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
     public static String toHexString(byte[] b) {
@@ -31,18 +32,37 @@ public class MD5Util {
         }
         return sb.toString();
     }
-    
-    public static File getFileMD5String(File file) {
+
+    /**
+     * 对外提供getMD5(String)方法
+     * @author randyjia
+     *
+     */
+
+    public static String getStringMD5(String val) {
+        MessageDigest md5 = null;
+        String str = null;
+        try {
+            md5 = MessageDigest.getInstance("MD5");
+
+            md5.update(val.getBytes());
+            byte[] m = md5.digest();//加密
+            str = toHexString(m);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return str==null?"null":str;
+    }
+
+    public static String getFileMD5String(File file) {
     	BufferedWriter bw = null;
-    	File md5File = null;
+        String md5Code = null;
         try{
             if (!file.exists()){
-                Log.e("","生成MD5 资源文件不存在 :" + file.toString());
+                Log.e(TAG,"生成MD5 的 资源文件不存在 :" + file.toString());
                 return null;
             }
-
             FileInputStream in = new FileInputStream(file);
-
             byte [] buffer =  new   byte [ 1024 ];
             int  numRead =  0 ;
             MessageDigest messagedigest = MessageDigest.getInstance("MD5");
@@ -50,36 +70,20 @@ public class MD5Util {
                 messagedigest.update(buffer, 0 , numRead);
             }
             in.close();
-
-           /* FileChannel ch = in.getChannel();
-            MappedByteBuffer byteBuffer = ch.map(FileChannel.MapMode.READ_ONLY, 0,file.length());
-            messagedigest.update(byteBuffer);*/
-
-            String md5Code = toHexString(messagedigest.digest());
-
-            md5File = new File(file.getPath()+".md5");
-            bw = new BufferedWriter(new FileWriter(md5File));
-            bw.write(md5Code);
+            md5Code = toHexString(messagedigest.digest());
         } catch (Exception e){
-            Log.e("",e.getMessage());
+            e.printStackTrace();
         }finally{
         	try {
                 if (bw != null){
                     bw.close();
                 }
 			} catch (IOException e) {
-				Log.e("",e.getMessage());
+				e.printStackTrace();
 			}
         }
-        return md5File;
+        return md5Code;
     }
-
-
-
-
-
-
-
 
     public static String readFileByLines(String fileName) {
         StringBuffer sb = new StringBuffer();
@@ -91,14 +95,14 @@ public class MD5Util {
             int line = 1;
             // 一次读入一行，直到读入null为文件结束
             while ((tempString = reader.readLine()) != null) {
+                // 显示行号
                 sb.append(tempString);
                 line++;
             }
             reader.close();
-
         } catch (IOException e) {
-//            e.printStackTrace();
-            Log.e(""," MD5 - " + e.getMessage());
+            e.printStackTrace();
+
         } finally {
             if (reader != null) {
                 try {
@@ -107,40 +111,34 @@ public class MD5Util {
                 }
             }
         }
-
         return sb.toString();
     }
-
-    public static int FTPMD5(String sp, String dp) {
-
-        String strs = readFileByLines(sp);
-        String dstr = readFileByLines(dp);
-
-        if (strs.equals(dstr)){
-            deleteFile(dp);
+    public static int FTPMD5(String sourcefile_md5code, String dirFile) {
+        String dstr = readFileByLines(dirFile);
+        if (sourcefile_md5code.equals(dstr)){
+            deleteFile(dirFile);
             return 0;
         }else{
             return 1;
         }
     }
+
     /**
      * 删除本地文件
-     *
      * @param fileName
      * @return
      */
-    public static boolean deleteFile(String fileName) {
-        Log.e("","delete mdg file :"+fileName);
+    public static void deleteFile(String fileName) {
         try {
+            Log.e(TAG," 删除文件 - "+fileName);
             File file = new File(fileName);
             if (file.exists()) {
+                Log.e(TAG," 删除文件 - "+fileName +" * success");
                 file.delete();
             }
-            return true;
         } catch (Exception e) {
-            Log.e("util", "delete file error with exception" + e.toString()
+            Log.e(TAG, "delete file error with exception" + e.toString()
                     + "on file:" + fileName);
-            return false;
         }
     }
 }

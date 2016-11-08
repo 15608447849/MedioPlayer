@@ -1,6 +1,8 @@
 package lzp.yw.com.medioplayer.model_download.downloadTools;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -8,8 +10,10 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.locks.ReentrantLock;
 
+import lzp.yw.com.medioplayer.model_command_mission.CommandPostBroad;
 import lzp.yw.com.medioplayer.model_download.singedownload.Loader;
-import lzp.yw.com.medioplayer.model_download.singedownload.LoaderCaller;
+import lzp.yw.com.medioplayer.model_download.singedownload.LoaderResultCall;
+import lzp.yw.com.medioplayer.model_universal.CMD_INFO;
 
 /**
  * Created by user on 2016/11/3.
@@ -48,21 +52,21 @@ public class Watched implements Observer{
     private Loader loader = null;
     private int sumCount = -1;
     private int successCount = -1;
-    private LoaderCaller call = new LoaderCaller() {
+    private LoaderResultCall call = new LoaderResultCall() {
         @Override
-        public void Call(String filePath) {
+        public void downloadResult(String filePath) {
             //下载完成回调
             Log.i("","当前成功数量 :["+ successCount++ +"] ,sumCount:["+sumCount+"] \n result: "+ filePath);
 
             if (successCount == sumCount){
-                Log.i(",","________________________任务完成 发送通知_______________________");
-//                Toals.Say("下载任务全部完成 发送通知");
-//                //发送完成通知
-//                Intent intent = new Intent();
-//                intent.setAction(completeTaskListBroadcast.action);
-//                getApplicationContext().sendBroadcast(intent);
-//                isLoadding = false;
-//                NotificationStoreList();
+                Log.i("","________________________任务完成 发送通知_______________________");
+                //发送完成通知
+                Intent i = new Intent();
+                i.setAction(CommandPostBroad.ACTION);
+                Bundle b = new Bundle();
+                b.putString(CommandPostBroad.PARAM1, CMD_INFO.SORE);
+                i.putExtras(b);
+                c.sendBroadcast(i);
             }
         }
     };
@@ -72,7 +76,6 @@ public class Watched implements Observer{
         successCount = 0;
         Log.i("","收到一个 下载任务, 队列大小:"+list.size());
         sumCount = list.size();
-
         for (CharSequence url : list){
             loader = new Loader(c,savepath,terminalNo);
             loader.settingCaller(call);//设置回调
