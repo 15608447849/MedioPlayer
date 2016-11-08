@@ -15,16 +15,17 @@ import java.util.concurrent.locks.ReentrantLock;
 import lzp.yw.com.medioplayer.model_application.baselayer.DataListEntiyStore;
 import lzp.yw.com.medioplayer.model_command_mission.JsonDataStore;
 import lzp.yw.com.medioplayer.model_download.DownloadBroad;
+import lzp.yw.com.medioplayer.model_universal.AppsTools;
 import lzp.yw.com.medioplayer.model_universal.CONTENT_TYPE;
 import lzp.yw.com.medioplayer.model_universal.Logs;
 import lzp.yw.com.medioplayer.model_universal.SdCardTools;
-import lzp.yw.com.medioplayer.model_universal.AppsTools;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.AdBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.LayoutBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.PagesBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ProgramBean;
+import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.Rules;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ScheduleBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.content_gallary.DataObjsBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.content_gallary.GallaryBean;
@@ -189,7 +190,6 @@ public class Command_UPSC implements iCommand {
             parseSchedule(schedule);
             Logs.e(TAG,"解析完一个排期\n\r-----------------------------------------------------------------------------------------------------------");
         }
-
     }
 
     /**
@@ -199,8 +199,34 @@ public class Command_UPSC implements iCommand {
     private void parseSchedule(ScheduleBean schedule) {
         Logs.d(TAG,"  排期 - " + schedule.getId() + " - type :"+schedule.getType() +" - allday:"+schedule.getAllDay());
         Logs.d(TAG,"  开始时间:"+schedule.getStartTime() +" - 结束时间:"+schedule.getEndTime());
+        if (schedule.getType()==3){
+            //重复
+            if (schedule.getRules()!=null){
+                parseRelus(schedule.getRules());
+            }
+
+        }
         parseProgram(schedule.getProgram());
     }
+
+    private void parseRelus(Rules rules) {
+        parseRelusRepeatRules(rules.getRepeatRules());
+
+    }
+    private void parseRelusRepeatRules(Rules.RepeatRulesBean repeatRules) {
+        Logs.d(TAG," #重复类型 - repeatRules - repeatType - code :"+repeatRules.getRepeatType().getCode());
+        Logs.d(TAG," #重复类型 - repeatRules - repeatType - text :"+repeatRules.getRepeatType().getText());
+        Logs.d(TAG," #重复类型 - repeatRules - repeatType - startday :"+repeatRules.getStartday());
+        Logs.d(TAG," #重复类型 - repeatRules - repeatType - endday :"+repeatRules.getEndday());
+        Logs.d(TAG," #重复类型 - repeatRules - repeatType - repeatWholeDay :"+repeatRules.isRepeatWholeDay());
+        Logs.d(TAG," #重复类型 - repeatRules - repeatType - startTime :"+repeatRules.getStartTime());
+        Logs.d(TAG," #重复类型 - repeatRules - repeatType - endTime :"+repeatRules.getEndTime());
+    }
+
+    /**
+     * 解析重复类型的时间对象
+     */
+
 
     /**
      * 解析节目
@@ -214,7 +240,6 @@ public class Command_UPSC implements iCommand {
         Logs.d(TAG," #节目 layoutId - "+ program.getLayoutId());
         parseLayout(program.getLayout());
     }
-
     /**
      * 解析布局
      * @param layout
@@ -238,7 +263,6 @@ public class Command_UPSC implements iCommand {
                 Logs.e(TAG,"    ##布局  解析完一个页面 \n");
             }
         }
-
     }
 
     /**

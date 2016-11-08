@@ -35,6 +35,15 @@ public class ScheduleBean {
     public String getStartTime() {
         return startTime;
     }
+    public Rules rules;
+
+    public Rules getRules() {
+        return rules;
+    }
+
+    public void setRules(Rules rules) {
+        this.rules = rules;
+    }
 
     public void setStartTime(String startTime) {
         this.startTime = startTime;
