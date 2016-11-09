@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimerTask;
+import java.util.concurrent.locks.ReentrantLock;
 
 import lzp.yw.com.medioplayer.model_universal.Logs;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ScheduleBean;
@@ -21,6 +22,7 @@ import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ScheduleBea
  */
 public class ScheduleReader {
     private static final String TAG = "_ScheduleRead";
+    private ReentrantLock lock = new ReentrantLock();
     private static ScheduleReader reader = null;
     private Context  c;
     private String filedirPath;
@@ -357,14 +359,23 @@ public class ScheduleReader {
      * //获取优先级 高的 -> 分类型验证时间 (开始时间 结束时间)-> 当前时间 -> 分发任务
      */
     public void startWork(List<ScheduleBean> scheduleList) {
-        stopWork();
-        Logs.i(TAG," ----------------------开始解析排期----------------------------- ");
-        //分组
-        for (ScheduleBean entity : scheduleList){
-            addScheduleToMap(entity);
+        try{
+            lock.lock();
+            stopWork();
+            Logs.i(TAG," ----------------------开始解析排期----------------------------- ");
+            //分组
+            for (ScheduleBean entity : scheduleList){
+                addScheduleToMap(entity);
+            }
+            Logs.i(TAG,"---分组 完成---  \n"+scheduleMap.toString());
+            current = parseing();
+            Logs.i(TAG,"---解析 完成---  \n"+current.toString());
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            lock.unlock();
         }
-        Logs.i(TAG,"---分组 完成---  \n"+scheduleMap.toString());
-        current = parseing();
-        Logs.i(TAG,"---解析 完成---  \n"+current.toString());
+
+
     }
 }
