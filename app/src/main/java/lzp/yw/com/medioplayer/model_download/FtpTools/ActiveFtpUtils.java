@@ -297,6 +297,9 @@ public class ActiveFtpUtils {
                     out.write(b, 0, length);
                     out.flush();
                     currentSize = currentSize + length; // 当前总大小 = 现在的大小 加上 写出来的大小
+                    if (step<=0){
+                        continue;
+                    }
                     if (currentSize / step != process) { //如果 当前进度/下标 != 已有进度
                         process = currentSize / step;
                         if (process % 5 == 0) {  //每隔%2的进度返回一次

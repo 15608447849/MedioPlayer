@@ -44,7 +44,7 @@ public class ScheduleReadBroad extends BroadcastReceiver{
             if (var!=null){
                 List<ScheduleBean> scheduleList = Command_UPSC.parseJsonToList(var);
                 if (scheduleList!=null){
-                    ScheduleReader.getReader().startWork(scheduleList);
+                    ScheduleReader.getReader(context,path).startWork(scheduleList);
                 }
             }
         }

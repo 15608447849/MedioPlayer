@@ -5,7 +5,7 @@ package lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc;
  * lzp
  * 一个节目下面有多个布局
  */
-public class ProgramBean {
+public class ProgramBean extends PublicAttibute{
     /**
      * id : 368
      * title : 1026最新节目
@@ -19,6 +19,7 @@ public class ProgramBean {
     private String title;
     private int width;
     private int height;
+
     private String resolution;
     private int layoutId;
     private LayoutBean layout;

@@ -61,68 +61,12 @@ public class PagesBean {
         this.order = order;
     }
 
-    public boolean isTweenEnabled() {
-        return tweenEnabled;
+    public List<PagesBean> getPages() {
+        return pages;
     }
 
-    public void setTweenEnabled(boolean tweenEnabled) {
-        this.tweenEnabled = tweenEnabled;
-    }
-
-    public String getLabel() {
-        return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
-    public double getCoordX() {
-        return coordX;
-    }
-
-    public void setCoordX(double coordX) {
-        this.coordX = coordX;
-    }
-
-    public double getCoordY() {
-        return coordY;
-    }
-
-    public void setCoordY(double coordY) {
-        this.coordY = coordY;
-    }
-
-    public double getWidth() {
-        return width;
-    }
-
-    public void setWidth(double width) {
-        this.width = width;
-    }
-
-    public double getHeight() {
-        return height;
-    }
-
-    public void setHeight(double height) {
-        this.height = height;
-    }
-
-    public String getBackground() {
-        return background;
-    }
-
-    public void setBackground(String background) {
-        this.background = background;
-    }
-
-    public String getBackgroundColor() {
-        return backgroundColor;
-    }
-
-    public void setBackgroundColor(String backgroundColor) {
-        this.backgroundColor = backgroundColor;
+    public void setPages(List<PagesBean> pages) {
+        this.pages = pages;
     }
 
     public List<ComponentsBean> getComponents() {
@@ -133,11 +77,67 @@ public class PagesBean {
         this.components = components;
     }
 
-    public List<PagesBean> getPages() {
-        return pages;
+    public String getBackgroundColor() {
+        return backgroundColor;
     }
 
-    public void setPages(List<PagesBean> pages) {
-        this.pages = pages;
+    public void setBackgroundColor(String backgroundColor) {
+        this.backgroundColor = backgroundColor;
+    }
+
+    public String getBackground() {
+        return background;
+    }
+
+    public void setBackground(String background) {
+        this.background = background;
+    }
+
+    public double getHeight() {
+        return height;
+    }
+
+    public void setHeight(double height) {
+        this.height = height;
+    }
+
+    public double getWidth() {
+        return width;
+    }
+
+    public void setWidth(double width) {
+        this.width = width;
+    }
+
+    public double getCoordY() {
+        return coordY;
+    }
+
+    public void setCoordY(double coordY) {
+        this.coordY = coordY;
+    }
+
+    public double getCoordX() {
+        return coordX;
+    }
+
+    public void setCoordX(double coordX) {
+        this.coordX = coordX;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public boolean isTweenEnabled() {
+        return tweenEnabled;
+    }
+
+    public void setTweenEnabled(boolean tweenEnabled) {
+        this.tweenEnabled = tweenEnabled;
     }
 }

@@ -48,12 +48,11 @@
         -->
         <service
             android:name=".model_communication.CommunicationServer"
-            android:persistent="true"
-            android:process="lzp.yw.communication" />
+            android:process="lzp.yw.communticate" />
         <!-- 派发任务 服务 -->
         <service
             android:name=".model_command_mission.CommandPostServer"
-            android:process="lzp.yw.communication" />
+            android:process="lzp.yw.download" />
         <!-- 下载服务 -->
         <service
             android:name=".model_download.DownloadServer"
