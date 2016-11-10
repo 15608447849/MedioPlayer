@@ -71,7 +71,8 @@ public class TimeOperator {
         long lt = new Long(s);
         Date date = new Date(lt);
         res = simpleDateFormat.format(date);
-        System.out.println("当前时间戳:"+s+" -> "+res);
+        System.out.println(" -> "+res);//"当前时间戳:"+s+
+
     }
 
     /*
@@ -103,6 +104,12 @@ public class TimeOperator {
      * 比较时间大小
      */
     public static int compareTime(long timeStamp1 ,long timeStamp2,boolean clearY_M_D){
+
+        System.out.println("timeStamp1-");
+        printTargetTimeStamp(timeStamp1);
+        System.out.println("timeStamp2-");
+        printTargetTimeStamp(timeStamp2);
+
         int result= 0;
         try
         {
@@ -111,26 +118,50 @@ public class TimeOperator {
         c1.setTimeInMillis(timeStamp1);
         c2.setTimeInMillis(timeStamp2);
             if (clearY_M_D){
-                c1.clear(Calendar.YEAR);
                 c1.clear(Calendar.MONTH);
-                c1.clear(Calendar.DAY_OF_MONTH);
-                c2.clear(Calendar.YEAR);
+                c1.clear(Calendar.YEAR);
+                c1.set(Calendar.DATE,1);
+
                 c2.clear(Calendar.MONTH);
-                c2.clear(Calendar.DAY_OF_MONTH);
+                c2.clear(Calendar.YEAR);
+                c2.set(Calendar.DATE,1);
+
             }
+//            System.out.println("11-");
+//            printTargetTimeStamp(c1.getTimeInMillis());
+//            System.out.println("22-");
+//            printTargetTimeStamp(c2.getTimeInMillis());
+//            System.out.println("->"+c1.toString());
+//            System.out.println("->"+c2.toString());
+
          result=c1.compareTo(c2);
         }catch(Exception e){
             e.printStackTrace();
         }
 
-        if(result==0)
-            System.out.println(result+"->timeStamp1 相等 timeStamp2");
+        /*if(result==0)
+            System.out.println("timeStamp1 相等 timeStamp2");
         else if(result<0)
-            System.out.println(result+"->timeStamp1 小于 timeStamp1");
+            System.out.println("timeStamp1 小于 timeStamp1");
         else
-            System.out.println(result+"->timeStamp1 大于 timeStamp2");
+            System.out.println("timeStamp1 大于 timeStamp2");*/
 
         return result;
+    }
+
+    /**
+     *
+     * @param result
+     * @param type 1 开始时间 比较 当前时间, 2结束时间 比较 当前时间
+     */
+    public static void printlnResult(int result,int type){
+        String var = type == 0?"开始时间":"结束时间";
+        if(result==0)
+            System.out.println(var+" 相等 当前时间");
+        else if(result<0)
+            System.out.println(var+" 小于 当前时间");
+        else
+            System.out.println(var+" 大于 当前时间");
     }
 
     /**
@@ -151,12 +182,12 @@ public class TimeOperator {
             e.printStackTrace();
         }
 
-        if(result==0)
+       /* if(result==0)
             System.out.println(result+"->timeStamp1 相等 timeStamp2");
         else if(result<0)
             System.out.println(result+"->timeStamp1 小于 timeStamp1");
         else
-            System.out.println(result+"->timeStamp1 大于 timeStamp2");
+            System.out.println(result+"->timeStamp1 大于 timeStamp2");*/
         return result;
     }
 
@@ -165,14 +196,17 @@ public class TimeOperator {
      * 忽略年月日
      */
     public static long getMillisecond(long start,long end){
+
+
         long milli = 0;
         java.util.Calendar s=java.util.Calendar.getInstance();
         java.util.Calendar d=java.util.Calendar.getInstance();
         s.setTimeInMillis(start);
         d.setTimeInMillis(end);
-        milli = ((d.get(Calendar.DAY_OF_MONTH) - s.get(Calendar.DAY_OF_MONTH)) * 60 * 60 *1000);
+        milli = ((d.get(Calendar.HOUR_OF_DAY) - s.get(Calendar.HOUR_OF_DAY)) * 60 * 60 *1000);
         milli += ((d.get(Calendar.MINUTE) - s.get(Calendar.MINUTE)) * 60 *1000);
         milli += ((d.get(Calendar.SECOND) - s.get(Calendar.SECOND))*1000);
+        System.err.println("------------------- 时间差 : "+milli +" 毫秒 " );
         return milli;
     }
 
@@ -190,12 +224,15 @@ public class TimeOperator {
      * 冲当前时间到结束
      */
     public static long getMillisecond(String end){
+
         return getMillisecond(dateToStamp(),Long.valueOf(end));
     }
 
-    public static int justStart_EndTime(Long startTime,long endTime) {
+    public static int justStart_EndTime(long startTime,long endTime) {
+
         int result = -1;
         int res = TimeOperator.compareTime(startTime, TimeOperator.dateToStamp(), true);
+        printlnResult(res,0);
         if (res != 0) {
             if (res > 0) {
                 //开始时间大于 当前时间
@@ -204,6 +241,7 @@ public class TimeOperator {
             if (res < 0) {
                 //判断 结束时间
                 res = TimeOperator.compareTime(endTime, TimeOperator.dateToStamp(), true);
+                printlnResult(res,1);
                 if (res != 0) {
                     if (res > 0) {
                         //结束时间 大于 当前时间
@@ -218,6 +256,7 @@ public class TimeOperator {
             //开始时间 == 当前时间
             //判断 结束时间
             res = TimeOperator.compareTime(endTime, TimeOperator.dateToStamp(), true);
+            printlnResult(res,1);
             if (res != 0) {
                 if (res > 0) {
                     //结束时间 大于 当前时间

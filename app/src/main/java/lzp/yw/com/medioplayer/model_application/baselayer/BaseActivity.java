@@ -16,6 +16,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import lzp.yw.com.medioplayer.R;
+import lzp.yw.com.medioplayer.model_application.ui.UiFactory.UiDataFilter;
 import lzp.yw.com.medioplayer.model_communication.CommunicationServer;
 import lzp.yw.com.medioplayer.model_communication.ICallBackAIDL;
 import lzp.yw.com.medioplayer.model_communication.ICommunicationAIDL;
@@ -203,4 +204,49 @@ public class BaseActivity extends Activity {
     public void receiveService(String result){
         Logs.d(TAG," 服务器返回值: \n" + result);
     }
+
+
+    /**
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     * 与 UI 元素 通讯  ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
+     *
+     *
+     *
+     */
+        //初始化 UI
+        protected void initUI(){
+            Logs.i(TAG,"初始化 UI 元素");
+            UiDataFilter.init(this);
+        };
+
+        protected void unInitUI(){
+            UiDataFilter.unInit();
+            Logs.i(TAG,"注销 UI 元素");
+        };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

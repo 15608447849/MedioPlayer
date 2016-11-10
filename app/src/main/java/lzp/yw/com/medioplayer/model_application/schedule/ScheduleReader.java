@@ -13,8 +13,12 @@ import java.util.Map;
 import java.util.TimerTask;
 import java.util.concurrent.locks.ReentrantLock;
 
+import lzp.yw.com.medioplayer.model_application.ui.UiFactory.UiDataFilter;
 import lzp.yw.com.medioplayer.model_universal.Logs;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ScheduleBean;
+
+import static lzp.yw.com.medioplayer.model_application.schedule.TimeOperator.dateToStamp;
+import static lzp.yw.com.medioplayer.model_application.schedule.TimeOperator.printTargetTimeStamp;
 
 
 /**
@@ -35,14 +39,12 @@ public class ScheduleReader {
         this.filedirPath = filedirpath;
         initScheduleMap();
         initNotToTimeSchuduleMap();
-        initTimeTask();
     }
 
     //重新更新排期广播任务
-    private void initTimeTask() {
-        if (timerTask == null){
+    private TimerTask initTimeTask() {
 
-            timerTask = new TimerTask() {
+           return new TimerTask() {
                 @Override
                 public void run() {
                     //发送广播 -> 排期读取广播
@@ -56,10 +58,7 @@ public class ScheduleReader {
                 }
             };
         }
-    }
 
-    //单例
-    private TimerTask timerTask = null;
     //获取单例
     public static ScheduleReader getReader(Context c,String filedirpath){
         if (reader == null){
@@ -105,12 +104,23 @@ public class ScheduleReader {
 
     /**
      * 删除指定排期组
-     */
+
     private void deleteOnlySchedule(ScheduleBean schedule){
         int type = schedule.getType();
         Logs.e(TAG,"删除 \n id =="+schedule.getId()+"\n节目名 == "+schedule.getProgram().getTitle()+ " \n类型:"+getScheduleType(type));
         scheduleMap.get(type).clear();
         Logs.i(TAG,scheduleMap.toString());
+    }*/
+    /**
+     * 删除 一组 排期
+     */
+    private void deleteGroupSchedule(int type){
+
+        if (scheduleMap.containsKey(type)){
+            Logs.e(TAG,"删除一组排期 \n type =="+getScheduleType(type)+" 现在大小 : "+scheduleMap.get(type).size());
+            scheduleMap.get(type).clear();
+        }
+
     }
 
     /**未到开始时间的排期*/
@@ -216,9 +226,9 @@ public class ScheduleReader {
             Logs.e(TAG,"当前无排期信息");
         }else{
             sche = filterOnlySchudule(objarr);
+            deleteGroupSchedule((int)objarr[0]);
         }
         if (sche==null && !isExit()){
-            deleteOnlySchedule((ScheduleBean) objarr[1]);
             sche = parseing();
         }
         return sche;
@@ -256,10 +266,9 @@ public class ScheduleReader {
                    break;
                case 1://轮播
                    scheBean = new LocalScheduleObject(
-                           TimeOperator.dateToStamp(TimeOperator.getToday()+" "+"00:00:00"),
-                           TimeOperator.dateToStamp(TimeOperator.getToday()+" "+"23:59:59"),
+                           dateToStamp(TimeOperator.getToday()+" "+"00:00:00"),
+                           dateToStamp(TimeOperator.getToday()+" "+"23:59:59"),
                            schduleList.get(0));
-                   deleteOnlySchedule(schduleList.get(0));
                    break;
            }
         }catch (Exception e){
@@ -279,20 +288,24 @@ public class ScheduleReader {
         int result = -1;
         for (ScheduleBean entity:schduleList){
             result = justTime(entity);
-            deleteOnlySchedule(entity);
+
             if (result == 1 || result == -1){
                 continue;
             }
             if (result == 3){
-                addNotToTimeSchdule(new LocalScheduleObject(entity.getType(),
-                        timerTask,
-                        TimeOperator.getMillisecond(entity.getStartTime())));//添加到未到时间 排期列表
-
+                addNotToTimeSchdule(new LocalScheduleObject(
+                        entity.getType(),
+                        initTimeTask(),
+                        TimeOperator.getMillisecond(entity.getStartTime())
+                ));//添加到未到时间 排期列表
             }
             if (result == 2){
                 storeList.add(new LocalScheduleObject(entity.getStartTime(),entity.getEndTime(),entity));
             }
         }
+
+
+
         return storeList;
     }
     // 快速 排序 1
@@ -315,9 +328,9 @@ public class ScheduleReader {
             @Override
             public int compare(LocalScheduleObject sa, LocalScheduleObject sb) {
                 long a = Long.valueOf(sa.getStart());
-                long b = Long.valueOf(sb.getEnd());
-                TimeOperator.printTargetTimeStamp(a);
-                TimeOperator.printTargetTimeStamp(b);
+                long b = Long.valueOf(sb.getStart());
+                printTargetTimeStamp(a);
+                printTargetTimeStamp(b);
                 return a-b>0 ? -1: a-b==0 ? 0:1;  //-1代表前者小，0代表两者相等，1代表前者大。
             }
         });
@@ -367,15 +380,22 @@ public class ScheduleReader {
             for (ScheduleBean entity : scheduleList){
                 addScheduleToMap(entity);
             }
-            Logs.i(TAG,"---分组 完成---  \n"+scheduleMap.toString());
+            Logs.i(TAG,"---分组 完成---");
             current = parseing();
-            Logs.i(TAG,"---解析 完成---  \n"+current.toString());
+            Logs.i(TAG,"---解析 完成---");
+
+            if (current!=null){
+                //转换数据
+                UiDataFilter.filter(current);
+            }
+
+            current.startTimer(initTimeTask(),TimeOperator.getMillisecond(current.getEnd()));
+            Logs.i(TAG,"---设置时间完成---");
+            //发送 排期信息 -> ui制作
         }catch (Exception e){
             e.printStackTrace();
         }finally {
             lock.unlock();
         }
-
-
     }
 }
