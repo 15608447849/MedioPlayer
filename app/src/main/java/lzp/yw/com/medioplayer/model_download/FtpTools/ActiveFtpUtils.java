@@ -372,7 +372,7 @@ public class ActiveFtpUtils {
 
     public interface DownLoadProgressListener{
        /*
-        *   下载进度监听
+        *   下载进度监听(currentStep, downProcess, speed, file)
         */
        public void onDownLoadProgress(String currentStep, long downProcess, String speed, File file);
    }

@@ -11,16 +11,24 @@ public class ContentsBean {
      * id : 0
      * componentId : 756
      * contentType : news
-     * materialType :
      * checkState : 2
      * checked : true
      * contentSource : http://172.16.0.17:9000/epaper/dyannews/page?stairId=103&categoryId=-1&sortBy=allSorts+asc,upDate+desc&filter=Base64
      * categoryId : 103
      * subcategoryId :
      * updateFreq : 600
+     *
+     *  "id":883,
+     "contentName":"小兔子.jpg",
+     "contentType":"image",
+     "materialType":"image",
+     "contentSource":"ftp://ftp:FTPmedia@172.16.0.17:21/content/1478163190677.jpg",
+     "timeLength":10,
+     "playTimes":1
      */
     private int id;
     private int componentId;
+    private String contentName;
     private String contentType;
     private String materialType;
     private String checkState;
@@ -29,6 +37,41 @@ public class ContentsBean {
     private String categoryId;
     private String subcategoryId;
     private String updateFreq;
+    private int timeLength;//时长
+    private int playTimes;//次数
+    private int playIndex;//内容下标
+
+    public String getContentName() {
+        return contentName;
+    }
+
+    public void setContentName(String contentName) {
+        this.contentName = contentName;
+    }
+
+    public int getTimeLength() {
+        return timeLength;
+    }
+
+    public void setTimeLength(int timeLength) {
+        this.timeLength = timeLength;
+    }
+
+    public int getPlayTimes() {
+        return playTimes;
+    }
+
+    public void setPlayTimes(int playTimes) {
+        this.playTimes = playTimes;
+    }
+
+    public int getPlayIndex() {
+        return playIndex;
+    }
+
+    public void setPlayIndex(int playIndex) {
+        this.playIndex = playIndex;
+    }
 
     public int getId() {
         return id;

@@ -2,8 +2,6 @@ package lzp.yw.com.medioplayer.model_application.ui.UiInterfaces;
 
 import android.widget.AbsoluteLayout;
 
-import java.util.LinkedHashMap;
-
 import lzp.yw.com.medioplayer.model_application.baselayer.BaseActivity;
 
 /**
@@ -14,36 +12,13 @@ public class IviewLayout extends AbsoluteLayout implements Iview{
     protected BaseActivity activity;
     protected int id;
     private boolean isInit = false;//是否初始化
-    private boolean isLaout = false;
+    private boolean isAttr = false;
     public IviewLayout(BaseActivity activity) {
         super(activity);
         this.activity = activity;
     }
-    protected LinkedHashMap<String,IviewPage> pagesMap = null;
 
-    //初始化页面
-    private void initPagesMap(){
-        if (pagesMap==null){
-            pagesMap = new LinkedHashMap<>();
-        }
-    }
-    //添加 一个 页面
-    public  void  addPage(int key,IviewPage page){
-        if (pagesMap == null){
-            initPagesMap();
-        }
-      pagesMap.put(generateKey(key),page);
-    }
-    //获取 一个 页面
-    public IviewPage getPage(int key){
-        if (pagesMap==null){
-            return null;
-        }
-        if (pagesMap.containsKey(generateKey(key))){
-            return pagesMap.get(generateKey(key));
-        }
-        return null;
-    }
+
     @Override
     public void initData(Object object) {
 
@@ -60,29 +35,42 @@ public class IviewLayout extends AbsoluteLayout implements Iview{
     }
 
     @Override
-    public void settingSuccess(boolean flag) {
-        this.isLaout = flag;
+    public void setAttrbuteSuccess(boolean flag) {
+        this.isAttr = flag;
     }
 
     @Override
-    public boolean isSetting() {
-        return isLaout;
+    public boolean isSetAttrbute() {
+        return isAttr;
     }
 
     @Override
-    public void setting() {
-        if (isSetting()) {
+    public void setAttrbute() {
+        if (isSetAttrbute()) {
             return;
         }
     }
+
+    @Override
+    public void layouted() {
+        activity.setContentView(this);
+    }
+
+    @Override
+    public void unLayouted() {
+        activity.setContentView(null);
+    }
+
+
     @Override
     public void startWork() {
         try{
             if (!isInitData()){
             return;
             }
-            setting();
-            activity.setContentView(this);
+            setAttrbute();
+            layouted();
+
         }catch (Exception e){
         e.printStackTrace();
         }
@@ -90,13 +78,10 @@ public class IviewLayout extends AbsoluteLayout implements Iview{
     @Override
     public void stopWork() {
         try {
-            activity.setContentView(null);
+            unLayouted();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    @Override
-    public String generateKey(int key) {
-        return key+"#"+hashCode();
-    }
+
 }

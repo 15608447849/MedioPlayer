@@ -139,7 +139,7 @@ public class CommunicationServer extends Service {
         if (dataList!=null){
             ip = dataList.GetStringDefualt("serverip","127.0.0.1");
             port = dataList.GetStringDefualt("serverport","8000");
-            terminalId = "10000090";//dataList.GetStringDefualt("terminalNo","0000");
+            terminalId = "10001110";//"10000090";//dataList.GetStringDefualt("terminalNo","0000");
             heartBeatTime = dataList.GetIntDefualt("HeartBeatInterval",1);
         }
     }

@@ -39,10 +39,12 @@ public class layoutView extends IviewLayout {
     }
 
     @Override
-    public void setting() {
-    super.setting();
+    public void setAttrbute() {
+    super.setAttrbute();
         this.setLayoutParams(new AbsoluteLayout.LayoutParams(width,height,0,0));
-        this.setBackgroundColor(Color.BLUE);
+        this.setBackgroundColor(Color.GRAY);
+        setAttrbuteSuccess(true);
+
     }
 
     @Override

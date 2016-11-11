@@ -10,16 +10,13 @@ public interface Iview {
     void setInitSuccess(boolean flag);
     boolean isInitData();
 
-    void settingSuccess(boolean flag);
-    boolean isSetting();
+    void setAttrbuteSuccess(boolean flag);
+    boolean isSetAttrbute();
 
-    void setting();
-
+    void setAttrbute();
+    void layouted();
+    void unLayouted();
     void startWork();
-
     void  stopWork();
-
-    String generateKey(int key);
-
 
 }

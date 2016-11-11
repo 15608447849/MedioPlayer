@@ -1,6 +1,9 @@
 package lzp.yw.com.medioplayer.model_application.baselayer;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +12,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.view.KeyEvent;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -17,6 +21,7 @@ import java.util.ArrayList;
 
 import lzp.yw.com.medioplayer.R;
 import lzp.yw.com.medioplayer.model_application.ui.UiFactory.UiDataFilter;
+import lzp.yw.com.medioplayer.model_application.ui.Uitools.UiTools;
 import lzp.yw.com.medioplayer.model_communication.CommunicationServer;
 import lzp.yw.com.medioplayer.model_communication.ICallBackAIDL;
 import lzp.yw.com.medioplayer.model_communication.ICommunicationAIDL;
@@ -224,19 +229,39 @@ public class BaseActivity extends Activity {
         //初始化 UI
         protected void initUI(){
             Logs.i(TAG,"初始化 UI 元素");
+            UiTools.init(this);
             UiDataFilter.init(this);
-        };
+        }
 
         protected void unInitUI(){
+            UiTools.uninit();
             UiDataFilter.unInit();
             Logs.i(TAG,"注销 UI 元素");
         };
 
 
+    /**
+     * 返回 fragment 管理器
+     */
+    public FragmentManager getFragmentsManager(){
+        return this.getFragmentManager();
+    }
+    /**
+     * 返回 fragment 事务
+     */
+    public FragmentTransaction getFragmentTransaction(){
+        return this.getFragmentManager().beginTransaction();
+    }
 
-
-
-
+    /**
+     * 替换 一个 view -> fragment
+     */
+    public void repleaceViewToFragment(ViewGroup view, Fragment fragment){
+        Logs.i(TAG,"repleaceViewToFragment() - "+view.getId());
+        FragmentTransaction transaction = getFragmentTransaction();
+        transaction.replace(view.getId(), fragment);
+        transaction.commit();
+    }
 
 
 
