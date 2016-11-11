@@ -5,18 +5,10 @@ package lzp.yw.com.medioplayer.model_application.ui.UiInterfaces;
  */
 
 public interface Iview {
-
     void initData(Object object);
-    void setInitSuccess(boolean flag);
-    boolean isInitData();
-
-    void setAttrbuteSuccess(boolean flag);
-    boolean isSetAttrbute();
-
     void setAttrbute();
     void layouted();
     void unLayouted();
     void startWork();
-    void  stopWork();
-
+    void stopWork();
 }

@@ -257,7 +257,7 @@ public class BaseActivity extends Activity {
      * 替换 一个 view -> fragment
      */
     public void repleaceViewToFragment(ViewGroup view, Fragment fragment){
-        Logs.i(TAG,"repleaceViewToFragment() - "+view.getId());
+        Logs.i(TAG,"repleace View To Fragment - "+view.getId());
         FragmentTransaction transaction = getFragmentTransaction();
         transaction.replace(view.getId(), fragment);
         transaction.commit();

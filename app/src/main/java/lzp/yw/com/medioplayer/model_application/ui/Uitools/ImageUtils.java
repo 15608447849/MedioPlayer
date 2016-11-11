@@ -34,10 +34,12 @@ public class ImageUtils {
             if (file != null && file.exists()) {
                 is = new FileInputStream(file);
                 bitmap = createImageThumbnail(is);
-                Log.d("","------------ 获取完毕 一个 bitmap _success -----------------");
+                if (bitmap == null){
+                    throw new Exception("无法获取bitmap 原因未知");
+                }
             }
         }catch (Exception e){
-            Log.e("","loading image err: "+e.getMessage());
+           e.printStackTrace();
         }finally {
             if (is != null) {
                 try {
@@ -47,6 +49,7 @@ public class ImageUtils {
                 }
             }
         }
+
         return bitmap;
     }
 

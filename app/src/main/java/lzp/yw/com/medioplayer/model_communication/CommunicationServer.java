@@ -139,7 +139,7 @@ public class CommunicationServer extends Service {
         if (dataList!=null){
             ip = dataList.GetStringDefualt("serverip","127.0.0.1");
             port = dataList.GetStringDefualt("serverport","8000");
-            terminalId = "10001110";//"10000090";//dataList.GetStringDefualt("terminalNo","0000");
+            terminalId = "10000125";//"10000141";//"10001110";//"10000090";//dataList.GetStringDefualt("terminalNo","0000");
             heartBeatTime = dataList.GetIntDefualt("HeartBeatInterval",1);
         }
     }
@@ -300,7 +300,7 @@ public class CommunicationServer extends Service {
      * @param t
      */
     private void processingResults(String t) {
-        if (t.trim().equals("cmd:error") || t.trim().equals("cmd:success")){
+        if (t.trim().equals("cmd:error") || t.trim().equals("cmd:success") ||  t.trim().equals("cmd:sucess")){
 
             return;
         }

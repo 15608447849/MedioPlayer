@@ -1,43 +1,29 @@
-package lzp.yw.com.medioplayer.model_application.ui.UiInterfaces;
+package lzp.yw.com.medioplayer.model_application.ui.UiElements.page;
 
 import android.widget.FrameLayout;
 
 import lzp.yw.com.medioplayer.model_application.baselayer.BaseActivity;
+import lzp.yw.com.medioplayer.model_application.ui.UiElements.layout.IviewLayout;
+import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.Iview;
 
 /**
  * Created by user on 2016/11/10.
  */
 
-public class IviewPage extends FrameLayout implements Iview{
+public abstract class IviewPage extends FrameLayout implements Iview {
     protected BaseActivity activity;
     protected IviewLayout layout;
     protected int id;
     protected boolean isHome = false;
-    public int getmId() {
-        return id;
-    }
-
     public boolean isHome() {
         return isHome;
     }
-
     public void setHome(boolean home) {
         isHome = home;
     }
-
-    private boolean isInit = false;//是否初始化
-    private boolean isAttr = false;
-    private  boolean isLayout = false;
-
-
-
-
-
-
-
-
-
-
+    protected boolean isInit = false;//是否初始化
+    protected boolean isAttr = false;
+    protected  boolean isLayout = false;
     public IviewPage(BaseActivity activity,IviewLayout layout) {
         super(activity);
         this.activity = activity;
@@ -45,49 +31,20 @@ public class IviewPage extends FrameLayout implements Iview{
     }
 
     @Override
-    public void initData(Object object) {
-            //子类实现
-    }
-
+    public abstract void initData(Object object) ;    //子类实现
     @Override
-    public void setInitSuccess(boolean flag) {
-        this.isInit = flag;
-    }
-
-    @Override
-    public boolean isInitData() {
-        return isInit;
-    }
-
-    @Override
-    public void setAttrbuteSuccess(boolean flag) {
-            this.isAttr = flag;
-    }
-
-    @Override
-    public boolean isSetAttrbute() {
-        return isAttr;
-    }
-
-    @Override
-    public void setAttrbute() {
-
-    }
-
+    public abstract void setAttrbute();
     @Override
     public void layouted() {
         if (!isLayout){
             try {
                 layout.addView(this);
-                mLoadSource();
                 isLayout = true;
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-
     }
-
     @Override
     public void unLayouted() {
         if (isLayout){
@@ -99,31 +56,29 @@ public class IviewPage extends FrameLayout implements Iview{
             }
         }
     }
-
     @Override
     public void startWork() {
-
-
+        try{
+            if (!isInit){
+                return;
+            }
+            setAttrbute();//设置属性
+            layouted();//设置布局
+            if (isLayout){
+                loadFragment();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
-
-
-
-
     @Override
     public void stopWork() {
-
+        try {
+            unLayouted();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-
-
     //关于 加载fragments
-
-    protected void mLoadSource(){
-
-    }
-
-    protected void mUnLoadSource(){
-
-    }
-
-
+    protected abstract void loadFragment();
 }

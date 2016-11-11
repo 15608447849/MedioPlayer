@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.IComponent;
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.Iview;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
@@ -21,7 +22,7 @@ import rx.functions.Action0;
  * Created by user on 2016/11/11.
  * 播放图片的组件 - 多图片播放
  */
-public class CMorePictures extends FrameLayout implements Iview{
+public class CMorePictures extends FrameLayout implements IComponent{
 
     private static final java.lang.String TAG = "CMorePictures";
 
@@ -43,41 +44,24 @@ public class CMorePictures extends FrameLayout implements Iview{
         this.layout = layout;
     }
 
-
     @Override
     public void initData(Object object) {
         try {
             ComponentsBean cb = ((ComponentsBean)object);
-
             this.componentId = cb.getId();
             this.width = (int)cb.getWidth();
             this.height = (int)cb.getHeight();
             this.x = (int)cb.getCoordX();
             this.y = (int)cb.getCoordY();
             this.linkId = (int)cb.getLinkId();
-            if (cb.isHasContent()){
+
+            if (cb.getContents()!=null && cb.getContents().size()>0) {
                 createContent(cb.getContents());
             }
             this.isInitData = true;
         }catch (Exception e){
             e.printStackTrace();
         }
-    }
-
-
-    @Override
-    public void setInitSuccess(boolean flag) {
-    }
-    @Override
-    public boolean isInitData() {
-        return false;
-    }
-    @Override
-    public void setAttrbuteSuccess(boolean flag) {
-    }
-    @Override
-    public boolean isSetAttrbute() {
-        return false;
     }
     @Override
     public void setAttrbute() {
@@ -86,7 +70,6 @@ public class CMorePictures extends FrameLayout implements Iview{
             this.setBackgroundColor(Color.BLUE);
         }
     }
-
     @Override
     public void layouted() {
         if (isLayout){
@@ -95,7 +78,6 @@ public class CMorePictures extends FrameLayout implements Iview{
         layout.addView(this);
         isLayout = true;
     }
-
     @Override
     public void unLayouted() {
         if (isLayout = false){
@@ -103,7 +85,6 @@ public class CMorePictures extends FrameLayout implements Iview{
             isLayout = false;
         }
     }
-
     @Override
     public void startWork() {
         try {
@@ -112,8 +93,7 @@ public class CMorePictures extends FrameLayout implements Iview{
             }
             setAttrbute();
             layouted();
-            loadsource();
-
+            loadContent();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -122,14 +102,14 @@ public class CMorePictures extends FrameLayout implements Iview{
     @Override
     public void stopWork() {
         try {
+            stopTimer();
             unLayouted();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 //--------------------------------------------------//
-    private ArrayList<CImageView> imageArr = null;
-
+    private ArrayList<CImageView> imageArr = null; //图片 自定义控件
     //添加 图片组件
     private void addImage(CImageView imageview){
         if (imageArr==null){
@@ -139,28 +119,29 @@ public class CMorePictures extends FrameLayout implements Iview{
     }
 
 
-
     //创建 内容
-    private void createContent(List<ContentsBean> contents) {
-        CImageView imageview = null;
-        //只有图片内容
-        for (ContentsBean content : contents){
-        imageview = new CImageView(context,this,content);
-        addImage(imageview);
+    @Override
+    public void createContent(Object object) {
+        try {
+            List<ContentsBean> contents = (List<ContentsBean>)object;
+            CImageView imageview = null;
+            //只有图片内容
+            for (ContentsBean content : contents){
+                imageview = new CImageView(context,this,content);
+                addImage(imageview);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
+    private int currentIndex = 0;//当前循环的下标
+    private CImageView currentImageView= null; //当前播放的图片
+    @Override
+    public void loadContent() {
 
-    private int currentIndex = 0;
-    private CImageView currentImageView= null;
-    private void loadsource() {
-
-        if (imageArr.size()>0){
-            Log.i("","loadsource 组件()");
-            if (currentImageView!=null){
-                currentImageView.stopWork();
-                currentImageView = null;
-            }
+        if (imageArr!=null && imageArr.size()>0){
+            stopTimer();
             currentImageView =  imageArr.get(currentIndex);
             currentImageView.startWork();
             //创建计时器
@@ -170,19 +151,12 @@ public class CMorePictures extends FrameLayout implements Iview{
                 currentIndex = 0;
             }
         }
-
     }
-
-
-
-
-
-
 
     private TimerTask timerTask= null;
     private Timer timer = null;
 
-    public void stopTimer(){
+    private void stopTimer(){
         if (timerTask!=null){
             timerTask.cancel();
             timerTask = null;
@@ -191,18 +165,19 @@ public class CMorePictures extends FrameLayout implements Iview{
             timer.cancel();
             timer = null;
         }
-
+        if (currentImageView!=null){
+            currentImageView.stopWork();
+            currentImageView = null;
+        }
     }
-
-    public void startTimer(long millisecond){
-        stopTimer();
+    private void startTimer(long millisecond){
         timerTask = new TimerTask() {
             @Override
             public void run() {
                 AndroidSchedulers.mainThread().createWorker().schedule(new Action0() {
                     @Override
                     public void call() {
-                        loadsource();
+                        loadContent();
                     }
                 });
 
@@ -211,7 +186,4 @@ public class CMorePictures extends FrameLayout implements Iview{
         timer = new Timer();
         timer.schedule(timerTask,millisecond);
     }
-
-
-
 }

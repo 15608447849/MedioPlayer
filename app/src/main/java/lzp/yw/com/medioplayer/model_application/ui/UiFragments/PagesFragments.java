@@ -22,23 +22,20 @@ import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsB
  */
 
 public class PagesFragments extends Fragment{
-
     private int x,y,w,h;
     private boolean isBgColor = true;
     private String bg;
-    private AbsoluteLayout layout ;
-
-    public ArrayList<Iview> componetArr = null;
+    private AbsoluteLayout layout;
+    public ArrayList<Iview> componetViewArr = null; //组件元素
     //添加组件的 key
     public void addConpone(Iview iview){
-        if (componetArr==null){
-            componetArr = new ArrayList<>();
+        if (componetViewArr==null){
+            componetViewArr = new ArrayList<>();
         }
-        componetArr.add(iview);
+        componetViewArr.add(iview);
     }
-
+    //组件内容
     private List<ComponentsBean> componetsArr = null;
-
     public PagesFragments( int w, int h,int x, int y, boolean isBgColor, String bg,List<ComponentsBean> list) {
         this.x = x;
         this.y = y;
@@ -49,32 +46,31 @@ public class PagesFragments extends Fragment{
         if (list!=null){
             this.componetsArr = list;
         }
-        Log.e("","PagesFragments()");
     }
-
-        //返回 视图
-       public AbsoluteLayout getLayoutView(){
-           return layout;
-       }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (layout == null){
-            System.err.println("---"+w+"*"+h+"-"+x+"-"+y);
             //创建绝对布局
             layout  = new AbsoluteLayout(getActivity());
             layout.setLayoutParams(new AbsoluteLayout.LayoutParams(w, h,x,y));
             layout.setBackgroundColor(Color.RED);
         }
-       System.err.println("layout - " + layout.toString());
         createConponent();
         return layout;
     }
 
+
     @Override
-    public void onStart() {
-        super.onStart();
-        startSource();
+    public void onResume() {
+        super.onResume();
+        exeComponents(); //执行组件
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        unexeComponents(); // 结束执行组件
     }
 
     //创建组件
@@ -92,16 +88,22 @@ public class PagesFragments extends Fragment{
 
     }
 
+    protected void exeComponents() {
+        if (componetViewArr!=null && componetViewArr.size()>0){
 
-    protected void startSource() {
-        if (componetArr!=null && componetArr.size()>0){
-            Log.i("","loadSource()");
-            for (Iview iv : componetArr){
+            for (Iview iv : componetViewArr){
                 iv.startWork();
             }
         }
     }
 
+    protected void unexeComponents() {
+        if (componetViewArr!=null && componetViewArr.size()>0){
+            for (Iview iv : componetViewArr){
+                iv.stopWork();
+            }
+        }
+    }
 
 
 

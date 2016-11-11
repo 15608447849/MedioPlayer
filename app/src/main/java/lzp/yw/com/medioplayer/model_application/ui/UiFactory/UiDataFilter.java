@@ -4,9 +4,9 @@ import java.util.List;
 
 import lzp.yw.com.medioplayer.model_application.baselayer.BaseActivity;
 import lzp.yw.com.medioplayer.model_application.schedule.LocalScheduleObject;
-import lzp.yw.com.medioplayer.model_application.ui.UiElements.layoutView;
-import lzp.yw.com.medioplayer.model_application.ui.UiElements.pagesView;
-import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.IviewPage;
+import lzp.yw.com.medioplayer.model_application.ui.UiElements.layout.layoutView;
+import lzp.yw.com.medioplayer.model_application.ui.UiElements.page.pagesView;
+import lzp.yw.com.medioplayer.model_application.ui.UiElements.page.IviewPage;
 import lzp.yw.com.medioplayer.model_application.ui.UiStore.ViewStore;
 import lzp.yw.com.medioplayer.model_universal.Logs;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.PagesBean;
@@ -59,6 +59,7 @@ public class UiDataFilter {
         layout.startWork();
         homeKey =-1;
         //循环 创建所有页面
+        ViewStore.getInstant().initPagesStore(); // 初始化
         repeatPageStore(program.getLayout().getPages(),layout);
 
         if (homeKey!=-1){
@@ -70,7 +71,7 @@ public class UiDataFilter {
 
     //循环遍历所有页面 存储
     private static void repeatPageStore(List<PagesBean> pages,layoutView layout) {
-        ViewStore.getInstant().initPagesStore(); // 初始化
+
 
         int key = -1;
         IviewPage pageView = null;
@@ -83,7 +84,7 @@ public class UiDataFilter {
                 pageView = new pagesView(activity,layout,page);
             }
             if (pageView.isHome()){
-                homeKey = pageView.getmId();
+                homeKey = key;
             }
             ViewStore.getInstant().addPage(key,pageView); //添加页面
 

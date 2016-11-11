@@ -23,18 +23,12 @@ public class CImageView extends ImageView implements Iview{
     private static final java.lang.String TAG = "CImageView";
     private Context mCcontext;
     private FrameLayout layout ;
-    private int x=0;
-    private int y=0;
-    private int h=0;
-    private int w=0;
     private String imagePath;
     private Bitmap bitmap;
     private int length;
-
     public int getLength() {
         return length;
     }
-
     private boolean isAttr;
     private boolean isInitData;
     private boolean isLayout ;
@@ -44,7 +38,6 @@ public class CImageView extends ImageView implements Iview{
         this.layout = layout;
         initData(content);
     }
-
 
     @Override
     public void initData(Object object) {
@@ -59,26 +52,6 @@ public class CImageView extends ImageView implements Iview{
     }
 
     @Override
-    public void setInitSuccess(boolean flag) {
-
-    }
-
-    @Override
-    public boolean isInitData() {
-        return false;
-    }
-
-    @Override
-    public void setAttrbuteSuccess(boolean flag) {
-
-    }
-
-    @Override
-    public boolean isSetAttrbute() {
-        return false;
-    }
-
-    @Override
     public void setAttrbute() {
         if (!isAttr){
             this.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,FrameLayout.LayoutParams.MATCH_PARENT));
@@ -90,7 +63,6 @@ public class CImageView extends ImageView implements Iview{
              bitmap = getBitmap();
         }
         if (bitmap!=null){
-            Log.i("","图片 组件()");
             this.setScaleType(ImageView.ScaleType.FIT_XY);
             this.setImageBitmap(bitmap);
         }
@@ -130,17 +102,15 @@ public class CImageView extends ImageView implements Iview{
     @Override
     public void stopWork() {
         try {
-//            this.setImageBitmap(null);
+            this.setImageBitmap(null);
             unLayouted();
-//            bitmap = null;
+            bitmap = null;
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
     //获取 bitmap
     public Bitmap getBitmap() {
-        //
         if (UiTools.fileIsExt(imagePath)){
             bitmap = ImageUtils.getBitmap(imagePath);
         }

@@ -1,6 +1,7 @@
 package lzp.yw.com.medioplayer.model_application.ui.componentLibrary;
 
 import android.content.Context;
+import android.util.Log;
 import android.util.LruCache;
 import android.widget.AbsoluteLayout;
 
@@ -34,10 +35,6 @@ public class CreateComponent {
         return  mLruCache.get(key);
     }
 
-
-
-
-
    public static Iview create(ComponentsBean component, AbsoluteLayout layout, Context context){
         Iview iplay = null;
        try {
@@ -64,7 +61,8 @@ public class CreateComponent {
            }
 
        } catch (Exception e) {
-           e.printStackTrace();
+//           e.printStackTrace();
+           Log.e("createComponent"," 创建组件错误 :"+e.getMessage());
        }
        return iplay;
     }
