@@ -1,10 +1,8 @@
-package lzp.yw.com.medioplayer.model_application.ui.componentLibrary;
+package lzp.yw.com.medioplayer.model_application.ui.componentLibrary.image;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.util.Log;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
@@ -55,7 +53,6 @@ public class CImageView extends ImageView implements Iview{
     public void setAttrbute() {
         if (!isAttr){
             this.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,FrameLayout.LayoutParams.MATCH_PARENT));
-            this.setBackgroundColor(Color.BLACK);
             isAttr = true;
         }
         //获取bitmap

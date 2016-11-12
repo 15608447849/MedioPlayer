@@ -1,9 +1,10 @@
 package lzp.yw.com.medioplayer.model_application.ui.UiElements.page;
 
+import android.util.Log;
+import android.widget.AbsoluteLayout;
 import android.widget.FrameLayout;
 
 import lzp.yw.com.medioplayer.model_application.baselayer.BaseActivity;
-import lzp.yw.com.medioplayer.model_application.ui.UiElements.layout.IviewLayout;
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.Iview;
 
 /**
@@ -12,7 +13,7 @@ import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.Iview;
 
 public abstract class IviewPage extends FrameLayout implements Iview {
     protected BaseActivity activity;
-    protected IviewLayout layout;
+    protected AbsoluteLayout layout;
     protected int id;
     protected boolean isHome = false;
     public boolean isHome() {
@@ -24,10 +25,10 @@ public abstract class IviewPage extends FrameLayout implements Iview {
     protected boolean isInit = false;//是否初始化
     protected boolean isAttr = false;
     protected  boolean isLayout = false;
-    public IviewPage(BaseActivity activity,IviewLayout layout) {
+    public IviewPage(BaseActivity activity) {
         super(activity);
         this.activity = activity;
-        this.layout = layout;
+        this.layout = (AbsoluteLayout) activity.getActivityLayout();
     }
 
     @Override
@@ -36,6 +37,7 @@ public abstract class IviewPage extends FrameLayout implements Iview {
     public abstract void setAttrbute();
     @Override
     public void layouted() {
+        Log.i("","layouted() -> "+isLayout);
         if (!isLayout){
             try {
                 layout.addView(this);
@@ -49,6 +51,7 @@ public abstract class IviewPage extends FrameLayout implements Iview {
     public void unLayouted() {
         if (isLayout){
             try {
+                removeFragment();
                 layout.removeView(this);
                 isLayout =false;
             } catch (Exception e) {
@@ -56,6 +59,9 @@ public abstract class IviewPage extends FrameLayout implements Iview {
             }
         }
     }
+
+
+
     @Override
     public void startWork() {
         try{
@@ -81,4 +87,6 @@ public abstract class IviewPage extends FrameLayout implements Iview {
     }
     //关于 加载fragments
     protected abstract void loadFragment();
+    //移除
+    protected abstract void removeFragment();
 }

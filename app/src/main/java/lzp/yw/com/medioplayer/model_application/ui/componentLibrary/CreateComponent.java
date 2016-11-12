@@ -20,7 +20,8 @@ public class CreateComponent {
     private static Map<String,String> referenceViewMap = new HashMap<String,String>();
     static{
         String packageName = "lzp.yw.com.medioplayer.model_application.ui.componentLibrary.";
-        referenceViewMap.put("image",packageName+"CMorePictures");
+        referenceViewMap.put("image",packageName+"image.CMorePictures");
+        referenceViewMap.put("button",packageName+"button.CButton");
     }
 
 

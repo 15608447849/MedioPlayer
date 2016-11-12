@@ -1,8 +1,7 @@
-package lzp.yw.com.medioplayer.model_application.ui.componentLibrary;
+package lzp.yw.com.medioplayer.model_application.ui.componentLibrary.image;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.widget.AbsoluteLayout;
 import android.widget.FrameLayout;
 
@@ -12,7 +11,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.IComponent;
-import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.Iview;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
 import rx.android.schedulers.AndroidSchedulers;
@@ -23,14 +21,11 @@ import rx.functions.Action0;
  * 播放图片的组件 - 多图片播放
  */
 public class CMorePictures extends FrameLayout implements IComponent{
-
     private static final java.lang.String TAG = "CMorePictures";
-
     private int componentId;
     private int width;
     private int height;
     private int x,y;
-    private int linkId;
     private Context context;
     private AbsoluteLayout layout;
 
@@ -40,8 +35,8 @@ public class CMorePictures extends FrameLayout implements IComponent{
     public CMorePictures(Context context, AbsoluteLayout layout, ComponentsBean component) {
         super(context);
         this.context = context;
-        initData(component);
         this.layout = layout;
+        initData(component);
     }
 
     @Override
@@ -53,8 +48,6 @@ public class CMorePictures extends FrameLayout implements IComponent{
             this.height = (int)cb.getHeight();
             this.x = (int)cb.getCoordX();
             this.y = (int)cb.getCoordY();
-            this.linkId = (int)cb.getLinkId();
-
             if (cb.getContents()!=null && cb.getContents().size()>0) {
                 createContent(cb.getContents());
             }
@@ -67,7 +60,7 @@ public class CMorePictures extends FrameLayout implements IComponent{
     public void setAttrbute() {
         if (!isAttr){
             this.setLayoutParams(new AbsoluteLayout.LayoutParams(width,height,x,y));
-            this.setBackgroundColor(Color.BLUE);
+            this.setBackgroundColor(Color.GREEN);
         }
     }
     @Override
@@ -80,7 +73,7 @@ public class CMorePictures extends FrameLayout implements IComponent{
     }
     @Override
     public void unLayouted() {
-        if (isLayout = false){
+        if (isLayout){
             layout.removeView(this);
             isLayout = false;
         }
@@ -102,8 +95,8 @@ public class CMorePictures extends FrameLayout implements IComponent{
     @Override
     public void stopWork() {
         try {
-            stopTimer();
-            unLayouted();
+            stopTimer();//停止计时间 停止当前内容
+            unLayouted(); //移除布局
         } catch (Exception e) {
             e.printStackTrace();
         }

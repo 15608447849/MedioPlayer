@@ -46,6 +46,7 @@ public class PagesFragments extends Fragment{
         if (list!=null){
             this.componetsArr = list;
         }
+        Log.i("","PagesFragments()");
     }
 
     @Override
@@ -54,9 +55,18 @@ public class PagesFragments extends Fragment{
             //创建绝对布局
             layout  = new AbsoluteLayout(getActivity());
             layout.setLayoutParams(new AbsoluteLayout.LayoutParams(w, h,x,y));
-            layout.setBackgroundColor(Color.RED);
+            if (isBgColor){
+                try {
+                    layout.setBackgroundColor(Color.parseColor(bg));
+                } catch (Exception e) {
+                    layout.setBackgroundColor(Color.RED);
+//                    e.printStackTrace();
+                }
+            }
+
         }
         createConponent();
+        Log.i(""," - -onCreateView() ");
         return layout;
     }
 
@@ -78,7 +88,7 @@ public class PagesFragments extends Fragment{
         if (componetsArr!=null){
             Iview iv = null;
             for (ComponentsBean component:componetsArr){
-//            反射创建任意组件
+                //反射创建匹配组件
                 iv = CreateComponent.create(component,layout,getActivity());
                 if (iv != null){
                     addConpone(iv);
@@ -88,15 +98,20 @@ public class PagesFragments extends Fragment{
 
     }
 
+    /**
+     * 执行组件
+     */
     protected void exeComponents() {
         if (componetViewArr!=null && componetViewArr.size()>0){
-
             for (Iview iv : componetViewArr){
                 iv.startWork();
             }
         }
     }
 
+    /**
+     * 取消执行组件
+     */
     protected void unexeComponents() {
         if (componetViewArr!=null && componetViewArr.size()>0){
             for (Iview iv : componetViewArr){
@@ -104,8 +119,6 @@ public class PagesFragments extends Fragment{
             }
         }
     }
-
-
 
 
 }

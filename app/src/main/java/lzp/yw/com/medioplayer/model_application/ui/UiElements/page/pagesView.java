@@ -1,14 +1,11 @@
 package lzp.yw.com.medioplayer.model_application.ui.UiElements.page;
 
 import android.graphics.Color;
+import android.util.Log;
 import android.widget.AbsoluteLayout;
-
-import java.util.List;
 
 import lzp.yw.com.medioplayer.model_application.baselayer.BaseActivity;
 import lzp.yw.com.medioplayer.model_application.ui.UiFragments.PagesFragments;
-import lzp.yw.com.medioplayer.model_application.ui.UiElements.layout.IviewLayout;
-import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.PagesBean;
 
 /**
@@ -27,10 +24,10 @@ public class pagesView extends IviewPage{
     private int x;
     private int y;
     private PagesFragments mFragment;
+    PagesBean page;
 
-
-    public pagesView(BaseActivity activity, IviewLayout layout, PagesBean page) {
-        super(activity,layout);
+    public pagesView(BaseActivity activity, PagesBean page) {
+        super(activity);
         initData(page);
     }
 
@@ -38,7 +35,7 @@ public class pagesView extends IviewPage{
     public void initData(Object object) {
         try {
 
-            PagesBean page = ((PagesBean) object);
+            page = ((PagesBean) object);
             setId(page.getId());//视图
             this.id = page.getId();
             this.x = (int)page.getCoordX();
@@ -46,10 +43,9 @@ public class pagesView extends IviewPage{
             this.width =(int)page.getWidth();
             this.height = (int)page.getHeight();
             this.backGroundColor = page.getBackgroundColor();
-            this.backGroundImage = page.getBackground();
+            this.backGroundImage = page.getBackground();//请截取 uri 暂时未做 确定bg颜色还是图片
             this.label = page.getLabel();
             this.isHome = page.isHome();
-            creatFragment(page.getComponents());//创建 fragments
             isInit = true;
         }catch (Exception e){
             e.printStackTrace();
@@ -70,17 +66,27 @@ public class pagesView extends IviewPage{
     /**
      * 创建 fragment
      */
-    private void creatFragment(List<ComponentsBean> list){
+    private void creatFragment(boolean isBgColor){
         if (mFragment == null){
-            mFragment = new PagesFragments(width,height,x,y,true,"",list);
+            mFragment = new PagesFragments(width,height,x,y,
+                    isBgColor,isBgColor?backGroundColor:backGroundImage,  //是否是背景颜色
+                    page.getComponents());
         }
+        Log.i("","creatFragment()");
     }
     @Override
     protected void loadFragment() {
+        if (page.getComponents()!=null && page.getComponents().size()>0){
+            creatFragment(true);//创建 fragments
+        }
         // 用 activity fragment 管理器  替换 view -> fragment
+        Log.i("","loadFragment - "+mFragment);
         activity.repleaceViewToFragment(this,mFragment);
     }
 
-
-
+    @Override
+    protected void removeFragment() {
+        activity.deleteFragments(mFragment);
+     //   mFragment = null;
+    }
 }

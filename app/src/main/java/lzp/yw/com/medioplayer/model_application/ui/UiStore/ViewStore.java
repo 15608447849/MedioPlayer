@@ -58,6 +58,7 @@ public class ViewStore {
 
     //添加 一个 页面
     public  void  addPage(int key,IviewPage page){
+//        Log.i("","id - "+key + "page - "+page);
         try{
             pagesMap.put(key,page);
         }catch (Exception e){

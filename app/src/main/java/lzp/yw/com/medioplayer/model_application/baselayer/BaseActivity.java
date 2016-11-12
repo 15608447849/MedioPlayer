@@ -2,7 +2,6 @@ package lzp.yw.com.medioplayer.model_application.baselayer;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.ComponentName;
 import android.content.Context;
@@ -226,6 +225,12 @@ public class BaseActivity extends Activity {
      *
      *
      */
+
+    //返回底层当前 layout
+    public ViewGroup getActivityLayout(){
+        return null;
+    }
+
         //初始化 UI
         protected void initUI(){
             Logs.i(TAG,"初始化 UI 元素");
@@ -240,16 +245,11 @@ public class BaseActivity extends Activity {
         };
 
 
-    /**
-     * 返回 fragment 管理器
-     */
-    public FragmentManager getFragmentsManager(){
-        return this.getFragmentManager();
-    }
+    private FragmentTransaction fragmentTransaction;
     /**
      * 返回 fragment 事务
      */
-    public FragmentTransaction getFragmentTransaction(){
+    private FragmentTransaction getFragmentTransaction(){
         return this.getFragmentManager().beginTransaction();
     }
 
@@ -257,12 +257,19 @@ public class BaseActivity extends Activity {
      * 替换 一个 view -> fragment
      */
     public void repleaceViewToFragment(ViewGroup view, Fragment fragment){
-        Logs.i(TAG,"repleace View To Fragment - "+view.getId());
-        FragmentTransaction transaction = getFragmentTransaction();
-        transaction.replace(view.getId(), fragment);
-        transaction.commit();
+        Logs.i(TAG," repleace View To Fragment - view id: "+view.getId());
+        fragmentTransaction = getFragmentTransaction();
+        fragmentTransaction.replace(view.getId(), fragment);
+        fragmentTransaction.commit();
     }
 
+    //删除一个fragments
+    public void deleteFragments(Fragment fragment){
+        Logs.i(TAG,"- delete Fragment  ");
+        fragmentTransaction = getFragmentTransaction();
+        getFragmentTransaction().remove(fragment);
+        getFragmentTransaction().commit();
+    }
 
 
 

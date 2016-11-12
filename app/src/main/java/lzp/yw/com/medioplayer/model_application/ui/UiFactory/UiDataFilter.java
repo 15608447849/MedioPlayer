@@ -4,9 +4,8 @@ import java.util.List;
 
 import lzp.yw.com.medioplayer.model_application.baselayer.BaseActivity;
 import lzp.yw.com.medioplayer.model_application.schedule.LocalScheduleObject;
-import lzp.yw.com.medioplayer.model_application.ui.UiElements.layout.layoutView;
-import lzp.yw.com.medioplayer.model_application.ui.UiElements.page.pagesView;
 import lzp.yw.com.medioplayer.model_application.ui.UiElements.page.IviewPage;
+import lzp.yw.com.medioplayer.model_application.ui.UiElements.page.pagesView;
 import lzp.yw.com.medioplayer.model_application.ui.UiStore.ViewStore;
 import lzp.yw.com.medioplayer.model_universal.Logs;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.PagesBean;
@@ -21,7 +20,7 @@ public class UiDataFilter {
 
     private  static boolean isInit = false;
 
-    private static BaseActivity activity = null;
+    public static BaseActivity activity = null;
 
     private static int homeKey = -1;
 
@@ -32,6 +31,7 @@ public class UiDataFilter {
 
     public static void init(BaseActivity activity){
         UiDataFilter.activity = activity;
+        UiManager.getInstans().initData();
         isInit = true;
     }
 
@@ -46,7 +46,6 @@ public class UiDataFilter {
             Logs.e(TAG," 未初始化 activity - 不可执行 ");
             return;
         }
-
         createLayout(current.getSchedule().getProgram());
     }
 
@@ -54,47 +53,36 @@ public class UiDataFilter {
 
     // 创建 布局层
     private static void createLayout(ProgramBean program) {
-
-        layoutView layout = new layoutView(activity,program);
-        layout.startWork();
+        UiManager.getInstans().stopTask();
         homeKey =-1;
-        //循环 创建所有页面
+       // ViewStore.getInstant().pageTanslationCache();//页面 转存
+        //循环创建所有页面
         ViewStore.getInstant().initPagesStore(); // 初始化
-        repeatPageStore(program.getLayout().getPages(),layout);
-
+        repeatPageStore(program.getLayout().getPages());
         if (homeKey!=-1){
-            if(ViewStore.getInstant().getPage(homeKey)!=null){
-                ViewStore.getInstant().getPage(homeKey).startWork();
-            }
+            UiManager.getInstans().exeMainTask(homeKey);
         }
     }
 
-    //循环遍历所有页面 存储
-    private static void repeatPageStore(List<PagesBean> pages,layoutView layout) {
-
-
-        int key = -1;
-        IviewPage pageView = null;
+    //循环遍历所有页面存储
+    private static void repeatPageStore(List<PagesBean> pages) {
+        int key;
+        IviewPage pageView;
         for (PagesBean page : pages){
 
             key = page.getId();
             pageView = ViewStore.getInstant().getPageCache(key);
             if (pageView==null){
                 // 无缓存 - 创建
-                pageView = new pagesView(activity,layout,page);
+                pageView = new pagesView(activity,page);
             }
             if (pageView.isHome()){
                 homeKey = key;
             }
             ViewStore.getInstant().addPage(key,pageView); //添加页面
-
             if (page.getPages()!=null && page.getPages().size()>0){
-                repeatPageStore(page.getPages(),layout);
+                repeatPageStore(page.getPages());
             }
-            //创建 页面的 内容组件 -> 告诉这个page
-            pageView = null;
         }
     }
-
-
 }

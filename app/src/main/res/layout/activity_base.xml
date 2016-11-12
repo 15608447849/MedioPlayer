@@ -1,8 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<AbsoluteLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".baselayer.BaseActivity"
+
     >
-</FrameLayout>
+
+    <FrameLayout
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_x="50dp"
+        android:layout_y="50dp"
+        android:background="@android:color/white">
+
+    </FrameLayout>
+
+
+    <FrameLayout
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_x="50dp"
+        android:layout_y="50dp"
+        android:background="@android:color/holo_blue_light">
+
+    </FrameLayout>
+
+
+
+</AbsoluteLayout>
