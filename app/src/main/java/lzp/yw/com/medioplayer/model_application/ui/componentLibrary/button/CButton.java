@@ -16,6 +16,7 @@ import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsB
  * 按钮 点击
  */
 public class CButton extends ImageButton implements View.OnClickListener,Iview{
+    private static final String TAG = "_CButton";
     private Context context;
     private AbsoluteLayout layout;
     private int componentId;
@@ -23,7 +24,7 @@ public class CButton extends ImageButton implements View.OnClickListener,Iview{
     private int linkId;
     private boolean isInitData;
     private boolean isLayout;
-    private boolean isAttr;
+
     public CButton(Context context, AbsoluteLayout layout, ComponentsBean component) {
         super(context);
         this.context = context;
@@ -52,10 +53,8 @@ public class CButton extends ImageButton implements View.OnClickListener,Iview{
     //设置属性
     @Override
     public void setAttrbute() {
-        if (!isAttr){
-            this.setLayoutParams(new AbsoluteLayout.LayoutParams(width,height,x,y));
-           this.setImageResource(R.mipmap.click_image);//如果是图片 使用图片
-        }
+        this.setLayoutParams(new AbsoluteLayout.LayoutParams(width,height,x,y));
+        this.setImageResource(R.mipmap.click_image);//如果是图片 使用图片
     }
     //布局
     @Override
@@ -77,6 +76,7 @@ public class CButton extends ImageButton implements View.OnClickListener,Iview{
     //开始工作
     @Override
     public void startWork() {
+//        Logs.i(TAG,"button - startWork()");
         try {
             if (!isInitData){
                 return;
@@ -87,9 +87,10 @@ public class CButton extends ImageButton implements View.OnClickListener,Iview{
             e.printStackTrace();
         }
     }
-    //开始工作
+    //停止
     @Override
     public void stopWork() {
+//        Logs.i(TAG,"button - startWork()");
         try {
             unLayouted(); //移除布局
         } catch (Exception e) {
@@ -113,14 +114,7 @@ public class CButton extends ImageButton implements View.OnClickListener,Iview{
     public void onClick(View v) {
         try {
             ((BaseActivity)context).showToast("按钮 -"+componentId +" linkId - "+linkId);
-            UiManager.getInstans().exeask(linkId);
-
-
-       /*     FrameLayout fl = new FrameLayout(context);
-            fl.setLayoutParams(new AbsoluteLayout.LayoutParams(500,500,10,600));
-            fl.setBackgroundColor(Color.WHITE);
-            UiDataFilter.activity.getActivityLayout().addView(fl);*/
-
+            UiManager.getInstans().exeTask(linkId);
         } catch (Exception e) {
             e.printStackTrace();
         }

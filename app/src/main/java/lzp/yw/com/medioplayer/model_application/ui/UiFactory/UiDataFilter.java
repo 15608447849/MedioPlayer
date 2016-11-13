@@ -71,11 +71,11 @@ public class UiDataFilter {
         for (PagesBean page : pages){
 
             key = page.getId();
-            pageView = ViewStore.getInstant().getPageCache(key);
-            if (pageView==null){
-                // 无缓存 - 创建
+//            pageView = ViewStore.getInstant().getPageCache(key);
+//            if (pageView==null){
+//                 无缓存 - 创建
                 pageView = new pagesView(activity,page);
-            }
+//            }
             if (pageView.isHome()){
                 homeKey = key;
             }

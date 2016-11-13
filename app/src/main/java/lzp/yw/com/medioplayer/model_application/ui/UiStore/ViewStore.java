@@ -1,10 +1,6 @@
 package lzp.yw.com.medioplayer.model_application.ui.UiStore;
 
-import android.util.LruCache;
-
-import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 import lzp.yw.com.medioplayer.model_application.ui.UiElements.page.IviewPage;
 
@@ -43,7 +39,7 @@ public class ViewStore {
     private LinkedHashMap<Integer,IviewPage> pagesMap = null;
 
     //页面缓存
-    private LruCache<Integer,IviewPage> pagesCacheMap = null;
+//    private LruCache<Integer,IviewPage> pagesCacheMap = null;
     //初始化 页面存储
    public void initPagesStore(){
        if (pagesMap==null){
@@ -51,9 +47,9 @@ public class ViewStore {
        }else{
            pagesMap.clear();
        }
-       if(pagesCacheMap == null){
-           pagesCacheMap = new LruCache<Integer, IviewPage>(mCacheSize);
-       }
+//       if(pagesCacheMap == null){
+//           pagesCacheMap = new LruCache<Integer, IviewPage>(mCacheSize);
+//       }
    }
 
     //添加 一个 页面
@@ -76,7 +72,7 @@ public class ViewStore {
         }
         return null;
     }
-    // 页面 转储 缓存中
+   /* // 页面 转储 缓存中
     public void pageTanslationCache(){
         if (pagesMap!=null && pagesCacheMap!=null){
             Iterator iter = pagesMap.entrySet().iterator();
@@ -88,8 +84,8 @@ public class ViewStore {
                 addPageCache(key,val);
             }
         }
-    }
-    //添加 一个 缓存 页面
+    }*/
+   /* //添加 一个 缓存 页面
     private  void  addPageCache(int key,IviewPage page){
         try{
             pagesCacheMap.put(key,page);
@@ -103,7 +99,7 @@ public class ViewStore {
             return null;
         }
        return pagesMap.get(key);
-    }
+    }*/
 
 //    ///////////////////////////////////////////////////////////////缓存组件
 //    //组件

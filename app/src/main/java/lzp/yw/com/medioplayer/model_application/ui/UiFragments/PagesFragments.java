@@ -3,7 +3,6 @@ package lzp.yw.com.medioplayer.model_application.ui.UiFragments;
 import android.app.Fragment;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.Iview;
+import lzp.yw.com.medioplayer.model_application.ui.Uitools.UiTools;
 import lzp.yw.com.medioplayer.model_application.ui.componentLibrary.CreateComponent;
+import lzp.yw.com.medioplayer.model_universal.Logs;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 
 /**
@@ -22,6 +23,7 @@ import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsB
  */
 
 public class PagesFragments extends Fragment{
+    private static final String TAG = "PagesFragments";
     private int x,y,w,h;
     private boolean isBgColor = true;
     private String bg;
@@ -46,27 +48,27 @@ public class PagesFragments extends Fragment{
         if (list!=null){
             this.componetsArr = list;
         }
-        Log.i("","PagesFragments()");
+        Logs.i(TAG,"- -PagesFragments()");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Logs.i(TAG," - -onCreateView() ");
         if (layout == null){
             //创建绝对布局
             layout  = new AbsoluteLayout(getActivity());
             layout.setLayoutParams(new AbsoluteLayout.LayoutParams(w, h,x,y));
             if (isBgColor){
                 try {
-                    layout.setBackgroundColor(Color.parseColor(bg));
+                    layout.setBackgroundColor(Color.parseColor(UiTools.TanslateColor(bg)));
                 } catch (Exception e) {
-                    layout.setBackgroundColor(Color.RED);
+//                    layout.setBackgroundColor(1+(int)(Math.random()*2)==1?Color.RED:Color.WHITE);
 //                    e.printStackTrace();
                 }
             }
 
         }
         createConponent();
-        Log.i(""," - -onCreateView() ");
         return layout;
     }
 
@@ -74,12 +76,14 @@ public class PagesFragments extends Fragment{
     @Override
     public void onResume() {
         super.onResume();
+        Logs.i(TAG,"- -onResume()");
         exeComponents(); //执行组件
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        Logs.i(TAG,"- -onPause()");
         unexeComponents(); // 结束执行组件
     }
 
@@ -102,6 +106,7 @@ public class PagesFragments extends Fragment{
      * 执行组件
      */
     protected void exeComponents() {
+        Logs.i(TAG,"- -exeComponents()");
         if (componetViewArr!=null && componetViewArr.size()>0){
             for (Iview iv : componetViewArr){
                 iv.startWork();
@@ -113,6 +118,7 @@ public class PagesFragments extends Fragment{
      * 取消执行组件
      */
     protected void unexeComponents() {
+        Logs.i(TAG,"- -unexeComponents()");
         if (componetViewArr!=null && componetViewArr.size()>0){
             for (Iview iv : componetViewArr){
                 iv.stopWork();
@@ -120,5 +126,29 @@ public class PagesFragments extends Fragment{
         }
     }
 
+/*
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Logs.i(TAG,"- -onDestroy()");
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Logs.i(TAG,"- -onDestroyView()");
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        Logs.i(TAG,"- -onDetach()");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Logs.i(TAG,"- -onStop()");
+    }*/
 
 }

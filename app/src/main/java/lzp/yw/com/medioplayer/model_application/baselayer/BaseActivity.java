@@ -242,7 +242,7 @@ public class BaseActivity extends Activity {
             UiTools.uninit();
             UiDataFilter.unInit();
             Logs.i(TAG,"注销 UI 元素");
-        };
+        }
 
 
     private FragmentTransaction fragmentTransaction;
@@ -257,7 +257,7 @@ public class BaseActivity extends Activity {
      * 替换 一个 view -> fragment
      */
     public void repleaceViewToFragment(ViewGroup view, Fragment fragment){
-        Logs.i(TAG," repleace View To Fragment - view id: "+view.getId());
+        Logs.i(TAG," repleace View To Fragment - \n view id: "+view.getId() +" \n fragment:"+fragment);
         fragmentTransaction = getFragmentTransaction();
         fragmentTransaction.replace(view.getId(), fragment);
         fragmentTransaction.commit();
@@ -265,10 +265,11 @@ public class BaseActivity extends Activity {
 
     //删除一个fragments
     public void deleteFragments(Fragment fragment){
-        Logs.i(TAG,"- delete Fragment  ");
+        Logs.i(TAG,"- delete Fragment - "+ fragment);
         fragmentTransaction = getFragmentTransaction();
-        getFragmentTransaction().remove(fragment);
-        getFragmentTransaction().commit();
+        fragmentTransaction.remove(fragment);
+        fragmentTransaction.commit();
+
     }
 
 

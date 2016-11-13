@@ -40,7 +40,7 @@ public class CreateComponent {
         Iview iplay = null;
        try {
            //查看缓存是否存在
-           int key = component.getId();
+           int key = component.getId()+layout.hashCode();
 
            iplay = getIplayerToCache(key);
 

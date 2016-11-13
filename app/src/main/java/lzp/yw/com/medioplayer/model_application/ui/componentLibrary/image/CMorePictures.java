@@ -1,7 +1,6 @@
 package lzp.yw.com.medioplayer.model_application.ui.componentLibrary.image;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.widget.AbsoluteLayout;
 import android.widget.FrameLayout;
 
@@ -11,6 +10,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.IComponent;
+import lzp.yw.com.medioplayer.model_universal.Logs;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
 import rx.android.schedulers.AndroidSchedulers;
@@ -58,13 +58,14 @@ public class CMorePictures extends FrameLayout implements IComponent{
     }
     @Override
     public void setAttrbute() {
-        if (!isAttr){
-            this.setLayoutParams(new AbsoluteLayout.LayoutParams(width,height,x,y));
-            this.setBackgroundColor(Color.GREEN);
-        }
+        Logs.i(TAG,"- -setAttrbute()- -");
+        this.setLayoutParams(new AbsoluteLayout.LayoutParams(width,height,x,y));
+//        this.setBackgroundColor(Color.BLUE);
     }
     @Override
     public void layouted() {
+        Logs.i(TAG,"- -layouted()- - "+isLayout);
+        Logs.i(TAG,"- --------------- - "+layout+"\n"+this);
         if (isLayout){
             return;
         }
@@ -73,6 +74,7 @@ public class CMorePictures extends FrameLayout implements IComponent{
     }
     @Override
     public void unLayouted() {
+        Logs.i(TAG,"- -unLayouted()- - "+isLayout);
         if (isLayout){
             layout.removeView(this);
             isLayout = false;
@@ -80,6 +82,7 @@ public class CMorePictures extends FrameLayout implements IComponent{
     }
     @Override
     public void startWork() {
+        Logs.i(TAG,"- -startWork()- -");
         try {
             if (!isInitData){
                 return;
@@ -94,6 +97,7 @@ public class CMorePictures extends FrameLayout implements IComponent{
 
     @Override
     public void stopWork() {
+        Logs.i(TAG,"stopWork()");
         try {
             stopTimer();//停止计时间 停止当前内容
             unLayouted(); //移除布局

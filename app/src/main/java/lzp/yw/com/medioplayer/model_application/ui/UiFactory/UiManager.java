@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lzp.yw.com.medioplayer.model_application.ui.UiStore.ViewStore;
+import lzp.yw.com.medioplayer.model_universal.Logs;
 
 import static android.R.attr.id;
 
@@ -11,6 +12,7 @@ import static android.R.attr.id;
  * Created by user on 2016/11/10.
  */
 public class UiManager {
+    private static final String TAG ="UiMagener";
     private static UiManager instants = null;
     private boolean isInit = false;
     private UiManager() {
@@ -49,17 +51,20 @@ public class UiManager {
     /**
      * 执行一个任务
      */
-    public void exeask(int id) {
+    public void exeTask(int id) {
         if (isInit){
             if (id == currentHomeId){
+                Logs.i(TAG,"当前目标ID 是主页,移除 栈上所有页面");
                 //停止 除去 homeid 之外的所有page
                 keepHomePage();
             }else{
                 //查看是否存在于栈中
                 if (loadedPageArray.contains(id)){
+                    Logs.i(TAG,"当前目标ID 存在于栈中 ,删除这个页面上的所有page");
                    // 1 已存在的 -> 删除这个页面上面的 所有页面
                     deleteTagerTop(id);
                 }else{
+                    Logs.i(TAG,"当前目标ID 不存在栈中,添加...");
 //                    2 不存在 添加到栈顶
                     if(ViewStore.getInstant().getPage(id)!=null){
                         addPage(id);
@@ -78,7 +83,7 @@ public class UiManager {
     public void stopTask() {
         if (isInit){
             //清楚 栈内所有 page
-
+            deleteAllPage();
         }
     }
 
@@ -107,18 +112,19 @@ public class UiManager {
 
     //添加一个页面
     public void addPage(int id){
-        if (loadedPageArray.contains(id)){
+       /* if (loadedPageArray.contains(id)){
             loadedPageArray.remove(loadedPageArray.indexOf(id));
-        }
+        }*/
         loadedPageArray.add(id);
     }
     //停止 页面
     private void stopPage(int id){
         if(ViewStore.getInstant().getPage(id)!=null){
             ViewStore.getInstant().getPage(id).stopWork();
-        }else if (ViewStore.getInstant().getPageCache(id)!=null){
-            ViewStore.getInstant().getPageCache(id).stopWork();
         }
+        /*else if (ViewStore.getInstant().getPageCache(id)!=null){
+            ViewStore.getInstant().getPageCache(id).stopWork();
+        }*/
     }
 
     //删除一个页面
@@ -149,7 +155,6 @@ public class UiManager {
             deleteList.add(id);
         }
         for (Integer deleteId :deleteList){
-
             loadedPageArray.remove(loadedPageArray.indexOf(deleteId));
         }
     }

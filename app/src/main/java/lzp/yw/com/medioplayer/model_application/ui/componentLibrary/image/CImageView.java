@@ -27,7 +27,7 @@ public class CImageView extends ImageView implements Iview{
     public int getLength() {
         return length;
     }
-    private boolean isAttr;
+
     private boolean isInitData;
     private boolean isLayout ;
     public CImageView(Context context, FrameLayout layout, ContentsBean content) {
@@ -51,18 +51,7 @@ public class CImageView extends ImageView implements Iview{
 
     @Override
     public void setAttrbute() {
-        if (!isAttr){
             this.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,FrameLayout.LayoutParams.MATCH_PARENT));
-            isAttr = true;
-        }
-        //获取bitmap
-        if (bitmap == null){
-             bitmap = getBitmap();
-        }
-        if (bitmap!=null){
-            this.setScaleType(ImageView.ScaleType.FIT_XY);
-            this.setImageBitmap(bitmap);
-        }
     }
 
     @Override
@@ -84,13 +73,14 @@ public class CImageView extends ImageView implements Iview{
 
     @Override
     public void startWork() {
+//        Logs.i(TAG,"image - startWork()");
         try {
                 if (!isInitData){
                     return;
                 }
             setAttrbute();
             layouted();
-
+            addBitmap();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -98,10 +88,11 @@ public class CImageView extends ImageView implements Iview{
 
     @Override
     public void stopWork() {
+//        Logs.i(TAG,"image - stopWork()");
         try {
-            this.setImageBitmap(null);
+            removeBitmap();
             unLayouted();
-            bitmap = null;
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -120,6 +111,30 @@ public class CImageView extends ImageView implements Iview{
             super.onDraw(canvas);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * 设置bitmap
+     */
+    private void addBitmap(){
+        //获取bitmap
+        if (bitmap == null){
+            bitmap = getBitmap();
+
+        }
+        if (bitmap!=null){
+            this.setScaleType(ImageView.ScaleType.FIT_XY);
+            this.setImageBitmap(bitmap);
+        }
+    }
+    /**
+     * 移除bitmap
+     */
+    private void removeBitmap(){
+        if(bitmap!=null){
+            bitmap.recycle();
+            bitmap=null;
         }
     }
 }

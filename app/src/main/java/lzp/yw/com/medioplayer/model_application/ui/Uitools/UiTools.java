@@ -1,6 +1,7 @@
 package lzp.yw.com.medioplayer.model_application.ui.Uitools;
 
 import android.content.Context;
+import android.util.Log;
 
 import lzp.yw.com.medioplayer.model_application.baselayer.DataListEntiyStore;
 import lzp.yw.com.medioplayer.model_download.singedownload.Loader;
@@ -28,22 +29,22 @@ public class UiTools {
      * @return
      */
     public static String TanslateColor(String colorValue){
+        Log.i(""," - - color code param ->"+colorValue);
         String color = null ;
         try {
-            String tem = Integer.toHexString(Integer.parseInt(colorValue));
-            if (tem.length() == 6) {
-                color = tem;
-            } else {
-                StringBuffer addZeor = new StringBuffer();
-                for (int i = 0; i < 6 - tem.length(); i++) {
-                    addZeor.append("0");
+           if (colorValue.startsWith("#") && colorValue.length()==7){
+               color = colorValue;
+           }else{
+                if (colorValue.contains("0x")){
+                    color= "#"+colorValue.substring(2);
                 }
-                color = addZeor + tem;
-            }
-            return "#" + color;
+           }
+
         }catch (Exception e){
-            return null;
+           e.printStackTrace();
         }
+        Log.i(""," - - color code tanslate code ->"+color);
+        return color;
     }
 
     //获取Uri的文件名

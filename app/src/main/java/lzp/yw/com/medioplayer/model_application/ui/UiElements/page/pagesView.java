@@ -1,11 +1,10 @@
 package lzp.yw.com.medioplayer.model_application.ui.UiElements.page;
 
-import android.graphics.Color;
-import android.util.Log;
 import android.widget.AbsoluteLayout;
 
 import lzp.yw.com.medioplayer.model_application.baselayer.BaseActivity;
 import lzp.yw.com.medioplayer.model_application.ui.UiFragments.PagesFragments;
+import lzp.yw.com.medioplayer.model_universal.Logs;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.PagesBean;
 
 /**
@@ -34,7 +33,6 @@ public class pagesView extends IviewPage{
     @Override
     public void initData(Object object) {
         try {
-
             page = ((PagesBean) object);
             setId(page.getId());//视图
             this.id = page.getId();
@@ -54,39 +52,39 @@ public class pagesView extends IviewPage{
 
     @Override
     public void setAttrbute() {
-        if (isAttr) {
-            return;
-        }
+        Logs.i(TAG,"setAttrbute() - ");
         //先设置大小
         this.setLayoutParams(new AbsoluteLayout.LayoutParams(width,height,x,y));
-        this.setBackgroundColor(Color.GREEN);
-        isAttr = true;
+//        this.setBackgroundColor(Color.YELLOW);
     }
 
     /**
      * 创建 fragment
      */
     private void creatFragment(boolean isBgColor){
+        Logs.i(TAG,"creatFragment()");
         if (mFragment == null){
             mFragment = new PagesFragments(width,height,x,y,
                     isBgColor,isBgColor?backGroundColor:backGroundImage,  //是否是背景颜色
                     page.getComponents());
+
         }
-        Log.i("","creatFragment()");
     }
     @Override
     protected void loadFragment() {
+        Logs.i(TAG,"loadFragment()");
         if (page.getComponents()!=null && page.getComponents().size()>0){
-            creatFragment(true);//创建 fragments
+            //创建 fragments
+            creatFragment(true);
+            // 用 activity fragment 管理器  替换 view -> fragment
+            activity.repleaceViewToFragment(this,mFragment);
         }
-        // 用 activity fragment 管理器  替换 view -> fragment
-        Log.i("","loadFragment - "+mFragment);
-        activity.repleaceViewToFragment(this,mFragment);
     }
 
     @Override
     protected void removeFragment() {
+        Logs.i(TAG,"removeFragment() - "+isLayout);
         activity.deleteFragments(mFragment);
-     //   mFragment = null;
+//        mFragment = null;
     }
 }

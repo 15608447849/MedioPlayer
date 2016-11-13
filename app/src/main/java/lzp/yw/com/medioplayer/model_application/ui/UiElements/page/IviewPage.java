@@ -1,17 +1,18 @@
 package lzp.yw.com.medioplayer.model_application.ui.UiElements.page;
 
-import android.util.Log;
 import android.widget.AbsoluteLayout;
 import android.widget.FrameLayout;
 
 import lzp.yw.com.medioplayer.model_application.baselayer.BaseActivity;
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.Iview;
+import lzp.yw.com.medioplayer.model_universal.Logs;
 
 /**
  * Created by user on 2016/11/10.
  */
 
 public abstract class IviewPage extends FrameLayout implements Iview {
+    protected static final String TAG = "IviewPage";
     protected BaseActivity activity;
     protected AbsoluteLayout layout;
     protected int id;
@@ -23,7 +24,6 @@ public abstract class IviewPage extends FrameLayout implements Iview {
         isHome = home;
     }
     protected boolean isInit = false;//是否初始化
-    protected boolean isAttr = false;
     protected  boolean isLayout = false;
     public IviewPage(BaseActivity activity) {
         super(activity);
@@ -37,7 +37,7 @@ public abstract class IviewPage extends FrameLayout implements Iview {
     public abstract void setAttrbute();
     @Override
     public void layouted() {
-        Log.i("","layouted() -> "+isLayout);
+        Logs.i("","layouted() - "+isLayout);
         if (!isLayout){
             try {
                 layout.addView(this);
@@ -49,6 +49,7 @@ public abstract class IviewPage extends FrameLayout implements Iview {
     }
     @Override
     public void unLayouted() {
+        Logs.i(TAG,"unLayouted() - "+isLayout);
         if (isLayout){
             try {
                 removeFragment();
@@ -64,6 +65,7 @@ public abstract class IviewPage extends FrameLayout implements Iview {
 
     @Override
     public void startWork() {
+        Logs.i(TAG,"startWork() - "+isLayout);
         try{
             if (!isInit){
                 return;
@@ -79,6 +81,7 @@ public abstract class IviewPage extends FrameLayout implements Iview {
     }
     @Override
     public void stopWork() {
+        Logs.i(TAG,"stopWork() - "+isLayout);
         try {
             unLayouted();
         } catch (Exception e) {
