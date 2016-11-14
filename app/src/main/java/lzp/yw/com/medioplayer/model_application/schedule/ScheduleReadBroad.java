@@ -7,7 +7,7 @@ import android.content.Intent;
 import java.io.File;
 import java.util.List;
 
-import lzp.yw.com.medioplayer.model_command_mission.command_arr.Command_UPSC;
+import lzp.yw.com.medioplayer.model_command_.command_arr.Command_UPSC;
 import lzp.yw.com.medioplayer.model_universal.Logs;
 import lzp.yw.com.medioplayer.model_universal.MD5Util;
 import lzp.yw.com.medioplayer.model_universal.SdCardTools;

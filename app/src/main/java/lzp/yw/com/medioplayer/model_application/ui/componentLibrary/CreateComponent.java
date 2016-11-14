@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.Iview;
+import lzp.yw.com.medioplayer.model_universal.CONTENT_TYPE;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 
 /**
@@ -17,11 +18,12 @@ import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsB
  */
 
 public class CreateComponent {
+    private static final String packageName = "lzp.yw.com.medioplayer.model_application.ui.componentLibrary.";
     private static Map<String,String> referenceViewMap = new HashMap<String,String>();
     static{
-        String packageName = "lzp.yw.com.medioplayer.model_application.ui.componentLibrary.";
-        referenceViewMap.put("image",packageName+"image.CMorePictures");
-        referenceViewMap.put("button",packageName+"button.CButton");
+        referenceViewMap.put(CONTENT_TYPE.image,packageName+"image.CMorePictures");
+        referenceViewMap.put(CONTENT_TYPE.button,packageName+"button.CButton");
+        referenceViewMap.put(CONTENT_TYPE.video,packageName+"video.CMedio");
     }
 
 

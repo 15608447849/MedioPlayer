@@ -1,4 +1,4 @@
-package lzp.yw.com.medioplayer.model_application.ui.componentLibrary.image;
+package lzp.yw.com.medioplayer.model_application.ui.componentLibrary.video;
 
 import android.content.Context;
 import android.widget.AbsoluteLayout;
@@ -10,6 +10,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.IComponent;
+import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.IContentView;
+import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.MedioInterface;
+import lzp.yw.com.medioplayer.model_application.ui.componentLibrary.image.CImageView;
+import lzp.yw.com.medioplayer.model_universal.CONTENT_TYPE;
 import lzp.yw.com.medioplayer.model_universal.Logs;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
@@ -17,27 +21,27 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
 
 /**
- * Created by user on 2016/11/11.
- * 播放图片的组件 - 多图片播放
+ * Created by user on 2016/11/14.
+ * 多媒体 播放组件
  */
-public class CMorePictures extends FrameLayout implements IComponent{
+
+public class CMedio extends FrameLayout implements IComponent,MedioInterface{
     private static final java.lang.String TAG = "CMorePictures";
     private int componentId;
-    private int width;
-    private int height;
+    private int width,height;
     private int x,y;
     private Context context;
     private AbsoluteLayout layout;
-
     private boolean isInitData;
     private boolean isLayout;
-    public CMorePictures(Context context, AbsoluteLayout layout, ComponentsBean component) {
+    public CMedio(Context context,AbsoluteLayout layout, ComponentsBean component) {
         super(context);
         this.context = context;
         this.layout = layout;
         initData(component);
     }
 
+    //初始化数据
     @Override
     public void initData(Object object) {
         try {
@@ -55,29 +59,64 @@ public class CMorePictures extends FrameLayout implements IComponent{
             e.printStackTrace();
         }
     }
+    private ArrayList<IContentView> contentArr = null;
+    //添加 图片组件
+    private void addContentImp(IContentView content){
+        if (contentArr==null){
+            contentArr = new ArrayList<>();
+        }
+        contentArr.add(content);
+    }
+
+    //创建内容
+    @Override
+    public void createContent(Object object) {
+        try {
+            List<ContentsBean> contents = (List<ContentsBean>)object;
+            IContentView imp = null;
+            //只有图片 或者 视频内容
+            for (ContentsBean content : contents){
+                if (content.getMaterialType().equals(CONTENT_TYPE.image)){
+                     imp = new CImageView(context,this,content);
+                }
+                if (content.getMaterialType().equals(CONTENT_TYPE.video)){
+                    imp = new MyVideoViewHolder(context,this,content);
+                }
+                if (imp!=null){
+                    addContentImp(imp);
+                    imp = null;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    //设置属性
     @Override
     public void setAttrbute() {
-//        Logs.i(TAG,"- -setAttrbute()- -");
         this.setLayoutParams(new AbsoluteLayout.LayoutParams(width,height,x,y));
-//        this.setBackgroundColor(Color.BLUE);
     }
+
+    //布局
     @Override
     public void layouted() {
-//        Logs.i(TAG,"- -layouted()- - "+isLayout);
-//        Logs.i(TAG,"- --------------- - "+layout+"\n"+this);
         if (!isLayout){
             layout.addView(this);
             isLayout = true;
         }
+
     }
+
+    //取消布局
     @Override
     public void unLayouted() {
-//        Logs.i(TAG,"- -unLayouted()- - "+isLayout);
         if (isLayout){
             layout.removeView(this);
             isLayout = false;
         }
     }
+    //开始
     @Override
     public void startWork() {
         Logs.i(TAG,"- -startWork()- -");
@@ -92,7 +131,7 @@ public class CMorePictures extends FrameLayout implements IComponent{
             e.printStackTrace();
         }
     }
-
+    //停止
     @Override
     public void stopWork() {
         Logs.i(TAG,"stopWork()");
@@ -103,63 +142,48 @@ public class CMorePictures extends FrameLayout implements IComponent{
             e.printStackTrace();
         }
     }
-//--------------------------------------------------//
-    private ArrayList<CImageView> imageArr = null; //图片 自定义控件
-    //添加 图片组件
-    private void addImage(CImageView imageview){
-        if (imageArr==null){
-            imageArr = new ArrayList<>();
-        }
-        imageArr.add(imageview);
-    }
 
-
-    //创建 内容
-    @Override
-    public void createContent(Object object) {
-        try {
-            List<ContentsBean> contents = (List<ContentsBean>)object;
-            CImageView imageview = null;
-            //只有图片内容
-            for (ContentsBean content : contents){
-                imageview = new CImageView(context,this,content);
-                addImage(imageview);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     private int currentIndex = 0;//当前循环的下标
-    private CImageView currentImageView= null; //当前播放的图片
+    private IContentView currentIView= null; //当前播放的图片
+
+
+    //加载内容
     @Override
     public void loadContent() {
-
-        if (imageArr!=null && imageArr.size()>0){
+        if (contentArr!=null && contentArr.size()>0){
             unLoadContent();
-            currentImageView =  imageArr.get(currentIndex);
-            currentImageView.startWork();
+            currentIView =  contentArr.get(currentIndex);
+            currentIView.startWork();
             //创建计时器
-            startTimer(imageArr.get(currentIndex).getLength() * 1000);
+            startTimer(currentIView.getLength() * 1000);
             currentIndex++;
-            if (currentIndex==imageArr.size()){
+            if (currentIndex==contentArr.size()){
                 currentIndex = 0;
             }
         }
     }
-    // 取消加载内容
+
     @Override
     public void unLoadContent() {
         stopTimer();//停止计时间 停止当前内容
-        if (currentImageView!=null){
-            currentImageView.stopWork();
-            currentImageView = null;
+        if (currentIView!=null){
+            currentIView.stopWork();
+            currentIView = null;
         }
     }
+    //和 视频控件 通讯
+    @Override
+    public void playOver() {
+        loadContent();
+    }
+
+
+
 
     private TimerTask timerTask= null;
     private Timer timer = null;
-
+    //停止计时器
     private void stopTimer(){
         if (timerTask!=null){
             timerTask.cancel();
@@ -170,6 +194,7 @@ public class CMorePictures extends FrameLayout implements IComponent{
             timer = null;
         }
     }
+    //开始计时器
     private void startTimer(long millisecond){
         timerTask = new TimerTask() {
             @Override
@@ -186,4 +211,6 @@ public class CMorePictures extends FrameLayout implements IComponent{
         timer = new Timer();
         timer.schedule(timerTask,millisecond);
     }
+
+
 }

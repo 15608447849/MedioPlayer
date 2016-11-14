@@ -10,7 +10,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.locks.ReentrantLock;
 
-import lzp.yw.com.medioplayer.model_command_mission.CommandPostBroad;
+import lzp.yw.com.medioplayer.model_command_.CommandPostBroad;
 import lzp.yw.com.medioplayer.model_download.singedownload.Loader;
 import lzp.yw.com.medioplayer.model_download.singedownload.LoaderResultCall;
 import lzp.yw.com.medioplayer.model_universal.CMD_INFO;

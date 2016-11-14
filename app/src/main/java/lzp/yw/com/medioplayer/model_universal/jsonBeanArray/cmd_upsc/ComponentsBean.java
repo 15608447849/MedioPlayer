@@ -44,6 +44,7 @@ public class ComponentsBean {
     private int titleShowType;
     private boolean hasContent;
     private int linkId;
+    private List<ContentsBean> contents;
 
     public int getLinkId() {
         return linkId;
@@ -53,7 +54,7 @@ public class ComponentsBean {
         this.linkId = linkId;
     }
 
-    private List<ContentsBean> contents;
+
 
     public List<ContentsBean> getContents() {
         return contents;

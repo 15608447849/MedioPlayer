@@ -6,9 +6,10 @@ import android.graphics.Canvas;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.Iview;
+import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.IContentView;
 import lzp.yw.com.medioplayer.model_application.ui.Uitools.ImageUtils;
 import lzp.yw.com.medioplayer.model_application.ui.Uitools.UiTools;
+import lzp.yw.com.medioplayer.model_universal.Logs;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
 
 /**
@@ -17,16 +18,14 @@ import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ContentsBea
  *
  */
 
-public class CImageView extends ImageView implements Iview{
+public class CImageView extends ImageView implements IContentView{
     private static final java.lang.String TAG = "CImageView";
     private Context mCcontext;
     private FrameLayout layout ;
     private String imagePath;
     private Bitmap bitmap;
     private int length;
-    public int getLength() {
-        return length;
-    }
+
 
     private boolean isInitData;
     private boolean isLayout ;
@@ -35,6 +34,9 @@ public class CImageView extends ImageView implements Iview{
         mCcontext =context;
         this.layout = layout;
         initData(content);
+    }
+    public int getLength() {
+        return length;
     }
 
     @Override
@@ -88,7 +90,7 @@ public class CImageView extends ImageView implements Iview{
 
     @Override
     public void stopWork() {
-//        Logs.i(TAG,"image - stopWork()");
+        Logs.i(TAG,"image - stopWork()");
         try {
             removeBitmap();
             unLayouted();

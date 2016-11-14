@@ -4,7 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 
-import lzp.yw.com.medioplayer.model_command_mission.CommandPostServer;
+import lzp.yw.com.medioplayer.model_command_.CommandPostServer;
 import lzp.yw.com.medioplayer.model_communication.CommunicationServer;
 import lzp.yw.com.medioplayer.model_download.DownloadServer;
 import lzp.yw.com.medioplayer.model_universal.Logs;

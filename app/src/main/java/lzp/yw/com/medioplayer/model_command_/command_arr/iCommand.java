@@ -1,4 +1,4 @@
-package lzp.yw.com.medioplayer.model_command_mission.command_arr;
+package lzp.yw.com.medioplayer.model_command_.command_arr;
 
 /**
  * Created by user on 2016/10/27.

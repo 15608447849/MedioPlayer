@@ -1,4 +1,4 @@
-package lzp.yw.com.medioplayer.model_command_mission;
+package lzp.yw.com.medioplayer.model_command_;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import lzp.yw.com.medioplayer.model_application.baselayer.DataListEntiyStore;
 import lzp.yw.com.medioplayer.model_application.schedule.ScheduleReadBroad;
-import lzp.yw.com.medioplayer.model_command_mission.command_arr.iCommand;
+import lzp.yw.com.medioplayer.model_command_.command_arr.iCommand;
 import lzp.yw.com.medioplayer.model_universal.Logs;
 import lzp.yw.com.medioplayer.model_universal.MD5Util;
 import lzp.yw.com.medioplayer.model_universal.SdCardTools;

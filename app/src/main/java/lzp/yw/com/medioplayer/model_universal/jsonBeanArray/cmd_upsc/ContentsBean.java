@@ -26,77 +26,25 @@ public class ContentsBean {
      "timeLength":10,
      "playTimes":1
      */
-    private int id;
-    private int componentId;
-    private String contentName;
-    private String contentType;
-    private String materialType;
-    private String checkState;
-    private boolean checked;
-    private String contentSource;
-    private String categoryId;
-    private String subcategoryId;
-    private String updateFreq;
+
+    private String contentType;//类型
+    private String contentSource;//image 资源 news资源uri 图集资源uri
+    private String materialType;//如果是video(多媒体)是 需要判断的字段
+
+    private String sourceUp;//button 资源 默认时
+    private String sourceDown;// button 资源 按下时
+
     private int timeLength;//时长
     private int playTimes;//次数
     private int playIndex;//内容下标
+    private boolean transparent;//是否透明
 
-    public String getContentName() {
-        return contentName;
+    public String getSourceDown() {
+        return sourceDown;
     }
-
-    public void setContentName(String contentName) {
-        this.contentName = contentName;
+    public void setSourceDown(String sourceDown) {
+        this.sourceDown = sourceDown;
     }
-
-    public int getTimeLength() {
-        return timeLength;
-    }
-
-    public void setTimeLength(int timeLength) {
-        this.timeLength = timeLength;
-    }
-
-    public int getPlayTimes() {
-        return playTimes;
-    }
-
-    public void setPlayTimes(int playTimes) {
-        this.playTimes = playTimes;
-    }
-
-    public int getPlayIndex() {
-        return playIndex;
-    }
-
-    public void setPlayIndex(int playIndex) {
-        this.playIndex = playIndex;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getComponentId() {
-        return componentId;
-    }
-
-    public void setComponentId(int componentId) {
-        this.componentId = componentId;
-    }
-
-    public String getContentType() {
-        return contentType;
-    }
-
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
-    }
-
     public String getMaterialType() {
         return materialType;
     }
@@ -104,52 +52,51 @@ public class ContentsBean {
     public void setMaterialType(String materialType) {
         this.materialType = materialType;
     }
-
-    public String getCheckState() {
-        return checkState;
+    public int getTimeLength() {
+        return timeLength;
+    }
+    public void setTimeLength(int timeLength) {
+        this.timeLength = timeLength;
+    }
+    public int getPlayTimes() {
+        return playTimes;
+    }
+    public void setPlayTimes(int playTimes) {
+        this.playTimes = playTimes;
+    }
+    public int getPlayIndex() {
+        return playIndex;
+    }
+    public void setPlayIndex(int playIndex) {
+        this.playIndex = playIndex;
     }
 
-    public void setCheckState(String checkState) {
-        this.checkState = checkState;
+    public String getContentType() {
+        return contentType;
     }
-
-    public boolean isChecked() {
-        return checked;
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
-
-    public void setChecked(boolean checked) {
-        this.checked = checked;
-    }
-
     public String getContentSource() {
         return contentSource;
     }
-
     public void setContentSource(String contentSource) {
         this.contentSource = contentSource;
     }
 
-    public String getCategoryId() {
-        return categoryId;
+    public String getSourceUp() {
+        return sourceUp;
     }
 
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
+    public void setSourceUp(String sourceUp) {
+        this.sourceUp = sourceUp;
     }
 
-    public String getSubcategoryId() {
-        return subcategoryId;
+    public boolean isTransparent() {
+        return transparent;
     }
 
-    public void setSubcategoryId(String subcategoryId) {
-        this.subcategoryId = subcategoryId;
-    }
-
-    public String getUpdateFreq() {
-        return updateFreq;
-    }
-
-    public void setUpdateFreq(String updateFreq) {
-        this.updateFreq = updateFreq;
+    public void setTransparent(boolean transparent) {
+        this.transparent = transparent;
     }
 }

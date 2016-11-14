@@ -1,4 +1,4 @@
-package lzp.yw.com.medioplayer.model_command_mission;
+package lzp.yw.com.medioplayer.model_command_;
 
 import android.app.Service;
 import android.content.Intent;
@@ -7,11 +7,11 @@ import android.os.IBinder;
 
 import java.util.HashMap;
 
-import lzp.yw.com.medioplayer.model_command_mission.command_arr.Command_SHDO;
-import lzp.yw.com.medioplayer.model_command_mission.command_arr.Command_SYTI;
-import lzp.yw.com.medioplayer.model_command_mission.command_arr.Command_UPSC;
-import lzp.yw.com.medioplayer.model_command_mission.command_arr.Command_VOLU;
-import lzp.yw.com.medioplayer.model_command_mission.command_arr.iCommand;
+import lzp.yw.com.medioplayer.model_command_.command_arr.Command_SHDO;
+import lzp.yw.com.medioplayer.model_command_.command_arr.Command_SYTI;
+import lzp.yw.com.medioplayer.model_command_.command_arr.Command_UPSC;
+import lzp.yw.com.medioplayer.model_command_.command_arr.Command_VOLU;
+import lzp.yw.com.medioplayer.model_command_.command_arr.iCommand;
 import lzp.yw.com.medioplayer.model_universal.CMD_INFO;
 import lzp.yw.com.medioplayer.model_universal.Logs;
 import rx.Scheduler;
@@ -97,7 +97,7 @@ public class CommandPostServer extends Service {
     /**
      * 收到一个命令
      */
-    public void reserveCmd(String cmd,String param){
+    public void reserveCmd(final String cmd, final String param){
         Logs.i(TAG,"收到一个命令 ["+cmd+ " ] -  参数: [ "+ param+" ]");
 
         if (commandList==null){

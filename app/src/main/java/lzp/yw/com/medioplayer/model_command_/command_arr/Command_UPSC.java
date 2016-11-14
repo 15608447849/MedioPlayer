@@ -1,4 +1,4 @@
-package lzp.yw.com.medioplayer.model_command_mission.command_arr;
+package lzp.yw.com.medioplayer.model_command_.command_arr;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 import lzp.yw.com.medioplayer.model_application.baselayer.DataListEntiyStore;
-import lzp.yw.com.medioplayer.model_command_mission.JsonDataStore;
+import lzp.yw.com.medioplayer.model_command_.JsonDataStore;
 import lzp.yw.com.medioplayer.model_download.DownloadBroad;
 import lzp.yw.com.medioplayer.model_universal.AppsTools;
 import lzp.yw.com.medioplayer.model_universal.CONTENT_TYPE;
@@ -69,7 +69,6 @@ public class Command_UPSC implements iCommand {
             loadingList.clear();
             Logs.d(TAG,"任务清空,当前数量:" + loadingList.size());
         }
-        initContentArray();
     }
     /**
      * 添加任务
@@ -90,34 +89,8 @@ public class Command_UPSC implements iCommand {
             Logs.e(TAG," add task failt ,because is exist !!!");
         }
     }
-    /**
-     *  组件具体内容 队列
-     */
-    private ArrayList<String []> contentArray = null;
-    //初始化内容列表
-    private void initContentArray(){
-      if (contentArray == null){
-          contentArray = new ArrayList<String []>();
-      }else{
-          contentArray.clear();
-          Logs.i(TAG,"contentArray 清空");
-      }
-    }
-    //添加
-    public void addContentOnArr(String [] contentArr){
-        if (contentArr==null || contentArray == null){
-            return;
-        }
-        if (contentArr.length!=2){
-            return;
-        }
-        if (!contentArray.contains(contentArr)){
-            contentArray.add(contentArr);
-        }
-    }
     //结果
     private String res;
-
     /**
      *   入口-------------------------------------------------------------------------------------------------------------------------------------------------
      * @param param
@@ -140,7 +113,7 @@ public class Command_UPSC implements iCommand {
                  initLoadingList();
                  startTime = System.currentTimeMillis();
                  parseScheduleList(list);
-                 loopContentArray();
+
                  endTime = System.currentTimeMillis();
                  Logs.e(TAG,"解析排期 用时 : "+(endTime - startTime)+" 毫秒 ");
 
@@ -352,44 +325,23 @@ public class Command_UPSC implements iCommand {
     /**
      * 解析内容
      * @param content
-     *
+    Logs.d(TAG,"                * 内容 materialType 材料类型 ^ "+content.getMaterialType());
+    Logs.d(TAG,"                * 内容 check State ^ "+content.getCheckState());
+    Logs.d(TAG,"                * 内容 checked ^ "+content.isChecked());
+    Logs.d(TAG,"                * 内容 categoryId 类别id  ^ "+content.getCategoryId());
+    Logs.d(TAG,"                * 内容 subcategoryId 子类别id  ^ "+content.getSubcategoryId());
+    Logs.d(TAG,"                * 内容 updateFreq 更新频率  ^ "+content.getUpdateFreq());
+    Logs.d(TAG,"                * 内容 id ^ "+content.getId());
+    Logs.d(TAG,"                * 内容 componentId ^ "+content.getComponentId());
      */
     private void parseContent(ContentsBean content) {
-        Logs.d(TAG,"                * 内容 id ^ "+content.getId());
-        Logs.d(TAG,"                * 内容 componentId ^ "+content.getComponentId());
         Logs.d(TAG,"                * 内容 contentType ^ "+content.getContentType());
-        Logs.d(TAG,"                * 内容 materialType 材料类型 ^ "+content.getMaterialType());
-        Logs.d(TAG,"                * 内容 check State ^ "+content.getCheckState());
-        Logs.d(TAG,"                * 内容 checked ^ "+content.isChecked());
         Logs.d(TAG,"                * 内容 contentSource ^ "+content.getContentSource());
-        Logs.d(TAG,"                * 内容 categoryId 类别id  ^ "+content.getCategoryId());
-        Logs.d(TAG,"                * 内容 subcategoryId 子类别id  ^ "+content.getSubcategoryId());
-        Logs.d(TAG,"                * 内容 updateFreq 更新频率  ^ "+content.getUpdateFreq());
-//        parseContentSourece(content.getContentType(),content.getContentSource());
-
-        if (content.getContentType()!=null && !content.getContentType().equals("") && content.getContentSource()!=null && !content.getContentSource().equals("")){
-            addContentOnArr(new String[]{content.getContentType(),content.getContentSource()});
-        }
-
+        parseContentSourece(content.getContentType(),content);
     }
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-    /**
-     * 循环具体内容 处理...
-     */
-    private void  loopContentArray(){
 
-        if (contentArray!=null && contentArray.size()>0){
-                for (String[] arr : contentArray){
-                        try {
-                            parseContentSourece(arr[0],arr[1]);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                }
-        }
-
-    }
 
 
     /**
@@ -426,22 +378,31 @@ public class Command_UPSC implements iCommand {
      *"id": "13","code": "gallary", "label": "图集",
      *"id": "14", "code": "news", "label": "资讯",
      */
-    private void parseContentSourece(String contentType, String contentSource) {
+    private void parseContentSourece(String contentType, ContentsBean content) {
 
-        Logs.d(TAG,"解析具体内容 来源 "+contentType+"_" + contentSource);
-
-        if (contentType.equals(CONTENT_TYPE.gallary)){
-            //图集
-            getGallarySource(contentSource);
-        }
-        if (contentType.equals(CONTENT_TYPE.news)){
-            getNewsSource(contentSource);
-        }
+        Logs.d(TAG,">>>> 解析具体内容 来源 " + contentType);
+        //图片
         if (contentType.equals(CONTENT_TYPE.image)){
-            addTaskOnList(contentSource);
+            addTaskOnList(content.getContentSource());
         }
+        //按钮
+        if (contentType.equals(CONTENT_TYPE.button)){
+            //默认展示图片
+            addTaskOnList(content.getSourceUp());
+            //点击时展示图片
+            addTaskOnList(content.getSourceDown());
+        }
+        //视频
         if (contentType.equals(CONTENT_TYPE.video)){
-            addTaskOnList(contentSource);
+            addTaskOnList(content.getContentSource());
+        }
+        //图集
+        if (contentType.equals(CONTENT_TYPE.gallary)){
+          //  getUrlSource(content.getContentSource());
+        }
+        //电子报
+        if (contentType.equals(CONTENT_TYPE.news)){
+         //   getUrlSource(content.getContentSource());
         }
         if (contentType.equals(CONTENT_TYPE.epaper)){
         }
@@ -465,9 +426,10 @@ public class Command_UPSC implements iCommand {
 
     /**
      * 获取图集资源
+     * 获取电子报资源
      * @param contentSource
      */
-    private void getGallarySource(String contentSource) {
+    private void getUrlSource(String contentSource) {
 
         try {
             contentSource = AppsTools.justUriIsBase64GetUrl(contentSource);//URL
@@ -497,37 +459,37 @@ public class Command_UPSC implements iCommand {
         Logs.i(TAG,"content _ grallry > totalPageCount " +gallaryBean.getTotalPageCount() );
         if (gallaryBean.getDataObjs()!=null && gallaryBean.getDataObjs().size()>0){
             for (DataObjsBean dataobj : gallaryBean.getDataObjs()){
-                parseGallarysData(dataobj);
+                parseContentUrlData(dataobj);
             }
         }
     }
     /**
-     * 图集下的数据集合
+     * 内容下的url获取的数据集合
      * @param dataobj
      */
-    private void parseGallarysData(DataObjsBean dataobj) {
-        Logs.i(TAG,"content _ grallry _data > id " +dataobj.getId());
-        Logs.i(TAG,"content _ grallry _data > cretime " +dataobj.getCretime());
-        Logs.i(TAG,"content _ grallry _data > updtime " +dataobj.getUpdtime());
-        Logs.i(TAG,"content _ grallry _data > creatorUserId " +dataobj.getCreatorUserId());
-        Logs.i(TAG,"content _ grallry _data > title " +dataobj.getTitle());
-        Logs.i(TAG,"content _ grallry _data > isShowTitle " +dataobj.getIsShowTitle());
-        Logs.i(TAG,"content _ grallry _data > usedStatus " +dataobj.getUsedStatus());
-        Logs.i(TAG,"content _ grallry _data > format " +dataobj.getFormat());
-        Logs.i(TAG,"content _ grallry _data > url " +dataobj.getUrl());
+    private void parseContentUrlData(DataObjsBean dataobj) {
+        Logs.i(TAG,"content _ URL _data > id " +dataobj.getId());
+        Logs.i(TAG,"content _ URL _data > cretime " +dataobj.getCretime());
+        Logs.i(TAG,"content _ URL _data > updtime " +dataobj.getUpdtime());
+        Logs.i(TAG,"content _ URL _data > creatorUserId " +dataobj.getCreatorUserId());
+        Logs.i(TAG,"content _ URL _data > title " +dataobj.getTitle());
+        Logs.i(TAG,"content _ URL _data > isShowTitle " +dataobj.getIsShowTitle());
+        Logs.i(TAG,"content _ URL _data > usedStatus " +dataobj.getUsedStatus());
+        Logs.i(TAG,"content _ URL _data > format " +dataobj.getFormat());
+        Logs.i(TAG,"content _ URL _data > url " +dataobj.getUrl());
         addTaskOnList(dataobj.getUrl());
-        Logs.i(TAG,"content _ grallry _data > media " +dataobj.getMedia());
-        Logs.i(TAG,"content _ grallry _data > newName " +dataobj.getNewName());
-        Logs.i(TAG,"content _ grallry _data > fileName " +dataobj.getFileName());
-        Logs.i(TAG,"content _ grallry _data > createdBy " +dataobj.getCreatedBy());
-        Logs.i(TAG,"content _ grallry _data > upDate " +dataobj.getUpDate());
-        Logs.i(TAG,"content _ grallry _data > selectType " +dataobj.getSelectType());
-        Logs.i(TAG,"content _ grallry _data > typeId " +dataobj.getTypeId());
-        Logs.i(TAG,"content _ grallry _data > updtimeStr " +dataobj.getUpdtimeStr());
+        Logs.i(TAG,"content _ URL _data > media " +dataobj.getMedia());
+        Logs.i(TAG,"content _ URL _data > newName " +dataobj.getNewName());
+        Logs.i(TAG,"content _ URL _data > fileName " +dataobj.getFileName());
+        Logs.i(TAG,"content _ URL _data > createdBy " +dataobj.getCreatedBy());
+        Logs.i(TAG,"content _ URL _data > upDate " +dataobj.getUpDate());
+        Logs.i(TAG,"content _ URL _data > selectType " +dataobj.getSelectType());
+        Logs.i(TAG,"content _ URL _data > typeId " +dataobj.getTypeId());
+        Logs.i(TAG,"content _ URL _data > updtimeStr " +dataobj.getUpdtimeStr());
         if (dataobj.getUrls()!=null && !dataobj.getUrls().equals("")){
             Logs.i(TAG,"content _ grallry _data > urls " + dataobj.getUpdtimeStr());
                 //切割字符串
-                parseGallaryNewsUris(dataobj.getUrls());
+            parseContentsUrisContent(dataobj.getUrls());
         }
     }
 
@@ -535,7 +497,7 @@ public class Command_UPSC implements iCommand {
      *  多个url
      * @param urls
      */
-    private void parseGallaryNewsUris(String urls) {
+    private void parseContentsUrisContent(String urls) {
         try {
             String [] urlarr = urls.split(",");
             for(int i=0;i<urlarr.length;i++){
@@ -544,10 +506,6 @@ public class Command_UPSC implements iCommand {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-    // news 新闻电子报
-    private void getNewsSource(String contentSource) {
-          getGallarySource(contentSource);
     }
 
     Intent intent = new Intent();

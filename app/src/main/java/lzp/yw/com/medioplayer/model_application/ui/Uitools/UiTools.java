@@ -50,7 +50,7 @@ public class UiTools {
     //获取Uri的文件名
     public static String getUrlTanslationFilename(String url){
         //      ftp://ftp:FTPmedia@172.16.0.17:21/content/1476427174433.jpg
-        return dle.GetStringDefualt("basepath","")+url.substring(url.lastIndexOf("/")+1);
+        return "".equals(url.substring(url.lastIndexOf("/")+1))?null:dle.GetStringDefualt("basepath","")+url.substring(url.lastIndexOf("/")+1);
 
     }
 

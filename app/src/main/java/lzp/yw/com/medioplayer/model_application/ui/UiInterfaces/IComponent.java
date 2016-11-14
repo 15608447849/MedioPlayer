@@ -9,5 +9,6 @@ public interface IComponent extends Iview{
     public void createContent(Object object);
     //加载 组件内容
     public void loadContent();
-
+    //取消 组件内容
+    public void unLoadContent();
 }

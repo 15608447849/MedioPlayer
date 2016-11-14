@@ -16,8 +16,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import lzp.yw.com.medioplayer.model_application.baselayer.DataListEntiyStore;
-import lzp.yw.com.medioplayer.model_command_mission.CommandPostBroad;
-import lzp.yw.com.medioplayer.model_command_mission.command_arr.Command_SYTI;
+import lzp.yw.com.medioplayer.model_command_.CommandPostBroad;
+import lzp.yw.com.medioplayer.model_command_.command_arr.Command_SYTI;
 import lzp.yw.com.medioplayer.model_universal.Logs;
 import lzp.yw.com.medioplayer.model_universal.httpconnect.HttpProxy;
 import rx.functions.Action1;
@@ -139,7 +139,7 @@ public class CommunicationServer extends Service {
         if (dataList!=null){
             ip = dataList.GetStringDefualt("serverip","127.0.0.1");
             port = dataList.GetStringDefualt("serverport","8000");
-            terminalId = "10001110";//"10000125";//"10000141";//"10000090";//dataList.GetStringDefualt("terminalNo","0000");
+            terminalId = "10000090";//"10001110";//"10000125";//"10000141";//dataList.GetStringDefualt("terminalNo","0000");
             heartBeatTime = dataList.GetIntDefualt("HeartBeatInterval",1);
         }
     }

@@ -51,7 +51,7 @@
             android:process="lzp.yw.communticate" />
         <!-- 派发任务 服务 -->
         <service
-            android:name=".model_command_mission.CommandPostServer"
+            android:name=".model_command_.CommandPostServer"
             android:process="lzp.yw.download" />
         <!-- 下载服务 -->
         <service

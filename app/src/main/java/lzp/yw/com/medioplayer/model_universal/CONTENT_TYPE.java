@@ -70,5 +70,9 @@ public class CONTENT_TYPE {
      */
     public static final String html ="html";
 
+    /**
+     * 按钮
+     */
+    public static final String button ="button";
 
 }
