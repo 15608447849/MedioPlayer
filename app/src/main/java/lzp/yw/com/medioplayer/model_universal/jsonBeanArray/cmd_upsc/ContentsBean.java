@@ -39,6 +39,26 @@ public class ContentsBean {
     private int playIndex;//内容下标
     private boolean transparent;//是否透明
 
+    //文本控件相关
+    private String contentName;//标题
+    private String contents;//内容
+
+    public String getContentName() {
+        return contentName;
+    }
+
+    public void setContentName(String contentName) {
+        this.contentName = contentName;
+    }
+
+    public String getContents() {
+        return contents;
+    }
+
+    public void setContents(String contents) {
+        this.contents = contents;
+    }
+
     public String getSourceDown() {
         return sourceDown;
     }

@@ -42,6 +42,7 @@ public class UiTools {
 
         }catch (Exception e){
            e.printStackTrace();
+            color= "#FFFFFF";
         }
         Log.i(""," - - color code tanslate code ->"+color);
         return color;

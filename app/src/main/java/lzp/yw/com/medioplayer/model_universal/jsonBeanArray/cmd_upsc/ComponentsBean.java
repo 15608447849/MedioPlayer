@@ -37,13 +37,23 @@ public class ComponentsBean {
     private String componentTypeCode;
     private boolean interactEnabled;
     private int order;
-    private String backgroundAlpha;
-    private String backgroundColor;
-    private String backgroundPic;
+    private int backgroundAlpha;//背景透明度
+    private String backgroundColor;//背景颜色
+    private String backgroundPic;//背景图片url
     private String backgroundPicName;
     private int titleShowType;
+
+    public int getBackgroundAlpha() {
+        return backgroundAlpha;
+    }
+
+    public void setBackgroundAlpha(int backgroundAlpha) {
+        this.backgroundAlpha = backgroundAlpha;
+    }
+
     private boolean hasContent;
     private int linkId;
+
     private List<ContentsBean> contents;
 
     public int getLinkId() {
@@ -136,13 +146,7 @@ public class ComponentsBean {
         this.order = order;
     }
 
-    public String getBackgroundAlpha() {
-        return backgroundAlpha;
-    }
 
-    public void setBackgroundAlpha(String backgroundAlpha) {
-        this.backgroundAlpha = backgroundAlpha;
-    }
 
     public String getBackgroundColor() {
         return backgroundColor;

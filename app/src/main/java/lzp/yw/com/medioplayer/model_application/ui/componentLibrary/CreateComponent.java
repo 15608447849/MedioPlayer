@@ -24,6 +24,7 @@ public class CreateComponent {
         referenceViewMap.put(CONTENT_TYPE.image,packageName+"image.CMorePictures");
         referenceViewMap.put(CONTENT_TYPE.button,packageName+"button.CButton");
         referenceViewMap.put(CONTENT_TYPE.video,packageName+"video.CMedio");
+        referenceViewMap.put(CONTENT_TYPE.text,packageName+"textshow.TextViewPager");
     }
 
 
