@@ -2,13 +2,13 @@ package lzp.yw.com.medioplayer.model_application.ui.componentLibrary.button;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsoluteLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-import lzp.yw.com.medioplayer.R;
 import lzp.yw.com.medioplayer.model_application.baselayer.BaseActivity;
 import lzp.yw.com.medioplayer.model_application.ui.UiFactory.UiManager;
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.Iview;
@@ -91,7 +91,8 @@ public class CButton extends ImageButton implements View.OnClickListener,View.On
             this.setImageBitmap(upBitmap);
         }else{
             Logs.i(TAG,"-- 使用默认图片 --");
-            this.setImageResource(R.mipmap.click_image);//没有指定图片 使用默认图片
+           // this.setImageResource(R.drawable.onclick_up);//没有指定图片 使用默认图片
+            this.setBackgroundColor(Color.TRANSPARENT);
         }
     }
     //清理bitmap
