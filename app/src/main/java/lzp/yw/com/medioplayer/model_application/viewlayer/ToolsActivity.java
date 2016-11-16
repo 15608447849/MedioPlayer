@@ -14,9 +14,9 @@ import butterknife.ButterKnife;
 import lzp.yw.com.medioplayer.R;
 import lzp.yw.com.medioplayer.model_application.baselayer.BaseActivity;
 import lzp.yw.com.medioplayer.model_application.baselayer.DataListEntiyStore;
+import lzp.yw.com.medioplayer.model_universal.AppsTools;
 import lzp.yw.com.medioplayer.model_universal.Logs;
 import lzp.yw.com.medioplayer.model_universal.SdCardTools;
-import lzp.yw.com.medioplayer.model_universal.AppsTools;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.TerminalNo;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
@@ -59,17 +59,16 @@ public class ToolsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wostools);
-
-        //开启全部服务
-        initAllServer();
         ButterKnife.bind(this);
-        gotoApp();
-        //初始化数据
-        initData();
-        //初始化控件信息
-        initViewValue();
-        mBindCommuniServer();//绑定通讯服务
-
+        if(gotoApp()){
+            //开启通讯服务
+            initAllServer("communication");
+            //初始化数据
+            initData();
+            //初始化控件信息
+            initViewValue();
+            mBindCommuniServer();//绑定通讯服务
+        }
     }
 
 
@@ -230,7 +229,9 @@ public class ToolsActivity extends BaseActivity {
         if (!isGetDataing){ //不在获取数据中
             if(save()){
                 //发送上线指令
-                sendMsgCommServer("sendTerminaOnline", null);
+//                sendMsgCommServer("sendTerminaOnline", null);
+                mUnbindCommuniServer();//取消绑定
+                closeAllServer("communication");
                 //进入应用
                 gotoApp();
             }
@@ -240,16 +241,17 @@ public class ToolsActivity extends BaseActivity {
     /**
      * 进入应用界面
      */
-    private void gotoApp() {
+    private boolean gotoApp() {
         if (DataListEntiyStore.isSettingServerInfo(getApplicationContext())){
             // 已设置过服务器信息
-            Intent intent = new Intent(this, MainActivity.class);
-            this.startActivity(intent);
+            this.startActivity(new Intent(this, MainActivity.class));
             this.finish();
+            return false;
         }
+        return true;
     }
     @Override
-    public void receiveService(String result) {
+    public void receiveService(final String result) {
         super.receiveService(result);
         AndroidSchedulers.mainThread().createWorker().schedule(new Action0() {
             @Override

@@ -52,11 +52,23 @@
         <!-- 派发任务 服务 -->
         <service
             android:name=".model_command_.CommandPostServer"
-            android:process="lzp.yw.download" />
+            android:process=":remote" />
         <!-- 下载服务 -->
         <service
             android:name=".model_download.DownloadServer"
             android:process="lzp.yw.download"/>
+
+        <!-- 拨叉sdcard 广播 -->
+        <receiver android:name=".model_universal.SdcardBroad">
+            <intent-filter android:priority="1000">
+                <action android:name="android.intent.action.MEDIA_MOUNTED"/>
+                <action android:name="android.intent.action.MEDIA_EJECT" />
+                <data android:scheme="file"/>
+            </intent-filter>
+        </receiver>
     </application>
+
+
+
 
 </manifest>

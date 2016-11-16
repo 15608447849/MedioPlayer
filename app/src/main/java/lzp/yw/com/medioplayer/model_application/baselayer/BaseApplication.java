@@ -25,13 +25,52 @@ public class BaseApplication extends Application{
     /**
      * 初始化 打开所有服务
      */
-    public void initStartServer(){
-        //打开 通讯服务
-        startAppServer(CommunicationServer.class);
-        //打开 命令分发服务
-        startAppServer(CommandPostServer.class);
-        //打开 下载服务
-        startAppServer(DownloadServer.class);
+    public void initStartServer(String serverName){
+        if ("all".equals(serverName)){
+            //打开 命令分发服务
+            startAppServer(CommandPostServer.class);
+            //打开 下载服务
+            startAppServer(DownloadServer.class);
+            //打开 通讯服务
+            startAppServer(CommunicationServer.class);
+        }
+        if ("communication".equals(serverName)){
+            //通讯服务
+            startAppServer(CommunicationServer.class);
+        }
+        if ("download".equals(serverName)){
+            //打开 下载服务
+            startAppServer(DownloadServer.class);
+        }
+        if ("command".equals(serverName)){
+            //打开 命令分发服务
+            startAppServer(CommandPostServer.class);
+        }
+    }
+    /**
+     * 初始化 打开所有服务
+     */
+    public void closeServer(String serverName){
+        if ("all".equals(serverName)){
+            // 通讯服务
+            closeAppServer(CommunicationServer.class);
+            // 命令分发服务
+            closeAppServer(CommandPostServer.class);
+            // 下载服务
+            closeAppServer(DownloadServer.class);
+        }
+        if ("communication".equals(serverName)){
+            //通讯服务
+            closeAppServer(CommunicationServer.class);
+        }
+        if ("download".equals(serverName)){
+            //打开 下载服务
+            closeAppServer(DownloadServer.class);
+        }
+        if ("command".equals(serverName)){
+            //打开 命令分发服务
+            closeAppServer(CommandPostServer.class);
+        }
     }
 
     /**

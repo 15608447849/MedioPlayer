@@ -74,10 +74,16 @@ public class BaseActivity extends Activity {
     /**
      * 初始化全部的服务
      */
-    public void initAllServer(){
-        ((BaseApplication)getApplication()).initStartServer();
+    public void initAllServer(String serverName){
+            ((BaseApplication)getApplication()).initStartServer(serverName);
     }
 
+    /**
+     * 关闭服务
+     */
+    public void closeAllServer(String serverName){
+        ((BaseApplication)getApplication()).closeServer(serverName);
+    }
     @Override
     protected void onStop() {
         super.onStop();
@@ -87,7 +93,6 @@ public class BaseActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mUnbindCommuniServer();
         removeActivityOnArr(this);
     }
 
@@ -186,9 +191,10 @@ public class BaseActivity extends Activity {
     public void mUnbindCommuniServer(){
         if (serConnImp!=null){
             unbindService(serConnImp);
+            serConnImp=null;
         }
-
     }
+
     /**
      * 发送消息去 服务
      */

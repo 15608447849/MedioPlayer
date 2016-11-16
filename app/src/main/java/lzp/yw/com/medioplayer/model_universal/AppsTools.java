@@ -18,8 +18,6 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
@@ -31,6 +29,10 @@ import static android.support.v7.widget.StaggeredGridLayoutManager.TAG;
  * Created by user on 2016/10/26.
  */
 public class AppsTools {
+    //随机数
+    public static int randomNum(int min,int max){
+        return (int)(min+Math.random()*max);
+    }
 
     private static String callCmd(String cmd,String filter) {
         String result = "";

@@ -304,18 +304,18 @@ public class SdCardTools {
 
                 if (fileList.contains(children[i])){
                     //log.d("","保留 - "+children[i]);
-                        continue;
+                    continue;
                 }
                 subFile = new File(dir_path+children[i]);
                 if (subFile.exists()){
-                  //  log.d("","准备删除 - "+children[i]);
+                    //  log.d("","准备删除 - "+children[i]);
                     if(justFileLastModified(subFile)){
                         subFile.delete();
                     }
                 }
             }
         }
-  }
+    }
     /**
      * 删除文件夹下所有内容
      */
@@ -379,25 +379,44 @@ public class SdCardTools {
         String tags = "#file_sdcard";
         if(!SdCardTools.existSDCard()){
             Log.e(tags," sdcard is no exist ! ");
-            Log.e(tags," application store dir-> "+getAppSourceDir(context));
+            appSourcePath = getDataDataAppDir(context);
+            Log.e(tags," application store dir-> "+appSourcePath);
         }else{
+            appSourcePath=getSDPath();
             String [] paths = SdCardTools.getVolumePaths(context);
             if (paths!=null && paths.length>0){
+                File dir = null;
                 Log.i(tags,"---------------------------------- sd card path info ------------------------------------");
-                Log.i(tags," 当前 sdcard path:"+ getSDPath() +"\n 可存贮的所有路径数量:"+paths.length);
-                appSourcePath=getSDPath();
-
+                Log.i(tags," 当前 sdcard path:"+ appSourcePath+"\n 可存贮的所有路径数量:"+ paths.length);
                 for (String path : paths){
-                    Log.i(tags,"  "+ path);
+                    Log.i(tags," 路径 - "+ path);
+                    // 优先级 1
                     if (path.equals("/mnt/external_sd")){
-                     appSourcePath = path;
-                        break;
+                        dir= new File(path);
+                        if (dir.exists()){
+                            if(MkDir(dir.toString()+"/test")){
+                                appSourcePath=path;
+                                break;
+                            }
+                        }
                     }
+                    //优先级2
+                    if (path.contains("usb")){
+                        dir = new File(path);
+                        if (dir.exists()){
+                            if(MkDir(dir.toString()+"/test")){
+                                appSourcePath=path;
+                                break;
+                            }
+                        }
+                    }
+
                 }
             }
         }
         appSourcePath += SdCardTools.app_dir;
         MkDir(appSourcePath);
+        Log.i(tags," 最优 sdcard path: "+ appSourcePath);
     }
 
 
@@ -407,15 +426,19 @@ public class SdCardTools {
      *
      * @param pathdir
      */
-    public static void MkDir(String pathdir) {
+    public static boolean MkDir(String pathdir) {
         try {
             File file = new File(pathdir);
             if (!file.exists()) {
                 file.mkdirs();
             }
+            if (file.exists()){
+                return true;
+            }
         } catch (Exception e) {
             Log.i("MkDir", e.getMessage());
         }
+        return false;
     }
 
 
@@ -460,7 +483,7 @@ public class SdCardTools {
                 byte[] bytes = new byte[1024];
                 int len = 0;
                 while((len=inStream.read(bytes))!=-1){
-                  sb.append(new String(bytes,0,len,"UTF-8"));
+                    sb.append(new String(bytes,0,len,"UTF-8"));
                 }
                 content = sb.toString();
             }
@@ -506,13 +529,5 @@ public class SdCardTools {
             Log.i("","备份数据完成");
         }
     }
-
-
-
-
-
-
-
-
 
 }

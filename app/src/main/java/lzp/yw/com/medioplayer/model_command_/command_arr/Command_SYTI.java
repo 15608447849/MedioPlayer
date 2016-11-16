@@ -22,24 +22,24 @@ public class Command_SYTI implements iCommand {
     private static final String TAG = "SYTI";
     @Override
     public void Execute(String param) {
-        Logs.i(TAG,"终端时间同步 parama:"+param +";当前线程:"+Thread.currentThread().getName());
+        Logs.i(TAG,"终端时间同步 parama:["+param +"]\n当前线程:"+Thread.currentThread().getName());
 
         if (!RegexMatches(param)){
             Logs.e(TAG,"Sync server time err, param not Matches ,param = " + param);
             return;
         }
         if(justTime(param,null,true)){
-
             return;
         }
 
         String settingTime = param.replaceAll("-", "").replace(":","").replaceAll(" ", ".");
         Logs.i(TAG,settingTime);
         String newTime = null;
-        Logs.e(TAG,"srtting zone GMT+08:00 >>> ");
+
         newTime = liunx_SU_syncTimeCmd(settingTime,"GMT+08:00");
+        Logs.i(TAG,"srtting zone GMT+08:00 >>> - "+newTime);
         if(!justTime(param,newTime,false)){
-            Logs.e(TAG,"srtting zone GMT-08:00 >>> ");
+            Logs.i(TAG,"srtting zone GMT-08:00 >>> ");
             liunx_SU_syncTimeCmd(settingTime,"GMT-08:00");
         }
     }
@@ -80,8 +80,10 @@ public class Command_SYTI implements iCommand {
                 }
 
             }else{
+                if (nt==null || nt.equals("")){
+                    return false;
+                }
                 currentTime = dataFormatUtils.parse(nt).getTime();
-
                 if (Math.abs(currentTime-systemTime) < (10 * 1000)){
                     Logs.e(TAG, "同步时间 正确");
                     return true;
