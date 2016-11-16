@@ -483,8 +483,10 @@ public class Loader {
 
         Logs.i(TAG, "FTP任务["+fileName+"]\n >>所在线程:"+ Thread.currentThread().getName());
 
-        final ActiveFtpUtils ftp = new ActiveFtpUtils(host,port,user,pass);
-        ftp.downloadSingleFile(remotePath + fileName,
+       // final ActiveFtpUtils ftp = new ActiveFtpUtils(host,port,user,pass);
+        ActiveFtpUtils
+                .getInstants(host,port,user,pass)
+                .downloadSingleFile(remotePath + fileName,
                 localPath,
                 fileName,
                 3,//重新链接次数

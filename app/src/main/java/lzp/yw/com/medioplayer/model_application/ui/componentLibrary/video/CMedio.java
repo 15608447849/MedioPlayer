@@ -72,14 +72,19 @@ public class CMedio extends FrameLayout implements IComponent,MedioInterface{
     @Override
     public void createContent(Object object) {
         try {
+            String type = null;
             List<ContentsBean> contents = (List<ContentsBean>)object;
             IContentView imp = null;
             //只有图片 或者 视频内容
             for (ContentsBean content : contents){
-                if (content.getMaterialType().equals(CONTENT_TYPE.image)){
+                type=content.getMaterialType() ==null?content.getContentType():content.getMaterialType();
+                if(content.getContentName().endsWith(".png") || content.getContentName().endsWith(".jpg")){
+                    type = CONTENT_TYPE.image;
+                }
+                if (type.equals(CONTENT_TYPE.image)){
                      imp = new CImageView(context,this,content);
                 }
-                if (content.getMaterialType().equals(CONTENT_TYPE.video)){
+                if (type.equals(CONTENT_TYPE.video)){
                     imp = new MyVideoViewHolder(context,this,content);
                 }
                 if (imp!=null){

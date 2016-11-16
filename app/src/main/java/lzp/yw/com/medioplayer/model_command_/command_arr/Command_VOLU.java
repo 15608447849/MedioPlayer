@@ -17,7 +17,7 @@ public class Command_VOLU implements iCommand {
 
     @Override
     public void Execute(String param) {
-        Logs.d(TAG,"音量设置 param :"+ param +"ThreadName:"+Thread.currentThread().getName()+" ");
+        Logs.d(TAG,"音量设置 param :["+ param +"]\nThreadName:"+Thread.currentThread().getName()+" ");
         int percent = Integer.valueOf(param);
         SetSystemVolume(percent);
     }
