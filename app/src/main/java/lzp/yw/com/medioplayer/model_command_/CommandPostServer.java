@@ -7,7 +7,6 @@ import android.os.IBinder;
 
 import java.util.HashMap;
 
-import lzp.yw.com.medioplayer.model_command_.command_arr.Command_SHDO;
 import lzp.yw.com.medioplayer.model_command_.command_arr.Command_SYTI;
 import lzp.yw.com.medioplayer.model_command_.command_arr.Command_UPSC;
 import lzp.yw.com.medioplayer.model_command_.command_arr.Command_VOLU;
@@ -48,7 +47,7 @@ public class CommandPostServer extends Service {
         // 音量控制
         commandList.put(CMD_INFO.VOLU, new Command_VOLU());
         //关闭终端
-        commandList.put(CMD_INFO.SHDO, new Command_SHDO());
+//        commandList.put(CMD_INFO.SHDO, new Command_SHDO());
         //收到排期
         commandList.put(CMD_INFO.UPSC, new Command_UPSC(getApplicationContext()));
         //下载完资源 保存json数据

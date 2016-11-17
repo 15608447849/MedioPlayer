@@ -8,7 +8,7 @@ import java.io.FileInputStream;
 /**
  * Created by user on 2016/6/22.
  */
-public class fileUtils {
+public class FTPFileUtils {
     private static final String TAG =  "load_ftp_fileUtils";
 
     /**

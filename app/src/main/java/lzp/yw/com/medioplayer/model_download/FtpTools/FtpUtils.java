@@ -19,10 +19,10 @@ import lzp.yw.com.medioplayer.model_universal.Logs;
  * Created by Administrator on 2016/6/25.
  */
 
-public class ActiveFtpUtils {
+public class FtpUtils {
 
     private static final String TAG = "FTPUtils";
-    private static ActiveFtpUtils instents;
+    private static FtpUtils instents;
     /**
      * 服务器名.
      */
@@ -50,12 +50,12 @@ public class ActiveFtpUtils {
      */
     private int reConnectCount = 0;
 
-    private ActiveFtpUtils() {
+    private FtpUtils() {
 
     }
-    public static ActiveFtpUtils getInstants(String hostName, int serverPort, String userName, String password){
+    public static FtpUtils getInstants(String hostName, int serverPort, String userName, String password){
         if (instents==null){
-            instents = new ActiveFtpUtils();
+            instents = new FtpUtils();
         }
         instents.init(hostName,serverPort,userName,password);
         return instents;
@@ -335,7 +335,7 @@ public class ActiveFtpUtils {
 
         }
         String nNmae = tmp_localPath.substring(0,tmp_localPath.lastIndexOf("."));//正式文件名
-        fileUtils.renamefile(tmp_localPath,nNmae);//转换名字
+        FTPFileUtils.renamefile(tmp_localPath,nNmae);//转换名字
                 File Nf = new File(nNmae);
         Logs.i(TAG,",转换前文件名["+tmp_localPath+"]\n新文件名: "+nNmae);
         listener.onDownLoadProgress(FTP_DOWN_SUCCESS, 0,null,Nf);

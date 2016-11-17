@@ -21,8 +21,8 @@ import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 import lzp.yw.com.medioplayer.model_communication.CommuniReceiverMsgBroadCasd;
-import lzp.yw.com.medioplayer.model_download.FtpTools.ActiveFtpUtils;
-import lzp.yw.com.medioplayer.model_download.FtpTools.fileUtils;
+import lzp.yw.com.medioplayer.model_download.FtpTools.FtpUtils;
+import lzp.yw.com.medioplayer.model_download.FtpTools.FTPFileUtils;
 import lzp.yw.com.medioplayer.model_universal.Logs;
 import lzp.yw.com.medioplayer.model_universal.MD5Util;
 import rx.Scheduler;
@@ -280,7 +280,7 @@ public class Loader {
      * 判断一个文件是不是已经存在
      */
     public static boolean fileIsExist(String filename){
-        return   fileUtils.checkFileExists(filename);
+        return   FTPFileUtils.checkFileExists(filename);
     }
     /**
      * 生成 状态
@@ -484,48 +484,48 @@ public class Loader {
         Logs.i(TAG, "FTP任务["+fileName+"]\n >>所在线程:"+ Thread.currentThread().getName());
 
        // final ActiveFtpUtils ftp = new ActiveFtpUtils(host,port,user,pass);
-        ActiveFtpUtils
+        FtpUtils
                 .getInstants(host,port,user,pass)
                 .downloadSingleFile(remotePath + fileName,
                 localPath,
                 fileName,
                 3,//重新链接次数
-                new ActiveFtpUtils.DownLoadProgressListener (){
+                new FtpUtils.DownLoadProgressListener (){
                     @Override
                     public void onDownLoadProgress(String currentStep, long downProcess, String speed, File file) {
 
                         //下载中
-                        if (currentStep.equals(ActiveFtpUtils.FTP_DOWN_LOADING)) {
+                        if (currentStep.equals(FtpUtils.FTP_DOWN_LOADING)) {
                             notifyProgress(fileName, downProcess + "", speed);
                         }
 
                         //ftp远程文件不存在
-                        if (currentStep.equals(ActiveFtpUtils.FTP_FILE_NOTEXISTS)) {
+                        if (currentStep.equals(FtpUtils.FTP_FILE_NOTEXISTS)) {
                             Logs.e(TAG, "ftp服务器 不存在文件 <<" + fileName + ">>");
                             loadFileRecall("loaderr");
                             nitifyMsg(fileName, 4);
                         }
                         //连接失败
-                        if (currentStep.equals(ActiveFtpUtils.FTP_CONNECT_FAIL)) {
+                        if (currentStep.equals(FtpUtils.FTP_CONNECT_FAIL)) {
                             Logs.e(TAG, "ftp 连接失败 ");
                             loadFileRecall("loaderr");
                             nitifyMsg(fileName, 4);
                         }
                         //下载失败
-                        if (currentStep.equals(ActiveFtpUtils.FTP_DOWN_FAIL)) {
+                        if (currentStep.equals(FtpUtils.FTP_DOWN_FAIL)) {
                             Logs.e(TAG, "ftp 下载失败 :" + fileName);
                             loadFileRecall("loaderr");
                             nitifyMsg(fileName, 4);
 
                         }
                         //连接成功
-                        if (currentStep.equals(ActiveFtpUtils.FTP_CONNECT_SUCCESSS)) {
+                        if (currentStep.equals(FtpUtils.FTP_CONNECT_SUCCESSS)) {
                             Logs.i(TAG, "ftp 连接成功 - " + fileName);
                             nitifyMsg(fileName, 1);
                             nitifyMsg(fileName, 2);
                         }
                         //下载成功
-                        if (currentStep.equals(ActiveFtpUtils.FTP_DOWN_SUCCESS)) {
+                        if (currentStep.equals(FtpUtils.FTP_DOWN_SUCCESS)) {
 
                             Logs.i(TAG, "ftp下载succsee -[" + fileName + "] - 线程 - " + Thread.currentThread().getName());
                             //APK文件

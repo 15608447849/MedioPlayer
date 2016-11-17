@@ -26,7 +26,7 @@ public class TextScrollView extends ScrollView implements IContentView {
     }
     @Override
     public int getLength() {
-        return length;
+        return length==0?30:length;
     }
 
     @Override

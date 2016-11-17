@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.IContentView;
 import lzp.yw.com.medioplayer.model_application.ui.Uitools.ImageUtils;
 import lzp.yw.com.medioplayer.model_application.ui.Uitools.UiTools;
-import lzp.yw.com.medioplayer.model_universal.Logs;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
 
 /**
@@ -90,7 +89,7 @@ public class CImageView extends ImageView implements IContentView{
 
     @Override
     public void stopWork() {
-        Logs.i(TAG,"image - stopWork()");
+//        Logs.i(TAG,"image - stopWork()");
         try {
             removeBitmap();
             unLayouted();

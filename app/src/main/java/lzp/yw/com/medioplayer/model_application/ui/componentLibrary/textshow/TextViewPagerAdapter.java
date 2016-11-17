@@ -11,9 +11,9 @@ import java.util.ArrayList;
  */
 
 public class TextViewPagerAdapter extends PagerAdapter {
-    private ArrayList<View> viewList = null;
+    private ArrayList<TextScrollView> viewList = null;
 
-    public TextViewPagerAdapter(ArrayList<View> viewList) {
+    public TextViewPagerAdapter(ArrayList<TextScrollView> viewList) {
         this.viewList = viewList;
     }
 
@@ -54,6 +54,7 @@ public class TextViewPagerAdapter extends PagerAdapter {
      */
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
+        //2.当前要显示的数据索引为集合长度
         container.addView(viewList.get(position));
         return viewList.get(position);
     }
@@ -69,11 +70,14 @@ public class TextViewPagerAdapter extends PagerAdapter {
      */
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        container.removeView((View) object);//删除页面
+        //3.移除的索引为集合的长度
+//        int newPosition = position % viewList.size();
+        container.removeView(viewList.get(position));
+//        container.removeView((View) object);//删除页面
     }
     @Override
     public void setPrimaryItem(ViewGroup container, int position, Object object) {
         super.setPrimaryItem(container,position,object);
-       // mCurrentView = (View)object; //当前视图
     }
+
 }
