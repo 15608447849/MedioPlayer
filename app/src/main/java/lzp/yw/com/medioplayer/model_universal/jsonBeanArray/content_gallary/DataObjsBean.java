@@ -35,10 +35,16 @@ public class DataObjsBean {
     private int usedStatus;
     private String format;
     private int checkedStatus;
-    private String url;
-    private String urls;
+    private String url;//图集
+    private String urls;//咨询
     private String media;
     private String newName;
+    private String fileName;
+    private String createdBy;
+    private long upDate;
+    private String selectType;
+    private int typeId;
+    private String updtimeStr;
 
     public String getUrls() {
         return urls;
@@ -48,12 +54,6 @@ public class DataObjsBean {
         this.urls = urls;
     }
 
-    private String fileName;
-    private String createdBy;
-    private long upDate;
-    private String selectType;
-    private int typeId;
-    private String updtimeStr;
 
     public int getId() {
         return id;

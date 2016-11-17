@@ -3,8 +3,12 @@ package lzp.yw.com.medioplayer.model_application.ui.Uitools;
 import android.content.Context;
 import android.util.Log;
 
+import java.io.File;
+
 import lzp.yw.com.medioplayer.model_application.baselayer.DataListEntiyStore;
 import lzp.yw.com.medioplayer.model_download.singedownload.Loader;
+import lzp.yw.com.medioplayer.model_universal.MD5Util;
+import lzp.yw.com.medioplayer.model_universal.SdCardTools;
 
 /**
  * Created by user on 2016/11/11.
@@ -13,9 +17,11 @@ import lzp.yw.com.medioplayer.model_download.singedownload.Loader;
 public class UiTools {
     private static boolean isInit = false;
     private static DataListEntiyStore dle = null;
+    private static File contentDir = null;
     public static void  init(Context context){
         dle = new DataListEntiyStore(context);
         dle.ReadShareData();
+        contentDir = new File(dle.GetStringDefualt("jsonStore","")) ;//根目录
         isInit = true;
     }
     public static void  uninit(){
@@ -58,6 +64,30 @@ public class UiTools {
     //判断文件是否存在
     public static boolean fileIsExt(String filepath){
             return Loader.fileIsExist(filepath);
+    }
+
+    /*1 获取文件名
+        2 获取文件内容
+        3 变成图集对象
+        4 获取所有文件名*/
+    //图集 :文件名->获取文件信息
+    public static String fileTanslationObject(String filename){
+        if(!contentDir.exists()){
+            return null;
+        }
+        String [] filenames = contentDir.list();
+        if (filenames==null || filenames.length==0){
+            return null;
+        }
+        filename =  MD5Util.getStringMD5(filename);
+        String textContent = null;
+        for (String file : filenames){
+            if (file.equals(filename)){
+                textContent = SdCardTools.readerJsonToMemory(contentDir.getAbsolutePath()+"/",filename);
+                break;
+            }
+        }
+        return textContent;
     }
 
 

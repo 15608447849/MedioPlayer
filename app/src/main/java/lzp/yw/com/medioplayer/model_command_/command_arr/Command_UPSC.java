@@ -398,7 +398,7 @@ public class Command_UPSC implements iCommand {
         }
         //图集
         if (contentType.equals(CONTENT_TYPE.gallary)){
-          //  getUrlSource(content.getContentSource());
+            getUrlSource(content.getContentSource());
         }
         //电子报
         if (contentType.equals(CONTENT_TYPE.news)){
@@ -432,11 +432,12 @@ public class Command_UPSC implements iCommand {
     private void getUrlSource(String contentSource) {
 
         try {
-            contentSource = AppsTools.justUriIsBase64GetUrl(contentSource);//URL
+
+            String url  = AppsTools.justUriIsBase64GetUrl(contentSource);//URL
             res= null;
-            res = AppsTools.uriTranslationString(contentSource);
+            res = AppsTools.uriTranslationString(url);
             if (res!=null){
-                JsonDataStore.getInstent(context).addEntity(contentSource,res);
+                JsonDataStore.getInstent(context).addEntity(contentSource,res);// 文件名,文件内容
                 GallaryBean gallaryBean = AppsTools.parseJsonWithGson(res,GallaryBean.class);
                 if (gallaryBean!=null){
                     parseContentGallarys(gallaryBean);

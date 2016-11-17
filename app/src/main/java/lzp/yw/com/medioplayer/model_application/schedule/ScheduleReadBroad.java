@@ -53,7 +53,7 @@ public class ScheduleReadBroad extends BroadcastReceiver{
 
 
 
-    private String getOnlyFileContent(String [] filenames ,String targetname){
+    private String  getOnlyFileContent(String [] filenames ,String targetname){
         String var = null;
         for (String filename : filenames){
             if (filename.equals(targetname)){
@@ -63,7 +63,7 @@ public class ScheduleReadBroad extends BroadcastReceiver{
             }
         }
         if (var!=null){
-            if (targetname.equals("main")){
+            if (targetname.equals("main")){//主文件
                 var = getOnlyFileContent(filenames, MD5Util.getStringMD5(var));
             }
         }

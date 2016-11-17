@@ -123,6 +123,5 @@ public class JsonDataStore implements iCommand {
         bundle.putString(ScheduleReadBroad.PARAM, sdcard_save_dir);
         intent.putExtras(bundle);
         c.sendBroadcast(intent);
-
     }
 }
