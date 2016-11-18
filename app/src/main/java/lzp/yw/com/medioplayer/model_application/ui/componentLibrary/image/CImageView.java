@@ -114,6 +114,15 @@ public class CImageView extends ImageView implements IContentView{
             e.printStackTrace();
         }
     }
+//    @Override
+//    protected void onDetachedFromWindow() {
+//        try {
+//            super.onDetachedFromWindow();
+//            setImageDrawable(null);
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+//    }
 
     /**
      * 设置bitmap

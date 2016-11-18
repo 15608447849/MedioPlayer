@@ -2,6 +2,7 @@ package lzp.yw.com.medioplayer.model_universal;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.Looper;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.WindowManager;
@@ -256,7 +257,14 @@ public class AppsTools {
 
 
 
-
+    //检查是不是ui线程
+    public static boolean checkUiThread(){
+        if (Looper.myLooper() == Looper.getMainLooper()) { // UI主线程
+                return true;
+        } else { // 非UI主线程
+                return false;
+        }
+    }
 
 
 

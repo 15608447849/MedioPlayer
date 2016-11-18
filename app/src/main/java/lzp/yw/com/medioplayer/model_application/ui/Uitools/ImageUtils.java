@@ -1,12 +1,19 @@
 package lzp.yw.com.medioplayer.model_application.ui.Uitools;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
+import android.widget.ImageView;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+
+import lzp.yw.com.medioplayer.model_universal.AppsTools;
 
 /**
  * Created by user on 2016/11/11.
@@ -110,4 +117,54 @@ public class ImageUtils {
             return upperBound;
         }
     }
+
+
+
+
+
+
+
+    //放入主线程
+    public static void removeImageViewDrawable(ImageView imageView) {
+        if (!AppsTools.checkUiThread()){
+            return;
+        }
+        //资源回调的地方
+        Bitmap bitmap = null;
+        Drawable drawable = imageView.getDrawable();
+        if (drawable == null){
+            drawable = imageView.getBackground();
+            if (drawable == null){
+                imageView.setDrawingCacheEnabled(true);
+                bitmap = imageView.getDrawingCache();
+                imageView.setDrawingCacheEnabled(false);
+                if (bitmap==null){
+                    return;
+                }
+            }
+        }
+        if (drawable != null && drawable instanceof BitmapDrawable) {
+            bitmap = ((BitmapDrawable) drawable).getBitmap();
+            drawable.setCallback(null);
+        }
+        if (bitmap != null && !bitmap.isRecycled()) {
+            bitmap.recycle();
+        }
+        imageView.setBackgroundResource(0);
+        imageView.setImageDrawable(null);
+    }
+
+    public static ImageView createImageView(Context context){
+        return new ImageView(context){
+            @Override
+            protected void onDraw(Canvas canvas) {
+                try {
+                    super.onDraw(canvas);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+    }
+
 }

@@ -89,6 +89,14 @@ public class UiTools {
         }
         return textContent;
     }
+    //存入数据 内容目录下  文件名请进行md5加密
+    public static boolean storeContentToDirFile(String filename,String content){
+        if(!contentDir.exists()){
+            return false;
+        }
+        SdCardTools.writeJsonToSdcard(contentDir.getAbsolutePath()+"/",MD5Util.getStringMD5(filename),content);
+        return true;
+    }
 
 
 
