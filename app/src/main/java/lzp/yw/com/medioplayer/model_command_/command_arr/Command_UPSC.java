@@ -432,10 +432,11 @@ public class Command_UPSC implements iCommand {
     private void getUrlSource(String contentSource) {
 
         try {
-
-            String url  = AppsTools.justUriIsBase64GetUrl(contentSource);//URL
+            Logs.i(TAG," 内容 url :"+contentSource);
+          //  String url  = AppsTools.justUriIsBase64GetUrl(contentSource);//URL
             res = null;
-            res = AppsTools.uriTranslationString(url);
+            res = AppsTools.uriTranslationString(contentSource);
+            res = AppsTools.justResultIsBase64decode(res);
             if (res!=null){
                 JsonDataStore.getInstent(context).addEntity(contentSource,res);// 文件名,文件内容
                 GallaryBean gallaryBean = AppsTools.parseJsonWithGson(res,GallaryBean.class);

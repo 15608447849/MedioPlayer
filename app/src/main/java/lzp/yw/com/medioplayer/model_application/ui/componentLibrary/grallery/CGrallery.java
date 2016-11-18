@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lzp.yw.com.medioplayer.R;
+import lzp.yw.com.medioplayer.model_application.ui.UiHttp.UiHttpProxy;
+import lzp.yw.com.medioplayer.model_application.ui.UiHttp.UiHttpResult;
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.IAdvancedComponent;
 import lzp.yw.com.medioplayer.model_application.ui.Uitools.ImageUtils;
 import lzp.yw.com.medioplayer.model_application.ui.Uitools.UiTools;
@@ -150,6 +152,7 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent {
             }
             setAttrbute();
             layouted();
+            loadContent();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -180,10 +183,19 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent {
     }
 
 
+    private UiHttpResult call = new UiHttpResult() {
+        @Override
+        public Void HttpResultCall() {
+            System.err.println("chen - gong");
+            return null;
+        }
+    };
 
     @Override
     public void loadContent() {
         //开始计时器
+        System.err.println("-**********-*************-***********-*************-**************-***************");
+        UiHttpProxy.getContent(url,call);
     }
 
     @Override

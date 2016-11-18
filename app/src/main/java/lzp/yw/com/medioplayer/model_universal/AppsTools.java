@@ -3,6 +3,7 @@ package lzp.yw.com.medioplayer.model_universal;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Looper;
+import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.WindowManager;
@@ -199,6 +200,20 @@ public class AppsTools {
             Logs.e(TAG," delete Base64 -> url  "+url);
         }
         return url.trim();
+    };
+    /**
+     *  内容 base64 解密
+     */
+    public static String justResultIsBase64decode(String result){
+
+        try {
+            byte[] byteIcon = Base64.decode(result,Base64.DEFAULT);
+            return new String(byteIcon,"UTF-8");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     };
 
     /**
