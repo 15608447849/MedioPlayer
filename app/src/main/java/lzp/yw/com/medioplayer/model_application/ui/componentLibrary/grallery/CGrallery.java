@@ -18,6 +18,8 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import lzp.yw.com.medioplayer.R;
 import lzp.yw.com.medioplayer.model_application.ui.UiHttp.UiHttpProxy;
@@ -25,6 +27,7 @@ import lzp.yw.com.medioplayer.model_application.ui.UiHttp.UiHttpResult;
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.IAdvancedComponent;
 import lzp.yw.com.medioplayer.model_application.ui.Uitools.ImageUtils;
 import lzp.yw.com.medioplayer.model_application.ui.Uitools.UiTools;
+import lzp.yw.com.medioplayer.model_universal.AppsTools;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.content_gallary.DataObjsBean;
@@ -161,6 +164,7 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent {
     @Override
     public void stopWork() {
         try {
+            unLoadContent();
             unLayouted();
         } catch (Exception e) {
             e.printStackTrace();
@@ -183,25 +187,7 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent {
     }
 
 
-    private UiHttpResult call = new UiHttpResult() {
-        @Override
-        public Void HttpResultCall() {
-            System.err.println("chen - gong");
-            return null;
-        }
-    };
 
-    @Override
-    public void loadContent() {
-        //开始计时器
-        System.err.println("-**********-*************-***********-*************-**************-***************");
-        UiHttpProxy.getContent(url,call);
-    }
-
-    @Override
-    public void unLoadContent() {
-    //结束计时器
-    }
 
 
     private ArrayList<String> imageNameArr = null;
@@ -212,6 +198,13 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent {
         }
         if (!imageNameArr.contains(name)){
             imageNameArr.add(name);
+            if (UiTools.fileIsExt(name)){
+                Bitmap bitmap = ImageUtils.getBitmap(name);
+                if (bitmap!=null){
+                    addBitmaps(bitmap);
+                }
+            }
+
         }
     }
     /*1 获取文件名
@@ -239,9 +232,8 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent {
     //获取 所有文件名
     private void getImageFilename(List<DataObjsBean> listBean) {
             for (DataObjsBean data : listBean){
-                addImageName(UiTools.getUrlTanslationFilename(data.getUrl()));
+                addImageName(UiTools.getUrlTanslationFilename(data.getUrl()));//同时生成bitmap
             }
-        getBitmpArr();//获取所有bitmap
     }
 
     /**
@@ -264,22 +256,60 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent {
             bitmapList.clear();
         }
     }
-    /**
-     * bitmap 数组
-     */
-    private void getBitmpArr(){
-        if (imageNameArr!=null && imageNameArr.size()>0){
-            Bitmap bitmap = null;
-            for (String imagePath :imageNameArr){
-                if (UiTools.fileIsExt(imagePath)){
-                    bitmap = ImageUtils.getBitmap(imagePath);
-                }
-                if (bitmap!=null){
-                    addBitmaps(bitmap);
-                }
-            }
+
+    private TimerTask timerTask= null;
+    private Timer timer = null;
+
+    private void stopTimer(){
+        if (timerTask!=null){
+            timerTask.cancel();
+            timerTask = null;
+        }
+        if (timer!=null){
+            timer.cancel();
+            timer = null;
         }
     }
+    //局部访问回调
+    private UiHttpResult call = new UiHttpResult() {
+        @Override
+        public void HttpResultCall() {
+            //更新资源文件名
+            tanslationUrl(url);
+            if (AppsTools.checkUiThread()){
+                //更新适配器
+                adapter.tansBitmapToDraw(bitmapList);
+            }
+        }
+    };
+
+    @Override
+    public void loadContent() {
+        //开始计时器
+        unLoadContent();
+        UiHttpProxy.getContent(url,call);
+        startTimer(10*1000);
+    }
+
+    @Override
+    public void unLoadContent() {
+        //结束计时器
+        stopTimer();//停止计时间 停止当前内容
+    }
+
+    private void startTimer(long millisecond){
+        timerTask = new TimerTask() {
+            @Override
+            public void run() {
+               loadContent();
+            }
+        };
+        timer = new Timer();
+        timer.schedule(timerTask,millisecond);
+    }
+
+
+
 
 
 }

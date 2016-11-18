@@ -5,5 +5,5 @@ package lzp.yw.com.medioplayer.model_application.ui.UiHttp;
  */
 
 public interface UiHttpResult {
-    Void HttpResultCall();
+    void HttpResultCall();
 }

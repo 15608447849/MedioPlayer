@@ -6,7 +6,7 @@ import android.util.Log;
 import java.io.File;
 
 import lzp.yw.com.medioplayer.model_application.baselayer.DataListEntiyStore;
-import lzp.yw.com.medioplayer.model_application.ui.UiHttp.UiSourceDownload;
+import lzp.yw.com.medioplayer.model_application.ui.UiHttp.UiDownload;
 import lzp.yw.com.medioplayer.model_download.singedownload.Loader;
 import lzp.yw.com.medioplayer.model_universal.MD5Util;
 import lzp.yw.com.medioplayer.model_universal.SdCardTools;
@@ -23,10 +23,11 @@ public class UiTools {
         dle = new DataListEntiyStore(context);
         dle.ReadShareData();
         contentDir = new File(dle.GetStringDefualt("jsonStore","")) ;//根目录
-        UiSourceDownload.init(context,dle.GetStringDefualt("basepath",""),dle.GetStringDefualt("terminalNo",""));
+        UiDownload.init(context,dle.GetStringDefualt("basepath",""),dle.GetStringDefualt("terminalNo",""));
         isInit = true;
     }
     public static void  uninit(){
+        UiDownload.unInit();
         dle =null;
         isInit = false;
     }

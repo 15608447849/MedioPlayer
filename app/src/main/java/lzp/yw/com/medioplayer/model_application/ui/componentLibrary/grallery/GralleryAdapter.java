@@ -37,6 +37,7 @@ public class GralleryAdapter extends BaseAdapter {
            for (Bitmap bitmap : bitmapList){
                imageArr.add(new BitmapDrawable(bitmap));
            }
+
         notifyDataSetChanged();
     }
     public Drawable getDrawable(int position){

@@ -588,6 +588,7 @@ public class Loader {
             bundle.putString(CommuniReceiverMsgBroadCasd.PARAM2, param);
             intent.putExtras(bundle);
             context.sendBroadcast(intent);
+            context = null;
         }
     }
 
