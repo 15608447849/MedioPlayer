@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
@@ -14,6 +15,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import lzp.yw.com.medioplayer.model_application.ui.UiStore.ViewStore;
 import lzp.yw.com.medioplayer.model_universal.tool.AppsTools;
 
 /**
@@ -169,6 +171,25 @@ public class ImageUtils {
         };
     }
 
+    //创建image并且存储tag
+    public static ImageView createImagerviewStore(Context context,String tag){
+        ImageView iv = null;
+
+        try {
+            iv = (ImageView) ViewStore.getInstants().getViewCache(tag);
+            if (iv!=null){
+                return iv;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        iv = createImageView(context);
+        iv.setTag(tag);
+        ViewStore.getInstants().addViewCache(tag,iv);
+        return iv;
+    }
+
     //创建imagebutton
     public static ImageButton createImagerButton(Context context){
         return new ImageButton(context){
@@ -183,4 +204,29 @@ public class ImageUtils {
         };
     }
 
+
+    //创建imagebutton并且存储tag
+    public static ImageButton createImagerbuttonStore(Context context, String tag){
+        ImageButton ib = null;
+
+        try {
+            ib = (ImageButton) ViewStore.getInstants().getViewCache(tag);
+            if (ib!=null){
+                return ib;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        ib = createImagerButton(context);
+        ib.setTag(tag);
+        ViewStore.getInstants().addViewCache(tag,ib);
+        return ib;
+    }
+
+    public static ImageButton createImageButoonStoreSettingOnclickEvent(Context context, String tag,View.OnClickListener onclick){
+        ImageButton ib = createImagerbuttonStore(context,tag);
+        ib.setOnClickListener(onclick);
+        return ib;
+    }
 }

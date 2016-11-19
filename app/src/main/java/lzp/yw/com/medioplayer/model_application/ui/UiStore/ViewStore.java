@@ -33,7 +33,7 @@ public class ViewStore {
         }
     }
 
-    //获取 一个 缓存 页面
+    //获取 一个 缓存 view
     public View getViewCache(String tag){
         if (CacheMap==null){
             return null;
@@ -42,8 +42,8 @@ public class ViewStore {
     }
 
 
-    //添加 一个 缓存 页面
-    private  void  addViewCache(String tag,View imageview){
+    //添加 一个 缓存 view
+    public  void  addViewCache(String tag,View imageview){
         try{
             CacheMap.put(tag,imageview);
         }catch (Exception e){
