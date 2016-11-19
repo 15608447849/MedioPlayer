@@ -6,8 +6,8 @@ import android.content.SharedPreferences;
 import java.util.Iterator;
 import java.util.Map;
 
-import lzp.yw.com.medioplayer.model_universal.DataListEntiy;
-import lzp.yw.com.medioplayer.model_universal.Logs;
+import lzp.yw.com.medioplayer.model_universal.tool.DataListEntiy;
+import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 
 /**
  * Created by user on 2016/11/2.

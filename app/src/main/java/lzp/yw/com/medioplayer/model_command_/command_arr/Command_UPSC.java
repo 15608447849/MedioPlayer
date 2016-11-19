@@ -13,12 +13,12 @@ import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 import lzp.yw.com.medioplayer.model_application.baselayer.DataListEntiyStore;
-import lzp.yw.com.medioplayer.model_command_.JsonDataStore;
-import lzp.yw.com.medioplayer.model_download.DownloadBroad;
-import lzp.yw.com.medioplayer.model_universal.AppsTools;
-import lzp.yw.com.medioplayer.model_universal.CONTENT_TYPE;
-import lzp.yw.com.medioplayer.model_universal.Logs;
-import lzp.yw.com.medioplayer.model_universal.SdCardTools;
+import lzp.yw.com.medioplayer.model_download.kernel.DownloadBroad;
+import lzp.yw.com.medioplayer.model_universal.tool.AppsTools;
+import lzp.yw.com.medioplayer.model_universal.tool.CONTENT_TYPE;
+import lzp.yw.com.medioplayer.model_universal.tool.Logs;
+import lzp.yw.com.medioplayer.model_universal.tool.SdCardTools;
+import lzp.yw.com.medioplayer.model_download.entity.UrlList;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.AdBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
@@ -30,7 +30,7 @@ import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ScheduleBea
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.content_gallary.DataObjsBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.content_gallary.GallaryBean;
 
-import static lzp.yw.com.medioplayer.model_universal.AppsTools.uriTranslationString;
+import static lzp.yw.com.medioplayer.model_universal.tool.AppsTools.uriTranslationString;
 
 /**
  * Created by user on 2016/10/27.
@@ -54,41 +54,11 @@ public class Command_UPSC implements iCommand {
         basePath = dl.GetStringDefualt("basepath","");
         terminalNo =dl.GetStringDefualt("terminalNo","");
         storageLimits = dl.GetStringDefualt("storageLimits","");
-
+        taskStore = new UrlList();
     }
     private static ReentrantLock lock = new ReentrantLock();
 
-    private ArrayList<CharSequence> loadingList = null;
-    /**
-     * 初始化下载列表
-     */
-    private void initLoadingList(){
-        if (loadingList==null){
-            loadingList = new ArrayList<CharSequence>();
-        }else{
-            loadingList.clear();
-            Logs.d(TAG,"任务清空,当前数量:" + loadingList.size());
-        }
-    }
-    /**
-     * 添加任务
-     * @param url
-     */
-    private void addTaskOnList(String url){
-        if (loadingList==null){
-            return;
-        }
-        if (url==null || url.equals("") || url.equals("null")){
-            Logs.e(TAG," add task is failt url = " + url);
-            return;
-        }
-        if(!loadingList.contains(url)){
-            loadingList.add(url);
-            Logs.w(TAG," add task is succsee !");
-        }else{
-            Logs.e(TAG," add task failt ,because is exist !!!");
-        }
-    }
+   private UrlList taskStore;
     //结果
     private String res;
     /**
@@ -105,19 +75,19 @@ public class Command_UPSC implements iCommand {
             res = uriTranslationString(param);
             if (res!=null){
                 //保存json数据
-                JsonDataStore.getInstent(context).addEntity("main",param,false);
-                JsonDataStore.getInstent(context).addEntity(param,res);
+                ICommand_SORE_JsonDataStore.getInstent(context).addEntity("main",param,false);
+                ICommand_SORE_JsonDataStore.getInstent(context).addEntity(param,res);
                 //解析json
                 List<ScheduleBean> list =  parseJsonToList(res);
                 if (list!=null){
-                 initLoadingList();
+                    taskStore.initLoadingList();
                  startTime = System.currentTimeMillis();
                  parseScheduleList(list);
 
                  endTime = System.currentTimeMillis();
                  Logs.e(TAG,"解析排期 用时 : "+(endTime - startTime)+" 毫秒 ");
 
-                 Logs.d(TAG,"----------------------------------任务队列大小 : " + loadingList.size()+" \n "+loadingList);
+                 Logs.d(TAG,"----------------------------------任务队列大小 : " + taskStore.getList().size());
 
                  startTime = System.currentTimeMillis();
                  clearSdcardSource();
@@ -272,7 +242,7 @@ public class Command_UPSC implements iCommand {
         Logs.d(TAG,"        ### 页面 - coordX :"+page.getCoordX() +" coordY :"+page.getCoordY());
         Logs.d(TAG,"        ### 页面 - width :"+page.getWidth() +" height :"+page.getHeight());
         Logs.d(TAG,"        ### 页面 - background :"+ page.getBackground());
-        addTaskOnList(page.getBackground());
+        taskStore.addTaskOnList(page.getBackground());
         Logs.d(TAG,"        ### 页面 - backgroundColor :"+page.getBackgroundColor());
 
         if (page.getComponents()!=null && page.getComponents().size()>0){
@@ -308,7 +278,7 @@ public class Command_UPSC implements iCommand {
         Logs.d(TAG,"            组件 backgroundAlpha 透明度 " + component.getBackgroundAlpha());
         Logs.d(TAG,"            组件 backgroundColor " + component.getBackgroundColor());
         Logs.d(TAG,"            组件 backgroundPic背景图片uri " + component.getBackgroundPic());
-        addTaskOnList(component.getBackgroundPic());
+        taskStore.addTaskOnList(component.getBackgroundPic());
         Logs.d(TAG,"            组件 backgroundPicName 背景图片名字 " + component.getBackgroundPicName());
         Logs.d(TAG,"            组件 titleShowType " + component.getTitleShowType());
         Logs.d(TAG,"            组件 hasContent " + component.isHasContent());
@@ -353,7 +323,7 @@ public class Command_UPSC implements iCommand {
                 ,storageLimits)){
 
             List<String> keepList = new ArrayList<String>();
-            for (CharSequence car :loadingList){
+            for (CharSequence car :taskStore.getList()){
                 keepList.add(car.toString());
             }
 
@@ -383,18 +353,18 @@ public class Command_UPSC implements iCommand {
         Logs.d(TAG,">>>> 解析具体内容 来源 " + contentType);
         //图片
         if (contentType.equals(CONTENT_TYPE.image)){
-            addTaskOnList(content.getContentSource());
+            taskStore.addTaskOnList(content.getContentSource());
         }
         //按钮
         if (contentType.equals(CONTENT_TYPE.button)){
             //默认展示图片
-            addTaskOnList(content.getSourceUp());
+            taskStore.addTaskOnList(content.getSourceUp());
             //点击时展示图片
-            addTaskOnList(content.getSourceDown());
+            taskStore.addTaskOnList(content.getSourceDown());
         }
         //视频
         if (contentType.equals(CONTENT_TYPE.video)){
-            addTaskOnList(content.getContentSource());
+            taskStore.addTaskOnList(content.getContentSource());
         }
         //图集
         if (contentType.equals(CONTENT_TYPE.gallary)){
@@ -438,7 +408,7 @@ public class Command_UPSC implements iCommand {
             res = AppsTools.uriTranslationString(contentSource);
             res = AppsTools.justResultIsBase64decode(res);
             if (res!=null){
-                JsonDataStore.getInstent(context).addEntity(contentSource,res);// 文件名,文件内容
+                ICommand_SORE_JsonDataStore.getInstent(context).addEntity(contentSource,res);// 文件名,文件内容
                 GallaryBean gallaryBean = AppsTools.parseJsonWithGson(res,GallaryBean.class);
                 if (gallaryBean!=null){
                     parseContentGallarys(gallaryBean);
@@ -479,7 +449,7 @@ public class Command_UPSC implements iCommand {
         Logs.i(TAG,"content _ URL _data > usedStatus " +dataobj.getUsedStatus());
         Logs.i(TAG,"content _ URL _data > format " +dataobj.getFormat());
         Logs.i(TAG,"content _ URL _data > url " +dataobj.getUrl());
-        addTaskOnList(dataobj.getUrl());
+        taskStore.addTaskOnList(dataobj.getUrl());
         Logs.i(TAG,"content _ URL _data > media " +dataobj.getMedia());
         Logs.i(TAG,"content _ URL _data > newName " +dataobj.getNewName());
         Logs.i(TAG,"content _ URL _data > fileName " +dataobj.getFileName());
@@ -503,7 +473,7 @@ public class Command_UPSC implements iCommand {
         try {
             String [] urlarr = urls.split(",");
             for(int i=0;i<urlarr.length;i++){
-                addTaskOnList(urlarr[i]);
+                taskStore.addTaskOnList(urlarr[i]);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -519,7 +489,7 @@ public class Command_UPSC implements iCommand {
         if (context!=null && dl!=null){
             bundle.clear();
             intent.setAction(DownloadBroad.ACTION);
-            bundle.putCharSequenceArrayList(DownloadBroad.PARAM1,loadingList);
+            bundle.putCharSequenceArrayList(DownloadBroad.PARAM1,taskStore.getList());
             bundle.putString(DownloadBroad.PARAM2, terminalNo);
             bundle.putString(DownloadBroad.PARAM3, basePath);
             intent.putExtras(bundle);

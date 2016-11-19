@@ -3,8 +3,8 @@ package lzp.yw.com.medioplayer.model_application.ui.UiFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-import lzp.yw.com.medioplayer.model_application.ui.UiStore.ViewStore;
-import lzp.yw.com.medioplayer.model_universal.Logs;
+import lzp.yw.com.medioplayer.model_application.ui.UiStore.PagerStore;
+import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 
 import static android.R.attr.id;
 
@@ -42,9 +42,9 @@ public class UiManager {
         if (isInit){
 
                 currentHomeId = homeId;
-                if(ViewStore.getInstant().getPage(currentHomeId)!=null){
+                if(PagerStore.getInstant().getPage(currentHomeId)!=null){
                 addPage(currentHomeId);
-                ViewStore.getInstant().getPage(currentHomeId).startWork();
+                PagerStore.getInstant().getPage(currentHomeId).startWork();
             }
         }
     }
@@ -66,9 +66,9 @@ public class UiManager {
                 }else{
                     Logs.i(TAG,"当前目标ID 不存在栈中,添加...");
 //                    2 不存在 添加到栈顶
-                    if(ViewStore.getInstant().getPage(id)!=null){
+                    if(PagerStore.getInstant().getPage(id)!=null){
                         addPage(id);
-                        ViewStore.getInstant().getPage(id).startWork();
+                        PagerStore.getInstant().getPage(id).startWork();
                     }
 
                 }
@@ -119,8 +119,8 @@ public class UiManager {
     }
     //停止 页面
     private void stopPage(int id){
-        if(ViewStore.getInstant().getPage(id)!=null){
-            ViewStore.getInstant().getPage(id).stopWork();
+        if(PagerStore.getInstant().getPage(id)!=null){
+            PagerStore.getInstant().getPage(id).stopWork();
         }
         /*else if (ViewStore.getInstant().getPageCache(id)!=null){
             ViewStore.getInstant().getPageCache(id).stopWork();

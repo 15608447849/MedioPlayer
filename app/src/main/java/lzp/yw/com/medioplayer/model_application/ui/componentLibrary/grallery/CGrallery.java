@@ -1,6 +1,7 @@
 package lzp.yw.com.medioplayer.model_application.ui.componentLibrary.grallery;
 
 import android.content.Context;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -22,12 +23,14 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import lzp.yw.com.medioplayer.R;
+import lzp.yw.com.medioplayer.model_application.ui.UiFactory.UiLocalBroad;
 import lzp.yw.com.medioplayer.model_application.ui.UiHttp.UiHttpProxy;
-import lzp.yw.com.medioplayer.model_application.ui.UiHttp.UiHttpResult;
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.IAdvancedComponent;
 import lzp.yw.com.medioplayer.model_application.ui.Uitools.ImageUtils;
 import lzp.yw.com.medioplayer.model_application.ui.Uitools.UiTools;
-import lzp.yw.com.medioplayer.model_universal.AppsTools;
+import lzp.yw.com.medioplayer.model_universal.tool.AppsTools;
+import lzp.yw.com.medioplayer.model_universal.tool.Logs;
+import lzp.yw.com.medioplayer.model_universal.tool.MD5Util;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.content_gallary.DataObjsBean;
@@ -46,9 +49,13 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent {
     private Context context;
     private AbsoluteLayout layout;
     private String url;
+    private int updateTime;
 
+    private String mBroadAction; //组件 id+hashcode+mad5
+    private UiLocalBroad broad = null;
     private boolean isInitData;
     private boolean isLayout;
+    private boolean isRegestBroad = false; //是否注册广播
     public CGrallery(Context context,AbsoluteLayout layout, ComponentsBean component) {
         super(context);
         this.context = context;
@@ -61,6 +68,8 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent {
     public void initData(Object object) {
         ComponentsBean cb = ((ComponentsBean)object);
         this.componentId = cb.getId();
+        this.mBroadAction = MD5Util.getStringMD5(this.hashCode()+"."+componentId);
+
         this.width = (int)cb.getWidth();
         this.height = (int)cb.getHeight();
         this.x = (int)cb.getCoordX();
@@ -91,6 +100,45 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent {
         }
     }
 
+
+
+    @Override
+    public void createBroad() {
+
+        if (!isRegestBroad){
+            broad = new UiLocalBroad(mBroadAction,this);
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(mBroadAction);
+            context.registerReceiver(broad, filter); //只需要注册一次
+            this.isRegestBroad = true;
+        }
+    }
+
+    @Override
+    public void cancelBroad() {
+        if (isRegestBroad) {
+            //取消注册
+            if (broad != null) {
+                try {
+                    context.unregisterReceiver(broad);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                broad = null;
+            }
+        }
+    }
+
+    @Override
+    public void broadCall() {
+        Logs.i(TAG," 广播 - "+mBroadAction+" - 收到,执行!");
+        //更新资源文件名
+        tanslationUrl(url);
+        if (AppsTools.checkUiThread()){
+            //更新适配器
+            adapter.tansBitmapToDraw(bitmapList);
+        }
+    }
     private ImagerSwitchFactory factory ;//图片工厂 (停止使用请调用 stop)
     //初始化 图片选择器
     private void initImageSwitcher() {
@@ -116,6 +164,9 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent {
         gallery.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (AppsTools.isMp4Suffix(imageNameArr.get(position))){
+//                    ishow.addView();
+                }
                 ishow.setImageDrawable(adapter.getDrawable(position));
             }
             @Override
@@ -155,6 +206,7 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent {
             }
             setAttrbute();
             layouted();
+            createBroad();
             loadContent();
         } catch (Exception e) {
             e.printStackTrace();
@@ -165,6 +217,7 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent {
     public void stopWork() {
         try {
             unLoadContent();
+            cancelBroad();
             unLayouted();
         } catch (Exception e) {
             e.printStackTrace();
@@ -172,10 +225,10 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent {
     }
     @Override
     public void createContent(Object object) {
-
         try {
             List<ContentsBean> contents = (List<ContentsBean>)object;
             for (ContentsBean content : contents){
+                updateTime = content.getUpdateFreq();
                 if (content.getContentSource()!=null ){
                     this.url = content.getContentSource();
                     tanslationUrl(url);
@@ -186,10 +239,6 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent {
         }
     }
 
-
-
-
-
     private ArrayList<String> imageNameArr = null;
     //添加 图片文件名
     public void addImageName(String name){
@@ -198,6 +247,9 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent {
         }
         if (!imageNameArr.contains(name)){
             imageNameArr.add(name);
+            if (AppsTools.isMp4Suffix(name)){
+                name = AppsTools.tanslationMp4ToPng(name);
+            }
             if (UiTools.fileIsExt(name)){
                 Bitmap bitmap = ImageUtils.getBitmap(name);
                 if (bitmap!=null){
@@ -270,25 +322,15 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent {
             timer = null;
         }
     }
-    //局部访问回调
-    private UiHttpResult call = new UiHttpResult() {
-        @Override
-        public void HttpResultCall() {
-            //更新资源文件名
-            tanslationUrl(url);
-            if (AppsTools.checkUiThread()){
-                //更新适配器
-                adapter.tansBitmapToDraw(bitmapList);
-            }
-        }
-    };
+
+
 
     @Override
     public void loadContent() {
         //开始计时器
         unLoadContent();
-        UiHttpProxy.getContent(url,call);
-        startTimer(10*1000);
+        UiHttpProxy.getContent(url,mBroadAction);
+        startTimer(updateTime*1000);
     }
 
     @Override

@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.Iview;
-import lzp.yw.com.medioplayer.model_universal.CONTENT_TYPE;
+import lzp.yw.com.medioplayer.model_universal.tool.CONTENT_TYPE;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 
 /**

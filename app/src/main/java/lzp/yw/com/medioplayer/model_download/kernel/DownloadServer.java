@@ -1,4 +1,4 @@
-package lzp.yw.com.medioplayer.model_download;
+package lzp.yw.com.medioplayer.model_download.kernel;
 
 import android.app.Service;
 import android.content.Intent;
@@ -8,7 +8,8 @@ import android.os.IBinder;
 import java.util.ArrayList;
 
 import lzp.yw.com.medioplayer.model_download.downloadTools.DownloadQueueTask;
-import lzp.yw.com.medioplayer.model_universal.Logs;
+import lzp.yw.com.medioplayer.model_download.localDownload.LocalDownloadQueue;
+import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 
 /**
  * lzp
@@ -46,10 +47,17 @@ public class DownloadServer extends Service {
     /*--------------------------------------------------------------------------------------------------------------------------------*/
 
 
-    // 通过广播 接受内容
+    // 接收全局 下载任务内容
     public void receiveContent(ArrayList<CharSequence> TaskList,String savepath ,String terminalNo ){
         DownloadQueueTask.getManage(getApplication()).addItemToStore(TaskList,savepath,terminalNo);
     }
+    // 接收局部 下载任务内容
+    public void receiveContent(String action,ArrayList<CharSequence> TaskList,String savepath ,String terminalNo ){
+        LocalDownloadQueue.getManage(getApplication()).addItemToStore(action,TaskList,savepath,terminalNo);
+    }
+
+
+
 
     /**
      *通过 广播 接受 其他 进程 发来的消息的,

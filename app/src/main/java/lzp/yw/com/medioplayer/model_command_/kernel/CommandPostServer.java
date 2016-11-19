@@ -1,4 +1,4 @@
-package lzp.yw.com.medioplayer.model_command_;
+package lzp.yw.com.medioplayer.model_command_.kernel;
 
 import android.app.Service;
 import android.content.Intent;
@@ -7,12 +7,13 @@ import android.os.IBinder;
 
 import java.util.HashMap;
 
+import lzp.yw.com.medioplayer.model_command_.command_arr.ICommand_SORE_JsonDataStore;
 import lzp.yw.com.medioplayer.model_command_.command_arr.Command_SYTI;
 import lzp.yw.com.medioplayer.model_command_.command_arr.Command_UPSC;
 import lzp.yw.com.medioplayer.model_command_.command_arr.Command_VOLU;
 import lzp.yw.com.medioplayer.model_command_.command_arr.iCommand;
-import lzp.yw.com.medioplayer.model_universal.CMD_INFO;
-import lzp.yw.com.medioplayer.model_universal.Logs;
+import lzp.yw.com.medioplayer.model_universal.tool.CMD_INFO;
+import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 import rx.Scheduler;
 import rx.functions.Action0;
 import rx.schedulers.Schedulers;
@@ -51,7 +52,7 @@ public class CommandPostServer extends Service {
         //收到排期
         commandList.put(CMD_INFO.UPSC, new Command_UPSC(getApplicationContext()));
         //下载完资源 保存json数据
-        commandList.put(CMD_INFO.SORE,JsonDataStore.getInstent(getApplicationContext()));
+        commandList.put(CMD_INFO.SORE, ICommand_SORE_JsonDataStore.getInstent(getApplicationContext()));
     }
 
 

@@ -14,7 +14,7 @@ import java.util.List;
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.Iview;
 import lzp.yw.com.medioplayer.model_application.ui.Uitools.UiTools;
 import lzp.yw.com.medioplayer.model_application.ui.componentLibrary.CreateComponent;
-import lzp.yw.com.medioplayer.model_universal.Logs;
+import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 
 /**

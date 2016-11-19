@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.concurrent.TimeUnit;
 
-import lzp.yw.com.medioplayer.model_universal.Logs;
+import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 import okhttp3.Headers;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;

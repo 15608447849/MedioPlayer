@@ -5,7 +5,7 @@ import android.widget.FrameLayout;
 
 import lzp.yw.com.medioplayer.model_application.baselayer.BaseActivity;
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.Iview;
-import lzp.yw.com.medioplayer.model_universal.Logs;
+import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 
 /**
  * Created by user on 2016/11/10.

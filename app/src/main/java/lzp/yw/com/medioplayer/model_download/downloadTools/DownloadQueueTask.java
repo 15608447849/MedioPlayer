@@ -5,7 +5,7 @@ import android.content.Context;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import lzp.yw.com.medioplayer.model_universal.Logs;
+import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 
 /**
  * Created by user on 2016/11/3.
@@ -14,6 +14,7 @@ import lzp.yw.com.medioplayer.model_universal.Logs;
  */
 public class DownloadQueueTask {
     private static final String TAG ="downloadQueueMagene";
+
     private static DownloadQueueTask taskManage = null;
     BeingWatched beingWatched = null;
     Watched watcher =null;
@@ -28,6 +29,10 @@ public class DownloadQueueTask {
         }
         return taskManage;
     }
+
+    /**
+     * 任务存储队列
+     */
     private ArrayList<ArrayList<CharSequence>>  storeList = null;
     /**
      * 添加任务
@@ -66,7 +71,7 @@ public class DownloadQueueTask {
         return tasklist;
     }
 
-
+/**************************************************************************************-*/
 
 
 

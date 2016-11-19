@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AbsoluteLayout;
 import android.widget.MediaController;
 
-import lzp.yw.com.medioplayer.model_universal.Logs;
+import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 
 
 /**

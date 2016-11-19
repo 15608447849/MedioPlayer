@@ -14,7 +14,7 @@ import java.util.TimerTask;
 import java.util.concurrent.locks.ReentrantLock;
 
 import lzp.yw.com.medioplayer.model_application.ui.UiFactory.UiDataFilter;
-import lzp.yw.com.medioplayer.model_universal.Logs;
+import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ScheduleBean;
 
 import static lzp.yw.com.medioplayer.model_application.schedule.TimeOperator.dateToStamp;

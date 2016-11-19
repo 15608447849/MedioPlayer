@@ -1,4 +1,4 @@
-package lzp.yw.com.medioplayer.model_command_;
+package lzp.yw.com.medioplayer.model_command_.kernel;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

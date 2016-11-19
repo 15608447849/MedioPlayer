@@ -7,13 +7,14 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import lzp.yw.com.medioplayer.model_universal.AppsTools;
+import lzp.yw.com.medioplayer.model_universal.tool.AppsTools;
 
 /**
  * Created by user on 2016/11/11.
@@ -154,8 +155,23 @@ public class ImageUtils {
         imageView.setImageDrawable(null);
     }
 
+    //创建 imageview
     public static ImageView createImageView(Context context){
         return new ImageView(context){
+            @Override
+            protected void onDraw(Canvas canvas) {
+                try {
+                    super.onDraw(canvas);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+    }
+
+    //创建imagebutton
+    public static ImageButton createImagerButton(Context context){
+        return new ImageButton(context){
             @Override
             protected void onDraw(Canvas canvas) {
                 try {

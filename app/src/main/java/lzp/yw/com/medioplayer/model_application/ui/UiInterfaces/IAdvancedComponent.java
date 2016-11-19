@@ -6,4 +6,7 @@ package lzp.yw.com.medioplayer.model_application.ui.UiInterfaces;
 
 public interface IAdvancedComponent extends IComponent{
     void initSubComponet();
+    void broadCall();
+    void createBroad();
+    void cancelBroad();
 }

@@ -4,7 +4,7 @@ import android.widget.AbsoluteLayout;
 
 import lzp.yw.com.medioplayer.model_application.baselayer.BaseActivity;
 import lzp.yw.com.medioplayer.model_application.ui.UiFragments.PagesFragments;
-import lzp.yw.com.medioplayer.model_universal.Logs;
+import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.PagesBean;
 
 /**

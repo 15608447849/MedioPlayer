@@ -2,7 +2,7 @@ package lzp.yw.com.medioplayer.model_command_.command_arr;
 
 
 import cn.trinea.android.common.util.ShellUtils;
-import lzp.yw.com.medioplayer.model_universal.Logs;
+import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 
 /**
  * Created by user on 2016/9/6.

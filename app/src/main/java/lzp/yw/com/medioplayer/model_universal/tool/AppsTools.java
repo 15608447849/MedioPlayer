@@ -1,4 +1,4 @@
-package lzp.yw.com.medioplayer.model_universal;
+package lzp.yw.com.medioplayer.model_universal.tool;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -281,9 +281,31 @@ public class AppsTools {
         }
     }
 
+    private static boolean isValidSuffix(String contentType, String... allowTypes) {
+        if (null == contentType || "".equals(contentType)) {
+            return false;
+        }
+        for (String type : allowTypes) {
+            if (contentType.endsWith(type)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 
-
+    /**
+     * 判断后缀是否是 mp4
+     */
+    public static boolean isMp4Suffix(String url){
+        return isValidSuffix(url,".mp4");
+    }
+    /**
+     * mp4 后缀->png后缀
+     */
+    public static String tanslationMp4ToPng(String url){
+        return url.substring(0,url.lastIndexOf(".mp4"))+".png";
+    }
 
 
 

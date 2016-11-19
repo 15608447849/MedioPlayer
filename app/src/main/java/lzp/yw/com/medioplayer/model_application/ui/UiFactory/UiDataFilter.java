@@ -6,8 +6,8 @@ import lzp.yw.com.medioplayer.model_application.baselayer.BaseActivity;
 import lzp.yw.com.medioplayer.model_application.schedule.LocalScheduleObject;
 import lzp.yw.com.medioplayer.model_application.ui.UiElements.page.IviewPage;
 import lzp.yw.com.medioplayer.model_application.ui.UiElements.page.pagesView;
-import lzp.yw.com.medioplayer.model_application.ui.UiStore.ViewStore;
-import lzp.yw.com.medioplayer.model_universal.Logs;
+import lzp.yw.com.medioplayer.model_application.ui.UiStore.PagerStore;
+import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.PagesBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ProgramBean;
 
@@ -57,7 +57,7 @@ public class UiDataFilter {
         homeKey =-1;
        // ViewStore.getInstant().pageTanslationCache();//页面 转存
         //循环创建所有页面
-        ViewStore.getInstant().initPagesStore(); // 初始化
+        PagerStore.getInstant().initPagesStore(); // 初始化
         repeatPageStore(program.getLayout().getPages());
         if (homeKey!=-1){
             UiManager.getInstans().exeMainTask(homeKey);
@@ -79,7 +79,7 @@ public class UiDataFilter {
             if (pageView.isHome()){
                 homeKey = key;
             }
-            ViewStore.getInstant().addPage(key,pageView); //添加页面
+            PagerStore.getInstant().addPage(key,pageView); //添加页面
             if (page.getPages()!=null && page.getPages().size()>0){
                 repeatPageStore(page.getPages());
             }

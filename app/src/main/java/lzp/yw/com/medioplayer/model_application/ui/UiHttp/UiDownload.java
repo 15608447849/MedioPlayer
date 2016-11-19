@@ -1,8 +1,12 @@
 package lzp.yw.com.medioplayer.model_application.ui.UiHttp;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 
-import lzp.yw.com.medioplayer.model_download.singedownload.Loader;
+import java.util.ArrayList;
+
+import lzp.yw.com.medioplayer.model_download.kernel.DownloadBroad;
 
 /**
  * Created by user on 2016/11/18.
@@ -10,25 +14,43 @@ import lzp.yw.com.medioplayer.model_download.singedownload.Loader;
 
 public class UiDownload {
 
+    private static Context context;
     private static String terminalNo;
     private static String savepath;
+
    public static void init(Context context,String savepath,String terminalNo){
+       UiDownload.context = context;
        UiDownload.savepath =savepath;
        UiDownload.terminalNo = terminalNo;
     }
     public static void unInit(){
+
+        UiDownload.context = null;
         UiDownload.savepath =null;
         UiDownload.terminalNo = null;
     }
 
-    public static void downloadTask(String url){
-        if (url!=null && !url.equals("")){
-            new Loader(null,savepath,terminalNo).LoadingUriResource(url,null);// 开始任务
-        }
-
+    public static void downloadTask(String actionName,ArrayList<CharSequence> list){
+        sendTaskList(actionName,list);
     }
 
-
+    private static Intent intent = new Intent();
+    private static Bundle bundle = new Bundle();
+    /**
+     * 发送任务到下载服务广播
+     */
+    private static void sendTaskList(String action, ArrayList<CharSequence> loadingList) {
+        if (context!=null){
+            bundle.clear();
+            intent.setAction(DownloadBroad.ACTION);
+            bundle.putString(DownloadBroad.PARAM0, action);
+            bundle.putCharSequenceArrayList(DownloadBroad.PARAM1,loadingList);
+            bundle.putString(DownloadBroad.PARAM2, terminalNo);
+            bundle.putString(DownloadBroad.PARAM3, savepath);
+            intent.putExtras(bundle);
+            context.sendBroadcast(intent);
+        }
+    }
 
 
 

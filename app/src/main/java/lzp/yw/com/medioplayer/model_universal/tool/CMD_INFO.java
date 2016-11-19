@@ -1,4 +1,4 @@
-package lzp.yw.com.medioplayer.model_universal;
+package lzp.yw.com.medioplayer.model_universal.tool;
 
 /**
  * Created by user on 2016/10/27.

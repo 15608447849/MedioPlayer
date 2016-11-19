@@ -1,4 +1,4 @@
-package lzp.yw.com.medioplayer.model_command_;
+package lzp.yw.com.medioplayer.model_command_.command_arr;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,31 +13,30 @@ import java.util.concurrent.ConcurrentMap;
 
 import lzp.yw.com.medioplayer.model_application.baselayer.DataListEntiyStore;
 import lzp.yw.com.medioplayer.model_application.schedule.ScheduleReadBroad;
-import lzp.yw.com.medioplayer.model_command_.command_arr.iCommand;
-import lzp.yw.com.medioplayer.model_universal.Logs;
-import lzp.yw.com.medioplayer.model_universal.MD5Util;
-import lzp.yw.com.medioplayer.model_universal.SdCardTools;
+import lzp.yw.com.medioplayer.model_universal.tool.Logs;
+import lzp.yw.com.medioplayer.model_universal.tool.MD5Util;
+import lzp.yw.com.medioplayer.model_universal.tool.SdCardTools;
 
 /**
  * Created by user on 2016/11/8.
  */
 
-public class JsonDataStore implements iCommand {
+public class ICommand_SORE_JsonDataStore implements iCommand {
     private ConcurrentMap<String, String> jsonMap = new ConcurrentHashMap<>();
-    private static JsonDataStore instant = null;
+    private static ICommand_SORE_JsonDataStore instant = null;
     private DataListEntiyStore dls = null;
     private String jsonStoreDir = null;
     private Context c;
-    private JsonDataStore(Context c){
+    private ICommand_SORE_JsonDataStore(Context c){
         this.c  = c;
         dls = new DataListEntiyStore(c);
         dls.ReadShareData();
         jsonStoreDir = dls.GetStringDefualt("jsonStore","");
     }
 
-    public static JsonDataStore getInstent(Context context){
+    public static ICommand_SORE_JsonDataStore getInstent(Context context){
         if (instant==null){
-            instant = new JsonDataStore(context);
+            instant = new ICommand_SORE_JsonDataStore(context);
         }
         return instant;
     }

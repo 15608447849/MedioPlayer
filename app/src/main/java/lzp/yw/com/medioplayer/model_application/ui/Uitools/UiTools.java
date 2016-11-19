@@ -8,8 +8,8 @@ import java.io.File;
 import lzp.yw.com.medioplayer.model_application.baselayer.DataListEntiyStore;
 import lzp.yw.com.medioplayer.model_application.ui.UiHttp.UiDownload;
 import lzp.yw.com.medioplayer.model_download.singedownload.Loader;
-import lzp.yw.com.medioplayer.model_universal.MD5Util;
-import lzp.yw.com.medioplayer.model_universal.SdCardTools;
+import lzp.yw.com.medioplayer.model_universal.tool.MD5Util;
+import lzp.yw.com.medioplayer.model_universal.tool.SdCardTools;
 
 /**
  * Created by user on 2016/11/11.

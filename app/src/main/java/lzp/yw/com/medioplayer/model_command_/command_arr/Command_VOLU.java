@@ -4,7 +4,7 @@ import android.content.Context;
 import android.media.AudioManager;
 
 import lzp.yw.com.medioplayer.model_application.baselayer.BaseApplication;
-import lzp.yw.com.medioplayer.model_universal.Logs;
+import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 
 
 /**

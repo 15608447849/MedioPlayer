@@ -14,7 +14,7 @@ import lzp.yw.com.medioplayer.model_application.ui.UiFactory.UiManager;
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.Iview;
 import lzp.yw.com.medioplayer.model_application.ui.Uitools.ImageUtils;
 import lzp.yw.com.medioplayer.model_application.ui.Uitools.UiTools;
-import lzp.yw.com.medioplayer.model_universal.Logs;
+import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 
 /**

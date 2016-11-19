@@ -51,15 +51,15 @@
             android:process="lzp.yw.communticate" />
         <!-- 派发任务 服务 -->
         <service
-            android:name=".model_command_.CommandPostServer"
+            android:name=".model_command_.kernel.CommandPostServer"
             android:process=":remote" />
         <!-- 下载服务 -->
         <service
-            android:name=".model_download.DownloadServer"
+            android:name=".model_download.kernel.DownloadServer"
             android:process="lzp.yw.download"/>
 
         <!-- 拨叉sdcard 广播 -->
-        <receiver android:name=".model_universal.SdcardBroad">
+        <receiver android:name=".model_universal.tool.SdcardBroad">
             <intent-filter android:priority="1000">
                 <action android:name="android.intent.action.MEDIA_MOUNTED"/>
                 <action android:name="android.intent.action.MEDIA_EJECT" />

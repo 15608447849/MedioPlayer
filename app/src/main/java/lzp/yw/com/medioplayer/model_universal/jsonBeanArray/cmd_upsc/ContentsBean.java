@@ -34,10 +34,19 @@ public class ContentsBean {
     private String sourceUp;//button 资源 默认时
     private String sourceDown;// button 资源 按下时
 
-    private int timeLength;//时长
+    private int timeLength;//播放时长
     private int playTimes;//次数
     private int playIndex;//内容下标
     private boolean transparent;//是否透明
+    private int updateFreq;//高级控件更新频率
+
+    public int getUpdateFreq() {
+        return updateFreq;
+    }
+
+    public void setUpdateFreq(int updateFreq) {
+        this.updateFreq = updateFreq;
+    }
 
     //文本控件相关
     private String contentName;//标题

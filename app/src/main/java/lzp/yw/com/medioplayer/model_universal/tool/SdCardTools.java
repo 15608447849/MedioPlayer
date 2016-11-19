@@ -1,4 +1,4 @@
-package lzp.yw.com.medioplayer.model_universal;
+package lzp.yw.com.medioplayer.model_universal.tool;
 
 import android.app.Activity;
 import android.content.Context;

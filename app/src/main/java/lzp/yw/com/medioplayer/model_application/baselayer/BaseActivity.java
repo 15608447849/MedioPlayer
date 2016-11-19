@@ -24,7 +24,7 @@ import lzp.yw.com.medioplayer.model_application.ui.Uitools.UiTools;
 import lzp.yw.com.medioplayer.model_communication.CommunicationServer;
 import lzp.yw.com.medioplayer.model_communication.ICallBackAIDL;
 import lzp.yw.com.medioplayer.model_communication.ICommunicationAIDL;
-import lzp.yw.com.medioplayer.model_universal.Logs;
+import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 
 /**
  *  bind communication server

@@ -2,8 +2,6 @@ package lzp.yw.com.medioplayer.model_application.ui.componentLibrary.textshow;
 
 import android.support.v4.view.ViewPager;
 
-import lzp.yw.com.medioplayer.model_universal.Logs;
-
 /**
  * Created by user on 2016/11/15.
  */
