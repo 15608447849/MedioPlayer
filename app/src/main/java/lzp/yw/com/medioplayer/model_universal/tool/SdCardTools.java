@@ -428,16 +428,27 @@ public class SdCardTools {
      */
     public static boolean MkDir(String pathdir) {
         try {
-            File file = new File(pathdir);
-            if (!file.exists()) {
-                file.mkdirs();
+            Log.i("Mkdir","创建 - "+pathdir);
+            if (pathdir.endsWith("/")){
+                pathdir = pathdir.substring(0,pathdir.lastIndexOf("/"));
+                Log.i("Mkdir","修改 - "+pathdir);
             }
-            if (file.exists()){
+            File folder = new File(pathdir);
+            if (!folder.exists()) {
+                if (folder.mkdirs()){
+                    Log.i("Mkdir","成功 - "+pathdir);
+                }else{
+                    Log.i("Mkdir","失败 - "+pathdir);
+
+                }
+            }
+            if (folder.exists() && folder.isDirectory()){
                 return true;
             }
         } catch (Exception e) {
-            Log.i("MkDir", e.getMessage());
+            Log.e("MkDir", e.getMessage());
         }
+
         return false;
     }
 

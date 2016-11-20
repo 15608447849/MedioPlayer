@@ -3,7 +3,6 @@ package lzp.yw.com.medioplayer.model_application.ui.componentLibrary.grallery;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.AnimationUtils;
@@ -24,17 +23,17 @@ import java.util.TimerTask;
 
 import lzp.yw.com.medioplayer.R;
 import lzp.yw.com.medioplayer.model_application.ui.UiFactory.UiLocalBroad;
-import lzp.yw.com.medioplayer.model_application.ui.UiHttp.UiHttpProxy;
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.IAdvancedComponent;
 import lzp.yw.com.medioplayer.model_application.ui.Uitools.ImageUtils;
 import lzp.yw.com.medioplayer.model_application.ui.Uitools.UiTools;
-import lzp.yw.com.medioplayer.model_universal.tool.AppsTools;
-import lzp.yw.com.medioplayer.model_universal.tool.Logs;
-import lzp.yw.com.medioplayer.model_universal.tool.MD5Util;
+import lzp.yw.com.medioplayer.model_application.ui.componentLibrary.video.MyVideoView;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.content_gallary.DataObjsBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.content_gallary.GallaryBean;
+import lzp.yw.com.medioplayer.model_universal.tool.AppsTools;
+import lzp.yw.com.medioplayer.model_universal.tool.Logs;
+import lzp.yw.com.medioplayer.model_universal.tool.MD5Util;
 
 /**
  * Created by user on 2016/11/17.
@@ -83,6 +82,8 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent {
 
     private ImageSwitcher ishow;
     private Gallery gallery;
+    private AbsoluteLayout absLayout;
+    private MyVideoView video;
     @Override
     public void initSubComponet() {
         if (bitmapList==null){
@@ -90,6 +91,8 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent {
         }
         try {
             View root = LayoutInflater.from(context).inflate(R.layout.imageswitcherpage,null);
+            absLayout = (AbsoluteLayout) root.findViewById(R.id.frame_abslayout);
+            video = new MyVideoView(context);//视频播放器
             ishow = (ImageSwitcher) root.findViewById(R.id.switcher);
             initImageSwitcher();
             gallery = (Gallery)root.findViewById(R.id.gallery);
@@ -136,7 +139,10 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent {
         tanslationUrl(url);
         if (AppsTools.checkUiThread()){
             //更新适配器
-            adapter.tansBitmapToDraw(bitmapList);
+            if (adapter!=null){
+                adapter.settingBitmaps(bitmapList);
+            }
+
         }
     }
     private ImagerSwitchFactory factory ;//图片工厂 (停止使用请调用 stop)
@@ -159,15 +165,13 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent {
     private void initGallery() {
         //设置适配器
         adapter = new GralleryAdapter(context);
-        adapter.tansBitmapToDraw(bitmapList);
+        adapter.settingBitmaps(bitmapList);
         gallery.setAdapter(adapter);
         gallery.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (AppsTools.isMp4Suffix(imageNameArr.get(position))){
-//                    ishow.addView();
-                }
-                ishow.setImageDrawable(adapter.getDrawable(position));
+                adapter.setSelectItem(position);
+                justVideos(position);
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -175,10 +179,29 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent {
         });
     }
 
+    //判断是视频素材还是图片素材
+    private void justVideos(int position) {
+        if (absLayout.getVisibility() == View.VISIBLE){
+            //有视频显示中
+//                    video.start(layout,videoPath,false);
+            video.stopMyPlayer();
+            absLayout.setVisibility(View.GONE);
+        }
+        if (AppsTools.isMp4Suffix(imageNameArr.get(position))){
+            if (absLayout.getVisibility() == View.GONE){
+                absLayout.setVisibility(View.VISIBLE);
+                //视频显示
+                video.start(absLayout,imageNameArr.get(position),true);
+            }
+        }else {
+            ishow.setImageDrawable(adapter.getDrawable(position));
+        }
+    }
+
     @Override
     public void setAttrbute() {
         this.setLayoutParams(new AbsoluteLayout.LayoutParams(width,height,x,y));
-        this.setBackgroundColor(Color.GREEN);
+//        this.setBackgroundColor(Color.GREEN);
     }
 
     @Override
@@ -329,7 +352,7 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent {
     public void loadContent() {
         //开始计时器
         unLoadContent();
-        UiHttpProxy.getContent(url,mBroadAction);
+        //UiHttpProxy.getContent(url,mBroadAction);
         startTimer(updateTime*1000);
     }
 

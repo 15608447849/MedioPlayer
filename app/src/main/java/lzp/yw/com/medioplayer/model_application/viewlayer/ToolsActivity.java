@@ -125,12 +125,18 @@ public class ToolsActivity extends BaseActivity {
         dataList.put("storageLimits",StorageLimits.getText().toString());//sdcard 清理阔值
         dataList.put("RestartBeatInterval",RestartBeatInterval.getText().toString()); //重启时间
         dataList.put("HeartBeatInterval",  heartbeattime.getText().toString());
+
         String dirpath = SdCardTools.getAppSourceDir(this) + completePath(BasePath.getText().toString());
-        dataList.put("basepath", dirpath );//资源存储的 文件名
-        SdCardTools.MkDir(dirpath);
+        if (SdCardTools.MkDir(dirpath)) {
+            dataList.put("basepath", dirpath);//资源存储的 文件名
+        }
+
         dirpath = SdCardTools.getAppSourceDir(this) + completePath(SchudulePath.getText().toString());
-        dataList.put("jsonStore", dirpath );//资源存储的 文件名
-        SdCardTools.MkDir(dirpath);
+        if (SdCardTools.MkDir(dirpath)){
+        dataList.put("jsonStore", dirpath );//json存储的 文件名
+        }
+
+
     }
 
     private String completePath(String path){

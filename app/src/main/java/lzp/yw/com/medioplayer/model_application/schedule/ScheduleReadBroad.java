@@ -30,7 +30,7 @@ public class ScheduleReadBroad extends BroadcastReceiver{
             //获取 main 得到 uri -> md5 ->文件名 -> 获取文本内容 -> 变成对象->scheduleReader
             File dir = new File(path) ;
             if(!dir.exists()){
-                Logs.e(TAG," 目录不存在 - "+ path);
+                Logs.e(TAG,"json - 目录不存在 - "+ path);
                 return;
             }
 

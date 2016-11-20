@@ -1,19 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" 
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/faramelayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="6"
+        android:background="@android:color/holo_purple">
+        <ImageSwitcher android:id="@+id/switcher"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white"
+            />
+        <AbsoluteLayout
+            android:id="@+id/frame_abslayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/holo_green_dark"
+            android:visibility="gone">
+
+
+        </AbsoluteLayout>
+    </FrameLayout>
+    <!--  android:layout_alignParentTop="true"
     <ImageSwitcher android:id="@+id/switcher"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-    />
-    <Gallery android:id="@+id/gallery"
+        android:layout_height="0dp"
+        android:layout_weight="6"
+        />
+        -->
+    <Gallery
+        android:id="@+id/gallery"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_alignParentBottom="true"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:gravity="center_vertical"
         android:spacing="16dp"
-    />
-</RelativeLayout>
+        android:background="@android:color/darker_gray"
+        />
+</LinearLayout>
    

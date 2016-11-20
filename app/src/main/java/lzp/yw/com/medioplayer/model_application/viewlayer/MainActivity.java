@@ -1,11 +1,14 @@
 package lzp.yw.com.medioplayer.model_application.viewlayer;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.ViewGroup;
 import android.widget.AbsoluteLayout;
 
 import lzp.yw.com.medioplayer.R;
 import lzp.yw.com.medioplayer.model_application.baselayer.BaseActivity;
+import lzp.yw.com.medioplayer.model_application.baselayer.DataListEntiyStore;
+import lzp.yw.com.medioplayer.model_application.schedule.ScheduleReadBroad;
 
 /**
  * Created by user on 2016/10/26.
@@ -36,7 +39,11 @@ public class MainActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         initAllServer("communication");
+        //读取排期
+        readSchuduler();
     }
+
+
 
     @Override
     protected void onPause() {
@@ -47,5 +54,27 @@ public class MainActivity extends BaseActivity {
     @Override
     public ViewGroup getActivityLayout() {
         return main_layout;
+    }
+
+    private DataListEntiyStore des;
+    private Intent intent =null;
+    private Bundle bundle = null;
+    //读取排期
+    private void readSchuduler() {
+        if (intent == null){
+            intent = new Intent();
+        }
+        if (bundle == null){
+            bundle = new Bundle();
+        }
+        if (des==null){
+            des = new DataListEntiyStore(this);
+            des.ReadShareData();
+        }
+        bundle.clear();
+        intent.setAction(ScheduleReadBroad.ACTION);
+        bundle.putString(ScheduleReadBroad.PARAM, des.GetStringDefualt("jsonStore",""));
+        intent.putExtras(bundle);
+        sendBroadcast(intent);
     }
 }

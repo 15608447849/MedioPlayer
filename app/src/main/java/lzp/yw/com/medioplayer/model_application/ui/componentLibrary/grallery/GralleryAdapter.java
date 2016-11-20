@@ -21,37 +21,52 @@ import lzp.yw.com.medioplayer.model_application.ui.Uitools.ImageUtils;
 
 public class GralleryAdapter extends BaseAdapter {
 
-    private ArrayList<Drawable> imageArr = null;
+    private ArrayList<Bitmap> bitmaps = null;
     private Context context ;
+    private int selectItem;
+
     GralleryAdapter(Context context){
         this.context = context;
-        imageArr = new ArrayList<>();
+        this.bitmaps = bitmaps;
     }
 
-    //转换bitmap
-    public void tansBitmapToDraw(ArrayList<Bitmap> bitmapList){
-        if (imageArr==null){
-            imageArr = new ArrayList<>();
-        }
-        imageArr.clear();
-           for (Bitmap bitmap : bitmapList){
-               imageArr.add(new BitmapDrawable(bitmap));
-           }
+    public void setSelectItem(int selectItem) {
 
+        if (this.selectItem != selectItem) {
+            this.selectItem = selectItem;
+            notifyDataSetChanged();
+        }
+    }
+    //设置bitmap
+    public void settingBitmaps(ArrayList<Bitmap> bitmapList){
+        if (bitmaps==null){
+            bitmaps = new ArrayList<>();
+        }
+        for (Bitmap bitmap:bitmapList){
+            if (!bitmaps.contains(bitmap)){
+                bitmaps.add(bitmap);
+            }
+        }
         notifyDataSetChanged();
     }
     public Drawable getDrawable(int position){
-        if (imageArr!=null){
-            return imageArr.get(position);
+        if (getBitmap(position)!=null){
+            return new BitmapDrawable(getBitmap(position));
+        }
+        return null;
+    }
+    public Bitmap getBitmap(int position){
+        if (bitmaps !=null){
+            return bitmaps.get(position);
         }
         return null;
     }
    @Override
     public int getCount() {
-       if (imageArr==null || imageArr.size()==0){
+       if (bitmaps ==null || bitmaps.size()==0){
            return 0;
        }else {
-           return imageArr.size();
+           return bitmaps.size();
        }
     }
 
@@ -71,13 +86,23 @@ public class GralleryAdapter extends BaseAdapter {
         if (convertView==null){
             iv= ImageUtils.createImageView(context);
             iv.setAdjustViewBounds(true);
-            iv.setLayoutParams(new Gallery.LayoutParams(Gallery.LayoutParams.WRAP_CONTENT, Gallery.LayoutParams.WRAP_CONTENT));
-            iv.setBackgroundColor(Color.BLACK);
+//            iv.setLayoutParams(new Gallery.LayoutParams(Gallery.LayoutParams.WRAP_CONTENT, Gallery.LayoutParams.WRAP_CONTENT));
+            Gallery.LayoutParams params = new Gallery.LayoutParams(150, 150);
+            iv.setLayoutParams(params);
+            iv. setScaleType(ImageView.ScaleType.FIT_XY);
+            iv.setPadding(2,2,2,2);
             convertView = iv;
         }else{
             iv = (ImageView) convertView;
         }
-        iv.setImageDrawable(imageArr.get(position));
+
+        iv.setImageBitmap(bitmaps.get(position));
+        if(selectItem==position){
+            iv.setBackgroundColor(Color.BLACK);
+        }
+        else{//未选中
+            iv.setBackgroundColor(Color.WHITE);
+        }
         return convertView;
     }
 }
