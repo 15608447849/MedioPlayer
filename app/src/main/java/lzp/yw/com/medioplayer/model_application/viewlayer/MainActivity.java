@@ -40,7 +40,7 @@ public class MainActivity extends BaseActivity {
         super.onResume();
         initAllServer("communication");
         //读取排期
-        readSchuduler();
+//        readSchuduler();
     }
 
 

@@ -13,8 +13,10 @@ import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 import lzp.yw.com.medioplayer.model_application.baselayer.DataListEntiyStore;
+import lzp.yw.com.medioplayer.model_command_.kernel.CommandPostBroad;
 import lzp.yw.com.medioplayer.model_download.kernel.DownloadBroad;
 import lzp.yw.com.medioplayer.model_universal.tool.AppsTools;
+import lzp.yw.com.medioplayer.model_universal.tool.CMD_INFO;
 import lzp.yw.com.medioplayer.model_universal.tool.CONTENT_TYPE;
 import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 import lzp.yw.com.medioplayer.model_universal.tool.SdCardTools;
@@ -87,14 +89,18 @@ public class Command_UPSC implements iCommand {
                  endTime = System.currentTimeMillis();
                  Logs.e(TAG,"解析排期 用时 : "+(endTime - startTime)+" 毫秒 ");
 
-                 Logs.d(TAG,"----------------------------------任务队列大小 : " + taskStore.getList().size());
+                 Logs.d(TAG,"----------------------------------任务队列大小 : " + taskStore.getListSize());
+
+                    if (taskStore.getListSize()==0){
+                        sendTaskList(false);
+                        return;
+                    }
 
                  startTime = System.currentTimeMillis();
                  clearSdcardSource();
                  endTime = System.currentTimeMillis();
                  Logs.e(TAG,"清理资源 用时 : "+(endTime - startTime)+" 毫秒 ");
-
-                 sendTaskList();
+                 sendTaskList(true);
                 }
             }
             }catch (Exception e){
@@ -485,13 +491,19 @@ public class Command_UPSC implements iCommand {
     /**
      * 发送任务到下载服务广播
      */
-    private void sendTaskList() {
+    private void sendTaskList(boolean flag) {
         if (context!=null && dl!=null){
             bundle.clear();
-            intent.setAction(DownloadBroad.ACTION);
-            bundle.putCharSequenceArrayList(DownloadBroad.PARAM1,taskStore.getList());
-            bundle.putString(DownloadBroad.PARAM2, terminalNo);
-            bundle.putString(DownloadBroad.PARAM3, basePath);
+            if (flag){
+                intent.setAction(DownloadBroad.ACTION);
+                bundle.putCharSequenceArrayList(DownloadBroad.PARAM1,taskStore.getList());
+                bundle.putString(DownloadBroad.PARAM2, terminalNo);
+                bundle.putString(DownloadBroad.PARAM3, basePath);
+
+            }else{
+                intent.setAction(CommandPostBroad.ACTION);
+                bundle.putString(CommandPostBroad.PARAM1, CMD_INFO.SORE);
+            }
             intent.putExtras(bundle);
             context.sendBroadcast(intent);
         }

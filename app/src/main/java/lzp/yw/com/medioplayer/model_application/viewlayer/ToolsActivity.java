@@ -126,6 +126,8 @@ public class ToolsActivity extends BaseActivity {
         dataList.put("RestartBeatInterval",RestartBeatInterval.getText().toString()); //重启时间
         dataList.put("HeartBeatInterval",  heartbeattime.getText().toString());
 
+
+
         String dirpath = SdCardTools.getAppSourceDir(this) + completePath(BasePath.getText().toString());
         if (SdCardTools.MkDir(dirpath)) {
             dataList.put("basepath", dirpath);//资源存储的 文件名
@@ -136,6 +138,11 @@ public class ToolsActivity extends BaseActivity {
         dataList.put("jsonStore", dirpath );//json存储的 文件名
         }
 
+        //app icon 路径
+        dirpath = SdCardTools.getAppSourceDir(this) + "/appicon/";
+        if (SdCardTools.MkDir(dirpath)){
+            dataList.put("appicon", dirpath );//json存储的 文件名
+        }
 
     }
 

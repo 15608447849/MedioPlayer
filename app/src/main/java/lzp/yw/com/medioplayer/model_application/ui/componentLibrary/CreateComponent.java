@@ -10,8 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.Iview;
-import lzp.yw.com.medioplayer.model_universal.tool.CONTENT_TYPE;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
+import lzp.yw.com.medioplayer.model_universal.tool.CONTENT_TYPE;
 
 /**
  * Created by user on 2016/11/11.
@@ -27,6 +27,7 @@ public class CreateComponent {
         referenceViewMap.put(CONTENT_TYPE.text,packageName+"textshow.TextViewPager");
         referenceViewMap.put(CONTENT_TYPE.html,packageName+"web.IWebView");
         referenceViewMap.put(CONTENT_TYPE.gallary,packageName+"grallery.CGrallery");
+        referenceViewMap.put(CONTENT_TYPE.media,packageName+"stream_medio.CStreamMedioForVitamio");
     }
 
 

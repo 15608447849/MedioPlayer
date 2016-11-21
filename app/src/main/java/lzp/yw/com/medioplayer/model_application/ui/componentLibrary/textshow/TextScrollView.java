@@ -46,9 +46,13 @@ public class TextScrollView extends ScrollView implements IContentView {
         }
     }
 
+    private ViewGroup.LayoutParams layoutParams;
     @Override
     public void setAttrbute() {
-        this.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));//匹配父容器
+        if (layoutParams==null){
+            layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        }
+        this.setLayoutParams(layoutParams);//匹配父容器
     }
 
     @Override

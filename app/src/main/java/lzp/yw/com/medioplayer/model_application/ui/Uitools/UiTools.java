@@ -8,6 +8,8 @@ import java.io.File;
 import lzp.yw.com.medioplayer.model_application.baselayer.DataListEntiyStore;
 import lzp.yw.com.medioplayer.model_application.ui.UiHttp.UiDownload;
 import lzp.yw.com.medioplayer.model_download.singedownload.Loader;
+import lzp.yw.com.medioplayer.model_universal.tool.AppsTools;
+import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 import lzp.yw.com.medioplayer.model_universal.tool.MD5Util;
 import lzp.yw.com.medioplayer.model_universal.tool.SdCardTools;
 
@@ -19,16 +21,22 @@ public class UiTools {
     private static boolean isInit = false;
     private static DataListEntiyStore dle = null;
     private static File contentDir = null;
+    private static String basepath;
+    private static String weatherIconPath = null; //白天 day 黑夜 night
+
     public static void  init(Context context){
         dle = new DataListEntiyStore(context);
         dle.ReadShareData();
-        contentDir = new File(dle.GetStringDefualt("jsonStore","")) ;//根目录
-        UiDownload.init(context,dle.GetStringDefualt("basepath",""),dle.GetStringDefualt("terminalNo",""));
+        basepath = dle.GetStringDefualt("basepath","");
+        contentDir = new File(dle.GetStringDefualt("jsonStore","")) ;//json根目录
+        UiDownload.init(context,basepath,dle.GetStringDefualt("terminalNo",""));
+        unzipWeatherIcon(context,dle.GetStringDefualt("appicon",""));
         isInit = true;
     }
     public static void  uninit(){
         UiDownload.unInit();
         dle =null;
+
         isInit = false;
     }
 
@@ -101,6 +109,32 @@ public class UiTools {
         return true;
     }
 
+    /**
+     * 天气图片 解压缩  源目录 - assets - weathericon.zip -> 根目录下的 appicon->weathericon.zip ->解压缩->删除zip
+     */
+    private static boolean unzipWeatherIcon(Context context,String dirpath){
 
+
+        if (fileIsExt(dirpath+"weathericon")){
+            weatherIconPath = dirpath+"weathericon/";
+            //存在
+            return true;
+        }
+
+        if (AppsTools.ReadAssectsDataToSdCard(context,dirpath,"weathericon.zip")){
+            //执行解压缩
+            Logs.i("unzip","路径- ->>>>>"+dirpath+"weathericon.zip");
+            try {
+                AppsTools.UnZip(dirpath+"weathericon.zip",dirpath.substring(0,dirpath.lastIndexOf("/")));
+                //删除 .zip文件
+                SdCardTools.DeleteFiles(dirpath+"weathericon.zip");
+                weatherIconPath = dirpath+"weathericon/";
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
 
 }

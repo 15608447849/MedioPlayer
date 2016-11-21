@@ -11,7 +11,10 @@ import android.view.WindowManager;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -24,6 +27,8 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import static android.support.v7.widget.StaggeredGridLayoutManager.TAG;
 
@@ -281,6 +286,12 @@ public class AppsTools {
         }
     }
 
+    /**
+     * 判断指定类型 是不是 数组中的某个类型
+     * @param contentType
+     * @param allowTypes
+     * @return
+     */
     private static boolean isValidSuffix(String contentType, String... allowTypes) {
         if (null == contentType || "".equals(contentType)) {
             return false;
@@ -306,6 +317,140 @@ public class AppsTools {
     public static String tanslationMp4ToPng(String url){
         return url.substring(0,url.lastIndexOf(".mp4"))+".png";
     }
+
+
+    /**
+     *SDCard/ xxx / xx.txt
+     *
+     * 读取 acesst路径下的文件 -> 保存到sd卡中
+     */
+
+    public static boolean ReadAssectsDataToSdCard(Context c,String dirPath,String fileName) {
+        InputStream inputStream = null;
+        FileOutputStream fileOutputStream = null;
+        try {
+            // 得到资源中的assets数据流
+            inputStream = c.getResources().getAssets().open(fileName);
+            int length = inputStream.available();
+            if (length==0){
+                return false;
+            }
+            if(SdCardTools.MkDir(dirPath)){
+                //目录创建 或者 存在
+                fileOutputStream = new FileOutputStream(dirPath+fileName);
+                byte[] buffer = new byte[1024];
+                length = 0;
+                while((length = inputStream.read(buffer)) > 0){
+                    fileOutputStream.write(buffer, 0 ,length);
+                }
+                fileOutputStream.flush();
+                System.out.println("ReadAssectsDataToSdCard() ----------success--------------");
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            if (inputStream!=null){
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (fileOutputStream!=null){
+                try {
+                    fileOutputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return false;
+    }
+
+
+    /**
+     * 解压缩
+     */
+    @SuppressWarnings("unchecked")
+    public static void UnZip(String zipFileName, String outputDirectory)
+            throws IOException {
+
+        ZipFile zipFile = null;
+        try {
+            zipFile = new ZipFile(zipFileName);
+            Enumeration e = zipFile.entries();
+            ZipEntry zipEntry = null;
+            File dest = new File(outputDirectory);
+            dest.mkdirs();
+            while (e.hasMoreElements()) {
+                zipEntry = (ZipEntry) e.nextElement();
+                String entryName = zipEntry.getName();
+                InputStream in = null;
+                FileOutputStream out = null;
+                try {
+                    if (zipEntry.isDirectory()) {
+                        String name = zipEntry.getName();
+                        name = name.substring(0, name.length() - 1);
+                        File f = new File(outputDirectory + File.separator
+                                + name);
+                        f.mkdirs();
+                    } else {
+                        int index = entryName.lastIndexOf("\\");
+                        if (index != -1) {
+                            File df = new File(outputDirectory + File.separator
+                                    + entryName.substring(0, index));
+                            df.mkdirs();
+                        }
+                        index = entryName.lastIndexOf("/");
+                        if (index != -1) {
+                            File df = new File(outputDirectory + File.separator
+                                    + entryName.substring(0, index));
+                            df.mkdirs();
+                        }
+                        File f = new File(outputDirectory + File.separator
+                                + zipEntry.getName());
+                        // f.createNewFile();
+                        in = zipFile.getInputStream(zipEntry);
+                        out = new FileOutputStream(f);
+                        int c;
+                        byte[] by = new byte[1024];
+                        while ((c = in.read(by)) != -1) {
+                            out.write(by, 0, c);
+                        }
+                        out.flush();
+                    }
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                    throw new IOException("解压失败：" + ex.toString());
+                } finally {
+                    if (in != null) {
+                        try {
+                            in.close();
+                        } catch (IOException ex) {
+                        }
+                    }
+                    if (out != null) {
+                        try {
+                            out.close();
+                        } catch (IOException ex) {
+                        }
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            throw new IOException("解压失败：" + ex.toString());
+        } finally {
+            if (zipFile != null) {
+                try {
+                    zipFile.close();
+                } catch (IOException ex) {
+                }
+            }
+        }
+    }
+
 
 
 

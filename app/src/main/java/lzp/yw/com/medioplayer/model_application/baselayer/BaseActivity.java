@@ -278,7 +278,10 @@ public class BaseActivity extends Activity {
 
     }
 
-
+    //返回全局context
+    public Context getAppContext(){
+        return this.getApplicationContext();
+    }
 
 
 

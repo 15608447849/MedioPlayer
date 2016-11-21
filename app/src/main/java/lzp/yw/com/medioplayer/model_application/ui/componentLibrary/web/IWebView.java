@@ -32,7 +32,7 @@ public class IWebView extends WebView implements IComponentUpdate {
     private String url;
     private boolean isInitData;
     private boolean isLayout;
-
+    private AbsoluteLayout.LayoutParams layoutParams;
     private int backgroundAlpha;
     private String backgroundColor;
     private  String bgImageUrl;
@@ -53,6 +53,7 @@ public class IWebView extends WebView implements IComponentUpdate {
             this.height = (int)cb.getHeight();
             this.x = (int)cb.getCoordX();
             this.y = (int)cb.getCoordY();
+            layoutParams = new AbsoluteLayout.LayoutParams(width,height,x,y);
             this.backgroundAlpha = cb.getBackgroundAlpha();
             this.bgImageUrl = UiTools.getUrlTanslationFilename(cb.getBackgroundPic());
             if (bgImageUrl==null){
@@ -90,7 +91,7 @@ public class IWebView extends WebView implements IComponentUpdate {
 
     @Override
     public void setAttrbute() {
-        this.setLayoutParams(new AbsoluteLayout.LayoutParams(width,height,x,y));
+        this.setLayoutParams(layoutParams);
         this.setAlpha(backgroundAlpha);
         if (bgImageUrl==null){
             //设置背景颜色

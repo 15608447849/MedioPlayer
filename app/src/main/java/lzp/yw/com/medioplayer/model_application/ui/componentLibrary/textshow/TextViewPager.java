@@ -85,7 +85,7 @@ public class TextViewPager extends ViewPager implements IComponentUpdate {
             this.height = (int)cb.getHeight();
             this.x = (int)cb.getCoordX();
             this.y = (int)cb.getCoordY();
-
+            layoutParams = new AbsoluteLayout.LayoutParams(width,height,x,y);
             this.backgroundAlpha = cb.getBackgroundAlpha();
             this.bgImageUrl = UiTools.getUrlTanslationFilename(cb.getBackgroundPic());
             if (bgImageUrl==null){
@@ -103,10 +103,10 @@ public class TextViewPager extends ViewPager implements IComponentUpdate {
             e.printStackTrace();
         }
     }
-
+    private AbsoluteLayout.LayoutParams layoutParams;
     @Override
     public void setAttrbute() {
-        this.setLayoutParams(new AbsoluteLayout.LayoutParams(width,height,x,y));
+        this.setLayoutParams(layoutParams);
         this.setAlpha(backgroundAlpha);
         if (bgImageUrl==null){
             //设置背景颜色

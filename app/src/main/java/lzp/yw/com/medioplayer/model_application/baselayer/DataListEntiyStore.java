@@ -123,7 +123,7 @@ public class DataListEntiyStore extends DataListEntiy{
         map.put("storageLimits",GetKey("storageLimits","50"));//sdka 容量达到多少时 会清理资源
         map.put("basepath",  GetKey("basepath", "sourceDir"));//资源保存路径
         map.put("jsonStore",GetKey("jsonStore","schuduleList"));//json保存路径
-
+        map.put("appicon",GetKey("appicon","appicon"));// 图标存储路径
         Logs.i(TAG,"ToolsDataListEntity_ReadShareData() \n --------------------------------------------------读取配置信息------------------------------- \n 成功");
     }
     }

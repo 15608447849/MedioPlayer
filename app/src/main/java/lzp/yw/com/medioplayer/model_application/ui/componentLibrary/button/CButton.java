@@ -14,8 +14,8 @@ import lzp.yw.com.medioplayer.model_application.ui.UiFactory.UiManager;
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.Iview;
 import lzp.yw.com.medioplayer.model_application.ui.Uitools.ImageUtils;
 import lzp.yw.com.medioplayer.model_application.ui.Uitools.UiTools;
-import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
+import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 
 /**
  * Created by user on 2016/11/12.
@@ -34,7 +34,7 @@ public class CButton extends ImageButton implements View.OnClickListener,View.On
     private Bitmap downBitmap;//按下图片
     private boolean isInitData;
     private boolean isLayout;
-
+    private AbsoluteLayout.LayoutParams layoutParams;
     public CButton(Context context, AbsoluteLayout layout, ComponentsBean component) {
         super(context);
         this.context = context;
@@ -53,6 +53,7 @@ public class CButton extends ImageButton implements View.OnClickListener,View.On
             this.height = (int)cb.getHeight();
             this.x = (int)cb.getCoordX();
             this.y = (int)cb.getCoordY();
+            layoutParams = new AbsoluteLayout.LayoutParams(width,height,x,y);
             this.linkId = cb.getLinkId();
             this.isInitData = true;
             if (cb.getContents()!=null && cb.getContents().size()==1){
@@ -68,7 +69,7 @@ public class CButton extends ImageButton implements View.OnClickListener,View.On
     //设置属性
     @Override
     public void setAttrbute() {
-        this.setLayoutParams(new AbsoluteLayout.LayoutParams(width,height,x,y));
+        this.setLayoutParams(layoutParams);
         this.setScaleType(ImageView.ScaleType.FIT_XY);
     }
 

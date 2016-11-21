@@ -3,7 +3,6 @@ package lzp.yw.com.medioplayer.model_command_.command_arr;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -22,6 +21,7 @@ import lzp.yw.com.medioplayer.model_universal.tool.SdCardTools;
  */
 
 public class ICommand_SORE_JsonDataStore implements iCommand {
+    private static final String TAG = " ICommand_SORE_JsonDataStore";
     private ConcurrentMap<String, String> jsonMap = new ConcurrentHashMap<>();
     private static ICommand_SORE_JsonDataStore instant = null;
     private DataListEntiyStore dls = null;
@@ -56,12 +56,12 @@ public class ICommand_SORE_JsonDataStore implements iCommand {
     }
 
     @Override
-    public void Execute(String param) {
+    public void Execute(String param) { //无参数
 
         if (jsonStoreDir==null || jsonStoreDir.equals("")){
             return;
         }
-        Log.i("","json 保存目录: "+ jsonStoreDir);
+        Logs.i("TAG","json 保存目录 : "+ jsonStoreDir);
         clearPreviousCache(jsonStoreDir);
         readJsonMapToSdcard(jsonStoreDir);
     }
@@ -73,16 +73,20 @@ public class ICommand_SORE_JsonDataStore implements iCommand {
         String bakPath = sdcard_save_dir.substring(0,sdcard_save_dir.lastIndexOf("/"));
         bakPath = bakPath.substring(0,bakPath.lastIndexOf("/"));
         bakPath = bakPath+"/jsonSchuduleBak/";
-        Log.i("","备份文件夹路径 : "+bakPath);
+        Logs.i("TAG","备份文件夹路径 : "+bakPath);
         try {
             SdCardTools.backupFileDir(sdcard_save_dir,bakPath);
-            SdCardTools.deleteTargetDir(sdcard_save_dir);
+            SdCardTools.DeleteTargetDir(sdcard_save_dir);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
     //写入文件
     private void readJsonMapToSdcard(String sdcard_save_dir){
+        if (!SdCardTools.MkDir(sdcard_save_dir)){
+            Logs.i("TAG","---------------存储数据失败--------------------"+sdcard_save_dir);
+            return;
+        }
        Iterator iter = jsonMap.entrySet().iterator();
         Object key = null;
         Object val = null;
@@ -94,7 +98,7 @@ public class ICommand_SORE_JsonDataStore implements iCommand {
             SdCardTools.writeJsonToSdcard(sdcard_save_dir,(String)key,(String)val);
 
         }
-        Logs.d("","---------------存储数据完成--------------------");
+        Logs.i("TAG","---------------存储数据完成--------------------");
         //发送 读取排期 的广播
         //带上排期保存的目录
         sendCompeleteBroad(sdcard_save_dir);

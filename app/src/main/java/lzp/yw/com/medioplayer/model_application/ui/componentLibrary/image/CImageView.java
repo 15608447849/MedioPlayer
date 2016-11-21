@@ -24,7 +24,7 @@ public class CImageView extends ImageView implements IContentView{
     private String imagePath;
     private Bitmap bitmap;
     private int length;
-
+    private FrameLayout.LayoutParams layoutParams;
 
     private boolean isInitData;
     private boolean isLayout ;
@@ -52,7 +52,10 @@ public class CImageView extends ImageView implements IContentView{
 
     @Override
     public void setAttrbute() {
-            this.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,FrameLayout.LayoutParams.MATCH_PARENT));
+        if (layoutParams==null){
+            layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,FrameLayout.LayoutParams.MATCH_PARENT);
+        }
+        this.setLayoutParams(layoutParams);
     }
 
     @Override

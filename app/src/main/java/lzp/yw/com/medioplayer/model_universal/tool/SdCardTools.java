@@ -319,16 +319,30 @@ public class SdCardTools {
     /**
      * 删除文件夹下所有内容
      */
-    public static void deleteTargetDir(String dirpath){
+    public static void DeleteTargetDir(String dirpath){
+        Log.i("","删除目录下所有文件 :"+dirpath);
         File dir = new File(dirpath);
         File []sub = dir.listFiles();
         if (sub!=null && sub.length>0){
             for (File f:sub){
                 f.delete();
             }
-            Log.i("","删除目录下所有文件 :"+dirpath);
         }
-
+    }
+    /**
+     * 删除文件或者文件夹
+     */
+    public static void DeleteFiles(String targetPath){
+        File targetFile = new File(targetPath);
+        if (targetFile.isDirectory()) { //如果是 文件夹
+            try {
+                FileUtils.deleteDirectory(targetFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else if (targetFile.isFile()) {//如果是文件
+            targetFile.delete();
+        }
     }
 
     /**
@@ -394,7 +408,8 @@ public class SdCardTools {
                     if (path.equals("/mnt/external_sd")){
                         dir= new File(path);
                         if (dir.exists()){
-                            if(MkDir(dir.toString()+"/test")){
+                            if(createTestFile(dir.toString()+"/test")){
+
                                 appSourcePath=path;
                                 break;
                             }
@@ -404,7 +419,7 @@ public class SdCardTools {
                     if (path.contains("usb")){
                         dir = new File(path);
                         if (dir.exists()){
-                            if(MkDir(dir.toString()+"/test")){
+                            if(createTestFile(dir.toString()+"/test")){
                                 appSourcePath=path;
                                 break;
                             }
@@ -419,6 +434,17 @@ public class SdCardTools {
         Log.i(tags," 最优 sdcard path: "+ appSourcePath);
     }
 
+    //创建测试文件
+    private static boolean createTestFile(String testpath){//dir.toString()+"/test")
+        boolean flag = false;
+        if(MkDir(testpath)){
+            DeleteFiles(testpath);
+            flag = true;
+        }else{
+            flag = false;
+        }
+        return flag;
+    }
 
 
     /**

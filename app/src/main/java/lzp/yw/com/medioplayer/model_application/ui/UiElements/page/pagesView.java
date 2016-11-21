@@ -67,7 +67,6 @@ public class pagesView extends IviewPage{
             mFragment = new PagesFragments(width,height,x,y,
                     isBgColor,isBgColor?backGroundColor:backGroundImage,  //是否是背景颜色
                     page.getComponents());
-
         }
     }
     @Override
@@ -84,7 +83,9 @@ public class pagesView extends IviewPage{
     @Override
     protected void removeFragment() {
         Logs.i(TAG,"removeFragment() - "+isLayout);
-        activity.deleteFragments(mFragment);
+        if (mFragment!=null){
+            activity.deleteFragments(mFragment);
+        }
 //        mFragment = null;
     }
 }

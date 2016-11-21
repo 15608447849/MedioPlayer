@@ -59,4 +59,7 @@ public class UrlList {
     public ArrayList<CharSequence> getList(){
         return loadingList;
     }
+    public int getListSize(){
+        return loadingList.size();
+    }
 }

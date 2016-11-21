@@ -10,7 +10,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.IComponent;
-import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
 import rx.android.schedulers.AndroidSchedulers;
@@ -28,7 +27,7 @@ public class CMorePictures extends FrameLayout implements IComponent{
     private int x,y;
     private Context context;
     private AbsoluteLayout layout;
-
+    private AbsoluteLayout.LayoutParams layoutParams;
     private boolean isInitData;
     private boolean isLayout;
     public CMorePictures(Context context, AbsoluteLayout layout, ComponentsBean component) {
@@ -47,6 +46,7 @@ public class CMorePictures extends FrameLayout implements IComponent{
             this.height = (int)cb.getHeight();
             this.x = (int)cb.getCoordX();
             this.y = (int)cb.getCoordY();
+            layoutParams = new AbsoluteLayout.LayoutParams(width,height,x,y);
             if (cb.getContents()!=null && cb.getContents().size()>0) {
                 createContent(cb.getContents());
             }
@@ -58,7 +58,7 @@ public class CMorePictures extends FrameLayout implements IComponent{
     @Override
     public void setAttrbute() {
 //        Logs.i(TAG,"- -setAttrbute()- -");
-        this.setLayoutParams(new AbsoluteLayout.LayoutParams(width,height,x,y));
+        this.setLayoutParams(layoutParams);
 //        this.setBackgroundColor(Color.BLUE);
     }
     @Override
@@ -80,7 +80,7 @@ public class CMorePictures extends FrameLayout implements IComponent{
     }
     @Override
     public void startWork() {
-        Logs.i(TAG,"- -startWork()- -");
+//        Logs.i(TAG,"- -startWork()- -");
         try {
             if (!isInitData){
                 return;
@@ -95,7 +95,7 @@ public class CMorePictures extends FrameLayout implements IComponent{
 
     @Override
     public void stopWork() {
-        Logs.i(TAG,"stopWork()");
+//        Logs.i(TAG,"stopWork()");
         try {
             unLoadContent();
             unLayouted(); //移除布局

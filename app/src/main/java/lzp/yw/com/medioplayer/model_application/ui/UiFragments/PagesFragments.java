@@ -63,7 +63,7 @@ public class PagesFragments extends Fragment{
                     layout.setBackgroundColor(Color.parseColor(UiTools.TanslateColor(bg)));
                 } catch (Exception e) {
 //                    layout.setBackgroundColor(1+(int)(Math.random()*2)==1?Color.RED:Color.WHITE);
-//                    e.printStackTrace();
+                    e.printStackTrace();
                 }
             }
 

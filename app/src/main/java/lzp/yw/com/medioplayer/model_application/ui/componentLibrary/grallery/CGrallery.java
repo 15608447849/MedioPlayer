@@ -197,10 +197,13 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent {
             ishow.setImageDrawable(adapter.getDrawable(position));
         }
     }
-
+    private AbsoluteLayout.LayoutParams layoutParams;
     @Override
     public void setAttrbute() {
-        this.setLayoutParams(new AbsoluteLayout.LayoutParams(width,height,x,y));
+        if (layoutParams==null){
+           layoutParams = new AbsoluteLayout.LayoutParams(width,height,x,y);
+        }
+        this.setLayoutParams(layoutParams);
 //        this.setBackgroundColor(Color.GREEN);
     }
 

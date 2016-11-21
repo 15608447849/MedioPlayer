@@ -13,10 +13,10 @@ import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.IComponent;
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.IContentView;
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.MedioInterface;
 import lzp.yw.com.medioplayer.model_application.ui.componentLibrary.image.CImageView;
-import lzp.yw.com.medioplayer.model_universal.tool.CONTENT_TYPE;
-import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
+import lzp.yw.com.medioplayer.model_universal.tool.CONTENT_TYPE;
+import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
 
@@ -32,6 +32,7 @@ public class CMedio extends FrameLayout implements IComponent,MedioInterface{
     private int x,y;
     private Context context;
     private AbsoluteLayout layout;
+    private AbsoluteLayout.LayoutParams layoutParams;
     private boolean isInitData;
     private boolean isLayout;
     public CMedio(Context context,AbsoluteLayout layout, ComponentsBean component) {
@@ -51,6 +52,7 @@ public class CMedio extends FrameLayout implements IComponent,MedioInterface{
             this.height = (int)cb.getHeight();
             this.x = (int)cb.getCoordX();
             this.y = (int)cb.getCoordY();
+            layoutParams = new AbsoluteLayout.LayoutParams(width,height,x,y);
             if (cb.getContents()!=null && cb.getContents().size()>0) {
                 createContent(cb.getContents());
             }
@@ -100,7 +102,7 @@ public class CMedio extends FrameLayout implements IComponent,MedioInterface{
     //设置属性
     @Override
     public void setAttrbute() {
-        this.setLayoutParams(new AbsoluteLayout.LayoutParams(width,height,x,y));
+        this.setLayoutParams(layoutParams);
     }
 
     //布局
