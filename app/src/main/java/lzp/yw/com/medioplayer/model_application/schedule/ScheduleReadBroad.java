@@ -7,11 +7,11 @@ import android.content.Intent;
 import java.io.File;
 import java.util.List;
 
-import lzp.yw.com.medioplayer.model_command_.command_arr.Command_UPSC;
+import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ScheduleBean;
+import lzp.yw.com.medioplayer.model_universal.tool.AppsTools;
 import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 import lzp.yw.com.medioplayer.model_universal.tool.MD5Util;
 import lzp.yw.com.medioplayer.model_universal.tool.SdCardTools;
-import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ScheduleBean;
 
 /**
  * Created by user on 2016/11/8.
@@ -42,7 +42,7 @@ public class ScheduleReadBroad extends BroadcastReceiver{
             }
            String var = getOnlyFileContent(filenames,"main");
             if (var!=null){
-                List<ScheduleBean> scheduleList = Command_UPSC.parseJsonToList(var);
+                List<ScheduleBean> scheduleList = AppsTools.parseJonToList(var,ScheduleBean[].class);
                 if (scheduleList!=null){
                     ScheduleReader.getReader(context,path).startWork(scheduleList);
                 }

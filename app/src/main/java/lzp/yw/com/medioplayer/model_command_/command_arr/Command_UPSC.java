@@ -4,23 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 import lzp.yw.com.medioplayer.model_application.baselayer.DataListEntiyStore;
 import lzp.yw.com.medioplayer.model_command_.kernel.CommandPostBroad;
-import lzp.yw.com.medioplayer.model_download.kernel.DownloadBroad;
-import lzp.yw.com.medioplayer.model_universal.tool.AppsTools;
-import lzp.yw.com.medioplayer.model_universal.tool.CMD_INFO;
-import lzp.yw.com.medioplayer.model_universal.tool.CONTENT_TYPE;
-import lzp.yw.com.medioplayer.model_universal.tool.Logs;
-import lzp.yw.com.medioplayer.model_universal.tool.SdCardTools;
 import lzp.yw.com.medioplayer.model_download.entity.UrlList;
+import lzp.yw.com.medioplayer.model_download.kernel.DownloadBroad;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.AdBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
@@ -31,6 +22,11 @@ import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.Rules;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ScheduleBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.content_gallary.DataObjsBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.content_gallary.GallaryBean;
+import lzp.yw.com.medioplayer.model_universal.tool.AppsTools;
+import lzp.yw.com.medioplayer.model_universal.tool.CMD_INFO;
+import lzp.yw.com.medioplayer.model_universal.tool.CONTENT_TYPE;
+import lzp.yw.com.medioplayer.model_universal.tool.Logs;
+import lzp.yw.com.medioplayer.model_universal.tool.SdCardTools;
 
 import static lzp.yw.com.medioplayer.model_universal.tool.AppsTools.uriTranslationString;
 
@@ -80,7 +76,8 @@ public class Command_UPSC implements iCommand {
                 ICommand_SORE_JsonDataStore.getInstent(context).addEntity("main",param,false);
                 ICommand_SORE_JsonDataStore.getInstent(context).addEntity(param,res);
                 //解析json
-                List<ScheduleBean> list =  parseJsonToList(res);
+                List<ScheduleBean> list =  AppsTools.parseJonToList(res,ScheduleBean[].class);
+
                 if (list!=null){
                     taskStore.initLoadingList();
                  startTime = System.currentTimeMillis();
@@ -110,23 +107,7 @@ public class Command_UPSC implements iCommand {
             }
     }
 
-    /**
-     *  排期json -> 对象
-     * @param jsondata
-     * @return
-     */
-    public static List<ScheduleBean> parseJsonToList(String jsondata) {
-        try {
-            List<ScheduleBean> listBean = new ArrayList<ScheduleBean>();
-            Gson gson=new Gson();
-            Type type = new TypeToken<ArrayList<ScheduleBean>>() {}.getType();
-            listBean=gson.fromJson(jsondata, type);
-            return listBean;
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return null;
-    }
+
 
 
     /**
@@ -374,7 +355,7 @@ public class Command_UPSC implements iCommand {
         }
         //图集
         if (contentType.equals(CONTENT_TYPE.gallary)){
-            getUrlSource(content.getContentSource());
+            getUrlSource(content.getContentSource(),CONTENT_TYPE.gallary);
         }
         //电子报
         if (contentType.equals(CONTENT_TYPE.news)){
@@ -382,11 +363,13 @@ public class Command_UPSC implements iCommand {
         }
         if (contentType.equals(CONTENT_TYPE.epaper)){
         }
-        if (contentType.equals(CONTENT_TYPE.clock)){
+        if (contentType.equals(CONTENT_TYPE.clock)){//swf
+            taskStore.addTaskOnList(content.getContentSource());
         }
         if (contentType.equals(CONTENT_TYPE.text)){
         }
         if (contentType.equals(CONTENT_TYPE.weather)){
+            getUrlSource(content.getContentSource(),CONTENT_TYPE.weather);
         }
         if (contentType.equals(CONTENT_TYPE.media)){
         }
@@ -405,7 +388,7 @@ public class Command_UPSC implements iCommand {
      * 获取电子报资源
      * @param contentSource
      */
-    private void getUrlSource(String contentSource) {
+    private void getUrlSource(String contentSource,String type) {//
 
         try {
             Logs.i(TAG," 内容 url :"+contentSource);
@@ -415,15 +398,25 @@ public class Command_UPSC implements iCommand {
             res = AppsTools.justResultIsBase64decode(res);
             if (res!=null){
                 ICommand_SORE_JsonDataStore.getInstent(context).addEntity(contentSource,res);// 文件名,文件内容
-                GallaryBean gallaryBean = AppsTools.parseJsonWithGson(res,GallaryBean.class);
-                if (gallaryBean!=null){
-                    parseContentGallarys(gallaryBean);
-                }
+                parseResult(res,type);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+    // 解析内容url - 返回值
+    private void parseResult(String res, String type) {
+        if (type.equals(CONTENT_TYPE.gallary)){
+            GallaryBean gallaryBean = AppsTools.parseJsonWithGson(res,GallaryBean.class);
+            if (gallaryBean!=null){
+                parseContentGallarys(gallaryBean);
+            }
+        }
+        if (type.equals(CONTENT_TYPE.weather)){
+//            WeatherBean weather = AppsTools.parseJsonWithGson(res,WeatherBean.class);  不处理
+        }
+    }
+
 
     /**
      * 解析内容下面的图集

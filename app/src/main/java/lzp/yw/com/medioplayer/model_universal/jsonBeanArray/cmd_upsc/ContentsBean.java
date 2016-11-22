@@ -40,6 +40,17 @@ public class ContentsBean {
     private boolean transparent;//是否透明
     private int updateFreq;//高级控件更新频率
 
+    //天气 城市
+    private String city;
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
     public int getUpdateFreq() {
         return updateFreq;
     }

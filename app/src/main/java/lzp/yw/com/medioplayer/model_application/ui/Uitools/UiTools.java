@@ -82,7 +82,7 @@ public class UiTools {
         3 变成图集对象
         4 获取所有文件名*/
     //图集 :文件名->获取文件信息
-    public static String fileTanslationObject(String filename){
+    public static String urlTanslationJsonText(String filename){
         if(!contentDir.exists()){
             return null;
         }

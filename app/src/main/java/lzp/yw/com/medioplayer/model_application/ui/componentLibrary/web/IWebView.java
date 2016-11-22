@@ -28,11 +28,11 @@ public class IWebView extends WebView implements IComponentUpdate {
     private int x,y;
     private Context context;
     private AbsoluteLayout layout;
-
+    private AbsoluteLayout.LayoutParams layoutParams;
     private String url;
     private boolean isInitData;
     private boolean isLayout;
-    private AbsoluteLayout.LayoutParams layoutParams;
+
     private int backgroundAlpha;
     private String backgroundColor;
     private  String bgImageUrl;
@@ -135,8 +135,10 @@ public class IWebView extends WebView implements IComponentUpdate {
     @Override
     public void stopWork() {
         try {
+            this.destroy();
             unLoadContent();
             unLayouted(); //移除布局
+
         } catch (Exception e) {
             e.printStackTrace();
         }

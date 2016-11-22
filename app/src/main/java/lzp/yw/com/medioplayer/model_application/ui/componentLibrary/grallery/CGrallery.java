@@ -12,10 +12,6 @@ import android.widget.FrameLayout;
 import android.widget.Gallery;
 import android.widget.ImageSwitcher;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -74,7 +70,7 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent {
         this.x = (int)cb.getCoordX();
         this.y = (int)cb.getCoordY();
         if (cb.getContents()!=null && cb.getContents().size()==1) {
-            createContent(cb.getContents());
+            createContent(cb.getContents().get(0));
         }
         initSubComponet();
         this.isInitData = true;
@@ -252,14 +248,12 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent {
     @Override
     public void createContent(Object object) {
         try {
-            List<ContentsBean> contents = (List<ContentsBean>)object;
-            for (ContentsBean content : contents){
+            ContentsBean content = (ContentsBean)object;
                 updateTime = content.getUpdateFreq();
                 if (content.getContentSource()!=null ){
                     this.url = content.getContentSource();
                     tanslationUrl(url);
                 }
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -290,20 +284,18 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent {
     3 变成图集对象
     4 获取所有文件名*/
     private void tanslationUrl(String contentSource) {
-      String jsonContent = UiTools.fileTanslationObject(contentSource);
+      String jsonContent = UiTools.urlTanslationJsonText(contentSource);
        if (jsonContent!=null){
-           GallaryBean gallaryBean = new GallaryBean();
+
            try {
-               Gson gson=new Gson();
-               Type type = new TypeToken<GallaryBean>(){}.getType();
-               gallaryBean=gson.fromJson(jsonContent, type);
+               GallaryBean gallaryBean = AppsTools.parseJsonWithGson(jsonContent,GallaryBean.class);
+               if (gallaryBean!=null && gallaryBean.getDataObjs()!=null && gallaryBean.getDataObjs().size()>0){
+                   getImageFilename(gallaryBean.getDataObjs());
+               }
            }catch (Exception e){
                e.printStackTrace();
            }
-           if (gallaryBean!=null && gallaryBean.getDataObjs()!=null && gallaryBean.getDataObjs().size()>0){
 
-               getImageFilename(gallaryBean.getDataObjs());
-           }
        }
     }
 
