@@ -30,6 +30,7 @@ public class CreateComponent {
         referenceViewMap.put(CONTENT_TYPE.media,packageName+"stream_medio.CStreamMedioForVitamio");
         referenceViewMap.put(CONTENT_TYPE.clock,packageName+"clock.IClock");
         referenceViewMap.put(CONTENT_TYPE.weather,packageName+"weather.Iweather");
+        referenceViewMap.put(CONTENT_TYPE.marquee,packageName+"scrolltextview.CMarquee");
     }
 
 
@@ -70,8 +71,8 @@ public class CreateComponent {
            }
 
        } catch (Exception e) {
-//           e.printStackTrace();
-           Log.e("createComponent"," 创建组件错误 :"+e.getMessage());
+           e.printStackTrace();
+//           Log.e("createComponent"," 创建组件错误 :"+e.getMessage());
        }
        return iplay;
     }

@@ -11,7 +11,7 @@ import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsB
  * Created by user on 2016/11/22.
  *
  */
-public class IClock extends FrameLayout implements IComponent {
+public class IClock extends AbsoluteLayout implements IComponent {
     private static final java.lang.String TAG = "IClock";
     private int componentId;
     private int width;

@@ -26,7 +26,7 @@ import rx.functions.Action0;
  * 文本滑动最外层
  */
 public class TextViewPager extends ViewPager implements IComponentUpdate {
-    private static final java.lang.String TAG = "ViewPager";
+    private static final java.lang.String TAG = "TextViewPager";
     private TextViewPagerAdapter adapter;
     private TextViewPagerAction action;
     private Context context;
@@ -87,10 +87,14 @@ public class TextViewPager extends ViewPager implements IComponentUpdate {
             this.y = (int)cb.getCoordY();
             layoutParams = new AbsoluteLayout.LayoutParams(width,height,x,y);
             this.backgroundAlpha = cb.getBackgroundAlpha();
-            this.bgImageUrl = UiTools.getUrlTanslationFilename(cb.getBackgroundPic());
-            if (bgImageUrl==null){
-                backgroundColor = cb.getBackgroundColor();
+
+            if (cb.getBackgroundPic()!=null && !cb.getBackgroundPic().equals("")){
+                this.bgImageUrl = UiTools.getUrlTanslationFilename(cb.getBackgroundPic());
+                if (bgImageUrl==null){
+                    backgroundColor = cb.getBackgroundColor();
+                }
             }
+
             if (cb.getContents()!=null && cb.getContents().size()>0){
                 createContent(cb.getContents());
                 action = new TextViewPagerAction(this);
@@ -227,7 +231,6 @@ public class TextViewPager extends ViewPager implements IComponentUpdate {
                         direction = 0;
                     }
                 }
-
                 this.setCurrentItem(currentIndex);
             }
             flag = false;

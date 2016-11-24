@@ -3,15 +3,12 @@ package lzp.yw.com.medioplayer.model_application.ui.ComponentLibrary.weather;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.AbsoluteLayout;
 import android.widget.FrameLayout;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
-import lzp.yw.com.medioplayer.R;
 import lzp.yw.com.medioplayer.model_application.ui.UiFactory.UiLocalBroad;
 import lzp.yw.com.medioplayer.model_application.ui.UiHttp.UiHttpProxy;
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.IAdvancedComponent;
@@ -47,8 +44,8 @@ public class Iweather extends FrameLayout implements IAdvancedComponent {
     //创建广播
     private UiLocalBroad broad = null;
     private boolean isRegestBroad = false; //是否注册广播
-
-
+    private LEDView led;    //创建 时间 天气 显示器
+    private boolean isShowTimer = false;//是否显示时间
     public Iweather(Context context, AbsoluteLayout layout, ComponentsBean component) {
         super(context);
         this.context = context;
@@ -100,8 +97,11 @@ public class Iweather extends FrameLayout implements IAdvancedComponent {
         if (!isLayout){
             layout.addView(this);
             isLayout = true;
-            if (ledTime!=null){
-                ledTime.start();
+            if (led !=null){
+                led.startText();
+                if (isShowTimer){
+                    led.startTime();
+                }
             }
         }
     }
@@ -109,8 +109,8 @@ public class Iweather extends FrameLayout implements IAdvancedComponent {
     @Override
     public void unLayouted() {
         if (isLayout){
-            if (ledTime!=null){
-                ledTime.stop();
+            if (led !=null){
+                led.stop();
             }
             layout.removeView(this);
             isLayout = false;
@@ -146,8 +146,10 @@ public class Iweather extends FrameLayout implements IAdvancedComponent {
 
     @Override
     public void initSubComponet() {
-        //获取平分子布局
-        createbLayout();
+     //
+        if (led ==null){
+            led = new LEDView(context,this);
+        }
     }
 
     @Override
@@ -165,15 +167,7 @@ public class Iweather extends FrameLayout implements IAdvancedComponent {
 
 
 
-    private FrameLayout timerLayout;//时间显示层
-    private FrameLayout weatherLayout;//天气显示层
-    // 创建子布局
-    private void createbLayout() {
-        View view = LayoutInflater.from(context).inflate(R.layout.weather_sublayout,null);
-        timerLayout = (FrameLayout) view.findViewById(R.id.timer_layout);
-        weatherLayout = (FrameLayout)view.findViewById(R.id.weather_layout);
-        this.addView(view);
-    }
+
 
 
 
@@ -250,15 +244,16 @@ public class Iweather extends FrameLayout implements IAdvancedComponent {
     }
     //获取天气 的 样式 - > 暂时无使用
     private void getStyleUrlData() {
-        createTime();
+        isShowTimer = true;
         String jsonContent = UiTools.urlTanslationJsonText(url_style);
         if (jsonContent!=null){
             try {
             WeathersBean weather = AppsTools.parseJsonWithGson(jsonContent,WeathersBean.class);
                 if (weather!=null){
+                    Logs.i(TAG,"weather.getStyle().getLayout().getDisplay() - "+weather.getStyle().getLayout().getDisplay());
                     if (weather.getStyle().getLayout().getDisplay().contains("time")){
                             //显示 时间
-//                        createTime();
+                      isShowTimer = true;
                     }
                 }
             }catch (Exception e){
@@ -266,14 +261,6 @@ public class Iweather extends FrameLayout implements IAdvancedComponent {
             }
         }
     }
-    private LEDView ledTime;    //创建 时间显示器
-    private void createTime() {
-        if (ledTime==null){
-            ledTime = new LEDView(context,timerLayout);
-            Logs.i(TAG,"createTime()");
-        }
-    }
-
     //获取天气内容
     public void getWeatherContent() {
         if (url_content!=null && !url_content.equals("")){
@@ -288,10 +275,8 @@ public class Iweather extends FrameLayout implements IAdvancedComponent {
         if (jsonContent!=null){
             try {
                 BaiduApiObject baiduApi =  AppsTools.parseJsonWithGson(jsonContent,BaiduApiObject.class);
-
                 if (baiduApi!=null){
 //                    存在数据
-
 //                    解析
                     parseBaiduData(baiduApi);
                 }
@@ -313,13 +298,8 @@ public class Iweather extends FrameLayout implements IAdvancedComponent {
         //根据类型 -> 获取bitmap
         Bitmap bitmap = tanslateTypeToBitmap(arr[1]);
 
-        if (bitmap==null){
-            return;
-        }
-        //创建布局
-        createWeather();
-        if (show!=null){
-            show.setValue(arr,bitmap);
+        if (led!=null){
+            led.setValue(arr,bitmap);
         }
     }
     //根据类型 得到 bitmap
@@ -331,20 +311,13 @@ public class Iweather extends FrameLayout implements IAdvancedComponent {
         path = UiTools.getDateSx()+path;
         // 去对应文件夹 获取 bitmap
         path = UiTools.getWeatherIconPath()+path+".png";
-
+        System.out.println("bitmap path -:"+path);
         if (UiTools.fileIsExt(path)){
             return ImageUtils.getBitmap(path);
         }
         return null;
     }
-    private WeatherShowView show;
-    //创建天气
-    private void createWeather() {
-        if (show==null){
-            show = new WeatherShowView(context,weatherLayout);
-            Logs.i(TAG,"createWeather()");
-        }
-    }
+
 
 
 }

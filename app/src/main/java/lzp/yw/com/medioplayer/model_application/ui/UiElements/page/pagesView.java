@@ -2,19 +2,19 @@ package lzp.yw.com.medioplayer.model_application.ui.UiElements.page;
 
 import android.widget.AbsoluteLayout;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import lzp.yw.com.medioplayer.model_application.baselayer.BaseActivity;
 import lzp.yw.com.medioplayer.model_application.ui.UiFragments.PagesFragments;
-import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.PagesBean;
+import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 
 /**
  * Created by user on 2016/11/10.
  */
 
 public class pagesView extends IviewPage{
-
-
-
     private String backGroundImage ;//背景图
     private String backGroundColor;
     private String label ;
@@ -34,7 +34,7 @@ public class pagesView extends IviewPage{
     public void initData(Object object) {
         try {
             page = ((PagesBean) object);
-            setId(page.getId());//视图
+            this.setId(page.getId());//视图
             this.id = page.getId();
             this.x = (int)page.getCoordX();
             this.y = (int)page.getCoordY();
@@ -55,7 +55,6 @@ public class pagesView extends IviewPage{
         Logs.i(TAG,"setAttrbute() - ");
         //先设置大小
         this.setLayoutParams(new AbsoluteLayout.LayoutParams(width,height,x,y));
-//        this.setBackgroundColor(Color.YELLOW);
     }
 
     /**
@@ -87,5 +86,15 @@ public class pagesView extends IviewPage{
             activity.deleteFragments(mFragment);
         }
 //        mFragment = null;
+    }
+
+    @Override
+    public Map<String, Integer> getPageSize() {
+        Map<String, Integer> map = new HashMap<>();
+        map.put("width",width);
+        map.put("height",height);
+        map.put("x",x);
+        map.put("y",y);
+        return map;
     }
 }

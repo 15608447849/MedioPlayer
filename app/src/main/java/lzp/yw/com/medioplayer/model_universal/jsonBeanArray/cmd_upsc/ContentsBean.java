@@ -28,7 +28,7 @@ public class ContentsBean {
      */
 
     private String contentType;//类型
-    private String contentSource;//image 资源 news资源uri 图集资源uri
+    private String contentSource;//image 资源 news资源uri 图集资源uri 跑马灯的文本内容
     private String materialType;//如果是video(多媒体)是 需要判断的字段
 
     private String sourceUp;//button 资源 默认时
@@ -60,8 +60,55 @@ public class ContentsBean {
     }
 
     //文本控件相关
-    private String contentName;//标题
+    private String contentName;//标题 //跑马灯标题
     private String contents;//内容
+
+//    跑马灯次数 速度
+   private int rollingTimes;
+   private int rollingSpeed;
+   private String backgroundColor;//跑马灯背景颜色
+    private int backgroundAlpha;//跑马灯背景透明图
+    private String fontColor;//跑马灯前景颜色-字体颜色
+
+    public int getRollingTimes() {
+        return rollingTimes;
+    }
+
+    public void setRollingTimes(int rollingTimes) {
+        this.rollingTimes = rollingTimes;
+    }
+
+    public int getRollingSpeed() {
+        return rollingSpeed;
+    }
+
+    public void setRollingSpeed(int rollingSpeed) {
+        this.rollingSpeed = rollingSpeed;
+    }
+
+    public String getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public void setBackgroundColor(String backgroundColor) {
+        this.backgroundColor = backgroundColor;
+    }
+
+    public int getBackgroundAlpha() {
+        return backgroundAlpha;
+    }
+
+    public void setBackgroundAlpha(int backgroundAlpha) {
+        this.backgroundAlpha = backgroundAlpha;
+    }
+
+    public String getFontColor() {
+        return fontColor;
+    }
+
+    public void setFontColor(String fontColor) {
+        this.fontColor = fontColor;
+    }
 
     public String getContentName() {
         return contentName;

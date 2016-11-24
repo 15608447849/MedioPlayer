@@ -2,7 +2,9 @@ package lzp.yw.com.medioplayer.model_application.ui.UiFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import lzp.yw.com.medioplayer.model_application.ui.UiElements.page.IviewPage;
 import lzp.yw.com.medioplayer.model_application.ui.UiStore.PagerStore;
 import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 
@@ -40,7 +42,6 @@ public class UiManager {
      */
     public void exeMainTask(int homeId) {
         if (isInit){
-
                 currentHomeId = homeId;
                 if(PagerStore.getInstant().getPage(currentHomeId)!=null){
                 addPage(currentHomeId);
@@ -50,30 +51,118 @@ public class UiManager {
     }
     /**
      * 执行一个任务
+     * 1. 是否存于 栈中
+     * 存在 ->
+     *       是不是主页面?  是, 删除上面的所有 页面
+     *       不是 创建
+     *  不存在->
+     *         是不是 宽高xy > 主页面的 宽高 xy? 是 -.删除主页面 -> 创建此页面
+     *         不是  直接创建显示
+     *
+     *
      */
     public void exeTask(int id) {
         if (isInit){
+//            func1(id);
+            func2(id);
+        }
+    }
+
+    private void func2(int id) {
+
+
+
+        if (loadedPageArray.contains(id)){
+            //栈中
             if (id == currentHomeId){
-                Logs.i(TAG,"当前目标ID 是主页,移除 栈上所有页面");
-                //停止 除去 homeid 之外的所有page
+                //主页
                 keepHomePage();
             }else{
-                //查看是否存在于栈中
-                if (loadedPageArray.contains(id)){
-                    Logs.i(TAG,"当前目标ID 存在于栈中 ,删除这个页面上的所有page");
-                   // 1 已存在的 -> 删除这个页面上面的 所有页面
-                    deleteTagerTop(id);
-                }else{
-                    Logs.i(TAG,"当前目标ID 不存在栈中,添加...");
-//                    2 不存在 添加到栈顶
-                    if(PagerStore.getInstant().getPage(id)!=null){
-                        addPage(id);
-                        PagerStore.getInstant().getPage(id).startWork();
-                    }
-
+                //不是 创建 执行
+                if(PagerStore.getInstant().getPage(id)!=null){
+                    addPage(id);
+                    PagerStore.getInstant().getPage(id).startWork();
                 }
+
             }
 
+        }
+
+        //不在栈中
+        else{
+        //判断页面大小
+            if (justSizeOnHome(id)){
+                    //一样大  删除主页面
+                stopTask();
+            }
+            //直接创建
+            if(PagerStore.getInstant().getPage(id)!=null){
+                addPage(id);
+                PagerStore.getInstant().getPage(id).startWork();
+            }
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+    //真 一样大
+    private boolean justSizeOnHome(int id) {
+        IviewPage page = PagerStore.getInstant().getPage(id);
+        IviewPage home = PagerStore.getInstant().getPage(currentHomeId);
+        if (page!=null){
+            Map<String,Integer> map1 = page.getPageSize();
+            Map<String,Integer> map2 = home.getPageSize();
+
+            int w1 = map1.get("width");
+            int w2 = map2.get("width");
+            int h1 = map1.get("height");
+            int h2 = map2.get("height");
+
+            if (w1==w2){
+                if (h1==h2) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private void func1(int id) {
+        if (id == currentHomeId){
+            Logs.i(TAG,"当前目标ID 是主页,移除 栈上所有页面");
+            //停止 除去 homeid 之外的所有page
+            keepHomePage();
+        }else{
+            //查看是否存在于栈中
+            if (loadedPageArray.contains(id)){
+                Logs.i(TAG,"当前目标ID 存在于栈中 ,删除这个页面上的所有page");
+                // 1 已存在的 -> 删除这个页面上面的 所有页面
+                deleteTagerTop(id);
+            }else{
+                Logs.i(TAG,"当前目标ID 不存在栈中,添加...");
+//                    2 不存在 添加到栈顶
+                if(PagerStore.getInstant().getPage(id)!=null){
+                    addPage(id);
+                    PagerStore.getInstant().getPage(id).startWork();
+                }
+
+            }
         }
     }
 

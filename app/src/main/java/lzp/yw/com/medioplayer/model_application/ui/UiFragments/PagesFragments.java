@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsoluteLayout;
+import android.widget.FrameLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,7 @@ public class PagesFragments extends Fragment{
     private int x,y,w,h;
     private boolean isBgColor = true;
     private String bg;
+    private FrameLayout root = null;
     private AbsoluteLayout layout;
     public ArrayList<Iview> componetViewArr = null; //组件元素
     //添加组件的 key
@@ -54,10 +56,16 @@ public class PagesFragments extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Logs.i(TAG," - -onCreateView() ");
+
+        if (root == null){
+            root = new FrameLayout(getActivity());
+            root.setLayoutParams(new AbsoluteLayout.LayoutParams(w, h,x,y));
+        }
         if (layout == null){
             //创建绝对布局
             layout  = new AbsoluteLayout(getActivity());
-            layout.setLayoutParams(new AbsoluteLayout.LayoutParams(w, h,x,y));
+            layout.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,FrameLayout.LayoutParams.MATCH_PARENT));
+            root.addView(layout);
             if (isBgColor){
                 try {
                     layout.setBackgroundColor(Color.parseColor(UiTools.TanslateColor(bg)));
@@ -69,7 +77,7 @@ public class PagesFragments extends Fragment{
 
         }
         createConponent();
-        return layout;
+        return root;
     }
 
 

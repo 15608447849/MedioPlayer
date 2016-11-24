@@ -2,6 +2,7 @@ package lzp.yw.com.medioplayer.model_application.ui.ComponentLibrary.button;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.view.MotionEvent;
 import android.view.View;
@@ -193,5 +194,14 @@ public class CButton extends ImageButton implements View.OnClickListener,View.On
             e.printStackTrace();
         }
         return false;
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        try {
+            super.onDraw(canvas);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -32,7 +32,7 @@ public class WeatherShowView {
         image = (ImageView)view.findViewById(R.id.show_icon);
         city = (TextView) view.findViewById(R.id.city);
         type = (TextView) view.findViewById(R.id.type);
-        temperature = (TextView) view.findViewById(R.id.temperature);;
+        temperature = (TextView) view.findViewById(R.id.temperature);
         wind = (TextView) view.findViewById(R.id.wind);
         vp.addView(view);
     }
