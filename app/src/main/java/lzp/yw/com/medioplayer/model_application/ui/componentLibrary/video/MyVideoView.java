@@ -1,4 +1,4 @@
-package lzp.yw.com.medioplayer.model_application.ui.componentLibrary.video;
+package lzp.yw.com.medioplayer.model_application.ui.ComponentLibrary.video;
 
 import android.content.Context;
 import android.content.Intent;

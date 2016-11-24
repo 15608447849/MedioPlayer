@@ -1,4 +1,4 @@
-package lzp.yw.com.medioplayer.model_application.ui.componentLibrary.image;
+package lzp.yw.com.medioplayer.model_application.ui.ComponentLibrary.image;
 
 import android.content.Context;
 import android.graphics.Bitmap;

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import java.io.File;
+import java.util.Calendar;
 
 import lzp.yw.com.medioplayer.model_application.baselayer.DataListEntiyStore;
 import lzp.yw.com.medioplayer.model_application.ui.UiHttp.UiDownload;
@@ -136,5 +137,30 @@ public class UiTools {
         }
         return false;
     }
+
+
+    //判断白天还是晚上
+    public static String getDateSx(){
+        String val = null;
+        Calendar cal = Calendar.getInstance();
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
+        if (hour >= 6 && hour < 8) {
+            val = "day/";
+        } else if (hour >= 8 && hour < 11) {
+            val = "day/";
+        } else if (hour >= 11 && hour < 13) {
+            val = "day/";
+        } else if (hour >= 13 && hour < 18) {
+            val = "day/";
+        } else {
+            val = "night/";
+        }
+        return val;
+    }
+    //获取 天气图片 跟路径
+    public static String getWeatherIconPath(){
+        return weatherIconPath;
+    }
+
 
 }

@@ -5,7 +5,6 @@ import android.content.pm.PackageManager;
 import android.os.Looper;
 import android.util.Base64;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.WindowManager;
 
 import com.google.gson.Gson;
@@ -16,15 +15,20 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.URL;
-import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -36,6 +40,9 @@ import static android.support.v7.widget.StaggeredGridLayoutManager.TAG;
  * Created by user on 2016/10/26.
  */
 public class AppsTools {
+
+
+
     //随机数
     public static int randomNum(int min,int max){
         return (int)(min+Math.random()*max);
@@ -222,59 +229,124 @@ public class AppsTools {
     };
 
     /**
-     * 把url转化为xml格式数据
+     * 把url转化为文本格式数据
      *
      * @param urlString
      * @return the xml data or "" if catch Exception
      */
-    public static String uriTranslationString(String urlString) {
+    public static String uriTransionString(String urlString,Map<String,String> header,Map<String,String> ParamMap) {
         URL url;
         String result = null;
         try {
             url = new URL(urlString);
         } catch (MalformedURLException e1) {
-            Log.e("",""+ "url errer :" +urlString +" \n cause: "+ e1.getMessage());
+            e1.printStackTrace();
             return result;
         }
-        URLConnection urlConnection;
-        try {
-            urlConnection = url.openConnection();
-        } catch (IOException ioe) {
-
-            Log.e("",""+ "url connect failed: " +  ioe.getMessage());
-            return result;
-        }
-
-        InputStreamReader in = null;
+        System.out.println("URL success :"+urlString);
+        HttpURLConnection httpUrlConnection;
+        OutputStream out = null;
         BufferedReader br = null;
         try {
-            in = new InputStreamReader(urlConnection.getInputStream());
-            br = new BufferedReader(in);
+            httpUrlConnection = (HttpURLConnection) url.openConnection();
+
+            if (header!=null){
+                Iterator iter = header.entrySet().iterator();
+                String key;
+                String val;
+                while (iter.hasNext())
+                {
+                    Map.Entry<String,String> entry = (Map.Entry) iter.next();
+                    key = entry.getKey();
+                    val = entry.getValue();
+                    System.out.println(key+" = "+val);
+                    httpUrlConnection.setRequestProperty(key,val);
+                }
+            }
+
+            // HttpURLConnection是基于HTTP协议的，其底层通过socket通信实现。如果不设置超时（timeout），在网络异常的情况下，可能会导致程序僵死而不继续往下执行。可以通过以下两个语句来设置相应的超时：
+           // System.setProperty("sun.net.client.defaultConnectTimeout", "30000");
+           //System.setProperty("sun.net.client.defaultReadTimeout", "30000");
+           httpUrlConnection.setConnectTimeout(30000);
+           httpUrlConnection.setReadTimeout(60000);
+            httpUrlConnection.setRequestProperty("Accept-Charset", "GBK");  //设置编码语言
+            httpUrlConnection.setRequestProperty("Connection", "keep-alive");  //设置连接的状态
+        // 设置是否从httpUrlConnection读入，默认情况下是true;
+            httpUrlConnection.setDoInput(true);
+        // 设定传送的内容类型是可序列化的java对象
+        // (如果不设此项,在传送序列化对象时,当WEB服务默认的不是这种类型时可能抛java.io.EOFException)
+       // httpUrlConnection.setRequestProperty("Content-type", "application/x-java-serialized-object");
+            httpUrlConnection.setRequestProperty("Content-type", "text/html");
+        //设置主体参数
+        if (ParamMap!=null){
+            //获取map 生成json
+            String json = mapToJson(ParamMap);
+            // 设置是否向httpUrlConnection输出，因为这个是post请求，参数要放在
+            // http正文内，因此需要设为true, 默认情况下是false;
+            httpUrlConnection.setDoOutput(true);
+            // 设定请求的方法为"POST"，默认是GET
+            httpUrlConnection.setRequestMethod("POST");// 可以根据需要 提交 GET、POST、DELETE、PUT等http提供的功能
+            // Post 请求不能使用缓存
+            httpUrlConnection.setUseCaches(false);
+
+            httpUrlConnection.setRequestProperty("X-Auth-Token", "token");  //设置请求的token
+            httpUrlConnection.setRequestProperty("Transfer-Encoding", "chunked");//设置传输编码
+            httpUrlConnection.setRequestProperty("Content-Length", String.valueOf(json.getBytes().length));//设置文件请求的长度
+            //对connection对象的一切配置（那一堆set函数）
+            //都必须要在connect()函数执行之前完成。而对outputStream的写操作，又必须要在inputStream的读操作之前。
+            // 此处getOutputStream会隐含的进行connect(即：如同调用上面的connect()方法，
+            //所以在开发中不调用上述的connect()也可以)。
+            httpUrlConnection.connect();//只是建立了一个与服务器的tcp连接没有实际发送http请求。
+            //写数据
+            out = httpUrlConnection.getOutputStream();
+            out.write(json.getBytes());
+            out.flush();
+        }else{
+            httpUrlConnection.connect();//只是建立了一个与服务器的tcp连接没有实际发送http请求。
+        }
+            System.out.println("httpUrlConnection connect()");
+            //连接
+            if (httpUrlConnection.getResponseCode()==200){
+            br = new BufferedReader( new InputStreamReader(httpUrlConnection.getInputStream(),"UTF-8"));//<===注意，实际发送请求的代码段就在这里
             StringBuilder sb = new StringBuilder();
             String temp;
             while ((temp = br.readLine()) != null){
                 sb.append(temp);
             }
               result = sb.toString();
-            return result;
+            }else{
+                System.err.println("请求失败 - "+httpUrlConnection.getResponseCode());
+            }
+            //断开连接
+            httpUrlConnection.disconnect();
+            System.out.println("httpUrlConnection disconnect()");
         } catch (IOException e) {
-            Log.e("",""+ "uriTranslationString() get input stream error:" +  e.getMessage());
-            return result;
+            e.printStackTrace();
         } finally {
             try {
+                if (out != null)
+                    out.close();
                 if (br != null)
                     br.close();
-                if (in != null)
-                    in.close();
-            } catch (IOException e) {
 
-                Log.e("",""+ "uriTranslationXml close input stream error:" +  urlString+"cause:" +e.getMessage());
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+        return result;
     }
 
-
+    /**
+     * 将Map转化为Json
+     *
+     * @param map
+     * @return String
+     */
+    public static <T> String mapToJson(Map<String, T> map) {
+        Gson gson = new Gson();
+        String jsonStr = gson.toJson(map);
+        return jsonStr;
+    }
 
 
     //检查是不是ui线程
@@ -304,7 +376,12 @@ public class AppsTools {
         return false;
     }
 
-
+    /**
+     * 判断后缀是不是md5
+     */
+    public static boolean isMD5Suffix(String url){
+        return isValidSuffix(url,".md5");
+    }
     /**
      * 判断后缀是否是 mp4
      */
@@ -451,9 +528,31 @@ public class AppsTools {
         }
     }
 
+    //生成城市url
+    public static String generWeateherContentUrl(String city) {
+        System.out.println("当前城市: "+city);
+        try {
+            city = URLEncoder.encode(city,"UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return "http://apis.baidu.com/apistore/weatherservice/recentweathers?cityname="+city;
+    }
 
+    private static Map<String,String> baiduApiMap;
+    //百度api 天气 appkey
+    public static Map<String,String> baiduApiMap(){
+        if (baiduApiMap==null){
+            baiduApiMap = new HashMap<>();
+            baiduApiMap.put("apikey","3a36d13c23c8065dcf1a1f584f5a5092");
+        }
+       return baiduApiMap;
+    }
 
-
+    //unicode 解码
+    public static String justResultIsUNICODEdecode(String res) {
+        return UnicodeUtils.decodeUnicode(res);
+    }
 
 
 }

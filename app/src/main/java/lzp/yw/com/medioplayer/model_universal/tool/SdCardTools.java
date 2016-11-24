@@ -483,7 +483,7 @@ public class SdCardTools {
      * 写入数据进入文件
      */
     public static void writeJsonToSdcard(String storePath,String filename,String _sContent) {
-//        Log.e("","filename: "+filename +"\n  "+_sContent);
+
         FileOutputStream outStream = null;
         try {
             outStream = new FileOutputStream(storePath + filename);

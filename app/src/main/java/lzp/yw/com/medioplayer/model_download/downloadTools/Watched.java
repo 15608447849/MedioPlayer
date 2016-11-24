@@ -61,7 +61,7 @@ public class Watched implements Observer{
         public void downloadResult(String filePath) {
 
             //下载完成回调
-            Logs.i(TAG,"当前成功数量 :["+ successCount++ +"] ,sumCount:["+sumCount+"] \n result: "+ filePath);
+            Logs.i(TAG,"当前回调下标 :["+ ++successCount +"] ,sumCount:["+sumCount+"] \n result: "+ filePath);
 
             if (successCount == sumCount){
                 Logs.i(TAG,"________________________下载任务完成 发送通知-保存数据_______________________");
@@ -72,6 +72,7 @@ public class Watched implements Observer{
                 i.putExtras(b);
                 c.sendBroadcast(i);
             }
+
         }
     };
 

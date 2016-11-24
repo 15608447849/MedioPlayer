@@ -3,11 +3,13 @@ package lzp.yw.com.medioplayer.model_application.ui.UiHttp;
 import java.util.List;
 
 import lzp.yw.com.medioplayer.model_application.ui.Uitools.UiTools;
-import lzp.yw.com.medioplayer.model_universal.tool.AppsTools;
 import lzp.yw.com.medioplayer.model_download.entity.UrlList;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.content_gallary.DataObjsBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.content_gallary.GallaryBean;
+import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.content_weather.BaiduApiObject;
+import lzp.yw.com.medioplayer.model_universal.tool.AppsTools;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
@@ -18,7 +20,7 @@ import rx.schedulers.Schedulers;
 
 public class UiHttpProxy {
 
-
+    //天气 咨询等
     public static void getContent(final String url,final String broadAction){
         try {
             Observable.just(url)
@@ -26,7 +28,7 @@ public class UiHttpProxy {
                 @Override
                 public String call(String newUrl) {
                     System.out.println("局部 访问 - "+url );
-                    return AppsTools.uriTranslationString(newUrl);//访问URL;
+                    return AppsTools.uriTransionString(newUrl,null,null);//访问URL;
                     }
                           })
                     .map(new Func1<String, String>() {
@@ -90,38 +92,56 @@ public class UiHttpProxy {
             e.printStackTrace();
         }
     }
-//
-//    private static void parseConentDownload(String result) {
-//        GallaryBean gallaryBean = AppsTools.parseJsonWithGson(result,GallaryBean.class);
-//
-//        if (gallaryBean!=null){
-//            for (DataObjsBean data : gallaryBean.getDataObjs()){
-//                parseData(data);
-//            }
-//        }
-//    }
-//
-//    private static void parseData(DataObjsBean dataobj) {
-//        UiDownload.downloadTask(dataobj.getUrl());
-//        if (dataobj.getUrls()!=null && !dataobj.getUrls().equals("")){
-//            //切割字符串
-//            parseContentsUrisContent(dataobj.getUrls());
-//        }
-//    }
-//
-//
-//    /**
-//     *  多个url
-//     * @param urls
-//     */
-//    private static void parseContentsUrisContent(String urls) {
-//        try {
-//            String [] urlarr = urls.split(",");
-//            for(int i=0;i<urlarr.length;i++){
-//                UiDownload.downloadTask(urlarr[i]);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
+
+
+
+    public static void getWeateher(final String url,final String broadAction){
+            //upsg commad ->  copy  thanks you
+        Observable.just(url)
+                .map(new Func1<String, String>() {
+                    @Override
+                    public String call(String url) {
+                        return  AppsTools.uriTransionString(url,AppsTools.baiduApiMap(),null);
+                    }
+                })
+                .map(new Func1<String, String>() {
+
+                    @Override
+                    public String call(String result) {
+                        if (result!=null){
+                            return  AppsTools.justResultIsUNICODEdecode(result);
+                        }
+                       return null;
+                    }
+                })
+                .map(new Func1<String, BaiduApiObject>() {
+                    @Override
+                    public BaiduApiObject call(String datas) {
+                        if (datas!=null){
+                            if (UiTools.storeContentToDirFile(url,datas)){ //存数据
+                                return AppsTools.parseJsonWithGson(datas,BaiduApiObject.class);
+                            }
+                        }
+                        return null;
+                    }
+                })
+        .subscribeOn(Schedulers.io()) //执行在异步
+                .unsubscribeOn(Schedulers.io())
+                  .observeOn(AndroidSchedulers.mainThread())//回到主线程
+                    .subscribe(new Action1<BaiduApiObject>() {
+                        @Override
+                        public void call(BaiduApiObject obj) {
+                            if (obj!=null && obj.getErrNum()==0 && obj.getErrMsg().equals("success")){
+                                //发送广播 刷新ui
+                                UiDownload.sendTansUiComponet(broadAction);
+                            }
+                        }
+                    });
+
+
+
+    }
+
+
+
 }

@@ -132,7 +132,7 @@ public class FtpUtils {
         } finally {
             try {
                 if (ftpClient != null) {
-                    Logs.i(TAG,"关闭ftp连接");
+                    Logs.e(TAG,"关闭ftp连接");
                     ftpClient.disconnect();
                     ftpClient=null;
                 }
@@ -314,7 +314,12 @@ public class FtpUtils {
                         }
                     }
                 }
-
+                //下载完成
+                String nNmae = tmp_localPath.substring(0,tmp_localPath.lastIndexOf("."));//正式文件名
+                FTPFileUtils.renamefile(tmp_localPath,nNmae);//转换名字
+                File Nf = new File(nNmae);
+                Logs.i(TAG,",转换前文件名["+tmp_localPath+"]\n新文件名: "+nNmae);
+                listener.onDownLoadProgress(FTP_DOWN_SUCCESS, 0,null,Nf);
             } catch (IOException e) {
                 e.printStackTrace();
                 listener.onDownLoadProgress(FTP_CONNECT_FAIL, 0,null, null);
@@ -332,13 +337,8 @@ public class FtpUtils {
                     e.printStackTrace();
                 }
             }
-
         }
-        String nNmae = tmp_localPath.substring(0,tmp_localPath.lastIndexOf("."));//正式文件名
-        FTPFileUtils.renamefile(tmp_localPath,nNmae);//转换名字
-                File Nf = new File(nNmae);
-        Logs.i(TAG,",转换前文件名["+tmp_localPath+"]\n新文件名: "+nNmae);
-        listener.onDownLoadProgress(FTP_DOWN_SUCCESS, 0,null,Nf);
+
     }
 
 

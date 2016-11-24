@@ -1,20 +1,35 @@
-package lzp.yw.com.medioplayer.model_application.ui.componentLibrary.weather;
+package lzp.yw.com.medioplayer.model_application.ui.ComponentLibrary.weather;
 
 import android.content.Context;
-import android.graphics.Color;
+import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.AbsoluteLayout;
-import android.widget.RelativeLayout;
+import android.widget.FrameLayout;
 
-import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.IComponent;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import lzp.yw.com.medioplayer.R;
+import lzp.yw.com.medioplayer.model_application.ui.UiFactory.UiLocalBroad;
+import lzp.yw.com.medioplayer.model_application.ui.UiHttp.UiHttpProxy;
+import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.IAdvancedComponent;
+import lzp.yw.com.medioplayer.model_application.ui.Uitools.ImageUtils;
 import lzp.yw.com.medioplayer.model_application.ui.Uitools.UiTools;
-import lzp.yw.com.medioplayer.model_application.ui.componentLibrary.clock.LEDView;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
+import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.content_weather.BaiduApiObject;
+import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.content_weather.WeathersBean;
+import lzp.yw.com.medioplayer.model_universal.tool.AppsTools;
+import lzp.yw.com.medioplayer.model_universal.tool.Logs;
+import lzp.yw.com.medioplayer.model_universal.tool.MD5Util;
+import lzp.yw.com.medioplayer.model_universal.tool.PinYinUtils;
 
 /**
  * Created by user on 2016/11/22.
  */
 
-public class Iweather extends RelativeLayout implements IComponent {
+public class Iweather extends FrameLayout implements IAdvancedComponent {
     private static final java.lang.String TAG = "IClock";
     private int componentId;
     private int width;
@@ -23,11 +38,15 @@ public class Iweather extends RelativeLayout implements IComponent {
     private Context context;
     private AbsoluteLayout layout;
     private AbsoluteLayout.LayoutParams layoutParams;
-    private String swfFilename;
     private boolean isInitData;
     private boolean isLayout;
     private String url_style ;//样式xml
     private String url_content;//天气内容xml
+    private String mBroadAction; //组件 id+hashcode+mad5
+    private  int uptimes ;//
+    //创建广播
+    private UiLocalBroad broad = null;
+    private boolean isRegestBroad = false; //是否注册广播
 
 
     public Iweather(Context context, AbsoluteLayout layout, ComponentsBean component) {
@@ -36,23 +55,24 @@ public class Iweather extends RelativeLayout implements IComponent {
         this.layout = layout;
         initData(component);
     }
-
-
-
     @Override
     public void initData(Object object) {
         try {
             ComponentsBean cb = ((ComponentsBean)object);
             this.componentId = cb.getId();
+            this.mBroadAction = MD5Util.getStringMD5(this.hashCode()+"."+componentId);
+
             this.width = (int)cb.getWidth();
             this.height = (int)cb.getHeight();
             this.x = (int)cb.getCoordX();
             this.y = (int)cb.getCoordY();
             layoutParams = new AbsoluteLayout.LayoutParams(width,height,x,y);
 
+            initSubComponet();
             if (cb.getContents()!=null && cb.getContents().size()==1) {
-                url_style = cb.getContents().get(0).getContentSource();  //http://172.16.0.17:9000/content/getContentSource/weather?contentsourcetype=weather¤tCity=长沙"
-                url_content = generContentUrl(cb.getContents().get(0).getCity());
+                uptimes = cb.getContents().get(0).getUpdateFreq();
+                url_style = cb.getContents().get(0).getContentSource();  // http://172.16.0.17:9000/content/getContentSource/weather?contentsourcetype=weather¤tCity=长沙"
+                url_content = AppsTools.generWeateherContentUrl(cb.getContents().get(0).getCity());
                 createContent(null);
             }
             this.isInitData = true;
@@ -60,13 +80,19 @@ public class Iweather extends RelativeLayout implements IComponent {
             e.printStackTrace();
         }
     }
-
+    //创建内容
+    @Override
+    public void createContent(Object object) {
+        //获取天气样式对象
+        getWeatherStyle();
+        //获取天气内容天气
+        getWeatherContent();
+    }
 
 
     @Override
     public void setAttrbute() {
         this.setLayoutParams(layoutParams);
-        this.setBackgroundColor(Color.RED);
     }
 
     @Override
@@ -74,12 +100,18 @@ public class Iweather extends RelativeLayout implements IComponent {
         if (!isLayout){
             layout.addView(this);
             isLayout = true;
+            if (ledTime!=null){
+                ledTime.start();
+            }
         }
     }
 
     @Override
     public void unLayouted() {
         if (isLayout){
+            if (ledTime!=null){
+                ledTime.stop();
+            }
             layout.removeView(this);
             isLayout = false;
         }
@@ -93,6 +125,7 @@ public class Iweather extends RelativeLayout implements IComponent {
             }
             setAttrbute();
             layouted();
+            createBroad();
             loadContent();
         } catch (Exception e) {
             e.printStackTrace();
@@ -103,80 +136,214 @@ public class Iweather extends RelativeLayout implements IComponent {
     public void stopWork() {
         try {
             unLoadContent();
+            cancelBroad();
             unLayouted(); //移除布局
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+
     @Override
-    public void createContent(Object object) {
-       //获取天气样式对象
-        if (url_style!=null && url_style.equals("")){
-            //访问本地文件 - 获取数据- 得到对象 - 获取数据
-            tanslationUrl();
-        }
-        createSubLayout();
+    public void initSubComponet() {
+        //获取平分子布局
+        createbLayout();
     }
-
-
-    private void createSubLayout() {
-        //创建 时钟
-        createTime();
-        //创建 天气
-    }
-
-
-    private LEDView time;
-    private void createTime() {
-        time = new LEDView(context);
-        this.addView(time);
-        RelativeLayout.LayoutParams lp =  (RelativeLayout.LayoutParams)time.getLayoutParams();
-        lp.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-        lp.addRule(RelativeLayout.CENTER_VERTICAL);
-    }
-
-
 
     @Override
     public void loadContent() {
-        time.start();
+        unLoadContent();
+        startBaiDuApi();//访问天气
+        startTimer(uptimes * 1000);
     }
 
     @Override
     public void unLoadContent() {
-        time.stop();
+        stopTimer();//停止计时间 停止当前内容
     }
 
 
 
-    private void tanslationUrl() {
+
+    private FrameLayout timerLayout;//时间显示层
+    private FrameLayout weatherLayout;//天气显示层
+    // 创建子布局
+    private void createbLayout() {
+        View view = LayoutInflater.from(context).inflate(R.layout.weather_sublayout,null);
+        timerLayout = (FrameLayout) view.findViewById(R.id.timer_layout);
+        weatherLayout = (FrameLayout)view.findViewById(R.id.weather_layout);
+        this.addView(view);
+    }
+
+
+
+
+
+
+    @Override
+    public void broadCall() {
+        //广播 回调
+        Logs.i(TAG," 广播 - "+mBroadAction+" - 收到,执行!");
+        //得到百度api内容对象
+        if (AppsTools.checkUiThread()){
+            getWeatherContent();
+        }
+    }
+
+    @Override
+    public void createBroad() {
+        if (!isRegestBroad){
+            broad = new UiLocalBroad(mBroadAction,this);
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(mBroadAction);
+            context.registerReceiver(broad, filter); //只需要注册一次
+            this.isRegestBroad = true;
+        }
+    }
+    @Override
+    public void cancelBroad() {
+        if (isRegestBroad) {
+            //取消注册
+            if (broad != null) {
+                try {
+                    context.unregisterReceiver(broad);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                broad = null;
+            }
+        }
+    }
+    private TimerTask timerTask= null;
+    private Timer timer = null;
+    private void stopTimer(){
+        if (timerTask!=null){
+            timerTask.cancel();
+            timerTask = null;
+        }
+        if (timer!=null){
+            timer.cancel();
+            timer = null;
+        }
+    }
+    private void startTimer(long millisecond){
+        timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                loadContent();
+            }
+        };
+        timer = new Timer();
+        timer.schedule(timerTask,millisecond);
+    }
+    //刷新ui 刷新内容
+    private void startBaiDuApi() {
+        //  - 去通讯服务 - >
+        UiHttpProxy.getWeateher(url_content,mBroadAction);
+    }
+    //获取天气样式
+    public void getWeatherStyle() {
+        if (url_style!=null && !url_style.equals("")){
+            //访问本地文件 - 获取数据- 得到对象 - 获取数据
+            getStyleUrlData();
+        }
+    }
+    //获取天气 的 样式 - > 暂时无使用
+    private void getStyleUrlData() {
+        createTime();
         String jsonContent = UiTools.urlTanslationJsonText(url_style);
         if (jsonContent!=null){
             try {
-//            WeathersBean weather = AppsTools.parseJsonWithGson(jsonContent,WeathersBean.class); 暂时没什么鸟用
-
+            WeathersBean weather = AppsTools.parseJsonWithGson(jsonContent,WeathersBean.class);
+                if (weather!=null){
+                    if (weather.getStyle().getLayout().getDisplay().contains("time")){
+                            //显示 时间
+//                        createTime();
+                    }
+                }
             }catch (Exception e){
                 e.printStackTrace();
             }
-
         }
-
-
+    }
+    private LEDView ledTime;    //创建 时间显示器
+    private void createTime() {
+        if (ledTime==null){
+            ledTime = new LEDView(context,timerLayout);
+            Logs.i(TAG,"createTime()");
+        }
     }
 
-
-
-
-
-
-
-    //生成城市url
-    private String generContentUrl(String city) {
-        return "http://apis.baidu.com/apistore/weatherservice/recentweathers?cityname="+city;
+    //获取天气内容
+    public void getWeatherContent() {
+        if (url_content!=null && !url_content.equals("")){
+            //  访问本地文件 - 获取数据- 得到对象 - 获取数据
+            getBaiduUrlData();
+        }
     }
-    //获取 天气内容
-    private void updateDatas() {
+    //获取百度天气数据
+    public void getBaiduUrlData() {
+        String jsonContent = UiTools.urlTanslationJsonText(url_content);
 
+        if (jsonContent!=null){
+            try {
+                BaiduApiObject baiduApi =  AppsTools.parseJsonWithGson(jsonContent,BaiduApiObject.class);
+
+                if (baiduApi!=null){
+//                    存在数据
+
+//                    解析
+                    parseBaiduData(baiduApi);
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
+    //解析百度api 数据
+    private void parseBaiduData(BaiduApiObject baiduApi) {
+        //解析数据
+
+        String [] arr = new String[4];
+        arr[0] = baiduApi.getRetData().getCity();//城市
+        arr[1] = baiduApi.getRetData().getToday().getType();//类型
+        arr[2] = baiduApi.getRetData().getToday().getLowtemp()+" ~ "+baiduApi.getRetData().getToday().getHightemp();//温度
+        arr[3] = baiduApi.getRetData().getToday().getFengli();//风力
+
+        //根据类型 -> 获取bitmap
+        Bitmap bitmap = tanslateTypeToBitmap(arr[1]);
+
+        if (bitmap==null){
+            return;
+        }
+        //创建布局
+        createWeather();
+        if (show!=null){
+            show.setValue(arr,bitmap);
+        }
+    }
+    //根据类型 得到 bitmap
+    private Bitmap tanslateTypeToBitmap(String type) {
+        String path = null;
+        // 1. 获取 类型的拼音
+        path = PinYinUtils.getPingYin(type);
+        // 2. 判断早晚
+        path = UiTools.getDateSx()+path;
+        // 去对应文件夹 获取 bitmap
+        path = UiTools.getWeatherIconPath()+path+".png";
+
+        if (UiTools.fileIsExt(path)){
+            return ImageUtils.getBitmap(path);
+        }
+        return null;
+    }
+    private WeatherShowView show;
+    //创建天气
+    private void createWeather() {
+        if (show==null){
+            show = new WeatherShowView(context,weatherLayout);
+            Logs.i(TAG,"createWeather()");
+        }
     }
 
 

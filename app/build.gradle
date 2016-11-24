@@ -84,4 +84,5 @@ dependencies {
     compile files('libs/commons-io-1.2.jar')
     compile 'joda-time:joda-time:2.9.5'
     compile 'com.charonchui.vitamio:vitamio:4.2.2'
+    compile files('libs/pinyin4j-2.5.0.jar')
 }

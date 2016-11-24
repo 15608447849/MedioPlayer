@@ -23,6 +23,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import lzp.yw.com.medioplayer.model_communication.CommuniReceiverMsgBroadCasd;
 import lzp.yw.com.medioplayer.model_download.FtpTools.FtpUtils;
 import lzp.yw.com.medioplayer.model_download.FtpTools.FTPFileUtils;
+import lzp.yw.com.medioplayer.model_universal.tool.AppsTools;
 import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 import lzp.yw.com.medioplayer.model_universal.tool.MD5Util;
 import rx.Scheduler;
@@ -84,15 +85,18 @@ public class Loader {
 
             Logs.i(TAG, "loader downloadResult(): 执行线程"+ Thread.currentThread().getName()+" \n thread size:"+ Thread.getAllStackTraces().size());
 
-            if (other_caller!=null){
-                try {
-                    Logs.i(TAG,"downloadResult:传递到 子监听回调 , count:"+ callCount++);
-                    other_caller.downloadResult(filePath);
+            if (!AppsTools.isMD5Suffix(filePath)){
+                if (other_caller!=null){
+                    try {
+                        Logs.i(TAG,"downloadResult:传递到 子监听回调 , count:"+ callCount++);
+                        other_caller.downloadResult(filePath);
 
-                }catch (Exception e){
-                    Logs.e(TAG,"传递子监听回调err:"+e.toString());
+                    }catch (Exception e){
+                        Logs.e(TAG,"传递子监听回调err:"+e.toString());
+                    }
                 }
             }
+
             if (muri!=null){
                 if (!existRepeatList){ // 不存在 重复列表
                     Logs.i(TAG, "不在重复任务队列");
@@ -300,6 +304,8 @@ public class Loader {
     private void loadFileRecall(final String Filepath) {
         Logs.i("#& loadFileRecall() 接受到一个文件路径: " + Filepath);
 
+
+
         if (Filepath.equals("loaderr")) {
             Logs.e("load faild 文件名:" + Filepath);
             notifyThread.schedule(new Action0() {
@@ -318,6 +324,8 @@ public class Loader {
             });
         }
     }
+
+
 
     /**
      * 请放入io 线程

@@ -1,4 +1,4 @@
-package lzp.yw.com.medioplayer.model_application.ui.componentLibrary.clock;
+package lzp.yw.com.medioplayer.model_application.ui.ComponentLibrary.weather;
 
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -6,16 +6,17 @@ import android.graphics.Typeface;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import lzp.yw.com.medioplayer.R;
 
-public class LEDView extends LinearLayout {
+public class LEDView {
 
 
 	private static final String FONT_DIGITAL_7 = "fonts" + File.separator+ "digital-7.ttf";
@@ -33,10 +34,10 @@ public class LEDView extends LinearLayout {
 
 	private TextView timeView;
 	private TextView houseView;
-	public LEDView(Context context) {
-		super(context);
+	private TextView weekView;
+	public LEDView(Context context, ViewGroup vp) {
+		init(context,vp);
 		initTime();
-		init(context);
 	}
 
 	SimpleDateFormat df1 = null;
@@ -45,19 +46,21 @@ public class LEDView extends LinearLayout {
 		df1 = new SimpleDateFormat("yyyy-MM-dd");//年月日
 		df2 = new SimpleDateFormat("HH:mm:ss");//时分秒
 	}
-	private void init(Context context) {
-		LayoutInflater layoutInflater = LayoutInflater.from(context);
-		View view = layoutInflater.inflate(R.layout.ledview, this);
+	private void init(Context context,ViewGroup layout) {
+		View view = LayoutInflater.from(context).inflate(R.layout.ledview, null);
 		timeView = (TextView) view.findViewById(R.id.ledview_clock_ydt);
 		houseView = (TextView) view.findViewById(R.id.ledview_clock_hms);
+		weekView = (TextView)view.findViewById(R.id.ledview_clock_week);
 		AssetManager assets = context.getAssets();
-		final Typeface font = Typeface.createFromAsset(assets, FONT_DIGITAL_7);
+		Typeface font = Typeface.createFromAsset(assets, FONT_DIGITAL_7);
 		timeView.setTypeface(font);// 设置字体
 		houseView.setTypeface(font);// 设置字体
+		layout.addView(view);
 	}
 
 	public void start() {
 		timeView.setText(getYesr());
+		weekView.setText(getWeekOfDate(new Date()));
 		mHandler.post(mTimeRefresher);
 	}
 	public void stop() {
@@ -71,7 +74,16 @@ public class LEDView extends LinearLayout {
 		return df1.format(new Date());
 	}
 	//获取当前时分秒
-	public String getHouse() {
+	private String getHouse() {
 		return df2.format(new Date());
+	}
+	private final String[] weekDays = {"星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"};
+	private String getWeekOfDate(Date dt) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(dt);
+		int w = cal.get(Calendar.DAY_OF_WEEK) - 1;
+		if (w < 0)
+			w = 0;
+		return weekDays[w];
 	}
 }

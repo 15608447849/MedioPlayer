@@ -1,4 +1,4 @@
-package lzp.yw.com.medioplayer.model_application.ui.componentLibrary.button;
+package lzp.yw.com.medioplayer.model_application.ui.ComponentLibrary.button;
 
 import android.content.Context;
 import android.graphics.Bitmap;

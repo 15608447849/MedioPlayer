@@ -1,4 +1,4 @@
-package lzp.yw.com.medioplayer.model_application.ui.componentLibrary.clock;
+package lzp.yw.com.medioplayer.model_application.ui.ComponentLibrary.clock;
 
 import android.content.Context;
 import android.widget.AbsoluteLayout;

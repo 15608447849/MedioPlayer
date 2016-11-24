@@ -43,10 +43,17 @@ public class ICommand_SORE_JsonDataStore implements iCommand {
 
 
     //添加数据
-    public void addEntity(String key,String value){
+    private void addEntity(String key,String value){
+
         jsonMap.put(MD5Util.getStringMD5(key),value);
     }
-    //添加数据
+
+    /**
+     *
+     * @param key 文件名
+     * @param value 文件内容
+     * @param f false->文件名不加密
+     */
     public void addEntity(String key,String value,boolean f){
         if (f){
             addEntity(key,value);
@@ -87,6 +94,7 @@ public class ICommand_SORE_JsonDataStore implements iCommand {
             Logs.i("TAG","---------------存储数据失败--------------------"+sdcard_save_dir);
             return;
         }
+        Logs.e(TAG,"jsonMap size: "+jsonMap.size());
        Iterator iter = jsonMap.entrySet().iterator();
         Object key = null;
         Object val = null;
@@ -96,7 +104,6 @@ public class ICommand_SORE_JsonDataStore implements iCommand {
             key = entry.getKey();
             val = entry.getValue();
             SdCardTools.writeJsonToSdcard(sdcard_save_dir,(String)key,(String)val);
-
         }
         Logs.i("TAG","---------------存储数据完成--------------------");
         //发送 读取排期 的广播
@@ -104,7 +111,11 @@ public class ICommand_SORE_JsonDataStore implements iCommand {
         sendCompeleteBroad(sdcard_save_dir);
 
     }
-
+    public void clearJsonMap(){
+        if (jsonMap!=null){
+            jsonMap.clear();
+        }
+    }
     private Intent intent =null;
     private Bundle bundle = null;
     /**

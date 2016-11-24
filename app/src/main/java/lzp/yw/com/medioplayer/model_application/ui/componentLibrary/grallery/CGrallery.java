@@ -1,4 +1,4 @@
-package lzp.yw.com.medioplayer.model_application.ui.componentLibrary.grallery;
+package lzp.yw.com.medioplayer.model_application.ui.ComponentLibrary.grallery;
 
 import android.content.Context;
 import android.content.IntentFilter;
@@ -18,11 +18,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import lzp.yw.com.medioplayer.R;
+import lzp.yw.com.medioplayer.model_application.ui.ComponentLibrary.video.MyVideoView;
 import lzp.yw.com.medioplayer.model_application.ui.UiFactory.UiLocalBroad;
+import lzp.yw.com.medioplayer.model_application.ui.UiHttp.UiHttpProxy;
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.IAdvancedComponent;
 import lzp.yw.com.medioplayer.model_application.ui.Uitools.ImageUtils;
 import lzp.yw.com.medioplayer.model_application.ui.Uitools.UiTools;
-import lzp.yw.com.medioplayer.model_application.ui.componentLibrary.video.MyVideoView;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.content_gallary.DataObjsBean;
@@ -138,7 +139,6 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent {
             if (adapter!=null){
                 adapter.settingBitmaps(bitmapList);
             }
-
         }
     }
     private ImagerSwitchFactory factory ;//图片工厂 (停止使用请调用 stop)
@@ -347,7 +347,7 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent {
     public void loadContent() {
         //开始计时器
         unLoadContent();
-        //UiHttpProxy.getContent(url,mBroadAction);
+        UiHttpProxy.getContent(url,mBroadAction);
         startTimer(updateTime*1000);
     }
 

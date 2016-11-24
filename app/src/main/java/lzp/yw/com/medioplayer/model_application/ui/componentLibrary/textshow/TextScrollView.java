@@ -1,4 +1,4 @@
-package lzp.yw.com.medioplayer.model_application.ui.componentLibrary.textshow;
+package lzp.yw.com.medioplayer.model_application.ui.ComponentLibrary.textshow;
 
 import android.content.Context;
 import android.view.LayoutInflater;

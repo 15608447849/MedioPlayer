@@ -52,6 +52,17 @@ public class UiDownload {
         }
     }
 
+    /**
+     * 发送 ui组件
+     */
+    public static void sendTansUiComponet(String action){
+
+        if (context!=null){
+            bundle.clear();
+            intent.setAction(action);
+            context.sendBroadcast(intent);
+        }
+    }
 
 
 

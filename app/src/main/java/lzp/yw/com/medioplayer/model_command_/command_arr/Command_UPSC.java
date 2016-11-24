@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
@@ -22,13 +23,16 @@ import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.Rules;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ScheduleBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.content_gallary.DataObjsBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.content_gallary.GallaryBean;
+import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.content_weather.BaiduApiObject;
+import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.content_weather.WeathersBean;
 import lzp.yw.com.medioplayer.model_universal.tool.AppsTools;
 import lzp.yw.com.medioplayer.model_universal.tool.CMD_INFO;
 import lzp.yw.com.medioplayer.model_universal.tool.CONTENT_TYPE;
 import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 import lzp.yw.com.medioplayer.model_universal.tool.SdCardTools;
 
-import static lzp.yw.com.medioplayer.model_universal.tool.AppsTools.uriTranslationString;
+import static lzp.yw.com.medioplayer.model_universal.tool.AppsTools.uriTransionString;
+import static lzp.yw.com.medioplayer.model_universal.tool.CONTENT_TYPE.weather;
 
 /**
  * Created by user on 2016/10/27.
@@ -70,11 +74,12 @@ public class Command_UPSC implements iCommand {
             lock.lock();
             Logs.d(TAG," - - 同步访问  uri : "  + param);
             res = null;
-            res = uriTranslationString(param);
+            res = uriTransionString(param,null,null);
             if (res!=null){
                 //保存json数据
-                ICommand_SORE_JsonDataStore.getInstent(context).addEntity("main",param,false);
-                ICommand_SORE_JsonDataStore.getInstent(context).addEntity(param,res);
+                ICommand_SORE_JsonDataStore.getInstent(context).clearJsonMap();
+                ICommand_SORE_JsonDataStore.getInstent(context).addEntity("main",param,false); //main 保存主文件的 文件名
+                ICommand_SORE_JsonDataStore.getInstent(context).addEntity(param,res,true);//保存主文件内容
                 //解析json
                 List<ScheduleBean> list =  AppsTools.parseJonToList(res,ScheduleBean[].class);
 
@@ -368,8 +373,8 @@ public class Command_UPSC implements iCommand {
         }
         if (contentType.equals(CONTENT_TYPE.text)){
         }
-        if (contentType.equals(CONTENT_TYPE.weather)){
-            getUrlSource(content.getContentSource(),CONTENT_TYPE.weather);
+        if (contentType.equals(weather)){
+            getUrlSource(content.getContentSource(), weather);
         }
         if (contentType.equals(CONTENT_TYPE.media)){
         }
@@ -392,12 +397,16 @@ public class Command_UPSC implements iCommand {
 
         try {
             Logs.i(TAG," 内容 url :"+contentSource);
-          //  String url  = AppsTools.justUriIsBase64GetUrl(contentSource);//URL
+            if (type.equals(weather)){
+                contentSource = contentSource.substring(0,contentSource.lastIndexOf("=")+1) + URLEncoder.encode(contentSource.substring(contentSource.lastIndexOf("=")+1),"UTF-8");
+            }
             res = null;
-            res = AppsTools.uriTranslationString(contentSource);
-            res = AppsTools.justResultIsBase64decode(res);
+            res = AppsTools.uriTransionString(contentSource,null,null);
+            if (type.equals(CONTENT_TYPE.gallary) || type.equals(CONTENT_TYPE.news)) {  //咨询 图集
+                res = AppsTools.justResultIsBase64decode(res);
+            }
             if (res!=null){
-                ICommand_SORE_JsonDataStore.getInstent(context).addEntity(contentSource,res);// 文件名,文件内容
+                ICommand_SORE_JsonDataStore.getInstent(context).addEntity(contentSource,res,true);//文件名,文件内容
                 parseResult(res,type);
             }
         } catch (Exception e) {
@@ -412,8 +421,28 @@ public class Command_UPSC implements iCommand {
                 parseContentGallarys(gallaryBean);
             }
         }
-        if (type.equals(CONTENT_TYPE.weather)){
-//            WeatherBean weather = AppsTools.parseJsonWithGson(res,WeatherBean.class);  不处理
+        
+        if (type.equals(weather)){
+            WeathersBean weather = AppsTools.parseJsonWithGson(res,WeathersBean.class);
+            if (weather!=null){
+               parseWeatherToBaiduApi(weather.getWeatherData().getCurrentCity());
+            }
+        }
+    }
+
+    //访问 百度 api
+    private void parseWeatherToBaiduApi(String currentCity) {
+        //再次访问 百度 api 保存结果
+        String baiduApiUrl = AppsTools.generWeateherContentUrl(currentCity);
+        res = null;
+        res = AppsTools.uriTransionString(baiduApiUrl,AppsTools.baiduApiMap(),null);
+        if (res!=null){
+            res = AppsTools.justResultIsUNICODEdecode(res);
+            System.out.println(res);
+            BaiduApiObject obj = AppsTools.parseJsonWithGson(res,BaiduApiObject.class);
+            if (obj!=null && obj.getErrNum()==0 && obj.getErrMsg().equals("success")){
+                ICommand_SORE_JsonDataStore.getInstent(context).addEntity(baiduApiUrl,res,true);//文件名,文件内容
+            }
         }
     }
 

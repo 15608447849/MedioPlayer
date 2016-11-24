@@ -1,4 +1,4 @@
-package lzp.yw.com.medioplayer.model_application.ui.componentLibrary;
+package lzp.yw.com.medioplayer.model_application.ui.ComponentLibrary.centerManager;
 
 import android.content.Context;
 import android.util.Log;
@@ -18,17 +18,17 @@ import lzp.yw.com.medioplayer.model_universal.tool.CONTENT_TYPE;
  */
 
 public class CreateComponent {
-    private static final String packageName = "lzp.yw.com.medioplayer.model_application.ui.componentLibrary.";
+    private static final String packageName = "lzp.yw.com.medioplayer.model_application.ui.ComponentLibrary.";
     private static Map<String,String> referenceViewMap = new HashMap<String,String>();
     static{
-//        referenceViewMap.put(CONTENT_TYPE.image,packageName+"image.CMorePictures");
-//        referenceViewMap.put(CONTENT_TYPE.button,packageName+"button.CButton");
-//        referenceViewMap.put(CONTENT_TYPE.video,packageName+"video.CMedio");
-//        referenceViewMap.put(CONTENT_TYPE.text,packageName+"textshow.TextViewPager");
-//        referenceViewMap.put(CONTENT_TYPE.html,packageName+"web.IWebView");
-//        referenceViewMap.put(CONTENT_TYPE.gallary,packageName+"grallery.CGrallery");
-//        referenceViewMap.put(CONTENT_TYPE.media,packageName+"stream_medio.CStreamMedioForVitamio");
-//            referenceViewMap.put(CONTENT_TYPE.clock,packageName+"clock.IClock");
+        referenceViewMap.put(CONTENT_TYPE.image,packageName+"image.CMorePictures");
+        referenceViewMap.put(CONTENT_TYPE.button,packageName+"button.CButton");
+        referenceViewMap.put(CONTENT_TYPE.video,packageName+"video.CMedio");
+        referenceViewMap.put(CONTENT_TYPE.text,packageName+"textshow.TextViewPager");
+        referenceViewMap.put(CONTENT_TYPE.html,packageName+"web.IWebView");
+        referenceViewMap.put(CONTENT_TYPE.gallary,packageName+"grallery.CGrallery");
+        referenceViewMap.put(CONTENT_TYPE.media,packageName+"stream_medio.CStreamMedioForVitamio");
+        referenceViewMap.put(CONTENT_TYPE.clock,packageName+"clock.IClock");
         referenceViewMap.put(CONTENT_TYPE.weather,packageName+"weather.Iweather");
     }
 

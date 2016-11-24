@@ -1,4 +1,4 @@
-package lzp.yw.com.medioplayer.model_application.ui.componentLibrary.video;
+package lzp.yw.com.medioplayer.model_application.ui.ComponentLibrary.video;
 
 import android.content.Context;
 import android.widget.AbsoluteLayout;
@@ -12,7 +12,7 @@ import java.util.TimerTask;
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.IComponent;
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.IContentView;
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.MedioInterface;
-import lzp.yw.com.medioplayer.model_application.ui.componentLibrary.image.CImageView;
+import lzp.yw.com.medioplayer.model_application.ui.ComponentLibrary.image.CImageView;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
 import lzp.yw.com.medioplayer.model_universal.tool.CONTENT_TYPE;
