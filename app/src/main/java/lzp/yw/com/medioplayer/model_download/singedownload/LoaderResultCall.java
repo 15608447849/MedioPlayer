@@ -5,5 +5,5 @@ package lzp.yw.com.medioplayer.model_download.singedownload;
  */
 
 public interface LoaderResultCall {
-    void downloadResult(String filePath);
+    void downloadResult(String filePath,String state);
 }

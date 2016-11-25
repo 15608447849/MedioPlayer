@@ -58,7 +58,7 @@ public class Watched implements Observer{
         Intent i = new Intent();
         Bundle b = new Bundle();
         @Override
-        public void downloadResult(String filePath) {
+        public void downloadResult(String filePath,String state) {
 
             //下载完成回调
             Logs.i(TAG,"当前回调下标 :["+ ++successCount +"] ,sumCount:["+sumCount+"] \n result: "+ filePath);
