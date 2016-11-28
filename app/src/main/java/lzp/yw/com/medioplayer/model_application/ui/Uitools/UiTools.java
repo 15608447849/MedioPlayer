@@ -6,9 +6,9 @@ import android.util.Log;
 import java.io.File;
 import java.util.Calendar;
 
+import cn.trinea.android.common.util.FileUtils;
 import lzp.yw.com.medioplayer.model_application.baselayer.DataListEntiyStore;
 import lzp.yw.com.medioplayer.model_application.ui.UiHttp.UiDownload;
-import lzp.yw.com.medioplayer.model_download.singedownload.Loader;
 import lzp.yw.com.medioplayer.model_universal.tool.AppsTools;
 import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 import lzp.yw.com.medioplayer.model_universal.tool.MD5Util;
@@ -76,7 +76,7 @@ public class UiTools {
 
     //判断文件是否存在
     public static boolean fileIsExt(String filepath){
-            return Loader.fileIsExist(filepath);
+            return FileUtils.isFileExist(filepath);
     }
 
     /*1 获取文件名

@@ -1,6 +1,4 @@
-package lzp.yw.com.medioplayer.model_download.FtpTools;
-
-import android.util.Log;
+package lzp.yw.com.medioplayer.model_download.override_download_mode;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,8 +6,8 @@ import java.io.FileInputStream;
 /**
  * Created by user on 2016/6/22.
  */
-public class FTPFileUtils {
-    private static final String TAG =  "load_ftp_fileUtils";
+public class fileUtils {
+    private static final String TAG =  fileUtils.class.getName();
 
     /**
      * 创建文件
@@ -23,7 +21,7 @@ public class FTPFileUtils {
                 file.mkdirs();
             }
         } catch (Exception e) {
-            Log.e(TAG,"创建文件失败"+ e.getMessage());
+          e.printStackTrace();
         }
     }
 
@@ -45,7 +43,7 @@ public class FTPFileUtils {
                     fis = new FileInputStream(file);
                     result = fis.available();
                 } catch (Exception e) {
-                    Log.e(TAG,"获取文件大小失败:"+e.getMessage());
+                  e.printStackTrace();
                 }
             }
         } catch (Exception e) {
@@ -64,10 +62,8 @@ public class FTPFileUtils {
         int end = pathandname.length();// pathandname.lastIndexOf(".");
         if (start != -1 && end != -1) {
             return pathandname.substring(start + 1, end);
-        } else {
-            Log.e(TAG,"获取文件名失败:"+pathandname);
-            return null;
         }
+        return null;
     }
 
     /**

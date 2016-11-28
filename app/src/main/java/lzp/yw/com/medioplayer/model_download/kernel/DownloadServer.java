@@ -3,12 +3,16 @@ package lzp.yw.com.medioplayer.model_download.kernel;
 import android.app.Service;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Bundle;
 import android.os.IBinder;
 
 import java.util.ArrayList;
 
-import lzp.yw.com.medioplayer.model_download.downloadTools.DownloadQueueTask;
-import lzp.yw.com.medioplayer.model_download.localDownload.LocalDownloadQueue;
+import lzp.yw.com.medioplayer.model_command_.kernel.CommandPostBroad;
+import lzp.yw.com.medioplayer.model_download.override_download_mode.LoaderHelper;
+import lzp.yw.com.medioplayer.model_download.override_download_mode.Task;
+import lzp.yw.com.medioplayer.model_download.override_download_mode.TaskQueue;
+import lzp.yw.com.medioplayer.model_universal.tool.CMD_INFO;
 import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 
 /**
@@ -19,6 +23,8 @@ import lzp.yw.com.medioplayer.model_universal.tool.Logs;
  */
 public class DownloadServer extends Service {
     private static final String TAG = "_download";
+    private Intent i = null;
+    private Bundle b = null;
     public DownloadServer() {
     }
 
@@ -36,6 +42,7 @@ public class DownloadServer extends Service {
         super.onCreate();
         Logs.i(TAG,"****************************************onCreate");
         registBroad();
+        TaskQueue.getInstants().init(getApplicationContext(), LoaderHelper.DOWNLOAD_MODE_SERIAL);
     }
 
     @Override
@@ -43,20 +50,47 @@ public class DownloadServer extends Service {
         super.onDestroy();
         Logs.i(TAG,"****************************************onDestroy");
         unregistBroad();
+        TaskQueue.getInstants().unInit();
     }
     /*--------------------------------------------------------------------------------------------------------------------------------*/
 
 
     // 接收全局 下载任务内容
     public void receiveContent(ArrayList<CharSequence> TaskList,String savepath ,String terminalNo ){
-        DownloadQueueTask.getManage(getApplication()).addItemToStore(TaskList,savepath,terminalNo);
+        for (int i = 0;i<TaskList.size();i++){
+            TaskQueue.getInstants().addTask(new Task(savepath,terminalNo,(String)TaskList.get(i),null));
+        }
     }
     // 接收局部 下载任务内容
     public void receiveContent(String action,ArrayList<CharSequence> TaskList,String savepath ,String terminalNo ){
-        LocalDownloadQueue.getManage(getApplication()).addItemToStore(action,TaskList,savepath,terminalNo);
+        if (action==null){
+            sendBroads(0,null,null);
+        }else{
+            sendBroads(1,action,null);
+        }
+        receiveContent(TaskList,savepath,terminalNo);
     }
 
-
+    //发送广播
+    private void sendBroads(int type,String action,Object[] param){
+        if (i == null){
+            i = new Intent();
+        }
+        if (b == null){
+            b = new Bundle();
+        }
+        b.clear();
+        if (type == 0){
+            i.setAction(CommandPostBroad.ACTION);
+            b.clear();
+            b.putString(CommandPostBroad.PARAM1, CMD_INFO.SORE);
+            i.putExtras(b);
+        }
+        if (type == 1){ //局部
+            i.setAction(action);
+        }
+        getApplication().sendBroadcast(i);
+    }
 
 
     /**

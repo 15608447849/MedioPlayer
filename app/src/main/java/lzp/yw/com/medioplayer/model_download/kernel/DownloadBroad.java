@@ -40,12 +40,7 @@ public class DownloadBroad extends BroadcastReceiver {
         savepath = intent.getExtras().getString(PARAM3,"");//终端资源文件路径
 
         notifyAction = intent.getExtras().getString(PARAM0);
-        if (notifyAction!=null){
-            server.receiveContent(notifyAction,TaskList,savepath,terminalNo);
-        }else{
-            server.receiveContent(TaskList,savepath,terminalNo);
-        }
-
+        server.receiveContent(notifyAction,TaskList,savepath,terminalNo);
         TaskList = null;
     }
 
