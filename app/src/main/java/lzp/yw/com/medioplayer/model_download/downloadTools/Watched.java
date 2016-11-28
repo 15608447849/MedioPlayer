@@ -42,9 +42,7 @@ public class Watched implements Observer{
             if (objarr[0]==null){
               throw new Exception("--  download list is null  --");
             }
-
             downloadAction((ArrayList<CharSequence>)objarr[0],(String)objarr[1],(String)objarr[2]);
-
         } catch (Exception e) {
             e.printStackTrace();
         }finally {
