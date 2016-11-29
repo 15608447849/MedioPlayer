@@ -37,11 +37,11 @@
                 android:layout_centerHorizontal="true"
                 android:layout_below="@+id/ledview_clock_ydt"
                 />
-            <ImageView
+    <!-- android:src="@mipmap/ic_launcher"-->
+            <lzp.yw.com.medioplayer.model_application.ui.ComponentLibrary.weather.LedImageView
                 android:id="@+id/show_icon"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/ic_launcher"
                 android:layout_below="@+id/ledview_clock_week"
                 />
             <lzp.yw.com.medioplayer.model_application.ui.ComponentLibrary.weather.AutoTextView

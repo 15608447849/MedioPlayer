@@ -7,6 +7,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.IContentView;
+import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.MedioInterface;
 import lzp.yw.com.medioplayer.model_application.ui.Uitools.ImageUtils;
 import lzp.yw.com.medioplayer.model_application.ui.Uitools.UiTools;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
@@ -25,19 +26,26 @@ public class CImageView extends ImageView implements IContentView{
     private Bitmap bitmap;
     private int length;
     private FrameLayout.LayoutParams layoutParams;
-
     private boolean isInitData;
-    private boolean isLayout ;
+    private boolean isLayout;
+    private MedioInterface bridge;//与 上级 通讯 的桥梁
+
+    //设置 上级组件
+    public void setMedioInterface(MedioInterface bridge) {
+        this.bridge = bridge;
+    }
+
     public CImageView(Context context, FrameLayout layout, ContentsBean content) {
         super(context);
         mCcontext =context;
         this.layout = layout;
         initData(content);
     }
+    //获取长度
     public int getLength() {
         return length;
     }
-
+    //初始化
     @Override
     public void initData(Object object) {
         try {
@@ -56,6 +64,7 @@ public class CImageView extends ImageView implements IContentView{
             layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,FrameLayout.LayoutParams.MATCH_PARENT);
         }
         this.setLayoutParams(layoutParams);
+        this.setScaleType(ImageView.ScaleType.FIT_XY);
     }
 
     @Override
@@ -84,7 +93,7 @@ public class CImageView extends ImageView implements IContentView{
                 }
             setAttrbute();
             layouted();
-            addBitmap();
+            getBitmap();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -101,13 +110,7 @@ public class CImageView extends ImageView implements IContentView{
             e.printStackTrace();
         }
     }
-    //获取 bitmap
-    public Bitmap getBitmap() {
-        if (UiTools.fileIsExt(imagePath)){
-            bitmap = ImageUtils.getBitmap(imagePath);
-        }
-        return bitmap;
-    }
+
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -130,14 +133,20 @@ public class CImageView extends ImageView implements IContentView{
     /**
      * 设置bitmap
      */
-    private void addBitmap(){
+    private void getBitmap(){
+
         //获取bitmap
         if (bitmap == null){
-            bitmap = getBitmap();
-
+            if (UiTools.fileIsExt(imagePath)){
+                bitmap = ImageUtils.getBitmap(imagePath);
+            }else{
+                bitmap = ImageUtils.getBitmap(UiTools.getDefImagePath());
+                if (bridge!=null){
+                    bridge.playOver(this);
+                }
+            }
         }
         if (bitmap!=null){
-            this.setScaleType(ImageView.ScaleType.FIT_XY);
             this.setImageBitmap(bitmap);
         }
     }

@@ -19,6 +19,9 @@ import java.util.Date;
 import java.util.List;
 
 import lzp.yw.com.medioplayer.R;
+import lzp.yw.com.medioplayer.model_application.ui.Uitools.ImageUtils;
+import lzp.yw.com.medioplayer.model_application.ui.Uitools.UiTools;
+import lzp.yw.com.medioplayer.model_universal.tool.PinYinUtils;
 
 public class LEDView {
 
@@ -57,15 +60,17 @@ public class LEDView {
 		init(context,vp);
 		initTime();
 	}
-
+	private ViewGroup layout;
+	View view = null;
 	SimpleDateFormat df1 = null;
 	SimpleDateFormat df2 = null;
 	private void initTime() {
 		df1 = new SimpleDateFormat("yyyy-MM-dd");//年月日
 		df2 = new SimpleDateFormat("HH:mm:ss");//时分秒
 	}
-	private void init(Context context,ViewGroup layout) {
-		View view = LayoutInflater.from(context).inflate(R.layout.ledview, null);
+	private void init(Context context,ViewGroup vp) {
+		layout = vp;
+		view = LayoutInflater.from(context).inflate(R.layout.ledview, null);
 		timeView = (TextView) view.findViewById(R.id.ledview_clock_ydt);
 		houseView = (TextView) view.findViewById(R.id.ledview_clock_hms);
 		weekView = (TextView)view.findViewById(R.id.ledview_clock_week);
@@ -86,11 +91,19 @@ public class LEDView {
 	public void startText(){
 		mHandler.post(mStringRefresher);
 	}
+
 	public void stop() {
-		stopimage();
+		layout.removeView(view);
+		view = null;
+		layout = null;
+		strings.clear();
+		strings = null;
 		mHandler.removeCallbacks(mTimeRefresher);
 		mHandler.removeCallbacks(mStringRefresher);
+		stopimage();
+		System.out.println("-------------stop()---------");
 	}
+	//计算时间
 	private void exeing(){
 		houseView.setText(getHouse());
 	}
@@ -102,7 +115,9 @@ public class LEDView {
 	private String getHouse() {
 		return df2.format(new Date());
 	}
+	//星期
 	private final String[] weekDays = {"星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"};
+	//获取星期
 	private String getWeekOfDate(Date dt) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(dt);
@@ -111,28 +126,38 @@ public class LEDView {
 			w = 0;
 		return weekDays[w];
 	}
-
+	//内容列表
 	private List<String> strings = null;
 	/**
 	 *
 	 * @param val 城市,类型,温度,风力
 	 */
-	public void setValue(String[] val, Bitmap bp){
-		System.out.println("setValue -- -- --");
+	public void setValue(String[] val){
+		System.out.println("- - - - - - - - setValue() - - - - - - ");
 		if (strings==null){
 			strings = new ArrayList<>();
+		}else{
+			strings.clear();
 		}
-		stopimage();
+		stopimage();//取消bitmap
 		for (int index = 0;index < val.length ;index++){
 			strings.add(index,val[index]);
 		}
-		bitmap = bp;
-		image.setImageBitmap(bitmap);
+
+		//根据类型 -> 获取bitmap
+		bitmap = tanslateTypeToBitmap(val[1]);
+		if (bitmap!=null){
+			System.out.println("setting - > bitmap >>"+bitmap);
+			image.setImageBitmap(bitmap);
+		}
 	}
+
 	public void stopimage(){
 		if (bitmap!=null){
+			System.out.println("stopimage ,bitmap >>"+bitmap);
 			bitmap.recycle();
 			bitmap=null;
+			System.gc();
 		}
 	}
 
@@ -149,7 +174,23 @@ public class LEDView {
 	}
 
 
-
+	//根据类型 得到 bitmap
+	private Bitmap tanslateTypeToBitmap(String type) {
+		String path = null;
+		// 1. 获取 类型的拼音
+		path = PinYinUtils.getPingYin(type);
+		// 2. 判断早晚
+		path = UiTools.getDateSx()+path;
+		// 去对应文件夹 获取 bitmap
+		path = UiTools.getWeatherIconPath()+path+".png";
+		System.out.println("bitmap path -:"+path);
+		if (UiTools.fileIsExt(path)){
+			System.out.println("bitmap 存在 -");
+			return ImageUtils.getBitmap(path);
+		}
+		System.out.println("bitmap 不存在 -");
+		return null;
+	}
 
 
 

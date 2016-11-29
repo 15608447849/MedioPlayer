@@ -1,25 +1,25 @@
 package lzp.yw.com.medioplayer.model_application.ui.ComponentLibrary.image;
 
 import android.content.Context;
+import android.os.Handler;
 import android.widget.AbsoluteLayout;
 import android.widget.FrameLayout;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.IComponent;
+import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.Iview;
+import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.MedioInterface;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action0;
 
 /**
  * Created by user on 2016/11/11.
  * 播放图片的组件 - 多图片播放
+ *
  */
-public class CMorePictures extends FrameLayout implements IComponent{
+public class CMorePictures extends FrameLayout implements IComponent,MedioInterface{
     private static final java.lang.String TAG = "CMorePictures";
     private int componentId;
     private int width;
@@ -103,17 +103,15 @@ public class CMorePictures extends FrameLayout implements IComponent{
             e.printStackTrace();
         }
     }
-//--------------------------------------------------//
-    private ArrayList<CImageView> imageArr = null; //图片 自定义控件
+//--------------------图片 自定义控件 数组------------------------------//
+    private ArrayList<CImageView> imageArr = null;
     //添加 图片组件
-    private void addImage(CImageView imageview){
+    private void addImages(CImageView imageview){
         if (imageArr==null){
             imageArr = new ArrayList<>();
         }
         imageArr.add(imageview);
     }
-
-
     //创建 内容
     @Override
     public void createContent(Object object) {
@@ -123,7 +121,8 @@ public class CMorePictures extends FrameLayout implements IComponent{
             //只有图片内容
             for (ContentsBean content : contents){
                 imageview = new CImageView(context,this,content);
-                addImage(imageview);
+                imageview.setMedioInterface(this);
+                addImages(imageview);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -132,15 +131,26 @@ public class CMorePictures extends FrameLayout implements IComponent{
 
     private int currentIndex = 0;//当前循环的下标
     private CImageView currentImageView= null; //当前播放的图片
+    private Handler hander = null;
+    private final Runnable mTask = new Runnable() {
+
+        @Override
+        public void run() {
+            loadContent();
+        }
+    };
     @Override
     public void loadContent() {
 
         if (imageArr!=null && imageArr.size()>0){
+            if (hander==null){
+                hander = new Handler();
+            }
             unLoadContent();
             currentImageView =  imageArr.get(currentIndex);
             currentImageView.startWork();
-            //创建计时器
-            startTimer(imageArr.get(currentIndex).getLength() * 1000);
+
+            hander.postDelayed(mTask, imageArr.get(currentIndex).getLength() * 1000);
             currentIndex++;
             if (currentIndex==imageArr.size()){
                 currentIndex = 0;
@@ -150,13 +160,40 @@ public class CMorePictures extends FrameLayout implements IComponent{
     // 取消加载内容
     @Override
     public void unLoadContent() {
-        stopTimer();//停止计时间 停止当前内容
+
+        if (hander!=null){
+            hander.removeCallbacks(mTask);
+        }
         if (currentImageView!=null){
             currentImageView.stopWork();
             currentImageView = null;
         }
     }
 
+
+    @Override
+    public void playOver(Iview playView) {
+        //子组件 资源不存在 或者 子组件err -> 播放一个内容
+        loadContent();
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+//计时器
+   /*
+               //创建计时器
+//            startTimer(imageArr.get(currentIndex).getLength() * 1000);
+    //        stopTimer();//停止计时间 停止当前内容
     private TimerTask timerTask= null;
     private Timer timer = null;
 
@@ -185,5 +222,4 @@ public class CMorePictures extends FrameLayout implements IComponent{
         };
         timer = new Timer();
         timer.schedule(timerTask,millisecond);
-    }
-}
+    }*/

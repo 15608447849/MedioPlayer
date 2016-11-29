@@ -5,5 +5,5 @@ package lzp.yw.com.medioplayer.model_application.ui.UiInterfaces;
  *  媒体播放器  - 视频控件 桥梁
  */
 public interface MedioInterface {
-    void playOver();
+    void playOver(Iview playView);
 }

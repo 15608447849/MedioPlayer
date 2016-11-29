@@ -1,24 +1,22 @@
 package lzp.yw.com.medioplayer.model_application.ui.ComponentLibrary.video;
 
 import android.content.Context;
+import android.os.Handler;
 import android.widget.AbsoluteLayout;
 import android.widget.FrameLayout;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
+import lzp.yw.com.medioplayer.model_application.ui.ComponentLibrary.image.CImageView;
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.IComponent;
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.IContentView;
+import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.Iview;
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.MedioInterface;
-import lzp.yw.com.medioplayer.model_application.ui.ComponentLibrary.image.CImageView;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
 import lzp.yw.com.medioplayer.model_universal.tool.CONTENT_TYPE;
 import lzp.yw.com.medioplayer.model_universal.tool.Logs;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action0;
 
 /**
  * Created by user on 2016/11/14.
@@ -153,17 +151,27 @@ public class CMedio extends FrameLayout implements IComponent,MedioInterface{
 
     private int currentIndex = 0;//当前循环的下标
     private IContentView currentIView= null; //当前播放的图片
+    private Handler hander = null;
+    private final Runnable mTask = new Runnable() {
 
+        @Override
+        public void run() {
+            loadContent();
+        }
+    };
 
     //加载内容
     @Override
     public void loadContent() {
+
         if (contentArr!=null && contentArr.size()>0){
+            if (hander==null){
+                hander = new Handler();
+            }
             unLoadContent();
             currentIView =  contentArr.get(currentIndex);
             currentIView.startWork();
-            //创建计时器
-            startTimer(currentIView.getLength() * 1000);
+            hander.postDelayed(mTask, contentArr.get(currentIndex).getLength() * 1000);
             currentIndex++;
             if (currentIndex==contentArr.size()){
                 currentIndex = 0;
@@ -173,7 +181,9 @@ public class CMedio extends FrameLayout implements IComponent,MedioInterface{
 
     @Override
     public void unLoadContent() {
-        stopTimer();//停止计时间 停止当前内容
+        if (hander!=null){
+            hander.removeCallbacks(mTask);
+        }
         if (currentIView!=null){
             currentIView.stopWork();
             currentIView = null;
@@ -181,43 +191,10 @@ public class CMedio extends FrameLayout implements IComponent,MedioInterface{
     }
     //和 视频控件 通讯
     @Override
-    public void playOver() {
+    public void playOver(Iview playView) {
         loadContent();
     }
 
-
-
-
-    private TimerTask timerTask= null;
-    private Timer timer = null;
-    //停止计时器
-    private void stopTimer(){
-        if (timerTask!=null){
-            timerTask.cancel();
-            timerTask = null;
-        }
-        if (timer!=null){
-            timer.cancel();
-            timer = null;
-        }
-    }
-    //开始计时器
-    private void startTimer(long millisecond){
-        timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                AndroidSchedulers.mainThread().createWorker().schedule(new Action0() {
-                    @Override
-                    public void call() {
-                        loadContent();
-                    }
-                });
-
-            }
-        };
-        timer = new Timer();
-        timer.schedule(timerTask,millisecond);
-    }
 
 
 }

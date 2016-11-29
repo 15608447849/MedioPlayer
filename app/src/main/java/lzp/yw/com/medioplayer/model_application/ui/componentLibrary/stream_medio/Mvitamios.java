@@ -1,5 +1,6 @@
 package lzp.yw.com.medioplayer.model_application.ui.ComponentLibrary.stream_medio;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.media.AudioManager;
@@ -28,7 +29,7 @@ public class Mvitamios implements MediaPlayer.OnBufferingUpdateListener, MediaPl
     private ViewGroup layout; //
     private String path ; //"http://222.36.5.53:9800/live/xktv.m3u8";//"http://218.89.69.211:8088/streamer/yb01/yb01-500.m3u8";
 
-    private  boolean isInit = false;
+    private  static boolean isInit = false;//是否初始化 c_Lib
     private  View root;
     private  boolean isLayout = false;
 
@@ -46,30 +47,31 @@ public class Mvitamios implements MediaPlayer.OnBufferingUpdateListener, MediaPl
             this.activity = (BaseActivity) context;
         }
         this.path = (path==null || path.equals(""))?"http://222.36.5.53:9800/live/xktv.m3u8":path;
+        initView();
     }
 
-    //初始化
-   public boolean init(){
-       if (activity!=null){
-               if (!LibsChecker.checkVitamioLibs(activity)) {
+    //初始化  uiTools 去初始化它
+   public static void initStreamMedia(Activity activityContext){
+       if (activityContext!=null){
+               if (!LibsChecker.checkVitamioLibs(activityContext)) {
                    isInit = false;
                }else {
-                   Vitamio.isInitialized(activity.getAppContext());
-                   initView();
+                   Vitamio.isInitialized(activityContext.getApplication());
                    isInit = true;
                }
            }
-       return isInit;
    }
 
     //初始化控件
     private void initView(){
-        if (activity!=null) {
-            root = LayoutInflater.from(activity).inflate(R.layout.stream_layout,null);
-            mPreview = (SurfaceView) root.findViewById(R.id.surface);
-            holder = mPreview.getHolder();
-            holder.addCallback(this);
-            holder.setFormat(PixelFormat.RGBA_8888);
+        if (isInit){
+            if (activity!=null) {
+                root = LayoutInflater.from(activity).inflate(R.layout.stream_layout,null);
+                mPreview = (SurfaceView) root.findViewById(R.id.surface);
+                holder = mPreview.getHolder();
+                holder.addCallback(this);
+                holder.setFormat(PixelFormat.RGBA_8888);
+            }
         }
     }
 

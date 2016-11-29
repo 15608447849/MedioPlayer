@@ -7,7 +7,9 @@ import java.io.File;
 import java.util.Calendar;
 
 import cn.trinea.android.common.util.FileUtils;
+import lzp.yw.com.medioplayer.model_application.baselayer.BaseActivity;
 import lzp.yw.com.medioplayer.model_application.baselayer.DataListEntiyStore;
+import lzp.yw.com.medioplayer.model_application.ui.ComponentLibrary.stream_medio.Mvitamios;
 import lzp.yw.com.medioplayer.model_application.ui.UiHttp.UiDownload;
 import lzp.yw.com.medioplayer.model_universal.tool.AppsTools;
 import lzp.yw.com.medioplayer.model_universal.tool.Logs;
@@ -23,21 +25,41 @@ public class UiTools {
     private static DataListEntiyStore dle = null;
     private static File contentDir = null;
     private static String basepath;
+    private  static  String appicon;
     private static String weatherIconPath = null; //白天 day 黑夜 night
-
+    private static String def_source_dir = null;
     public static void  init(Context context){
         dle = new DataListEntiyStore(context);
         dle.ReadShareData();
         basepath = dle.GetStringDefualt("basepath","");
+        appicon = dle.GetStringDefualt("appicon","");
         contentDir = new File(dle.GetStringDefualt("jsonStore","")) ;//json根目录
         UiDownload.init(context,basepath,dle.GetStringDefualt("terminalNo",""));
-        unzipWeatherIcon(context,dle.GetStringDefualt("appicon",""));
         isInit = true;
+        final BaseActivity context1 = (BaseActivity)context;
+        try {
+            Mvitamios.initStreamMedia(context1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //解压缩
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if(isInit) {
+                    unzipWeatherIcon(context1, appicon);
+                    unzipDefSource(context1, basepath);
+                }
+            }
+        }).start();
+
     }
+
+
+
     public static void  uninit(){
         UiDownload.unInit();
         dle =null;
-
         isInit = false;
     }
 
@@ -115,14 +137,11 @@ public class UiTools {
      * 天气图片 解压缩  源目录 - assets - weathericon.zip -> 根目录下的 appicon->weathericon.zip ->解压缩->删除zip
      */
     private static boolean unzipWeatherIcon(Context context,String dirpath){
-
-
         if (fileIsExt(dirpath+"weathericon")){
             weatherIconPath = dirpath+"weathericon/";
             //存在
             return true;
         }
-
         if (AppsTools.ReadAssectsDataToSdCard(context,dirpath,"weathericon.zip")){
             //执行解压缩
             Logs.i("unzip","路径- ->>>>>"+dirpath+"weathericon.zip");
@@ -161,6 +180,41 @@ public class UiTools {
     //获取 天气图片 跟路径
     public static String getWeatherIconPath(){
         return weatherIconPath;
+    }
+
+    /**
+     * 解压  默认 资源  - 图片 -> def_image.png    视频 def_video.mp4
+     *
+     * @param context
+     * @param basepath
+     */
+    private static void unzipDefSource(Context context,String basepath) {
+        if (fileIsExt(basepath+"defSource")){
+            def_source_dir = basepath+"defSource/";
+            //存在
+            return;
+        }
+        if (AppsTools.ReadAssectsDataToSdCard(context,basepath,"defSource.zip")){
+            //执行解压缩
+            Logs.i("unzip","路径- ->>>>>"+basepath+"defSource.zip");
+            try {
+                AppsTools.UnZip(basepath+"defSource.zip",basepath.substring(0,basepath.lastIndexOf("/")));
+                //删除 .zip文件
+                SdCardTools.DeleteFiles(basepath+"defSource.zip");
+                def_source_dir = basepath+"defSource/";
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    //获取 默认图片
+    public static String getDefImagePath(){
+        return def_source_dir+"def_image.png";
+    }
+    //获取 默认视频
+    public static String getDefVideoPath(){
+        return def_source_dir+"def_video.mp4";
     }
 
 

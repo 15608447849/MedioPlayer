@@ -50,7 +50,10 @@ public class MyVideoViewHolder implements IContentView{
             video.setOnPreparedListener_(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
-                    Logs.i(TAG,"当前设置时长 - "+length +"获取到视频真实时长 - "+video.getDuration());
+                    Logs.i(TAG,"当前设置时长 - "+length +"获取到视频真实时长 - "+video.getDuration()/1000);
+                    if (length!=video.getDuration()/1000){
+                        length = video.getDuration()/1000;
+                    }
                 }
             });
             video.setOnCompletionListener_ (new MediaPlayer.OnCompletionListener() {
@@ -62,9 +65,9 @@ public class MyVideoViewHolder implements IContentView{
             video.setOnErrorListener(new MediaPlayer.OnErrorListener() {
                 @Override
                 public boolean onError(MediaPlayer mp, int what, int extra) {
-                    Logs.i(TAG,"播放错误");
+                    Logs.e(TAG,"播放错误");
                     if (medioEr!=null){
-                        medioEr.playOver();
+                        medioEr.playOver(MyVideoViewHolder.this);
                     }
                     return false;
                 }
@@ -97,8 +100,9 @@ public class MyVideoViewHolder implements IContentView{
             video.start(layout,videoPath,false);
         }else{
             if (medioEr!=null){
-                medioEr.playOver();
+                medioEr.playOver(this);
             }
+//            video.start(layout,UiTools.getDefVideoPath(),false);
         }
 
     }

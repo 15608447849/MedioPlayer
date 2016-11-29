@@ -28,6 +28,7 @@ public class Command_SYTI implements iCommand {
             Logs.e(TAG,"Sync server time err, param not Matches ,param = " + param);
             return;
         }
+        liunx_SU_syncTimeCmd(param,"GMT+08:00");
         if(justTime(param,null,true)){
             return;
         }
@@ -39,8 +40,8 @@ public class Command_SYTI implements iCommand {
         newTime = liunx_SU_syncTimeCmd(settingTime,"GMT+08:00");
         Logs.i(TAG,"srtting zone GMT+08:00 >>> - "+newTime);
         if(!justTime(param,newTime,false)){
-            Logs.i(TAG,"srtting zone GMT-08:00 >>> ");
-            liunx_SU_syncTimeCmd(settingTime,"GMT-08:00");
+            newTime = liunx_SU_syncTimeCmd(settingTime,"GMT-08:00");
+            Logs.i(TAG,"srtting zone GMT-08:00 >>> "+newTime);
         }
     }
 
@@ -119,16 +120,20 @@ public class Command_SYTI implements iCommand {
     }
 
     private String  liunx_SU_syncTimeCmd(String param,String timeZone){
-        Logs.i(TAG,"yyyyMMdd.HHmmss ==>"+param);
+        Logs.i(TAG,"yyyyMMdd.HHmmss ==>"+param+" zone==>"+timeZone);
         Process process = null;
         DataOutputStream os = null;
         try {
             process = Runtime.getRuntime().exec("su");
             String datetime=param;//"20131023.112800" _测试的设置的时间【时间格式 yyyyMMdd.HHmmss】
             os = new DataOutputStream(process.getOutputStream());
-            os.writeBytes("setprop persist.sys.timezone "+ timeZone+"\n");
-            os.writeBytes("/system/bin/date -s "+datetime+"\n");
-            os.writeBytes("clock -w\n");
+            if (timeZone!=null){
+                os.writeBytes("setprop persist.sys.timezone "+ timeZone+"\n");
+            }
+            if (param!=null){
+                os.writeBytes("/system/bin/date -s "+datetime+"\n");
+            }
+//            os.writeBytes("clock -w\n"); //将当前系统时间写入CMOS中去
             os.writeBytes("exit\n");
             os.flush();
             process.waitFor();

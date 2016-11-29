@@ -17,6 +17,7 @@ import java.io.IOException;
 
 import lzp.yw.com.medioplayer.model_application.ui.UiStore.ViewStore;
 import lzp.yw.com.medioplayer.model_universal.tool.AppsTools;
+import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 
 /**
  * Created by user on 2016/11/11.
@@ -127,11 +128,12 @@ public class ImageUtils {
 
 
 
-    //放入主线程
+    //放入主线程 移除资源
     public static void removeImageViewDrawable(ImageView imageView) {
         if (!AppsTools.checkUiThread()){
             return;
         }
+        Logs.i("imageUtils","回收图片bitmap...");
         //资源回调的地方
         Bitmap bitmap = null;
         Drawable drawable = imageView.getDrawable();
@@ -155,6 +157,7 @@ public class ImageUtils {
         }
         imageView.setBackgroundResource(0);
         imageView.setImageDrawable(null);
+        Logs.i("imageUtils","回收图片bitmap...完成");
     }
 
     //创建 imageview

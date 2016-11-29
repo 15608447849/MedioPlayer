@@ -10,7 +10,6 @@ import android.widget.AbsoluteLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-import lzp.yw.com.medioplayer.model_application.baselayer.BaseActivity;
 import lzp.yw.com.medioplayer.model_application.ui.UiFactory.UiManager;
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.Iview;
 import lzp.yw.com.medioplayer.model_application.ui.Uitools.ImageUtils;
@@ -74,20 +73,21 @@ public class CButton extends ImageButton implements View.OnClickListener,View.On
         this.setScaleType(ImageView.ScaleType.FIT_XY);
     }
 
+    //加载图片
     private void loadBitmap() {
         if (upImagePath!=null && UiTools.fileIsExt(upImagePath)){
-            Logs.i(TAG,"指定图片 默认效果 path - "+upImagePath);
+//            Logs.i(TAG,"指定图片 默认效果 path - "+upImagePath);
             upBitmap = ImageUtils.getBitmap(upImagePath);
-        }else{
+        }/*else{
             Logs.i(TAG,"图片资源本地不存在 - "+upImagePath);
-        }
+        }*/
 
         if (downImagePath!=null && UiTools.fileIsExt(downImagePath)){
-            Logs.i(TAG,"指定图片 点击效果 path - "+downImagePath);
+          //  Logs.i(TAG,"指定图片 点击效果 path - "+downImagePath);
             downBitmap = ImageUtils.getBitmap(downImagePath);
-        }else{
+        }/*else{
             Logs.i(TAG,"图片资源本地不存在 - "+downImagePath);
-        }
+        }*/
 
         if (upBitmap!=null){
             this.setImageBitmap(upBitmap);
@@ -112,11 +112,10 @@ public class CButton extends ImageButton implements View.OnClickListener,View.On
     //布局
     @Override
     public void layouted() {
-        if (isLayout){
-            return;
+        if (!isLayout){
+            layout.addView(this);
+            isLayout = true;
         }
-        layout.addView(this);
-        isLayout = true;
     }
     //未布局
     @Override
@@ -149,15 +148,12 @@ public class CButton extends ImageButton implements View.OnClickListener,View.On
     public void stopWork() {
 //        Logs.i(TAG,"button - startWork()");
         try {
-            unLayouted(); //移除布局
             unloadBitmap();
-
+            unLayouted(); //移除布局
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-
 
     /**
      * 点击事件
@@ -166,7 +162,7 @@ public class CButton extends ImageButton implements View.OnClickListener,View.On
     @Override
     public void onClick(View v) {
         try {
-            ((BaseActivity)context).showToast("按钮 -"+componentId +" linkId - "+linkId);
+//            ((BaseActivity)context).showToast("按钮 -"+componentId +" linkId - "+linkId);
             UiManager.getInstans().exeTask(linkId);
         } catch (Exception e) {
             e.printStackTrace();
@@ -177,19 +173,18 @@ public class CButton extends ImageButton implements View.OnClickListener,View.On
     public boolean onTouch(View v, MotionEvent event) {
         try {
             if(event.getAction() == MotionEvent.ACTION_DOWN){
-                Logs.i(TAG,"按下");
+//                Logs.i(TAG,"按下");
                 if (downBitmap!=null){
                     //更改为按下时的背景图片
                     ((ImageButton)v).setImageBitmap(downBitmap);
                 }
             }else if(event.getAction() == MotionEvent.ACTION_UP){
-                Logs.i(TAG,"抬起");
+//                Logs.i(TAG,"抬起");
                 if (upBitmap!=null){
                     //改为抬起时的图片
                     ((ImageButton)v).setImageBitmap(upBitmap);
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }

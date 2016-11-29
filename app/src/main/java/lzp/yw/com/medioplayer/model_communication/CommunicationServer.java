@@ -119,7 +119,7 @@ public class CommunicationServer extends Service {
                     @Override
                     public void run() {
                         try {
-                            Thread.sleep(AppsTools.randomNum(5,10)*1000);  //随机休眠5 - 10秒
+                            Thread.sleep(AppsTools.randomNum(2,5)*1000);  //随机休眠5 - 10秒
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

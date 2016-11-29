@@ -100,9 +100,7 @@ public class CStreamMedioForVitamio extends FrameLayout implements IComponent{
     public void createContent(Object object) {
         try {
             ContentsBean content = (ContentsBean)object;
-
             video = new Mvitamios(context,content.getContentSource());//content.getContentSource()
-            video.init();
         } catch (Exception e) {
             e.printStackTrace();
         }
