@@ -44,7 +44,7 @@ public class CommandPostServer extends Service {
     private void initData() {
 
         //syncTime
-        commandList.put(CMD_INFO.SYTI,new Command_SYTI());
+        commandList.put(CMD_INFO.SYTI,new Command_SYTI(getApplicationContext()));
         // 音量控制
         commandList.put(CMD_INFO.VOLU, new Command_VOLU());
         //关闭终端

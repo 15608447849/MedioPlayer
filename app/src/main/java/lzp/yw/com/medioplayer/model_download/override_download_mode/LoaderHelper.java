@@ -87,19 +87,22 @@ public class LoaderHelper implements Observer {//观察者
      * @param task
      */
     private void parseDatas(Task task){
+        if (fileIsExist(task.getSavePath()+task.getFileName())){
+            caller.downloadResult(task,0);
+            return;
+        }
 
         int type = task.getType();
-
         if (type == Task.Type.HTTP){
             httpDownload(task);
-        }
-
+        }else
         if (type == Task.Type.FTP){
             ftpDownloadSetting(task);
-        }
-
+        }else
         if (type== Task.Type.FILE){
             cpFile(task);
+        }else {
+            caller.downloadResult(task, 1);
         }
     }
     //复制本地文件到 -app 资源目录下

@@ -1,5 +1,6 @@
 package lzp.yw.com.medioplayer.model_command_.command_arr;
 
+import android.content.Context;
 import android.text.format.Time;
 
 import java.io.DataOutputStream;
@@ -21,6 +22,12 @@ import lzp.yw.com.medioplayer.model_universal.tool.Logs;
  */
 public class Command_SYTI implements iCommand {
     private static final String TAG = "SYTI";
+    private Context context;
+
+    public Command_SYTI(Context context) {
+        this.context = context;
+    }
+
     @Override
     public void Execute(String param) {
         Logs.i(TAG,"终端时间同步 parama:["+param +"]\n当前线程:"+Thread.currentThread().getName());
@@ -29,24 +36,14 @@ public class Command_SYTI implements iCommand {
             Logs.e(TAG,"Sync server time err, param not Matches ,param = " + param);
             return;
         }
-        String currentTime = getSystemTime();
-        if(justTime(currentTime,param)){
+
+        if(justTime(getSystemTime(false),param)){
             return;
         }
-
         String settingTime = param.replaceAll("-", "").replace(":","").replaceAll(" ", ".");
         Logs.i(TAG,"准备设置时间参数 >date>> "+settingTime);
-
-        liunx_SU_syncTimeCmd(settingTime,"GMT+8");
-        currentTime = getSystemTime();
-        Logs.i(TAG,"当前设置时区 GMT+08:00 >>> 时间 - "+currentTime);
-        if(!justTime(currentTime,param)){
-            liunx_SU_syncTimeCmd(settingTime,"GMT-08:00");
-            currentTime = getSystemTime();
-            Logs.i(TAG,"当前设置时区 GMT-08:00 >>> 时间 - "+currentTime);
-            liunx_SU_syncTimeCmd(null,"GMT+8");
-            getSystemTime();
-        }
+        liunx_SU_syncTimeCmd(settingTime,"Asia/Shanghai");
+        Logs.i(TAG,"当前设置时区 Asia/Shanghai >>> 时间 - "+getSystemTime(true));
     }
 
 
@@ -80,7 +77,6 @@ public class Command_SYTI implements iCommand {
                 }else{
                     Logs.i(TAG, "时间错误 android - "+currentTime +"   server - "+systemTime);
                 }
-
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -91,55 +87,49 @@ public class Command_SYTI implements iCommand {
     /**
      * 获取系统时间
      */
-    public static String getSystemTime(){
-        Logs.i(TAG,"当前时区 - "+ TimeZone.getDefault().getDisplayName());
+    public static String getSystemTime(boolean islogs){
+        if (islogs){
+            Logs.i(TAG,"当前时区 - "+ TimeZone.getDefault().getDisplayName());
+        }
+
         long time= System.currentTimeMillis();
         final Calendar mCalendar= Calendar.getInstance();
         mCalendar.setTimeInMillis(time);
         int mYear = mCalendar.get(Calendar.YEAR);//年
         int mMonth = mCalendar.get(Calendar.MONTH);//月
         int mDate = mCalendar.get(Calendar.DATE);//日
-        Logs.i(TAG,"mCalendar >>> "+mYear+"-"+mMonth+"-"+mDate);
-        int mHour=mCalendar.get(Calendar.HOUR);//取得小时：
+        if (islogs){
+            Logs.i(TAG,"mCalendar >>> "+mYear+"-"+mMonth+"-"+mDate);
+        }
+
+        int mHour=mCalendar.get(Calendar.HOUR_OF_DAY);//取得小时：
         int mMinuts=mCalendar.get(Calendar.MINUTE);//取得分钟：
         int mSecond=mCalendar.get(Calendar.SECOND);//取得秒
-        Logs.i(TAG,"mCalendar >>> "+mHour+":"+mMinuts+":"+mSecond);
+        if (islogs){
+            Logs.i(TAG,"mCalendar >>> "+mHour+":"+mMinuts+":"+mSecond);
+        }
 
-        Time t=new Time(TimeZone.getDefault().getDisplayName(false, TimeZone.SHORT)); // or Time t=new Time("GMT+8"); 加上Time Zone资料
+
+        Time t=new Time(); // or Time t=new Time("GMT+8"); 加上Time Zone资料
         t.setToNow(); // 取得系统时间。
         int year = t.year;
         int month = t.month;
         int date = t.monthDay;
-        Logs.i(TAG,"Time() >>> \n"+year+":"+month+":"+date);
+        if (islogs){
+            Logs.i(TAG,"Time() >>> \n"+year+"-"+month+"-"+date);
+        }
+
         int hour = t.hour;    // 0-23
         int minuts = t.minute;
         int seconds = t.second;
-        Logs.i(TAG,"Time() >>> \n"+hour+":"+minuts+":"+seconds);
+        if (islogs){
+            Logs.i(TAG,"Time() >>> \n"+hour+":"+minuts+":"+seconds);
+        }
+
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String times = df.format(new Date());
         return times;
     }
-    /**
-     * 获取系统时间并传递出来
-     */
-    public static Calendar getSystemTime(Void s){
-        int mHour, mMinuts, mSecond;
-        long time= System.currentTimeMillis();
-        Calendar mCalendar= Calendar.getInstance();
-        mCalendar.setTimeInMillis(time);
-        mHour=mCalendar.get(Calendar.HOUR);//取得小时：
-        mMinuts=mCalendar.get(Calendar.MINUTE);//取得分钟：
-        mSecond=mCalendar.get(Calendar.SECOND);//取得秒
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String times = df.format(new Date());
-        System.out.println(TAG+"当前时区 - "+ TimeZone.getDefault().getDisplayName(false, TimeZone.SHORT));
-        System.out.println(TAG+"获取系统时间 ->"+times);
-        return mCalendar;
-    }
-
-
-
-
 
     private void  liunx_SU_syncTimeCmd(String datetime,String timeZone){
         Logs.i(TAG,"yyyyMMdd.HHmmss ==>"+datetime+"\n zone==>"+timeZone);
@@ -180,3 +170,107 @@ public class Command_SYTI implements iCommand {
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//        AlarmManager mAlarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+//        mAlarmManager.setTimeZone("Asia/Shanghai");//"GMT+08:00,中国标准时间"
+//        try {
+//            setDateTime(2016,11,30,20,0,0);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        System.out.println(getSystemTime());
+/*
+    static Process createSuProcess(String cmd) throws IOException {
+
+        DataOutputStream os = null;
+        Process process = createSuProcess();
+
+        try {
+            os = new DataOutputStream(process.getOutputStream());
+            os.writeBytes(cmd + "\n");
+            os.writeBytes("exit $?\n");
+        } finally {
+            if(os != null) {
+                try {
+                    os.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+
+        return process;
+    }
+
+    static void requestPermission() throws InterruptedException, IOException {
+        createSuProcess("chmod 666 /dev/alarm").waitFor();
+    }
+
+    static Process createSuProcess() throws IOException  {
+        File rootUser = new File("/system/xbin/ru");
+        if(rootUser.exists()) {
+            return Runtime.getRuntime().exec(rootUser.getAbsolutePath());
+        } else {
+            return Runtime.getRuntime().exec("su");
+        }
+    }
+
+    public static void setDateTime(int year, int month, int day, int hour, int minute,int second) throws IOException, InterruptedException {
+
+        requestPermission();
+
+        Calendar c = Calendar.getInstance();
+
+        c.set(Calendar.YEAR, year);
+        c.set(Calendar.MONTH, month-1);
+        c.set(Calendar.DAY_OF_MONTH, day);
+        c.set(Calendar.HOUR_OF_DAY, hour);
+        c.set(Calendar.MINUTE, minute);
+        c.set(Calendar.SECOND, second);
+
+
+        long when = c.getTimeInMillis();
+
+        if (when / 1000 < Integer.MAX_VALUE) {
+            SystemClock.setCurrentTimeMillis(when);
+        }
+
+        long now = Calendar.getInstance().getTimeInMillis();
+        Logs.i(TAG, "set tm="+when + ", now tm="+now);
+
+        if(now - when > 1000)
+            throw new IOException("failed to set Date.");
+
+    }
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+

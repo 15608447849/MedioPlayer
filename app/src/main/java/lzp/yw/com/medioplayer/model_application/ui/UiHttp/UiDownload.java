@@ -41,14 +41,15 @@ public class UiDownload {
      */
     private static void sendTaskList(String action, ArrayList<CharSequence> loadingList) {
         if (context!=null){
+            //发送下载任务 -> 下载服务
             bundle.clear();
             intent.setAction(DownloadBroad.ACTION);
-            bundle.putString(DownloadBroad.PARAM0, action);
             bundle.putCharSequenceArrayList(DownloadBroad.PARAM1,loadingList);
             bundle.putString(DownloadBroad.PARAM2, terminalNo);
             bundle.putString(DownloadBroad.PARAM3, savepath);
             intent.putExtras(bundle);
             context.sendBroadcast(intent);
+            sendTansUiComponet(action);
         }
     }
 

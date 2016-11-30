@@ -99,10 +99,10 @@ public class MyVideoViewHolder implements IContentView{
         if (videoPath!=null && UiTools.fileIsExt(videoPath)){
             video.start(layout,videoPath,false);
         }else{
-            if (medioEr!=null){
-                medioEr.playOver(this);
-            }
-//            video.start(layout,UiTools.getDefVideoPath(),false);
+//            if (medioEr!=null){
+//                medioEr.playOver(this);
+//            }
+            video.start(layout,UiTools.getDefVideoPath(),false);
         }
 
     }

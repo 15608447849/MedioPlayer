@@ -27,7 +27,7 @@ public class GralleryAdapter extends BaseAdapter {
 
     GralleryAdapter(Context context){
         this.context = context;
-        this.bitmaps = bitmaps;
+
     }
 
     public void setSelectItem(int selectItem) {
@@ -37,8 +37,11 @@ public class GralleryAdapter extends BaseAdapter {
             notifyDataSetChanged();
         }
     }
-    //设置bitmap
+    //设置bitmap list
     public void settingBitmaps(ArrayList<Bitmap> bitmapList){
+        if (bitmapList==null){
+            return;
+        }
         if (bitmaps==null){
             bitmaps = new ArrayList<>();
         }
@@ -49,6 +52,19 @@ public class GralleryAdapter extends BaseAdapter {
         }
         notifyDataSetChanged();
     }
+
+    //设置bitmap list
+    public void settingOnlyBitmap(Bitmap bitmap){
+
+        if (bitmaps==null){
+            bitmaps = new ArrayList<>();
+        }
+        if (!bitmaps.contains(bitmap)){
+            bitmaps.add(bitmap);
+        }
+        notifyDataSetChanged();
+    }
+
     public Drawable getDrawable(int position){
         if (getBitmap(position)!=null){
             return new BitmapDrawable(getBitmap(position));

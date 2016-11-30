@@ -394,7 +394,7 @@ public class CommunicationServer extends Service {
      * 发送心跳
      */
     private void sendHearbeating() {
-        Logs.d(TAG, "当前时间:" + Command_SYTI.getSystemTime() + " HRBT:" + terminalId);
+        Logs.i(TAG, "当前时间:" + Command_SYTI.getSystemTime(false) + " HRBT:" + terminalId);
         sendCmds(getHearbeatUri());
     }
 }

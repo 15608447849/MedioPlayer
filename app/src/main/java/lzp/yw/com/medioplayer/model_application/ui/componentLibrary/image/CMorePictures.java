@@ -58,8 +58,9 @@ public class CMorePictures extends FrameLayout implements IComponent,MedioInterf
     @Override
     public void setAttrbute() {
 //        Logs.i(TAG,"- -setAttrbute()- -");
-        this.setLayoutParams(layoutParams);
 //        this.setBackgroundColor(Color.BLUE);
+        this.setLayoutParams(layoutParams);
+        currentIndex=0;//当前下标
     }
     @Override
     public void layouted() {
@@ -124,11 +125,13 @@ public class CMorePictures extends FrameLayout implements IComponent,MedioInterf
                 imageview.setMedioInterface(this);
                 addImages(imageview);
             }
+            playNumber = imageArr.size();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    private int playNumber = 0;
     private int currentIndex = 0;//当前循环的下标
     private CImageView currentImageView= null; //当前播放的图片
     private Handler hander = null;
@@ -174,7 +177,11 @@ public class CMorePictures extends FrameLayout implements IComponent,MedioInterf
     @Override
     public void playOver(Iview playView) {
         //子组件 资源不存在 或者 子组件err -> 播放一个内容
-        loadContent();
+        playNumber--;
+        if (playNumber>0){
+            loadContent();
+        }
+
     }
 }
 

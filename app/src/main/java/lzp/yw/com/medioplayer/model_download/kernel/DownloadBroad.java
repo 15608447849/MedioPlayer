@@ -14,7 +14,6 @@ import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 
 public class DownloadBroad extends BroadcastReceiver {
     public static final String ACTION = "com.download.receivebroad";
-    public static final String PARAM0 = "nitifyAction";
     public static final String PARAM1 = "taskList";
     public static final String PARAM2 ="storeDir";
     public static final String PARAM3 = "telminalId";
@@ -24,23 +23,21 @@ public class DownloadBroad extends BroadcastReceiver {
         this.server = server;
     }
 
-    private String notifyAction;
     private String terminalNo ;
     private String savepath ;
     private ArrayList<CharSequence> TaskList = null;
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        TaskList =   intent.getExtras().getCharSequenceArrayList(PARAM1);
-        if (TaskList == null || TaskList.size() == 0){
-            Logs.e("","DownloadBroad 收到空任务队列 !!!");
-            return;
-        }
+        TaskList =  intent.getExtras().getCharSequenceArrayList(PARAM1);
         terminalNo = intent.getExtras().getString(PARAM2,"0000");//终端id
         savepath = intent.getExtras().getString(PARAM3,"");//终端资源文件路径
-
-        notifyAction = intent.getExtras().getString(PARAM0);
-        server.receiveContent(notifyAction,TaskList,savepath,terminalNo);
+        if (TaskList == null || TaskList.size() == 0){
+            Logs.e("DownloadBroad","DownloadBroad 收到空任务队列 !!!");
+            return;
+        }
+        Logs.i("DownloadBroad","终端id - "+terminalNo+"\n资源保存路径 - "+savepath);
+        server.receiveContent(TaskList,savepath,terminalNo);
         TaskList = null;
     }
 
