@@ -14,6 +14,8 @@ import android.view.View;
 
 import java.util.Calendar;
 
+import lzp.yw.com.medioplayer.model_command_.command_arr.Command_SYTI;
+
 /**
  * 自定义时钟View
  */
@@ -65,9 +67,10 @@ public class ClockView extends SurfaceView implements SurfaceHolder.Callback, Ru
 
     public ClockView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-        mMinute = Calendar.getInstance().get(Calendar.MINUTE);
-        mSecond = Calendar.getInstance().get(Calendar.SECOND);
+        Calendar mCalendar = Command_SYTI.getSystemTime(null);
+        mHour = mCalendar.get(Calendar.HOUR);
+        mMinute = mCalendar.get(Calendar.MINUTE);
+        mSecond = mCalendar.get(Calendar.SECOND);
 
         mHolder = getHolder();
         mHolder.addCallback(this);
