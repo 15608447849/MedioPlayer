@@ -98,7 +98,7 @@ public class Command_UPSC implements iCommand {
 
                     Logs.i(TAG, "----------------------------------任务队列大小 : " + taskStore.getListSize());
                     if (taskStore.getListSize() > 0) {
-//                        sendDownLoadTaskList();
+                        sendDownLoadTaskList();
                     }
 
                     startTime = System.currentTimeMillis();
