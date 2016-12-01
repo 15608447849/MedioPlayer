@@ -362,7 +362,7 @@ public class Command_UPSC implements iCommand {
             //点击时展示图片
             taskStore.addTaskOnList(content.getSourceDown());
         }
-        //视频
+        //多媒体
         if (contentType.equals(CONTENT_TYPE.video)) {
             taskStore.addTaskOnList(content.getContentSource());
         }
@@ -370,24 +370,31 @@ public class Command_UPSC implements iCommand {
         if (contentType.equals(CONTENT_TYPE.gallary)) {
             getUrlSource(content.getContentSource(), CONTENT_TYPE.gallary);
         }
-        //电子报
+        //咨询
         if (contentType.equals(CONTENT_TYPE.news)) {
-            //   getUrlSource(content.getContentSource());
+               getUrlSource(content.getContentSource(),CONTENT_TYPE.gallary);
         }
+        //电子报
         if (contentType.equals(CONTENT_TYPE.epaper)) {
         }
+        //时钟
         if (contentType.equals(CONTENT_TYPE.clock)) {//swf
             taskStore.addTaskOnList(content.getContentSource());
         }
+        //文本控件
         if (contentType.equals(CONTENT_TYPE.text)) {
         }
+        //天气
         if (contentType.equals(weather)) {
             getUrlSource(content.getContentSource(), weather);
         }
+        //流媒体
         if (contentType.equals(CONTENT_TYPE.media)) {
         }
+        //跑马灯
         if (contentType.equals(CONTENT_TYPE.marquee)) {
         }
+        //网页
         if (contentType.equals(CONTENT_TYPE.html)) {
         }
     }

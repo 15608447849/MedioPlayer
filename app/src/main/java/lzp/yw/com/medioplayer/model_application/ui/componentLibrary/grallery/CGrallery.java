@@ -57,6 +57,8 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
     private boolean isInitData;
     private boolean isLayout;
     private boolean isRegestBroad = false; //是否注册广播
+    //资源轮询线程
+    private LoopLocalSourceThread loopSoureceThread;
 
     private ImageSwitcher ishow;
     private Gallery gallery;
@@ -64,8 +66,7 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
     private MyVideoView video;
     private ImagerSwitchFactory factory;//图片工厂 (停止使用请调用 stop)
     private GralleryAdapter adapter;
-    //资源轮询线程
-    private LoopLocalSourceThread loopSoureceThread;
+
 
     public CGrallery(Context context, AbsoluteLayout layout, ComponentsBean component) {
         super(context);
@@ -84,16 +85,17 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
         this.height = (int) cb.getHeight();
         this.x = (int) cb.getCoordX();
         this.y = (int) cb.getCoordY();
+        layoutParams = new AbsoluteLayout.LayoutParams(width, height, x, y);
+        initSubComponet();
         if (cb.getContents() != null && cb.getContents().size() == 1) {
             createContent(cb.getContents().get(0));
         }
         this.isInitData = true;
     }
-
+    //创建内容
     @Override
     public void createContent(Object object) {
         try {
-            initSubComponet();
             ContentsBean content = (ContentsBean) object;
             updateTime = content.getUpdateFreq();//更新频率
             if (content.getContentSource() != null) {
@@ -121,7 +123,6 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
             e.printStackTrace();
         }
     }
-
 
 
     @Override
@@ -213,12 +214,10 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
             ishow.setImageDrawable(adapter.getDrawable(position));
         }
     }
+
     //设置属性
     @Override
     public void setAttrbute() {
-        if (layoutParams == null) {
-            layoutParams = new AbsoluteLayout.LayoutParams(width, height, x, y);
-        }
         this.setLayoutParams(layoutParams);
         flag_ones = true;
     }
@@ -263,7 +262,7 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
             unLoadContent();
             if (loopSoureceThread != null) {
                 loopSoureceThread.stopLoop();
-                loopSoureceThread= null;
+                loopSoureceThread = null;
             }
             adapter.removeBitmaps();
         } catch (Exception e) {
@@ -299,13 +298,13 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
 
     //添加 图片文件名
     public void addImageName(String name) {
-            if (UiTools.fileIsExt(name)) {
-                //资源存在
-                sendGralleryAdapter(name, ImageUtils.getBitmap(name));
-            } else {
-                //资源不存在
-                sendLoopThread(name);
-            }
+        if (UiTools.fileIsExt(name)) {
+            //资源存在
+            sendGralleryAdapter(name, ImageUtils.getBitmap(name));
+        } else {
+            //资源不存在
+            sendLoopThread(name);
+        }
     }
 
     //发送资源到适配器
@@ -332,6 +331,7 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
         }
         loopSoureceThread.addLoopSource(name);
     }
+
     //轮询到资源存在了
     @Override
     public void SourceExist(Object data) {
@@ -355,11 +355,12 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
     }
 
     private boolean flag_ones = true;
+
     @Override
     public void loadContent() {
         //开始计时器
         unLoadContent();
-        if (!flag_ones){
+        if (!flag_ones) {
             UiHttpProxy.getContent(url, mBroadAction);
         }
         flag_ones = false;

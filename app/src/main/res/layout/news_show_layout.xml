@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/news_show"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="gone">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <!-- 存放标题 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@android:color/darker_gray"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/news_show_backbtn"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="返回" />
+
+            <TextView
+                android:id="@+id/news_show_title"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:text="标题"
+                android:textSize="18sp"
+
+                />
+
+            <TextView
+                android:id="@+id/news_show_subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="作者 2016/12/1"
+                android:textSize="14sp" />
+        </LinearLayout>
+        <!-- 图片 或者 视频 -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="4"
+            android:background="@android:color/white">
+
+            <lzp.yw.com.medioplayer.model_application.ui.ComponentLibrary.weather.LedImageView
+                android:id="@+id/news_show_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+
+            <FrameLayout
+                android:id="@+id/news_show_video"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                >
+
+            </FrameLayout>
+        </FrameLayout>
+
+
+    </LinearLayout>
+</FrameLayout>
