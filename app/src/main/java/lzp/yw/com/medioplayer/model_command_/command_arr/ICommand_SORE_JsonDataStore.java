@@ -55,6 +55,7 @@ public class ICommand_SORE_JsonDataStore implements iCommand {
      * @param f false->文件名不加密
      */
     public void addEntity(String key,String value,boolean f){
+        Logs.i(TAG,"添加json文件名 - "+key);
         if (f){
             addEntity(key,value);
         }else{

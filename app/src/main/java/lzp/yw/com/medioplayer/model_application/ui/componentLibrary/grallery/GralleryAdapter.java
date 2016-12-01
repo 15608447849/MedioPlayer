@@ -12,6 +12,9 @@ import android.widget.Gallery;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import lzp.yw.com.medioplayer.model_application.ui.Uitools.ImageUtils;
 
@@ -21,15 +24,20 @@ import lzp.yw.com.medioplayer.model_application.ui.Uitools.ImageUtils;
 
 public class GralleryAdapter extends BaseAdapter {
 
-    private ArrayList<Bitmap> bitmaps = null;
+
+    //文件名 下标
+    private ArrayList<String> imageNameList = null;
+    /**
+     * bitmap list
+     */
+    private LinkedHashMap<String,Bitmap> bitmapMap = null;
     private Context context ;
     private int selectItem;
-
+    //构造
     GralleryAdapter(Context context){
         this.context = context;
-
     }
-
+    //设置选择项
     public void setSelectItem(int selectItem) {
 
         if (this.selectItem != selectItem) {
@@ -37,32 +45,47 @@ public class GralleryAdapter extends BaseAdapter {
             notifyDataSetChanged();
         }
     }
-    //设置bitmap list
-    public void settingBitmaps(ArrayList<Bitmap> bitmapList){
-        if (bitmapList==null){
-            return;
+    //添加bitmap
+    public void addBitmaps(String fileName,Bitmap bitmap) {
+        if (bitmapMap == null) {
+            bitmapMap = new LinkedHashMap<>();
         }
-        if (bitmaps==null){
-            bitmaps = new ArrayList<>();
+        if (imageNameList==null){
+            imageNameList = new ArrayList<>();
         }
-        for (Bitmap bitmap:bitmapList){
-            if (!bitmaps.contains(bitmap)){
-                bitmaps.add(bitmap);
-            }
+        //如果 不包含 这个文件名 添加
+        if (!bitmapMap.containsKey(fileName)){
+
+            imageNameList.add(fileName);
+            bitmapMap.put(fileName,bitmap);
         }
         notifyDataSetChanged();
     }
 
-    //设置bitmap list
-    public void settingOnlyBitmap(Bitmap bitmap){
+    //清理bitmap
+    public void removeBitmaps() {
+        if (bitmapMap != null && imageNameList!=null) {
+            for (Iterator<Map.Entry<String, Bitmap>> it = bitmapMap.entrySet().iterator(); it.hasNext();){
+                Map.Entry<String, Bitmap> item = it.next();
+                imageNameList.remove(item.getKey());
+                item.getValue().recycle();
+                it.remove();
+            }
+        }
+    }
+    //获取bitmap
+    public Bitmap getBitmap(int position){
+        if (bitmapMap !=null && imageNameList!=null){
+            return bitmapMap.get(imageNameList.get(position));
+        }
+        return null;
+    }
 
-        if (bitmaps==null){
-            bitmaps = new ArrayList<>();
+    public String getImageName(int position){
+        if (imageNameList!=null){
+            return imageNameList.get(position);
         }
-        if (!bitmaps.contains(bitmap)){
-            bitmaps.add(bitmap);
-        }
-        notifyDataSetChanged();
+        return null;
     }
 
     public Drawable getDrawable(int position){
@@ -71,18 +94,13 @@ public class GralleryAdapter extends BaseAdapter {
         }
         return null;
     }
-    public Bitmap getBitmap(int position){
-        if (bitmaps !=null){
-            return bitmaps.get(position);
-        }
-        return null;
-    }
+
    @Override
     public int getCount() {
-       if (bitmaps ==null || bitmaps.size()==0){
+       if (imageNameList ==null || imageNameList.size()==0){
            return 0;
        }else {
-           return bitmaps.size();
+           return imageNameList.size();
        }
     }
 
@@ -112,7 +130,7 @@ public class GralleryAdapter extends BaseAdapter {
             iv = (ImageView) convertView;
         }
 
-        iv.setImageBitmap(bitmaps.get(position));
+        iv.setImageBitmap(bitmapMap.get(imageNameList.get(position)));
         if(selectItem==position){
             iv.setBackgroundColor(Color.BLACK);
         }

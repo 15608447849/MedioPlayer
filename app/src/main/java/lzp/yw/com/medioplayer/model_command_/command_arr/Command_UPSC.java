@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
@@ -404,11 +403,8 @@ public class Command_UPSC implements iCommand {
 
         try {
             Logs.i(TAG, " 内容 url :" + contentSource);
-            if (type.equals(weather)) {
-                contentSource = contentSource.substring(0, contentSource.lastIndexOf("=") + 1) + URLEncoder.encode(contentSource.substring(contentSource.lastIndexOf("=") + 1), "UTF-8");
-            }
             res = null;
-            res = AppsTools.uriTransionString(contentSource, null, null);
+            res = AppsTools.uriTransionString(AppsTools.urlEncodeParam(contentSource), null, null);
             if (type.equals(CONTENT_TYPE.gallary) || type.equals(CONTENT_TYPE.news)) {  //咨询 图集
                 res = AppsTools.justResultIsBase64decode(res);
             }

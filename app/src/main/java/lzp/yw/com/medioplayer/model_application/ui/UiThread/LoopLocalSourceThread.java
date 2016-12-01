@@ -1,5 +1,7 @@
 package lzp.yw.com.medioplayer.model_application.ui.UiThread;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import cn.trinea.android.common.util.FileUtils;
@@ -19,13 +21,23 @@ public class LoopLocalSourceThread extends Thread{
         isStart = false;
     }
 
-    public LoopLocalSourceThread(List<String> fileList, LoopSuccessInterfaces binder) {
-        this.fileList = fileList;
+    public LoopLocalSourceThread(LoopSuccessInterfaces binder) {
         this.binder = binder;
     }
 
     //放入一个资源列表
     private List<String> fileList = null;
+
+    public synchronized void addLoopSource(String sourceName){
+        if (fileList==null){
+            fileList = new ArrayList<>();
+        }
+        fileList.add(sourceName);
+        System.out.println("loop - add item : "+sourceName);
+    }
+
+
+
     private LoopSuccessInterfaces binder;
 
     private void relase() {
@@ -40,25 +52,31 @@ public class LoopLocalSourceThread extends Thread{
     @Override
     public void run() {
         while (isStart){
-            if (fileList!=null && fileList.size()>0){
-                System.out.println(fileList.get(0)+" - looping");
-                if (FileUtils.isFileExist(fileList.get(0))){
-                    //已存在
-                    //通知绑定的接口
-                    binder.SourceExist(fileList.get(0));
-                    //删除
-                    fileList.remove(0);
-                }
-            }else{
-                stopLoop();
-            }
+            looping();
             try {
-                Thread.sleep(AppsTools.randomNum(1,2)*500);
+                Thread.sleep(AppsTools.randomNum(10,30)*1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                stopLoop();
             }
         }
         relase();
+    }
+
+    private synchronized void looping() {
+        if (fileList!=null && fileList.size()>0){
+
+            Iterator<String> fileIter = fileList.iterator();
+
+            while (fileIter.hasNext()) {
+                String filePath = fileIter.next();
+                if (FileUtils.isFileExist(filePath)){
+                    //已存在
+                    //通知绑定的接口
+                    binder.SourceExist(filePath);
+                    //删除
+                    fileIter.remove();
+                }
+            }
+        }
     }
 }

@@ -28,7 +28,7 @@ public class UiHttpProxy {
                 @Override
                 public String call(String newUrl) {
                     System.out.println("局部 访问 - "+url );
-                    return AppsTools.uriTransionString(newUrl,null,null);//访问URL;
+                    return AppsTools.uriTransionString(AppsTools.urlEncodeParam(url),null,null);//访问URL;
                     }
                           })
                     .map(new Func1<String, String>() {

@@ -555,4 +555,33 @@ public class AppsTools {
     }
 
 
+
+    //url encode
+    public static String urlEncodeParam(String url){
+        //http://172.16.0.216:9000/epaper/dyannews/page?stairId=3&categoryId=-1&sortBy=allSorts asc,upDate desc&filter=Base64
+        //先截取?
+        //在截取&
+        //再截取=
+        String var1 ;
+        try {
+            var1 = url.substring(0,url.indexOf("?")+1);
+            String var3[] = url.substring(url.indexOf("?")+1).split("&");
+            if (var3!=null && var3.length>0){
+                for (int i=0;i<var3.length;i++){
+                    if (var3[i].contains("=")){
+                        var1= var1 + var3[i].substring(0,var3[i].indexOf("=")+1) + URLEncoder.encode(var3[i].substring(var3[i].indexOf("=")+1),"UTF-8");
+                    }
+                    if (i!=var3.length-1){
+                        var1+="&";
+                    }
+                }
+            }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return url;
+        }
+        return var1;
+    }
+
+
 }

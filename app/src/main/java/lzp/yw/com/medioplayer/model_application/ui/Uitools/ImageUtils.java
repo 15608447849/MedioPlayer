@@ -29,7 +29,7 @@ public class ImageUtils {
 
 
     public static Bitmap getBitmap(String filepath) {
-        return getBitmap(new File(filepath));
+        return getBitmap(new File(AppsTools.isMp4Suffix(filepath)?AppsTools.tanslationMp4ToPng(filepath):filepath));
     }
 
     /**
