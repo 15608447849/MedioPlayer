@@ -32,7 +32,6 @@
                 android:gravity="center"
                 android:text="标题"
                 android:textSize="18sp"
-
                 />
 
             <TextView
@@ -51,22 +50,23 @@
             android:layout_weight="4"
             android:background="@android:color/white">
 
-            <lzp.yw.com.medioplayer.model_application.ui.ComponentLibrary.weather.LedImageView
+            <!-- 图片列表 -->
+            <ListView
                 android:id="@+id/news_show_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                />
+                android:clickable="false"
+                android:visibility="gone">
 
+            </ListView>
+            <!-- 视频显示 -->
             <FrameLayout
                 android:id="@+id/news_show_video"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:visibility="gone"
                 >
-
             </FrameLayout>
         </FrameLayout>
-
-
     </LinearLayout>
 </FrameLayout>

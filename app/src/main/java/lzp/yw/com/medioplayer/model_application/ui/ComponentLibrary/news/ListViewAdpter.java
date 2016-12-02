@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import lzp.yw.com.medioplayer.R;
+import lzp.yw.com.medioplayer.model_application.ui.Uitools.ImageUtils;
 
 /**
  * Created by user on 2016/12/1.
@@ -115,7 +116,7 @@ public class ListViewAdpter extends BaseAdapter{
 
         //设置数据
         NewsDataBeans dataBeans = useDatas.get(position);
-        holder.getImageview().setImageBitmap(dataBeans.getBitmap());
+        holder.getImageview().setImageBitmap(ImageUtils.getBitmap(dataBeans.getFilePath()));
         holder.getTitle().setText(dataBeans.getTitle());
         holder.getDate().setText(dataBeans.getDateStr());
         return convertView;

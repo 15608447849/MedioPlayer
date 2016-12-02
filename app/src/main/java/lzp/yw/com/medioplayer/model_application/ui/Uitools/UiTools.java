@@ -91,9 +91,8 @@ public class UiTools {
     //获取Uri的文件名
     public static String getUrlTanslationFilename(String url){
         //      ftp://ftp:FTPmedia@172.16.0.17:21/content/1476427174433.jpg
-        System.out.println("转换 - url -> " +url);
+        System.out.println("转换 - url -> 本地文件路径 - " +url);
         return "".equals(url.substring(url.lastIndexOf("/")+1))?null:dle.GetStringDefualt("basepath","")+url.substring(url.lastIndexOf("/")+1);
-
     }
 
     //判断文件是否存在

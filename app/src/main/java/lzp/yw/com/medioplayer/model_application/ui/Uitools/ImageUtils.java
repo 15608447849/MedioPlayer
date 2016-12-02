@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import lzp.yw.com.medioplayer.model_application.ui.UiStore.ImageStore;
 import lzp.yw.com.medioplayer.model_application.ui.UiStore.ViewStore;
 import lzp.yw.com.medioplayer.model_universal.tool.AppsTools;
 import lzp.yw.com.medioplayer.model_universal.tool.Logs;
@@ -29,7 +30,12 @@ public class ImageUtils {
 
 
     public static Bitmap getBitmap(String filepath) {
-        return getBitmap(new File(AppsTools.isMp4Suffix(filepath)?AppsTools.tanslationMp4ToPng(filepath):filepath));
+        Bitmap bitmap = ImageStore.getInstants().getBitmapCache(filepath);
+        if (bitmap==null){
+            bitmap = getBitmap(new File(AppsTools.isMp4Suffix(filepath)?AppsTools.tanslationMp4ToPng(filepath):filepath));
+            ImageStore.getInstants().addBitmapCache(filepath,bitmap);
+        }
+        return bitmap;
     }
 
     /**
@@ -87,6 +93,7 @@ public class ImageUtils {
             // TODO: handle exception
             Log.e(""," create bitmap err: "+e.getMessage());
         }
+
         return bitmap;
     }
 

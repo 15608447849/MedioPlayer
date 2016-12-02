@@ -119,10 +119,22 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
         String key = UiTools.getUrlTanslationFilename(data.getUrl());
         if (UiTools.fileIsExt(key)) {
             //资源存在 - 生成dataBean对象
-            sendListAdapter(NewsDataBeans.generteDataSource(data.getTitle(), data.getCreatedBy(), data.getUpdtimeStr(), key, true));
+            sendListAdapter(NewsDataBeans.generteDataSource(
+                    data.getFormat(),
+                    data.getTitle(),
+                    data.getCreatedBy(),
+                    data.getUpdtimeStr(),
+                    key,
+                    data.getUrls()==null?null:data.getUrls().split(",")));
         } else {
             //资源不存在 1 存资源 2 开始轮询线程
-            sendLoopThread(NewsDataBeans.generteDataSource(data.getTitle(), data.getCreatedBy(), data.getUpdtimeStr(), key, false));
+            sendListAdapter(NewsDataBeans.generteDataSource(
+                    data.getFormat(),
+                    data.getTitle(),
+                    data.getCreatedBy(),
+                    data.getUpdtimeStr(),
+                    key,
+                    data.getUrls()==null?null:data.getUrls().split(",")));
         }
     }
 
@@ -153,7 +165,7 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
                 // 结束图层上面的内容
                 //隐藏图层
                hindShowLayout();
-                listView.setVisibility(View.VISIBLE);
+               listView.setVisibility(View.VISIBLE);
             }
         });
         adpter = new ListViewAdpter(context);
@@ -175,7 +187,7 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
     private void showShowLayout(int position) {
         if (showLayout.getRootView().getVisibility() == View.GONE){
             showLayout.getRootView().setVisibility(View.VISIBLE);
-//            showLayout.setData(); 未实现
+            showLayout.setData(adpter.getUdata(position));
         }
     }
     private void hindShowLayout() {
