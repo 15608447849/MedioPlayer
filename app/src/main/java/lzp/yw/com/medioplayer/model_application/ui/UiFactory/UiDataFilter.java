@@ -6,6 +6,7 @@ import lzp.yw.com.medioplayer.model_application.baselayer.BaseActivity;
 import lzp.yw.com.medioplayer.model_application.schedule.LocalScheduleObject;
 import lzp.yw.com.medioplayer.model_application.ui.UiElements.page.IviewPage;
 import lzp.yw.com.medioplayer.model_application.ui.UiElements.page.pagesView;
+import lzp.yw.com.medioplayer.model_application.ui.UiStore.ImageStore;
 import lzp.yw.com.medioplayer.model_application.ui.UiStore.PagerStore;
 import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.PagesBean;
@@ -37,6 +38,7 @@ public class UiDataFilter {
 
     public static void unInit(){
         UiDataFilter.activity = null;
+        ImageStore.getInstants().clearCache();
         isInit = false;
     }
 

@@ -26,27 +26,71 @@ public class ImageStore {
         maxMemory = (int) Runtime.getRuntime().maxMemory();
         mCacheSize = maxMemory / 4;
         if(CacheMap == null){
-            CacheMap = new LruCache<String, Bitmap>(mCacheSize);
+            CacheMap = new LruCache<String,Bitmap>(mCacheSize){
+                @Override
+                protected int sizeOf(String key, Bitmap bitmap) {
+                    // 重写此方法来衡量每张图片的大小，默认返回图片数量。
+                    return bitmap.getRowBytes() * bitmap.getHeight() / 1024;
+                }
+                //当item被回收或者删掉时调用。该方法当value被回收释放存储空间时被remove调用， 或者替换item值时put调用，默认实现什么都没做。
+                //true: 为释放空间被删除；false: put或remove导致
+                @Override
+                protected void entryRemoved(boolean evicted, String key,
+                                            Bitmap oldValue, Bitmap newValue) {
+                    removeImageCache(key);
+                }
+            };
         }
     }
 
     //获取 一个 缓存 view
-    public Bitmap getBitmapCache(String tag){
+    public synchronized  Bitmap getBitmapCache(String tag){
         if (CacheMap==null){
             return null;
         }
         return CacheMap.get(tag);
     }
 
-
     //添加 一个 缓存 view
-    public  void  addBitmapCache(String tag,Bitmap imageview){
+    public  synchronized  void  addBitmapCache(String tag,Bitmap bitmap){
         try{
-            CacheMap.put(tag,imageview);
+            if (bitmap==null){
+                return;
+            }
+            if (CacheMap.get(tag) == null || CacheMap.get(tag).isRecycled()) {
+                CacheMap.put(tag,bitmap);
+            }
+
         }catch (Exception e){
             e.printStackTrace();
         }
     }
+    //清理缓存
+    public void clearCache() {
+        if (CacheMap != null) {
+            if (CacheMap.size() > 0) {
+//                Log.d("CacheUtils",
+//                        "mMemoryCache.size() " + mMemoryCache.size());
+                CacheMap.evictAll();
+//                Log.d("CacheUtils", "mMemoryCache.size()" + mMemoryCache.size());
+            }
+            CacheMap = null;
+        }
+    }
 
+    /**
+     * 移除缓存
+     *
+     * @param key
+     */
+    public synchronized void removeImageCache(String key) {
+        if (key != null) {
+            if (CacheMap != null) {
+                Bitmap bm = CacheMap.remove(key);
+                if (bm != null)
+                    bm.recycle();
+            }
+        }
+    }
 
 }

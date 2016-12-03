@@ -384,11 +384,12 @@ public class ScheduleReader {
             current = parseing();
             Logs.i(TAG,"---解析 完成---");
 
-            if (current!=null){
-                //转换数据
-                UiDataFilter.filter(current);
+            if (current==null){
+                Logs.i(TAG,"---没有可播放排期任务---");
+                return;
             }
-
+            //转换数据
+            UiDataFilter.filter(current);
             current.startTimer(initTimeTask(),TimeOperator.getMillisecond(current.getEnd()));
             Logs.i(TAG,"---设置时间完成---");
             //发送 排期信息 -> ui制作

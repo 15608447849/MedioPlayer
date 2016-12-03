@@ -31,8 +31,9 @@ public class ImageUtils {
 
     public static Bitmap getBitmap(String filepath) {
         Bitmap bitmap = ImageStore.getInstants().getBitmapCache(filepath);
-        if (bitmap==null){
+        if (bitmap==null || bitmap.isRecycled()){
             bitmap = getBitmap(new File(AppsTools.isMp4Suffix(filepath)?AppsTools.tanslationMp4ToPng(filepath):filepath));
+
             ImageStore.getInstants().addBitmapCache(filepath,bitmap);
         }
         return bitmap;
