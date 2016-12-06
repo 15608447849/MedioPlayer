@@ -130,12 +130,6 @@ public class ImageUtils {
         }
     }
 
-
-
-
-
-
-
     //放入主线程 移除资源
     public static void removeImageViewDrawable(ImageView imageView) {
         if (!AppsTools.checkUiThread()){
