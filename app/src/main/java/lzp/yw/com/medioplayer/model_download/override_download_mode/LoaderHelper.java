@@ -34,11 +34,13 @@ public class LoaderHelper implements Observer {//观察者
     private ExecutorService executor;
     private HttpUtils http = null;
     public LoaderHelper() {
-
+    }
+    public LoaderHelper(Context context,int downLoadType){
+        initWord(context,downLoadType);
     }
     public void initWord(Context context,int downLoadType){
 //        singleThreadExecutor = Executors.newSingleThreadExecutor();
-        executor =downLoadType==DOWNLOAD_MODE_SERIAL? Executors.newSingleThreadExecutor(): Executors.newFixedThreadPool(15);
+        executor =downLoadType==DOWNLOAD_MODE_SERIAL? Executors.newSingleThreadExecutor(): Executors.newCachedThreadPool();
         http = new HttpUtils();
         caller = new DownloadCallImp();
         caller.setContext(context);
@@ -52,9 +54,9 @@ public class LoaderHelper implements Observer {//观察者
                     // 超时的时候向线程池中所有的线程发出中断(interrupted)。
                     executor.shutdownNow();
                 }
+                executor=null;
             } catch (Exception e) {
                 e.printStackTrace();
-
             }
         }
 
@@ -70,39 +72,43 @@ public class LoaderHelper implements Observer {//观察者
      * 执行下载任务
      */
     private void excuteDownLoad(final Task task) {
-        executor.execute(new Runnable() {
-            public void run() {
-                try {
-                    parseDatas(task);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
 
+        if (executor!=null && !executor.isShutdown()){
+//            Logs.i(TAG,"excuteDownLoad() "+ task.getUrl());
+            executor.execute(new Runnable() {
+                public void run() {
+                    try {
+                        parseDatas(task);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+
+    }
 
     /**
      * 解析数据
      * @param task
      */
     private void parseDatas(Task task){
-        if (fileIsExist(task.getSavePath()+task.getFileName())){
+        Logs.i(TAG,"准备下载 - 任务 -> : "+ task.getUrl());
+        if (cn.trinea.android.common.util.FileUtils.isFileExist(task.getSavePath()+task.getFileName())){
             caller.downloadResult(task,0);
-            return;
-        }
-
-        int type = task.getType();
-        if (type == Task.Type.HTTP){
-            httpDownload(task);
-        }else
-        if (type == Task.Type.FTP){
-            ftpDownloadSetting(task);
-        }else
-        if (type== Task.Type.FILE){
-            cpFile(task);
-        }else {
-            caller.downloadResult(task, 1);
+        }else{
+            int type = task.getType();
+            if (type == Task.Type.HTTP){
+                httpDownload(task);
+            }else
+            if (type == Task.Type.FTP){
+                ftpDownloadSetting(task);
+            }else
+            if (type== Task.Type.FILE){
+                cpFile(task);
+            }else {
+                caller.downloadResult(task, 1);
+            }
         }
     }
     //复制本地文件到 -app 资源目录下
@@ -289,19 +295,14 @@ public class LoaderHelper implements Observer {//观察者
      */
     @Override
     public void update(Observable observable, Object data) {
-//        Logs.i(TAG,"update - "+data);
+        Logs.i(TAG,"update() - "+data);
         //获取到一个任务 -> 执行一个线程
         if (data!=null){
             excuteDownLoad((Task) data);
         }
     }
 
-    /**
-     * 判断文件是不是存在
-     */
-    public boolean fileIsExist(String filename){
-        return   fileUtils.checkFileExists(filename);
-    }
+
 
 
 

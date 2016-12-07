@@ -31,6 +31,7 @@ public class UrlList {
      * @param url
      */
     public void addTaskOnList(String url){
+        Logs.d(TAG,"addTaskOnList - "+url);
         if (loadingList==null){
             return;
         }

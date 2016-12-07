@@ -30,13 +30,13 @@ public class DownloadServer extends Service {
     }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Logs.i(TAG,"****************************************onStartCommand");
+        Logs.i(TAG,"**************************************** onStartCommand");
         return super.onStartCommand(intent, flags, startId);
     }
     @Override
     public void onCreate() {
         super.onCreate();
-        Logs.i(TAG,"****************************************onCreate");
+        Logs.i(TAG,"**************************************** onCreate");
         registBroad();
         TaskQueue.getInstants().init(getApplicationContext(), LoaderHelper.DOWNLOAD_MODE_CONCURRENT);
     }
@@ -44,7 +44,7 @@ public class DownloadServer extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Logs.i(TAG,"****************************************onDestroy");
+        Logs.i(TAG,"**************************************** onDestroy");
         unregistBroad();
         TaskQueue.getInstants().unInit();
     }
@@ -53,6 +53,7 @@ public class DownloadServer extends Service {
 
     // 接收全局 下载任务内容
     public void receiveContent(ArrayList<CharSequence> TaskList,String savepath ,String terminalNo ){
+        Logs.i(TAG,"初始化任务队列 - >>>> " + TaskList);
         for (int i = 0;i<TaskList.size();i++){
             TaskQueue.getInstants().addTask(new Task(savepath,terminalNo,(String)TaskList.get(i),null));
         }

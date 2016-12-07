@@ -70,6 +70,36 @@ public class ContentsBean {
     private int backgroundAlpha;//跑马灯背景透明图
     private String fontColor;//跑马灯前景颜色-字体颜色
 
+
+    //电子报 相关
+    private String renewalPaperTime;//每天更新电子报的时间
+    private int daysKeep;//保持天数
+    private int saveDays;//保存天数
+
+    public String getRenewalPaperTime() {
+        return renewalPaperTime;
+    }
+
+    public void setRenewalPaperTime(String renewalPaperTime) {
+        this.renewalPaperTime = renewalPaperTime;
+    }
+
+    public int getDaysKeep() {
+        return daysKeep;
+    }
+
+    public void setDaysKeep(int daysKeep) {
+        this.daysKeep = daysKeep;
+    }
+
+    public int getSaveDays() {
+        return saveDays;
+    }
+
+    public void setSaveDays(int saveDays) {
+        this.saveDays = saveDays;
+    }
+
     public int getRollingTimes() {
         return rollingTimes;
     }

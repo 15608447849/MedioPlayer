@@ -1,14 +1,18 @@
 package lzp.yw.com.medioplayer.model_application.ui.ComponentLibrary.news;
 
 import android.content.Context;
+import android.content.IntentFilter;
 import android.view.View;
 import android.widget.AbsoluteLayout;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import lzp.yw.com.medioplayer.model_application.ui.UiFactory.UiLocalBroad;
+import lzp.yw.com.medioplayer.model_application.ui.UiHttp.UiHttpProxy;
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.IAdvancedComponent;
 import lzp.yw.com.medioplayer.model_application.ui.UiThread.LoopLocalSourceThread;
 import lzp.yw.com.medioplayer.model_application.ui.UiThread.LoopSuccessInterfaces;
@@ -18,6 +22,7 @@ import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ContentsBea
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.content_gallary.DataObjsBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.content_gallary.GallaryBean;
 import lzp.yw.com.medioplayer.model_universal.tool.AppsTools;
+import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 import lzp.yw.com.medioplayer.model_universal.tool.MD5Util;
 
 /**
@@ -125,7 +130,7 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
                     data.getCreatedBy(),
                     data.getUpdtimeStr(),
                     key,
-                    data.getUrls()==null?null:data.getUrls().split(",")));
+                    data.getUrls() == null ? null : data.getUrls().split(",")));
         } else {
             //资源不存在 1 存资源 2 开始轮询线程
             sendListAdapter(NewsDataBeans.generteDataSource(
@@ -134,7 +139,7 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
                     data.getCreatedBy(),
                     data.getUpdtimeStr(),
                     key,
-                    data.getUrls()==null?null:data.getUrls().split(",")));
+                    data.getUrls() == null ? null : data.getUrls().split(",")));
         }
     }
 
@@ -153,7 +158,7 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
         }
         adpter.addNdataBean(newsDataBeans);
         //开轮询线程
-//         ... 未实现
+//      ... 未实现
     }
 
     //初始化 组件
@@ -164,8 +169,8 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
             public void onClick(View v) {
                 // 结束图层上面的内容
                 //隐藏图层
-               hindShowLayout();
-               listView.setVisibility(View.VISIBLE);
+                hindShowLayout();
+                listView.setVisibility(View.VISIBLE);
             }
         });
         adpter = new ListViewAdpter(context);
@@ -179,23 +184,25 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
             }
         });
 
-        }
-
+    }
 
 
     //弹出 放大的 视图层
     private void showShowLayout(int position) {
-        if (showLayout.getRootView().getVisibility() == View.GONE){
+        if (showLayout.getRootView().getVisibility() == View.GONE) {
             showLayout.getRootView().setVisibility(View.VISIBLE);
             showLayout.setData(adpter.getUdata(position));
         }
     }
+
+    //隐藏放大的视图层
     private void hindShowLayout() {
-        if (showLayout.getRootView().getVisibility()==View.VISIBLE){
+        if (showLayout.getRootView().getVisibility() == View.VISIBLE) {
 //            showLayout.destoryData();
             showLayout.getRootView().setVisibility(View.GONE);
         }
     }
+
     //设置属性
     @Override
     public void setAttrbute() {
@@ -230,8 +237,8 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
             }
             setAttrbute();
             layouted();
-//            createBroad();//创建广播
-//            loadContent();
+            createBroad();//创建广播
+            loadContent();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -241,14 +248,14 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
     @Override
     public void stopWork() {
         try {
-//            cancelBroad();//取消广播
+            cancelBroad();//取消广播
             unLayouted();
-//            unLoadContent();
+            unLoadContent();
 //            if (loopSoureceThread != null) {
 //                loopSoureceThread.stopLoop();
 //                loopSoureceThread = null;
 //            }
-//            adapter.removeBitmaps();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -257,36 +264,87 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
     //循环线程资源存在回传
     @Override
     public void SourceExist(Object data) {
-
+        //未实现
     }
 
-    //加载内容
-    @Override
-    public void loadContent() {
 
-    }
 
-    //取消加载内容
-    @Override
-    public void unLoadContent() {
 
-    }
-
-    //广播回调
-    @Override
-    public void broadCall() {
-
-    }
 
     //创建广播
     @Override
     public void createBroad() {
-
+        if (!isRegestBroad) {
+            broad = new UiLocalBroad(mBroadAction, this);
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(mBroadAction);
+            context.registerReceiver(broad, filter); //只需要注册一次
+            this.isRegestBroad = true;
+        }
     }
 
     //取消广播
     @Override
     public void cancelBroad() {
+        if (isRegestBroad) {
+            //取消注册
+            if (broad != null) {
+                try {
+                    context.unregisterReceiver(broad);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                broad = null;
+            }
+        }
+    }
 
+    //广播回调
+    @Override
+    public void broadCall() {
+        Logs.i(TAG, " 资讯 - 广播 -  " + mBroadAction + " - 收到,执行!");
+        //更新资源文件名
+        tanslationUrl(url);
+    }
+
+    private boolean flag_ones = true;
+    private TimerTask timerTask = null;
+    private Timer timer = null;
+    private void stopTimer() {
+        if (timerTask != null) {
+            timerTask.cancel();
+            timerTask = null;
+        }
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+    }
+    private void startTimer(long millisecond) {
+        timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                loadContent();
+            }
+        };
+        timer = new Timer();
+        timer.schedule(timerTask, millisecond);
+    }
+    //加载内容
+    @Override
+    public void loadContent() {
+        //开始计时器
+        unLoadContent();
+        if (!flag_ones) {
+            UiHttpProxy.getContent(url, mBroadAction);
+        }
+        flag_ones = false;
+        startTimer(updateTime * 1000);
+    }
+
+    //取消加载内容
+    @Override
+    public void unLoadContent() {
+        stopTimer();//停止计时间 停止当前内容
     }
 }

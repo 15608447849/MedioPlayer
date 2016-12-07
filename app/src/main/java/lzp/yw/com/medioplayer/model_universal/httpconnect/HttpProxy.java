@@ -47,7 +47,6 @@ public class HttpProxy {
         if (mCompositeSubscription==null){
             mCompositeSubscription = new CompositeSubscription();
         }
-
        }
 
     /**

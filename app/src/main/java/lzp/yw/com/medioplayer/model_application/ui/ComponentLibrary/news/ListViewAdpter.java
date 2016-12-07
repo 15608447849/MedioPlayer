@@ -37,9 +37,15 @@ public class ListViewAdpter extends BaseAdapter{
         if (useDatas==null){
             useDatas = new ArrayList<>();
         }
+        for (NewsDataBeans bean : useDatas){
+            if (bean.getFilePath().equals(data.getFilePath())){
+                return;
+            }
+        }
         useDatas.add(data);
+        notifyDataSetChanged();
     }
-    //添加无效无效数据源
+    //添加无效数据源
     public void addNdataBean(NewsDataBeans data){
         if (notDatas==null){
             notDatas = new ArrayList<>();
@@ -52,6 +58,7 @@ public class ListViewAdpter extends BaseAdapter{
         if (useDatas==null){
             return null;
         }
+
         return useDatas.get(position);
     }
     //index - 获取 无效数据源

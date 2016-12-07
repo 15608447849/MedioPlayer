@@ -2,7 +2,6 @@ package lzp.yw.com.medioplayer.model_application.ui.ComponentLibrary.grallery;
 
 import android.content.Context;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.AnimationUtils;
@@ -23,7 +22,6 @@ import lzp.yw.com.medioplayer.model_application.ui.UiHttp.UiHttpProxy;
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.IAdvancedComponent;
 import lzp.yw.com.medioplayer.model_application.ui.UiThread.LoopLocalSourceThread;
 import lzp.yw.com.medioplayer.model_application.ui.UiThread.LoopSuccessInterfaces;
-import lzp.yw.com.medioplayer.model_application.ui.Uitools.ImageUtils;
 import lzp.yw.com.medioplayer.model_application.ui.Uitools.UiTools;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
@@ -127,7 +125,7 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
 
     @Override
     public void broadCall() {
-        Logs.i(TAG, " 广播 - " + mBroadAction + " - 收到,执行!");
+        Logs.i(TAG, "图集 广播 - " + mBroadAction + " - 收到,执行!");
         //更新资源文件名
         tanslationUrl(url);
     }
@@ -264,7 +262,6 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
                 loopSoureceThread.stopLoop();
                 loopSoureceThread = null;
             }
-            adapter.removeBitmaps();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -300,7 +297,7 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
     public void addImageName(String name) {
         if (UiTools.fileIsExt(name)) {
             //资源存在
-            sendGralleryAdapter(name, ImageUtils.getBitmap(name));
+            sendGralleryAdapter(name);
         } else {
             //资源不存在
             sendLoopThread(name);
@@ -308,17 +305,13 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
     }
 
     //发送资源到适配器
-    private void sendGralleryAdapter(final String name, final Bitmap bitmap) {
-        if (bitmap == null) {
-            sendLoopThread(name);
-        } else if (adapter != null) {
+    private void sendGralleryAdapter(final String name) {
             AndroidSchedulers.mainThread().createWorker().schedule(new Action0() {
                 @Override
                 public void call() {
-                    adapter.addBitmaps(name, bitmap);
+                    adapter.addBitmaps(name);
                 }
             });
-        }
     }
 
     //资源不存在发送给轮询线程
@@ -337,12 +330,12 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
     public void SourceExist(Object data) {
         final String filePath = (String) data;
         //资源存在
-        sendGralleryAdapter(filePath, ImageUtils.getBitmap(filePath));
+        sendGralleryAdapter(filePath);
     }
 
+    private boolean flag_ones = true;
     private TimerTask timerTask = null;
     private Timer timer = null;
-
     private void stopTimer() {
         if (timerTask != null) {
             timerTask.cancel();
@@ -354,7 +347,6 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
         }
     }
 
-    private boolean flag_ones = true;
 
     @Override
     public void loadContent() {
@@ -364,7 +356,6 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
             UiHttpProxy.getContent(url, mBroadAction);
         }
         flag_ones = false;
-
         startTimer(updateTime * 1000);
     }
 

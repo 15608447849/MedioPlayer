@@ -66,23 +66,7 @@ public class fileUtils {
         return null;
     }
 
-    /**
-     * 文件是否存在
-     * @param filename
-     * @return
-     */
-    public static boolean checkFileExists(String filename) {
-        File file = new File(filename);
-        if (!file.exists()) {
-            return false;
-        } else {
-            if ((file.length() == 0) && (!file.isDirectory())) {
-                return false;
-            } else {
-                return true;
-            }
-        }
-    }
+
 
     /**
      * 重命名

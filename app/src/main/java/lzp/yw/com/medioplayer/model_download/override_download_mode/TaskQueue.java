@@ -7,17 +7,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 
+import lzp.yw.com.medioplayer.model_universal.tool.Logs;
+
 /**
  * Created by user on 2016/11/25.
  */
 public class TaskQueue extends Observable { //被观察者
-
-
-
+    private static final String TAG = "下载任务队列";
     private static TaskQueue instants;
     private List<Task> queue;//队列
     private TaskQueue(){
-        queue = new LinkedList<Task>();
+        queue = new LinkedList<>();
 //        init(new LoaderHelper());
     }
 
@@ -29,23 +29,23 @@ public class TaskQueue extends Observable { //被观察者
         return instants;
     }
 
+    //下载助手
     private LoaderHelper helper;
     public void init(Context context,int loaderModel){
+        Logs.i(TAG,"初始化 下载队列");
         if (helper==null){
-            helper = new LoaderHelper();
+            helper = new LoaderHelper(context,loaderModel);
             //绑定关系
-            helper.initWord(context,loaderModel);
             this.addObserver(helper);
         }
     }
     public void unInit(){
+        Logs.i(TAG,"取消 - 初始化 下载队列");
         if (helper!=null){
             this.deleteObserver(helper);
             //绑定关系
             helper.unInitWord();
-            this.addObserver(helper);
             helper = null;
-
         }
         if (queue!=null){
             queue.clear();
@@ -58,7 +58,7 @@ public class TaskQueue extends Observable { //被观察者
     // 添加一项任务
     public synchronized void addTask(Task task) {
         if (task != null) {
-//            log.i(TAG,"addTask()" +task.getUrl());
+//            Logs.i(TAG,"addTask()" +task.getUrl());
             queue.add(task);
             excute();//通知->观察者
         }

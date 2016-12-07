@@ -37,16 +37,4 @@ public interface HttpServerInterface {
      */
     @GET("")
     Observable<String> sendCMD(@Url String url);
-
-
-
-
-
-
-
-
-
-
-
-
 }
