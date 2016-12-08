@@ -24,6 +24,7 @@ import lzp.yw.com.medioplayer.model_application.ui.Uitools.UiTools;
 import lzp.yw.com.medioplayer.model_communication.CommunicationServer;
 import lzp.yw.com.medioplayer.model_communication.ICallBackAIDL;
 import lzp.yw.com.medioplayer.model_communication.ICommunicationAIDL;
+import lzp.yw.com.medioplayer.model_monitor.kernes.WatchServer;
 import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 
 /**
@@ -91,9 +92,21 @@ public class BaseActivity extends Activity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        sendBroadToWatchServer();
+        onDestroy();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         removeActivityOnArr(this);
+
+    }
+
+    private void sendBroadToWatchServer() {
+        this.startService(new Intent(this, WatchServer.class));
     }
 
 

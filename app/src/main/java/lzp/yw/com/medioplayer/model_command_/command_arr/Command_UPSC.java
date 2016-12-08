@@ -98,7 +98,7 @@ public class Command_UPSC implements iCommand {
                     clearSdcardSource();
                     endTime = System.currentTimeMillis();
                     Logs.e(TAG, "清理资源 用时 : " + (endTime - startTime) + " 毫秒 ");
-//                    sendDataSaveTask();
+                    sendDataSaveTask();
                     Logs.i(TAG, "任务队列大小 : " + taskStore.getListSize());
                     if (taskStore.getListSize() > 0) {
                         sendDownLoadTaskList();

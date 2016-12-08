@@ -41,9 +41,8 @@ public class MainActivity extends BaseActivity {
         initAllServer("communication");
         //读取排期
 //        readSchuduler();
+
     }
-
-
 
     @Override
     protected void onPause() {

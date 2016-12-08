@@ -1,5 +1,6 @@
 package lzp.yw.com.medioplayer.model_application.ui.UiFragments;
 
+import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,17 +13,17 @@ import android.widget.FrameLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import lzp.yw.com.medioplayer.model_application.ui.ComponentLibrary.a_centerManager.CreateComponent;
 import lzp.yw.com.medioplayer.model_application.ui.UiInterfaces.Iview;
 import lzp.yw.com.medioplayer.model_application.ui.Uitools.UiTools;
-import lzp.yw.com.medioplayer.model_application.ui.ComponentLibrary.a_centerManager.CreateComponent;
-import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 import lzp.yw.com.medioplayer.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
+import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 
 /**
  * Created by user on 2016/11/11.
  * 页面 fragment
  */
-
+@SuppressLint("ValidFragment")
 public class PagesFragments extends Fragment{
     private static final String TAG = "PagesFragments";
     private int x,y,w,h;
@@ -37,6 +38,9 @@ public class PagesFragments extends Fragment{
             componetViewArr = new ArrayList<>();
         }
         componetViewArr.add(iview);
+    }
+    public PagesFragments(){
+
     }
     //组件内容
     private List<ComponentsBean> componetsArr = null;

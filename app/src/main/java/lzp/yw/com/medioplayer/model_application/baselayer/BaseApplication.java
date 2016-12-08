@@ -7,7 +7,6 @@ import android.content.Intent;
 import lzp.yw.com.medioplayer.model_command_.kernel.CommandPostServer;
 import lzp.yw.com.medioplayer.model_communication.CommunicationServer;
 import lzp.yw.com.medioplayer.model_download.kernel.DownloadServer;
-import lzp.yw.com.medioplayer.model_universal.tool.Logs;
 
 /**
  * Created by user on 2016/10/26.
@@ -17,7 +16,7 @@ public class BaseApplication extends Application{
     @Override
     public void onCreate() {
         super.onCreate();
-        Logs.i("###################### app start ######################");
+//        Logs.i("###################### app start ######################");
         appContext = this.getApplicationContext();
 //        checkSdCard();
        // initStartServer();
