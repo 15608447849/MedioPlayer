@@ -1,0 +1,54 @@
+package com.wos.play.rootdir.model_application.schedule;
+
+import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.Rules;
+import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ScheduleBean;
+
+/**
+ * Created by user on 2016/11/9.
+ */
+
+public class JustRepeteType {
+    public static int just(ScheduleBean entity){
+       Rules.RepeatRulesBean rep = entity.getRules().getRepeatRules();
+        //开始时间 - 这个时间
+        entity.setStartTime(TimeOperator.dateToStamp(rep.getStartTime()));
+
+        int result = -1;
+        //判断 类型 (1 每天, 2 每周, 3 每月 4 每年)
+        int type = rep.getRepeatType().getCode();
+
+        if (type == 1){
+            //每天  - 判断 全天 还是 时间段
+            if (!rep.isRepeatWholeDay()){
+//                判断时间段
+                long startTime = Long.valueOf(TimeOperator.dateToStamp(rep.getStartTime()));
+                long endTime = Long.valueOf(TimeOperator.dateToStamp(rep.getEndTime()));
+                result = TimeOperator.justStart_EndTime(startTime,endTime);
+                 if (result == 2){
+                     //结束时间 他的时间
+                     entity.setEndTime(TimeOperator.dateToStamp(rep.getEndTime()));
+                 }
+            }else{
+                //fasle 全天
+                //结束时间 - 今天的 23:59
+                entity.setEndTime(TimeOperator.dateToStamp(TimeOperator.getToday()+" "+"23:59:59"));
+                result = 2;
+            }
+        }
+
+        if (type == 2){
+
+        }
+
+        if (type == 3){
+
+        }
+
+        if (type == 4){
+
+        }
+
+
+     return result;
+    }
+}

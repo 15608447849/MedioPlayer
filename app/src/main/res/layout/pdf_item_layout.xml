@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center">
-    <lzp.yw.com.medioplayer.model_application.ui.ComponentLibrary.weather.LedImageView
+    <com.wos.play.rootdir.model_application.ui.ComponentLibrary.weather.LedImageView
         android:id="@+id/pad_item_img"
         android:layout_gravity="center"
         android:layout_width="wrap_content"

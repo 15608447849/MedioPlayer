@@ -6,7 +6,7 @@
     android:orientation="horizontal"
     android:layout_margin="15dp"
     >
-    <lzp.yw.com.medioplayer.model_application.ui.ComponentLibrary.weather.LedImageView
+    <com.wos.play.rootdir.model_application.ui.ComponentLibrary.weather.LedImageView
         android:id="@+id/item_image"
         android:layout_width="75dp"
         android:layout_height="75dp"
