@@ -7,7 +7,7 @@ import android.widget.ImageSwitcher;
 import android.widget.ImageView;
 import android.widget.ViewSwitcher;
 
-import com.wos.play.rootdir.model_application.ui.ComponentLibrary.weather.LedImageView;
+import com.wos.play.rootdir.model_application.ui.ComponentLibrary.image.MeImageView;
 import com.wos.play.rootdir.model_application.ui.Uitools.ImageUtils;
 
 /**
@@ -15,13 +15,13 @@ import com.wos.play.rootdir.model_application.ui.Uitools.ImageUtils;
  */
 
 public class ImagerSwitchFactory implements ViewSwitcher.ViewFactory{
-    private LedImageView imager1;
-    private LedImageView imager2;
+    private MeImageView imager1;
+    private MeImageView imager2;
     private int current = 0;
     public ImagerSwitchFactory(Context context){
-        imager1 = ImageUtils.createImageView(context);
+        imager1 = ImageUtils.createImageViewScale(context);
         initAttr(imager1,0);
-        imager2 = ImageUtils.createImageView(context);
+        imager2 = ImageUtils.createImageViewScale(context);
         initAttr(imager2,1);
     }
 
@@ -29,8 +29,8 @@ public class ImagerSwitchFactory implements ViewSwitcher.ViewFactory{
     private void initAttr(ImageView image,int tag) {
         if (image!=null){
             image.setTag(tag);
-            image.setBackgroundColor(0xFF000000);
-            image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+//            image.setBackgroundColor(0xFF000000);
+//            image.setScaleType(ImageView.ScaleType.FIT_CENTER);
             image.setLayoutParams(new ImageSwitcher.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         }

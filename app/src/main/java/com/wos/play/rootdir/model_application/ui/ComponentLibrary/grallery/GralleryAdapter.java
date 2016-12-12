@@ -10,7 +10,7 @@ import android.widget.BaseAdapter;
 import android.widget.Gallery;
 import android.widget.ImageView;
 
-import com.wos.play.rootdir.model_application.ui.ComponentLibrary.weather.LedImageView;
+import com.wos.play.rootdir.model_application.ui.ComponentLibrary.image.MeImageView;
 import com.wos.play.rootdir.model_application.ui.Uitools.ImageAsyLoad;
 import com.wos.play.rootdir.model_application.ui.Uitools.ImageUtils;
 
@@ -96,7 +96,7 @@ public class GralleryAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        LedImageView iv = null;
+        MeImageView iv = null;
         if (convertView==null){
             iv= ImageUtils.createImageView(context);
             iv.setAdjustViewBounds(true);
@@ -106,7 +106,7 @@ public class GralleryAdapter extends BaseAdapter {
             iv.setPadding(2,2,2,2);
             convertView = iv;
         }else{
-            iv = (LedImageView) convertView;
+            iv = (MeImageView) convertView;
         }
 
       //  iv.setImageBitmap(ImageUtils.getBitmap(imageNameList.get(position)));

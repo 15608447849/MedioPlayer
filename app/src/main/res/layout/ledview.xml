@@ -38,7 +38,7 @@
                 android:layout_below="@+id/ledview_clock_ydt"
                 />
     <!-- android:src="@mipmap/ic_launcher"-->
-            <com.wos.play.rootdir.model_application.ui.ComponentLibrary.weather.LedImageView
+            <com.wos.play.rootdir.model_application.ui.ComponentLibrary.image.MeImageView
                 android:id="@+id/show_icon"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

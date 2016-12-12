@@ -12,7 +12,7 @@ import java.util.List;
 
 import cn.trinea.android.common.util.FileUtils;
 import com.wos.play.rootdir.R;
-import com.wos.play.rootdir.model_application.ui.ComponentLibrary.weather.LedImageView;
+import com.wos.play.rootdir.model_application.ui.ComponentLibrary.image.MeImageView;
 import com.wos.play.rootdir.model_application.ui.Uitools.ImageUtils;
 import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
 
@@ -77,14 +77,14 @@ public class PDFShowListAdpter extends BaseAdapter{
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        LedImageView image = null;
+        MeImageView image = null;
         if (convertView==null){
             convertView = LayoutInflater.from(context).inflate(R.layout.pdf_item_layout,null);
-            image= (LedImageView) convertView.findViewById(R.id.pad_item_img);
+            image= (MeImageView) convertView.findViewById(R.id.pad_item_img);
             image.setScaleType(ImageView.ScaleType.FIT_XY);
             convertView.setTag(image);
         }else{
-            image = (LedImageView) convertView.getTag();
+            image = (MeImageView) convertView.getTag();
         }
 
         if (FileUtils.isFileExist(bitmapFilename.get(position))){

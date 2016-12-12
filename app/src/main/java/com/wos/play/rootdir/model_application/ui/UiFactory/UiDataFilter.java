@@ -41,6 +41,8 @@ public class UiDataFilter {
         UiDataFilter.activity = activity;
         UiManager.getInstans().initData();
         handler = new Handler();
+
+
         isInit = true;
     }
 

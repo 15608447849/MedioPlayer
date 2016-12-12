@@ -14,7 +14,6 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.wos.play.rootdir.R;
-import com.wos.play.rootdir.model_application.ui.UiFactory.UiDataFilter;
 import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
 import com.wos.play.rootdir.model_communication.CommuniReceiverMsgBroadCasd;
 import com.wos.play.rootdir.model_monitor.kernes.WatchServer;
@@ -215,15 +214,13 @@ public class BaseActivity extends Activity {
 
         //初始化 UI
         protected void initUI(){
-            Logs.i(TAG,"初始化 UI 元素");
+            Logs.i(TAG,"--------------初始化 UI 元素--------------");
             UiTools.init(this);
-            UiDataFilter.init(this);
         }
 
         protected void unInitUI(){
             UiTools.uninit();
-            UiDataFilter.unInit();
-            Logs.i(TAG,"注销 UI 元素");
+            Logs.i(TAG,"-----------------注销 UI 元素-----------------");
         }
 
 

@@ -1,7 +1,6 @@
 package com.wos.play.rootdir.model_application.ui.ComponentLibrary.button;
 
 import android.content.Context;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,7 +18,7 @@ import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ComponentsBea
  * Created by user on 2016/11/12.
  * 按钮 点击
  */
-public class CButton extends ImageButton implements View.OnClickListener,View.OnTouchListener,Iview{
+public class CButton extends MeImageButton implements View.OnClickListener,View.OnTouchListener,Iview{
     private static final String TAG = "_CButton";
     private Context context;
     private AbsoluteLayout layout;
@@ -162,12 +161,5 @@ public class CButton extends ImageButton implements View.OnClickListener,View.On
         return false;
     }
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        try {
-            super.onDraw(canvas);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+
 }

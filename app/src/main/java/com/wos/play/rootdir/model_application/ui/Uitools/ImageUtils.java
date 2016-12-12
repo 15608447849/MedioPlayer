@@ -3,17 +3,16 @@ package com.wos.play.rootdir.model_application.ui.Uitools;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-import com.wos.play.rootdir.model_application.ui.ComponentLibrary.weather.LedImageView;
+import com.wos.play.rootdir.model_application.ui.ComponentLibrary.button.MeImageButton;
+import com.wos.play.rootdir.model_application.ui.ComponentLibrary.image.DoubleScaleImageView;
+import com.wos.play.rootdir.model_application.ui.ComponentLibrary.image.MeImageView;
 import com.wos.play.rootdir.model_application.ui.UiStore.ImageStore;
-import com.wos.play.rootdir.model_application.ui.UiStore.ViewStore;
 import com.wos.play.rootdir.model_universal.tool.AppsTools;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 
@@ -31,7 +30,6 @@ public class ImageUtils {
         Bitmap bitmap = ImageStore.getInstants().getBitmapCache(filepath);
         if (bitmap==null || bitmap.isRecycled()){
             bitmap = getBitmap(new File(AppsTools.isMp4Suffix(filepath)?AppsTools.tanslationMp4ToPng(filepath):filepath));
-
             ImageStore.getInstants().addBitmapCache(filepath,bitmap);
         }
         return bitmap;
@@ -67,7 +65,7 @@ public class ImageUtils {
 
         return bitmap;
     }
-    public static Bitmap createImageThumbnail(FileInputStream is){
+    private static Bitmap createImageThumbnail(FileInputStream is){
         Bitmap bitmap = null;
         try {
             BitmapFactory.Options opts = new BitmapFactory.Options();
@@ -93,7 +91,7 @@ public class ImageUtils {
 
         return bitmap;
     }
-    public static int computeSampleSize(BitmapFactory.Options options, int minSideLength, int maxNumOfPixels) {// 最小边长 最大像素
+    private static int computeSampleSize(BitmapFactory.Options options, int minSideLength, int maxNumOfPixels) {// 最小边长 最大像素
         int initialSize = computeInitialSampleSize(options, minSideLength, maxNumOfPixels);
         int roundedSize;
         if (initialSize <= 8) {
@@ -155,66 +153,22 @@ public class ImageUtils {
         Logs.i("imageUtils","回收图片bitmap...完成");
     }
     //创建 imageview
-    public static LedImageView createImageView(Context context){
-        return new LedImageView(context);
+    public static MeImageView createImageView(Context context){
+        return new MeImageView(context);
     }
-    //创建image并且存储tag
-    public static ImageView createImagerviewStore(Context context,String tag){
-        ImageView iv = null;
-
-        try {
-            iv = (ImageView) ViewStore.getInstants().getViewCache(tag);
-            if (iv!=null){
-                return iv;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        iv = createImageView(context);
-        iv.setTag(tag);
-        ViewStore.getInstants().addViewCache(tag,iv);
-        return iv;
+    //创建 imageview
+    public static DoubleScaleImageView createImageViewScale(Context context){
+        return new DoubleScaleImageView(context);
     }
-
     //创建imagebutton
     public static ImageButton createImagerButton(Context context){
-        return new ImageButton(context){
-            @Override
-            protected void onDraw(Canvas canvas) {
-                try {
-                    super.onDraw(canvas);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        };
+        return new MeImageButton(context);
     }
 
 
-    //创建imagebutton并且存储tag
-    public static ImageButton createImagerbuttonStore(Context context, String tag){
-        ImageButton ib = null;
 
-        try {
-            ib = (ImageButton) ViewStore.getInstants().getViewCache(tag);
-            if (ib!=null){
-                return ib;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
-        ib = createImagerButton(context);
-        ib.setTag(tag);
-        ViewStore.getInstants().addViewCache(tag,ib);
-        return ib;
-    }
 
-    public static ImageButton createImageButoonStoreSettingOnclickEvent(Context context, String tag,View.OnClickListener onclick){
-        ImageButton ib = createImagerbuttonStore(context,tag);
-        ib.setOnClickListener(onclick);
-        return ib;
-    }
 
 
 

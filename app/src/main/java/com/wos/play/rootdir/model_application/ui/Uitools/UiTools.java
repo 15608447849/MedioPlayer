@@ -5,7 +5,8 @@ import android.util.Log;
 
 import com.wos.play.rootdir.model_application.baselayer.BaseActivity;
 import com.wos.play.rootdir.model_application.baselayer.DataListEntiyStore;
-import com.wos.play.rootdir.model_application.ui.ComponentLibrary.stream_medio.Mvitamios;
+import com.wos.play.rootdir.model_application.schedule.ScheduleReader;
+import com.wos.play.rootdir.model_application.ui.UiFactory.UiDataFilter;
 import com.wos.play.rootdir.model_application.ui.UiHttp.UiDownload;
 import com.wos.play.rootdir.model_universal.tool.AppsTools;
 import com.wos.play.rootdir.model_universal.tool.Logs;
@@ -30,14 +31,18 @@ public class UiTools {
     private static String weatherIconPath = null; //白天 day 黑夜 night
     private static String def_source_dir = null;
     public static void  init(Context context){
+        final BaseActivity context1 = (BaseActivity)context;
         dle = new DataListEntiyStore(context);
         dle.ReadShareData();
         basepath = dle.GetStringDefualt("basepath","");
         appicon = dle.GetStringDefualt("appicon","");
         contentDir = new File(dle.GetStringDefualt("jsonStore","")) ;//json根目录
         UiDownload.init(context,basepath,dle.GetStringDefualt("terminalNo",""));
+        UiDataFilter.init(context1);// UI 过滤
+
+
+        //
         isInit = true;
-        final BaseActivity context1 = (BaseActivity)context;
         //解压缩
         new Thread(new Runnable() {
             @Override
@@ -46,7 +51,9 @@ public class UiTools {
                     try {
                     unzipWeatherIcon(context1, appicon);
                     unzipDefSource(context1, basepath);
-                    Mvitamios.initStreamMedia(context1);
+//                        Mvitamios.initStreamMedia(context1); //初始化vitimio
+                     //初始化排期读取
+                     ScheduleReader.getReader().initSch(dle.GetStringDefualt("jsonStore",""));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -59,7 +66,9 @@ public class UiTools {
 
 
     public static void  uninit(){
-        UiDownload.unInit();
+        ScheduleReader.getReader().unInit();//关闭排期读取
+        UiDataFilter.unInit();
+        UiDownload.unInit();//ui下载关闭
         dle =null;
         isInit = false;
     }

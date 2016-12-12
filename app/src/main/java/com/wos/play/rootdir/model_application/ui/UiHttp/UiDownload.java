@@ -4,15 +4,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.wos.play.rootdir.model_download.kernel.DownloadBroad;
+
 import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.wos.play.rootdir.model_download.kernel.DownloadBroad;
-
 /**
  * Created by user on 2016/11/18.
+ *  UI 下载
  */
-
 public class UiDownload {
 
     private static Context context;

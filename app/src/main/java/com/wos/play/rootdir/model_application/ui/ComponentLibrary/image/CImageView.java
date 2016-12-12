@@ -4,7 +4,6 @@ import android.content.Context;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.wos.play.rootdir.model_application.ui.ComponentLibrary.weather.LedImageView;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.IContentView;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.MedioInterface;
 import com.wos.play.rootdir.model_application.ui.Uitools.ImageUtils;
@@ -17,7 +16,7 @@ import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
  *
  */
 
-public class CImageView extends LedImageView implements IContentView{
+public class CImageView extends MeImageView implements IContentView{
     private static final java.lang.String TAG = "CImageView";
     private Context mCcontext;
     private FrameLayout layout ;
