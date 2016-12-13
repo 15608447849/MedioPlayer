@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.wos.play.rootdir.model_application.baselayer.DataListEntiyStore;
+import com.wos.play.rootdir.model_application.baselayer.SystemInitInfo;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 import com.wos.play.rootdir.model_universal.tool.MD5Util;
 import com.wos.play.rootdir.model_universal.tool.SdCardTools;
@@ -23,14 +23,12 @@ public class ICommand_SORE_JsonDataStore implements iCommand {
     private static final String TAG = " ICommand_SORE_JsonDataStore";
     private ConcurrentMap<String, String> jsonMap = new ConcurrentHashMap<>();
     private static ICommand_SORE_JsonDataStore instant = null;
-    private DataListEntiyStore dls = null;
     private String jsonStoreDir = null;
     private Context c;
     private ICommand_SORE_JsonDataStore(Context c){
         this.c  = c;
-        dls = new DataListEntiyStore(c);
-        dls.ReadShareData();
-        jsonStoreDir = dls.GetStringDefualt("jsonStore","");
+        jsonStoreDir =  SystemInitInfo.get().getJsonStore();
+
     }
 
     public static ICommand_SORE_JsonDataStore getInstent(Context context){

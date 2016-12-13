@@ -22,6 +22,9 @@ public class DataListEntiy {
             return defualtValue;
         }
     }
+    public String GetStringDefualt(String key) {
+      return GetStringDefualt(key,"");
+    }
     public int GetIntDefualt(String key, int defualtValue) {
         try {
             Object object = map.get(key);

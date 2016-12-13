@@ -8,6 +8,8 @@ import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -337,7 +339,7 @@ public class AppsTools {
     }
 
     /**
-     * 将Map转化为Json
+     * 将Map转化为Json文本
      *
      * @param map
      * @return String
@@ -347,7 +349,19 @@ public class AppsTools {
         String jsonStr = gson.toJson(map);
         return jsonStr;
     }
-
+    /**
+     *
+     * 函数名称: parseData
+     * 函数描述: 将json字符串转换为map
+     * @param data
+     * @return
+     */
+    public static HashMap<String, String> jsonTxtToMap(String data){
+        GsonBuilder gb = new GsonBuilder();
+        Gson g = gb.create();
+        HashMap<String, String> map = g.fromJson(data, new TypeToken<HashMap<String, String>>() {}.getType());
+        return map;
+    }
 
     //检查是不是ui线程
     public static boolean checkUiThread(){

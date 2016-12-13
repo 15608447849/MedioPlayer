@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.wos.play.rootdir.model_application.baselayer.BaseActivity;
-import com.wos.play.rootdir.model_application.baselayer.DataListEntiyStore;
+import com.wos.play.rootdir.model_application.baselayer.SystemInitInfo;
 import com.wos.play.rootdir.model_application.schedule.ScheduleReader;
 import com.wos.play.rootdir.model_application.ui.UiFactory.UiDataFilter;
 import com.wos.play.rootdir.model_application.ui.UiHttp.UiDownload;
@@ -24,7 +24,6 @@ import cn.trinea.android.common.util.FileUtils;
 
 public class UiTools {
     private static boolean isInit = false;
-    private static DataListEntiyStore dle = null;
     private static File contentDir = null;
     private static String basepath;
     private  static  String appicon;
@@ -32,12 +31,11 @@ public class UiTools {
     private static String def_source_dir = null;
     public static void  init(Context context){
         final BaseActivity context1 = (BaseActivity)context;
-        dle = new DataListEntiyStore(context);
-        dle.ReadShareData();
-        basepath = dle.GetStringDefualt("basepath","");
-        appicon = dle.GetStringDefualt("appicon","");
-        contentDir = new File(dle.GetStringDefualt("jsonStore","")) ;//json根目录
-        UiDownload.init(context,basepath,dle.GetStringDefualt("terminalNo",""));
+
+        basepath = SystemInitInfo.get().getBasepath();
+        appicon = SystemInitInfo.get().getAppicon();
+        contentDir = new File(SystemInitInfo.get().getJsonStore()) ;//json根目录
+        UiDownload.init(context,basepath,SystemInitInfo.get().getTerminalNo());
         UiDataFilter.init(context1);// UI 过滤
 
 
@@ -53,7 +51,7 @@ public class UiTools {
                     unzipDefSource(context1, basepath);
 //                        Mvitamios.initStreamMedia(context1); //初始化vitimio
                      //初始化排期读取
-                     ScheduleReader.getReader().initSch(dle.GetStringDefualt("jsonStore",""));
+                     ScheduleReader.getReader().initSch(SystemInitInfo.get().getJsonStore());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -69,7 +67,6 @@ public class UiTools {
         ScheduleReader.getReader().unInit();//关闭排期读取
         UiDataFilter.unInit();
         UiDownload.unInit();//ui下载关闭
-        dle =null;
         isInit = false;
     }
 
@@ -102,7 +99,7 @@ public class UiTools {
     public static String getUrlTanslationFilename(String url){
         //      ftp://ftp:FTPmedia@172.16.0.17:21/content/1476427174433.jpg
         System.out.println("转换 - url -> 本地文件路径 - " +url);
-        return "".equals(url.substring(url.lastIndexOf("/")+1))?null:dle.GetStringDefualt("basepath","")+url.substring(url.lastIndexOf("/")+1);
+        return "".equals(url.substring(url.lastIndexOf("/")+1))?null:SystemInitInfo.get().getBasepath()+url.substring(url.lastIndexOf("/")+1);
     }
 
     //判断文件是否存在

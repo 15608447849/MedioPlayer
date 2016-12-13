@@ -479,15 +479,11 @@ public class SdCardTools {
     }
 
 
-    /**
-     * 写入数据进入文件
-     */
-    public static void writeJsonToSdcard(String storePath,String filename,String _sContent) {
-
+    public static void writeJsonToSdcard(String filepath,String _content){
         FileOutputStream outStream = null;
         try {
-            outStream = new FileOutputStream(storePath + filename);
-            outStream.write(_sContent.getBytes("UTF-8"));
+            outStream = new FileOutputStream(filepath);//
+            outStream.write(_content.getBytes("UTF-8"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -502,6 +498,12 @@ public class SdCardTools {
                 outStream = null;
             }
         }
+    }
+    /**
+     * 写入数据进入文件
+     */
+    public static void writeJsonToSdcard(String storePath,String filename,String _sContent) {
+        writeJsonToSdcard(storePath + filename,_sContent);
     }
 
 

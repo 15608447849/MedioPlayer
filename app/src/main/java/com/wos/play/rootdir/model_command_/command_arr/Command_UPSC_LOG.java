@@ -4,11 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.locks.ReentrantLock;
-
-import com.wos.play.rootdir.model_application.baselayer.DataListEntiyStore;
+import com.wos.play.rootdir.model_application.baselayer.SystemInitInfo;
 import com.wos.play.rootdir.model_command_.kernel.CommandPostBroad;
 import com.wos.play.rootdir.model_download.entity.UrlList;
 import com.wos.play.rootdir.model_download.kernel.DownloadBroad;
@@ -30,6 +26,10 @@ import com.wos.play.rootdir.model_universal.tool.CONTENT_TYPE;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 import com.wos.play.rootdir.model_universal.tool.SdCardTools;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
+
 import static com.wos.play.rootdir.model_universal.tool.AppsTools.uriTransionString;
 import static com.wos.play.rootdir.model_universal.tool.CONTENT_TYPE.weather;
 
@@ -41,7 +41,6 @@ public class Command_UPSC_LOG implements iCommand{
 
         private static final String TAG = "_UPSC_log";
         private Context context;
-        private DataListEntiyStore dl;
         private String basePath = null;
         private String terminalNo = null;
         private String storageLimits = null;
@@ -53,11 +52,10 @@ public class Command_UPSC_LOG implements iCommand{
             this.context = context;
             bundle = new Bundle();
             intent = new Intent();
-            dl = new DataListEntiyStore(context);
-            dl.ReadShareData();
-            basePath = dl.GetStringDefualt("basepath", "");
-            terminalNo = dl.GetStringDefualt("terminalNo", "");
-            storageLimits = dl.GetStringDefualt("storageLimits", "");
+
+            basePath = SystemInitInfo.get().getBasepath();
+            terminalNo = SystemInitInfo.get().getTerminalNo();
+            storageLimits = SystemInitInfo.get().getStorageLimits();
             taskStore = new UrlList();
         }
 
@@ -529,7 +527,7 @@ public class Command_UPSC_LOG implements iCommand{
          * 发送任务到下载服务广播
          */
         private void sendDownLoadTaskList() {
-            if (context != null && dl != null) {
+            if (context != null) {
                 //发送任务->下载服务
                 bundle.clear();
                 intent.setAction(DownloadBroad.ACTION);

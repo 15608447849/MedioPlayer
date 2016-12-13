@@ -40,7 +40,7 @@ public class MediaPlayerSubtitle extends Activity implements Callback, OnPrepare
 	SurfaceHolder sholder;
 	TextView tv;
 	private MediaPlayer mediaPlayer;
-	private String path = "";
+	private String path = "http://222.36.5.53:9800/live/xktv.m3u8";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

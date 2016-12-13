@@ -31,8 +31,8 @@ import io.vov.vitamio.widget.VideoView;
 
 public class VideoViewSubtitle extends Activity {
 
-	private String path = "";
-	private String subtitle_path = "";
+	private String path = "http://222.36.5.53:9800/live/xktv.m3u8";
+	private String subtitle_path = "星空卫视";
 	private VideoView mVideoView;
 	private TextView mSubtitleView;
 	private long mPosition = 0;

@@ -8,7 +8,7 @@ import android.widget.EditText;
 
 import com.wos.play.rootdir.R;
 import com.wos.play.rootdir.model_application.baselayer.BaseActivity;
-import com.wos.play.rootdir.model_application.baselayer.DataListEntiyStore;
+import com.wos.play.rootdir.model_application.baselayer.SystemInitInfo;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.TerminalNo;
 import com.wos.play.rootdir.model_universal.tool.AppsTools;
 import com.wos.play.rootdir.model_universal.tool.Logs;
@@ -21,6 +21,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
+
+import static com.wos.play.rootdir.R.id.HeartBeatInterval;
 
 /**
  * Created by user on 2016/10/26.
@@ -42,7 +44,7 @@ public class ToolsActivity extends BaseActivity {
     public EditText BasePath;
     @Bind(R.id.SchudulePath)
     public EditText SchudulePath;
-    @Bind(R.id.HeartBeatInterval)
+    @Bind(HeartBeatInterval)
     public EditText heartbeattime;
     @Bind(R.id.StorageLimits)
     public EditText StorageLimits;
@@ -54,7 +56,7 @@ public class ToolsActivity extends BaseActivity {
     @Bind(R.id.btnSaveData)
     public Button btnSaveData;
 
-    private DataListEntiyStore dataList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,10 +77,7 @@ public class ToolsActivity extends BaseActivity {
      * 初始化数据对象
      */
     private void initData() {
-        if (dataList==null){
-            dataList = new DataListEntiyStore(getApplicationContext());
-        }
-        dataList.ReadShareData();
+
     }
     /**
      *  加载数据
@@ -88,15 +87,15 @@ public class ToolsActivity extends BaseActivity {
         try
         {
             btnSaveData.setEnabled(false);
-            serverip.setText(dataList.GetStringDefualt("serverip", "172.16.0.14"));
-            serverport.setText(dataList.GetStringDefualt("serverport", "9000"));
-            companyid.setText(dataList.GetStringDefualt("companyid", "999"));
-            terminalNo.setText(dataList.GetStringDefualt("terminalNo", ""));
-            heartbeattime.setText(dataList.GetStringDefualt("HeartBeatInterval", "30"));//心跳
-            StorageLimits.setText(dataList.GetStringDefualt("storageLimits","50"));//sdcard 阔值
-            RestartBeatInterval.setText(dataList.GetStringDefualt("RestartBeatInterval","30"));//重启时间
-            BasePath.setText(catPathfile(dataList.GetStringDefualt("basepath", "")));//资源文件夹
-            SchudulePath.setText(catPathfile(dataList.GetStringDefualt("jsonStore","")));//排期文件夹
+            serverip.setText(SystemInitInfo.get().getServerip());
+            serverport.setText(SystemInitInfo.get().getServerport());
+            companyid.setText(SystemInitInfo.get().getCompanyid());
+            terminalNo.setText(SystemInitInfo.get().getTerminalNo());
+            heartbeattime.setText(SystemInitInfo.get().getHeartBeatInterval());//心跳
+            StorageLimits.setText(SystemInitInfo.get().getStorageLimits());//sdcard 阔值
+            RestartBeatInterval.setText(SystemInitInfo.get().getSleepTime());//重启时间
+            BasePath.setText(catPathfile(SystemInitInfo.get().getBasepath()));//资源文件夹
+            SchudulePath.setText(catPathfile(SystemInitInfo.get().getJsonStore()));//排期文件夹
             //焦点默认在这个控件上
             serverip.setFocusable(true);
         }catch(Exception e)
@@ -117,32 +116,26 @@ public class ToolsActivity extends BaseActivity {
      */
     public void GetViewValue()
     {
-        dataList.put("terminalNo",terminalNo.getText().toString());
-        dataList.put("serverip",  serverip.getText().toString());
-        dataList.put("serverport",  serverport.getText().toString());
-        dataList.put("companyid",  companyid.getText().toString());
-        dataList.put("storageLimits",StorageLimits.getText().toString());//sdcard 清理阔值
-        dataList.put("RestartBeatInterval",RestartBeatInterval.getText().toString()); //重启时间
-        dataList.put("HeartBeatInterval",  heartbeattime.getText().toString());
-
-
-
+        SystemInitInfo.get().setServerport(serverport.getText().toString());
+        SystemInitInfo.get().setStorageLimits(StorageLimits.getText().toString());
+        SystemInitInfo.get().setSleepTime(RestartBeatInterval.getText().toString());
+        SystemInitInfo.get().setHeartBeatInterval(heartbeattime.getText().toString());
+        SystemInitInfo.get().setCompanyid(companyid.getText().toString());
+        SystemInitInfo.get().setTerminalNo(terminalNo.getText().toString());
+        SystemInitInfo.get().setServerip(serverip.getText().toString());
         String dirpath = SdCardTools.getAppSourceDir(this) + completePath(BasePath.getText().toString());
         if (SdCardTools.MkDir(dirpath)) {
-            dataList.put("basepath", dirpath);//资源存储的 文件名
+            SystemInitInfo.get().setBasepath(dirpath);
         }
-
         dirpath = SdCardTools.getAppSourceDir(this) + completePath(SchudulePath.getText().toString());
         if (SdCardTools.MkDir(dirpath)){
-        dataList.put("jsonStore", dirpath );//json存储的 文件名
+            SystemInitInfo.get().setJsonStore(dirpath);
         }
-
         //app icon 路径
         dirpath = SdCardTools.getAppSourceDir(this) + "/appicon/";
         if (SdCardTools.MkDir(dirpath)){
-            dataList.put("appicon", dirpath );//json存储的 文件名
+            SystemInitInfo.get().setAppicon(dirpath);
         }
-
     }
 
     private String completePath(String path){
@@ -156,7 +149,6 @@ public class ToolsActivity extends BaseActivity {
         }
         return path;
     }
-
 
     /**
      *  是否正在获取数据中
@@ -203,31 +195,30 @@ public class ToolsActivity extends BaseActivity {
             param.clear();
         }
         param.put("version",String.valueOf(AppsTools.getLocalVersionCode(getApplicationContext())));
-        param.put("corpId",dataList.GetStringDefualt("companyid","999"));
-        param.put("code",dataList.GetStringDefualt("companyid","999"));
+        param.put("corpId",SystemInitInfo.get().getCompanyid());
+        param.put("code",SystemInitInfo.get().getCompanyid());
         param.put("ip", AppsTools.getLocalIpAddress());
         param.put("mac", AppsTools.getLocalMacAddressFromBusybox());
         if (screenSize==null){
             screenSize = AppsTools.getScreenSize(getApplicationContext());
         }
         param.put("screenResolutionWidth",String.valueOf(screenSize[0]));
-      param.put("screenResolutionHeight",String.valueOf(screenSize[1]));
-
-       return AppsTools.mapTanslationUri(dataList.GetStringDefualt("serverip","127.0.0.1"),dataList.GetStringDefualt("serverport","8000"),param);
+        param.put("screenResolutionHeight",String.valueOf(screenSize[1]));
+       return AppsTools.mapTanslationUri(SystemInitInfo.get().getServerip(),String.valueOf(SystemInitInfo.get().getServerport()),param);
     }
 
     /**
      * 保存
      */
     public boolean save(){
-        GetViewValue();
-        dataList.SaveShareData();
         if (!"".equals(terminalNo.getText().toString())){
-            DataListEntiyStore.settingServerInfo(getApplicationContext(),true);
+            GetViewValue();
+            SystemInitInfo.get().saveInfo();
+            SystemInitInfo.get().setConfig(true);
             showToast("---保存完成---");
             return true;
         }else{
-            DataListEntiyStore.settingServerInfo(getApplicationContext(),false);
+            SystemInitInfo.get().setConfig(false);
             showToast("-- 保存失败 --");
             return false;
         }
@@ -250,7 +241,7 @@ public class ToolsActivity extends BaseActivity {
      * 进入应用界面
      */
     private boolean gotoApp() {
-        if (DataListEntiyStore.isSettingServerInfo(getApplicationContext())){
+        if (SystemInitInfo.get().isConfig()){
             // 已设置过服务器信息
             //发送上线指令
             sendMsgCommServer("sendTerminaOnline", null);
@@ -272,7 +263,6 @@ public class ToolsActivity extends BaseActivity {
                     if (teln != null){
                         terminalNo.setText(teln.getTerminalNo());
                         showToast(" -- 获取终端完成 --");
-                        dataList.put("terminalNo", teln.getTerminalNo());
                         btnSaveData.setEnabled(true);
                     }
                 }else{

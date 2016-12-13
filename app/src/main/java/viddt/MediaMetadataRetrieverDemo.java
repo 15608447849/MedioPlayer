@@ -34,7 +34,7 @@ public class MediaMetadataRetrieverDemo extends Activity {
 		super.onCreate(savedInstanceState);
 		MediaMetadataRetriever retriever = new MediaMetadataRetriever(this);
 		try {
-			path = "";
+			path = "http://222.36.5.53:9800/live/xktv.m3u8";
 			if (path == "") {
 				// Tell the user to provide an audio file URL.
 				Toast.makeText(MediaMetadataRetrieverDemo.this, "Please edit MediaMetadataRetrieverDemo Activity, " + "and set the path variable to your audio file path." + " Your audio file must be stored on sdcard.", Toast.LENGTH_LONG).show();

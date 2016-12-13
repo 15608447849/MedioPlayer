@@ -69,7 +69,7 @@ public class MediaPlayerDemo_setSurface extends Activity implements OnBufferingU
     doCleanUp();
     try {
 
-      path = "";
+      path = "http://222.36.5.53:9800/live/xktv.m3u8";
       if (path == "") {
         // Tell the user to provide a media file URL.
         Toast.makeText(

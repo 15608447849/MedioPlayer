@@ -11,14 +11,15 @@ import com.wos.play.rootdir.model_application.baselayer.BaseActivity;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 
 import io.vov.vitamio.MediaPlayer;
-import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
+
+import static io.vov.vitamio.MediaPlayer.VIDEOQUALITY_HIGH;
 
 /**
  * Created by user on 2016/11/21.
  */
 
-public class Mvitamios implements MediaPlayer.OnInfoListener, MediaPlayer.OnBufferingUpdateListener {
+public class Mvitamios implements MediaPlayer.OnInfoListener, MediaPlayer.OnBufferingUpdateListener,MediaPlayer.OnErrorListener{
     private static final String TAG = "Vitamio";
     private BaseActivity activity;
     private ViewGroup layout; //
@@ -41,9 +42,7 @@ public class Mvitamios implements MediaPlayer.OnInfoListener, MediaPlayer.OnBuff
             initStreamMedia();
             initView();
         }
-        path = (path == null || path.equals("")) ? "http://222.36.5.53:9800/live/xktv.m3u8" : path;
-
-//      this.path = "/mnt/external_sd/wosplayer/playlist/default.mp4";
+        path = (path == null || path.equals("")) ? "http://devimages.apple.com/iphone/samples/bipbop/gear1/prog_index.m3u8" : "http://222.36.5.53:9800/live/xktv.m3u8";
         uri = Uri.parse(path);
     }
 
@@ -125,9 +124,10 @@ public class Mvitamios implements MediaPlayer.OnInfoListener, MediaPlayer.OnBuff
         if (isStardEnable) {//允许播放
             Logs.d(TAG,"playVideo() : "+ uri);
             try {
-                mVideoView.setVideoURI(uri);
-                mVideoView.setMediaController(new MediaController(activity));
-                mVideoView.requestFocus();
+
+//                mVideoView.setMediaController(new MediaController(activity));
+//                mVideoView.requestFocus();
+                mVideoView.setVideoQuality(VIDEOQUALITY_HIGH);
                 mVideoView.setOnInfoListener(this);
                 mVideoView.setOnBufferingUpdateListener(this);
                 mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
@@ -137,7 +137,10 @@ public class Mvitamios implements MediaPlayer.OnInfoListener, MediaPlayer.OnBuff
                         mediaPlayer.setPlaybackSpeed(1.0f);
                     }
                 });
-
+                mVideoView.setOnErrorListener(this);
+//                mVideoView.setHardwareDecoder(true);
+//                mVideoView.setVideoLayout(VIDEO_LAYOUT_STRETCH,0);
+                mVideoView.setVideoURI(uri);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -161,14 +164,23 @@ public class Mvitamios implements MediaPlayer.OnInfoListener, MediaPlayer.OnBuff
             case MediaPlayer.MEDIA_INFO_BUFFERING_END:
                 mVideoView.start();
                 break;
-            case MediaPlayer.MEDIA_INFO_DOWNLOAD_RATE_CHANGED:
-                Logs.d(TAG,"进度 : " + extra + "kb/s" + "  ");
+            case MediaPlayer.MEDIA_INFO_DOWNLOAD_RATE_CHANGED://速度改变
+                //Logs.d(TAG,"进度 : " + extra + "kb/s" + "  ");
+                break;
+            default:
+                Logs.d(TAG,"onInfo -  code "+what);
                 break;
         }
         return true;
     }
     @Override
     public void onBufferingUpdate(MediaPlayer mp, int percent) {
-        Logs.d(TAG,"进度百分比 : " + percent + "%  ");
+        //Logs.d(TAG,"进度百分比 : " + percent + "%  ");
+    }
+
+    @Override
+    public boolean onError(MediaPlayer mp, int what, int extra) {
+        Logs.d(TAG,"onError : " + what + extra + "kb/s" + " ");
+        return true;
     }
 }
