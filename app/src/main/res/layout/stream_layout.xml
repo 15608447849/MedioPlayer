@@ -5,10 +5,18 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <SurfaceView
-        android:id="@+id/surface"
+    <!--<SurfaceView-->
+        <!--android:id="@+id/surface"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_gravity="center" >-->
+    <!--</SurfaceView>-->
+
+    <io.vov.vitamio.widget.VideoView
+        android:id="@+id/buffer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center" >
-    </SurfaceView>
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true" />
+
 </io.vov.vitamio.widget.CenterLayout>
