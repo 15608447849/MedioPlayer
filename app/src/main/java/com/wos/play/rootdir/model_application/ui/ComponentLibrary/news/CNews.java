@@ -7,10 +7,6 @@ import android.widget.AbsoluteLayout;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import com.wos.play.rootdir.model_application.ui.UiFactory.UiLocalBroad;
 import com.wos.play.rootdir.model_application.ui.UiHttp.UiHttpProxy;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.IAdvancedComponent;
@@ -24,6 +20,10 @@ import com.wos.play.rootdir.model_universal.jsonBeanArray.content_gallary.Gallar
 import com.wos.play.rootdir.model_universal.tool.AppsTools;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 import com.wos.play.rootdir.model_universal.tool.MD5Util;
+
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by user on 2016/12/1.
@@ -336,7 +336,7 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
         //开始计时器
         unLoadContent();
         if (!flag_ones) {
-            UiHttpProxy.getContent(url, mBroadAction);
+            UiHttpProxy.getPeoxy().getContent(url, mBroadAction);
         }
         flag_ones = false;
         startTimer(updateTime * 1000);

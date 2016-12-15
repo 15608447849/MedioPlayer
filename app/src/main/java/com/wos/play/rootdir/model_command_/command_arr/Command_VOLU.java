@@ -4,6 +4,7 @@ import android.content.Context;
 import android.media.AudioManager;
 
 import com.wos.play.rootdir.model_application.baselayer.BaseApplication;
+import com.wos.play.rootdir.model_command_.kernel.iCommand;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 
 

@@ -1,4 +1,4 @@
-package com.wos.play.rootdir.model_command_.command_arr;
+package com.wos.play.rootdir.model_command_.kernel;
 
 /**
  * Created by user on 2016/10/27.

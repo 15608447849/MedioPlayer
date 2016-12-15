@@ -240,4 +240,9 @@ public class CMD_INFO {
      *
      */
     public static final String SORE ="SORE:";
+
+    /**
+     * 下载调度
+     */
+    public static final String DLIF = "DLIF:";
 }

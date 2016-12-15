@@ -52,10 +52,10 @@ public class DownloadServer extends Service {
 
 
     // 接收全局 下载任务内容
-    public void receiveContent(ArrayList<CharSequence> TaskList,String savepath ,String terminalNo ){
-        Logs.i(TAG,"初始化任务队列 - >>>> " + TaskList);
-        for (int i = 0;i<TaskList.size();i++){
-            TaskQueue.getInstants().addTask(new Task(savepath,terminalNo,(String)TaskList.get(i),null));
+    public void receiveContent(ArrayList<Task> taskList){
+        Logs.i(TAG,"下载任务数量 - receiveContent() - >>> "+ taskList.size());
+        for (int i = 0;i<taskList.size();i++){
+            TaskQueue.getInstants().addTask(taskList.get(i));
         }
     }
 

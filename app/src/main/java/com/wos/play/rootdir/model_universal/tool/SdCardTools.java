@@ -76,7 +76,7 @@ import java.util.List;
 
  */
 public class SdCardTools {
-
+    private static String TAG = "sdcard Tools";
     public static final String app_dir ="/wosplayer";
     public static  final String Construction_Bank_dir_source ="/construction_bank/source/";
     public static  final String Construction_Bank_dir_xmlfile ="/construction_bank/xml/";
@@ -223,7 +223,7 @@ public class SdCardTools {
 
             File dir = new File(dirpath);
             if (!dir.exists()){
-                Log.e(""," justFileBlockVolume() is err ,bacause dir is not exists");
+                Log.e(TAG," justFileBlockVolume() is err ,bacause dir is not exists");
                 return false;
             }
 
@@ -247,10 +247,10 @@ public class SdCardTools {
 
             double scale = availableText / totalText;// 比值
 
-            Log.d("","总大小 :"+totalText+"\n有效大小 :"+availableText+"\n文件容量 比值 :"+ scale +"\n目标阔值 :"+scope);
+            Log.d(TAG,"总大小 :"+totalText+"\n有效大小 :"+availableText+"\n文件容量 比值 :"+ scale +"\n目标阔值 :"+scope);
 
             if (scope>scale){
-                Log.d("","执行清理");
+                Log.d(TAG,"执行清理");
                 isClear =  true;
             }
         } catch (Exception e) {
@@ -287,11 +287,11 @@ public class SdCardTools {
     public static void clearTargetDir(String dir_path, List<String> compList){
 
 
-        List<String> fileList = parseList(compList);
+        List<String> fileList =compList;// parseList(compList);
 
         File dir = new File(dir_path);
         if (!dir.exists()){
-            Log.e("","file dir is not exists !!");
+            Log.e(TAG,"file dir is not exists !!");
             return;
         }
 
@@ -299,16 +299,16 @@ public class SdCardTools {
         if (dir.isDirectory()) {
             String[] children = dir.list();
             File subFile = null;
-            Log.d("","资源文件夹 文件总数量:"+children.length+"\n对比保留文件总数量:"+compList.size());
+            Log.d(TAG,"资源文件夹 文件总数量:"+children.length+"\n对比保留文件总数量:"+compList.size());
             for (int i=0; i<children.length; i++) {
 
                 if (fileList.contains(children[i])){
-                    //log.d("","保留 - "+children[i]);
+                    //log.d(TAG,"保留 - "+children[i]);
                     continue;
                 }
                 subFile = new File(dir_path+children[i]);
                 if (subFile.exists()){
-                    //  log.d("","准备删除 - "+children[i]);
+                    //  log.d(TAG,"准备删除 - "+children[i]);
                     if(justFileLastModified(subFile)){
                         subFile.delete();
                     }
@@ -320,7 +320,7 @@ public class SdCardTools {
      * 删除文件夹下所有内容
      */
     public static void DeleteTargetDir(String dirpath){
-        Log.i("","删除目录下所有文件 :"+dirpath);
+        Log.i(TAG,"删除目录下所有文件 :"+dirpath);
         File dir = new File(dirpath);
         File []sub = dir.listFiles();
         if (sub!=null && sub.length>0){
@@ -374,7 +374,7 @@ public class SdCardTools {
             list.add(cutUrlTanslationFilename(str));
         }
 
-        Log.i("","准备下载的文件的文件名集合:\n" + list.toString());
+        Log.i(TAG,"准备下载的文件的文件名集合:\n" + list.toString());
         return list;
     }
 
@@ -558,7 +558,7 @@ public class SdCardTools {
         File sourceDirectory = new File(sourcePath);
 
         if (!sourceDirectory.exists()){
-            Log.e("","备份文件 - 源文件 不存在 -> "+sourcePath);
+            Log.e(TAG,"备份文件 - 源文件 不存在 -> "+sourcePath);
             return;
         }
 
@@ -567,7 +567,7 @@ public class SdCardTools {
             for (File sfile : subFiles){
                 FileUtils.copyFileToDirectory(sfile, dir_bak);
             }
-            Log.i("","备份数据完成");
+            Log.i(TAG,"备份数据完成");
         }
     }
 

@@ -233,7 +233,7 @@ public class Iweather extends FrameLayout implements IAdvancedComponent {
     //刷新ui 刷新内容
     private void startBaiDuApi() {
         //  - 去通讯服务 - >
-        UiHttpProxy.getWeateher(url_content, mBroadAction);
+        UiHttpProxy.getPeoxy().getWeateher(url_content, mBroadAction);
     }
 
     //获取天气样式

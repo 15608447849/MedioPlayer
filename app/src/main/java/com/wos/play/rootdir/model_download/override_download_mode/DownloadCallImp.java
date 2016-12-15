@@ -17,7 +17,7 @@ import java.util.List;
  * Created by user on 2016/11/25.
  */
 
-public class DownloadCallImp implements LoaderCall {
+public class DownloadCallImp {
 
     private static final java.lang.String TAG = "下载回传实现类";
     private Context context;
@@ -150,16 +150,13 @@ public class DownloadCallImp implements LoaderCall {
             nitifyMsg(task.getTerminalNo(), task.getFileName(), 4);
         }
         if (task.getCall() != null) {
-            task.getCall().downloadResult(null, null);
+            task.getCall().downloadResult(task);
         }
         //删除任务
         TaskQueue.getInstants().finishTask(task);
     }
 
-    @Override
-    public void downloadResult(String filePath, String state) {
 
-    }
 
 
 }

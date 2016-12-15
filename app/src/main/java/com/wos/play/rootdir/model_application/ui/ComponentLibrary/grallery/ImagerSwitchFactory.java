@@ -30,7 +30,7 @@ public class ImagerSwitchFactory implements ViewSwitcher.ViewFactory{
         if (image!=null){
             image.setTag(tag);
 //            image.setBackgroundColor(0xFF000000);
-//            image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            image.setScaleType(ImageView.ScaleType.FIT_CENTER);
             image.setLayoutParams(new ImageSwitcher.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         }

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.wos.play.rootdir.model_application.baselayer.SystemInitInfo;
+import com.wos.play.rootdir.model_command_.kernel.iCommand;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 import com.wos.play.rootdir.model_universal.tool.MD5Util;
 import com.wos.play.rootdir.model_universal.tool.SdCardTools;
@@ -92,7 +93,7 @@ public class ICommand_SORE_JsonDataStore implements iCommand {
             Logs.i("TAG","---------------存储数据失败--------------------"+sdcard_save_dir);
             return;
         }
-        Logs.e(TAG,"jsonMap size: "+jsonMap.size());
+        Logs.i(TAG,"json Map size : "+jsonMap.size());
        Iterator iter = jsonMap.entrySet().iterator();
         Object key = null;
         Object val = null;

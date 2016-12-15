@@ -22,11 +22,14 @@ public class CONTENT_TYPE {
             *
             * */
 
-
+    /**
+     *   *"id": "11","code": "qrCode","label": "二维码",
+     */
+    public static final String qrCode = "qrCode";
     /**
      * *"id": "1", "code": "image", "label": "图片",
      *      *"id": "8","code": "image","label": "商品信息",
-     *"id": "11","code": "image","label": "二维码",
+
      */
     public static final String image  = "image";
     /**

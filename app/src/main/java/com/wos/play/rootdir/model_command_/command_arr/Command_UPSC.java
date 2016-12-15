@@ -6,8 +6,8 @@ import android.os.Bundle;
 
 import com.wos.play.rootdir.model_application.baselayer.SystemInitInfo;
 import com.wos.play.rootdir.model_command_.kernel.CommandPostBroad;
+import com.wos.play.rootdir.model_command_.kernel.iCommand;
 import com.wos.play.rootdir.model_download.entity.UrlList;
-import com.wos.play.rootdir.model_download.kernel.DownloadBroad;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.AdBean;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
@@ -25,7 +25,6 @@ import com.wos.play.rootdir.model_universal.tool.CONTENT_TYPE;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 import com.wos.play.rootdir.model_universal.tool.SdCardTools;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -40,26 +39,22 @@ import static com.wos.play.rootdir.model_universal.tool.CONTENT_TYPE.weather;
 public class Command_UPSC implements iCommand {
     private static final String TAG = "_UPSC";
     private Context context;
-    private String basePath = null;
-    private String terminalNo = null;
-    private String storageLimits = null;
-    private Long startTime;
-    private Long endTime;
+    private String basePath;//资源存储路径
+    private String storageLimits;//存储上限百分比
     private Intent intent;
     private Bundle bundle;
+    private UrlList taskStore;
     public Command_UPSC(Context context) {
         this.context = context;
         bundle = new Bundle();
         intent = new Intent();
         basePath = SystemInitInfo.get().getBasepath();
-        terminalNo = SystemInitInfo.get().getTerminalNo();
         storageLimits = SystemInitInfo.get().getStorageLimits();
-        taskStore = new UrlList();
+        taskStore = new UrlList(context);
     }
 
     private static ReentrantLock lock = new ReentrantLock();
 
-    private UrlList taskStore;
     //结果
     private String res;
 
@@ -70,7 +65,8 @@ public class Command_UPSC implements iCommand {
      */
     @Override
     public void Execute(String param) {
-
+        Long startTime;//开始时间
+        Long endTime;//结束时间
         try {
             lock.lock();
             Logs.d(TAG, "获取排期 uri : " + param);
@@ -96,10 +92,8 @@ public class Command_UPSC implements iCommand {
                     endTime = System.currentTimeMillis();
                     Logs.e(TAG, "清理资源 用时 : " + (endTime - startTime) + " 毫秒 ");
                     sendDataSaveTask();
-                    Logs.i(TAG, "任务队列大小 : " + taskStore.getListSize());
-                    if (taskStore.getListSize() > 0) {
-                        sendDownLoadTaskList();
-                    }
+//                    taskStore.sendTkToRemote();
+                    nonotifyDownLoad();
                 }
             }
         } catch (Exception e) {
@@ -108,6 +102,8 @@ public class Command_UPSC implements iCommand {
             lock.unlock();
         }
     }
+
+
 
 
     /**
@@ -227,14 +223,8 @@ public class Command_UPSC implements iCommand {
      */
     private void clearSdcardSource() {
         //如果 true  清理!
-        if (SdCardTools.justFileBlockVolume(basePath
-                , storageLimits)) {
-
-            List<String> keepList = new ArrayList<String>();
-            for (CharSequence car : taskStore.getList()) {
-                keepList.add(car.toString());
-            }
-            SdCardTools.clearTargetDir(basePath, keepList);
+        if (SdCardTools.justFileBlockVolume(basePath,storageLimits)) {
+            SdCardTools.clearTargetDir(basePath, taskStore.getListNames());
         }
     }
 
@@ -243,9 +233,14 @@ public class Command_UPSC implements iCommand {
     */
     private void parseContentSourece(String contentType, ContentsBean content) {
 
-        Logs.d(TAG, ">>>> 解析具体内容 类型 - " + contentType);
+        Logs.d(TAG, ">>>> 解析具体内容 类型 - " + contentType );
         //图片
         if (contentType.equals(CONTENT_TYPE.image)) {
+            taskStore.addTaskOnList(content.getContentSource());
+        }
+        //二维码
+        if (contentType.equals(CONTENT_TYPE.qrCode)){
+            Logs.d(TAG, "二维码 - " + content.getContentSource());
             taskStore.addTaskOnList(content.getContentSource());
         }
         //按钮
@@ -407,22 +402,7 @@ public class Command_UPSC implements iCommand {
 
 
 
-    /**
-     * 发送任务到下载服务广播
-     */
-    private void sendDownLoadTaskList() {
-        if (context != null) {
-            //发送任务->下载服务
-            bundle.clear();
-            intent.setAction(DownloadBroad.ACTION);
-            bundle.putCharSequenceArrayList(DownloadBroad.PARAM1, taskStore.getList());
-            bundle.putString(DownloadBroad.PARAM2, terminalNo);
-            bundle.putString(DownloadBroad.PARAM3, basePath);
-            intent.putExtras(bundle);
-            context.sendBroadcast(intent);
-            Logs.d(TAG,"sendDownLoadTaskList() success ");
-        }
-    }
+
 
     /**发送数据保存广播*/
     private void sendDataSaveTask() {
@@ -434,5 +414,11 @@ public class Command_UPSC implements iCommand {
             context.sendBroadcast(intent);
             Logs.d(TAG,"sendDataSaveTask() success ");
         }
+    }
+
+    //通知服务器 可以下载了
+    private void nonotifyDownLoad() {
+        ICommand_DLIF.get(context).saveTaskList(taskStore.getList());
+        ICommand_DLIF.get(context).downloadStartNotifiy();
     }
 }

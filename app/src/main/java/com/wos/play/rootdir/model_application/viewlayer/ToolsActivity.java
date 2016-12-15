@@ -51,6 +51,16 @@ public class ToolsActivity extends BaseActivity {
     @Bind(R.id.RestartBeatInterval)
     public EditText RestartBeatInterval;
 
+    @Bind(R.id.ftpaddress)
+    public EditText ftpaddress;
+    @Bind(R.id.ftpport)
+    public EditText ftpport;
+    @Bind(R.id.ftpuser)
+    public EditText ftpuser;
+    @Bind(R.id.ftppass)
+    public EditText ftppass;
+
+
     @Bind(R.id.btnGetID)
     public Button btnGetID;
     @Bind(R.id.btnSaveData)
@@ -96,6 +106,10 @@ public class ToolsActivity extends BaseActivity {
             RestartBeatInterval.setText(SystemInitInfo.get().getSleepTime());//重启时间
             BasePath.setText(catPathfile(SystemInitInfo.get().getBasepath()));//资源文件夹
             SchudulePath.setText(catPathfile(SystemInitInfo.get().getJsonStore()));//排期文件夹
+            ftpaddress.setText(SystemInitInfo.get().getFtpAddress());
+            ftpport.setText(SystemInitInfo.get().getFtpPort());
+            ftpuser.setText(SystemInitInfo.get().getFtpUser());
+            ftppass.setText(SystemInitInfo.get().getFtpPass());
             //焦点默认在这个控件上
             serverip.setFocusable(true);
         }catch(Exception e)
@@ -123,6 +137,10 @@ public class ToolsActivity extends BaseActivity {
         SystemInitInfo.get().setCompanyid(companyid.getText().toString());
         SystemInitInfo.get().setTerminalNo(terminalNo.getText().toString());
         SystemInitInfo.get().setServerip(serverip.getText().toString());
+        SystemInitInfo.get().setFtpAddress(ftpaddress.getText().toString());//ftp 地址
+        SystemInitInfo.get().setFtpPort(ftpport.getText().toString());// 端口
+        SystemInitInfo.get().setFtpUser(ftpuser.getText().toString());// 用户名
+        SystemInitInfo.get().setFtpPass(ftppass.getText().toString());// 密码
         String dirpath = SdCardTools.getAppSourceDir(this) + completePath(BasePath.getText().toString());
         if (SdCardTools.MkDir(dirpath)) {
             SystemInitInfo.get().setBasepath(dirpath);

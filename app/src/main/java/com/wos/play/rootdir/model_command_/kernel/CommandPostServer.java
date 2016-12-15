@@ -8,29 +8,29 @@ import android.os.IBinder;
 import com.wos.play.rootdir.model_command_.command_arr.Command_SYTI;
 import com.wos.play.rootdir.model_command_.command_arr.Command_UPSC;
 import com.wos.play.rootdir.model_command_.command_arr.Command_VOLU;
+import com.wos.play.rootdir.model_command_.command_arr.ICommand_DLIF;
 import com.wos.play.rootdir.model_command_.command_arr.ICommand_SORE_JsonDataStore;
-import com.wos.play.rootdir.model_command_.command_arr.iCommand;
 import com.wos.play.rootdir.model_universal.tool.CMD_INFO;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 
-import rx.Scheduler;
-import rx.functions.Action0;
-import rx.schedulers.Schedulers;
-
-public class CommandPostServer extends Service {
+public class CommandPostServer extends Service implements iCommand{
     private static final String TAG = "_CommandPostServer";
     @Override
     public void onCreate() {
         super.onCreate();
         Logs.e(TAG," 指令 - onCreate() ");
+        createThrad();
         registBroad();
     }
     @Override
     public void onDestroy() {
         super.onDestroy();
         Logs.e(TAG,"指令 - onDestroy() ");
+        overThrad();
         unregistBroad();
     }
     @Override
@@ -50,6 +50,8 @@ public class CommandPostServer extends Service {
 //        commandList.put(CMD_INFO.SHDO, new Command_SHDO());
         //收到排期
         commandList.put(CMD_INFO.UPSC, new Command_UPSC(getApplicationContext()));
+        //下载调度
+        commandList.put(CMD_INFO.DLIF, ICommand_DLIF.get(getApplicationContext()));
         //下载完资源 保存json数据
         commandList.put(CMD_INFO.SORE, ICommand_SORE_JsonDataStore.getInstent(getApplicationContext()));
     }
@@ -61,6 +63,7 @@ public class CommandPostServer extends Service {
     public IBinder onBind(Intent intent) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
+
     private CommandPostBroad appReceive;
     /**
      * 停止广播 destory call
@@ -72,6 +75,7 @@ public class CommandPostServer extends Service {
             Logs.i(TAG,"注销 指令 广播");
         }
     }
+
     /**
      * 注册广播  create call
      */
@@ -85,45 +89,82 @@ public class CommandPostServer extends Service {
         Logs.i(TAG,"已注册 指令 广播");
     }
 
+   private CommandExecuterThread executer ;
+
+    private void createThrad(){
+       overThrad();
+        executer = new CommandExecuterThread(this);
+        executer.mStart();
+    }
+
+    private void overThrad() {
+        if (executer!=null){
+            executer.mStop();
+            executer = null;
+        }
+    }
+
+    // 命令
+    private class CmdObj{
+        public String cmd = null;
+        public String param = null;
+
+        public CmdObj(String cmd, String param) {
+            this.cmd = cmd;
+            this.param = param;
+        }
+    }
 
 
-    private static final Scheduler.Worker helper1 =  Schedulers.newThread().createWorker();
-    private static final Scheduler.Worker helper2 =  Schedulers.newThread().createWorker();
+    private LinkedList<CmdObj> cmdList ;
+
+    private synchronized void addCmds(String cmd,String param){
+        if (cmdList == null){
+            cmdList = new LinkedList<>();
+        }
+        cmdList.add(new CmdObj(cmd,param));
+    }
+    private synchronized void getCmds(){
+        if (cmdList!=null){
+            Iterator<CmdObj> iterator = cmdList.iterator();
+            if (iterator.hasNext()){
+                CmdObj obj = iterator.next();
+                executes(obj.cmd,obj.param);
+                iterator.remove();
+                obj = null;
+            }
+
+
+        }
+    }
+
+
+
+
 
     /**
-     * 收到一个命令
+     * 收到一个命令 ->放入队列中 -> 轮询队列有命令 取出来 执行
      */
-    public void reserveCmd(final String cmd, final String param){
+    public void reserveCmd(String cmd, String param){
         Logs.i(TAG,"命令 ["+cmd+ " ]  -  参数: [ "+ param+" ]");
 
         if (commandList==null){
             commandList = new HashMap<>();
             initData();
         }
+        addCmds(cmd,param);
+    }
+
+    private void executes(String cmd, String param){
         if (commandList.containsKey(cmd)) {
-            Logs.i(TAG,"执行指令:"+cmd +" \n 所在线程:"+Thread.currentThread().getName()+" - 当前线程数:"+Thread.getAllStackTraces().size());
-
-            if (!cmd.equals(CMD_INFO.UPSC)){
-
-                helper1.schedule(new Action0() {
-                    @Override
-                    public void call() {
-                        commandList.get(cmd).Execute(param);
-                    }
-                });
-            }else{
-
-                helper2.schedule(new Action0() {
-                    @Override
-                    public void call() {
-                            commandList.get(cmd).Execute(param);
-                    }
-                });
-            }
+            Logs.i(TAG,"执行指令{"+cmd +" ]"+"参数: [ "+ param+" ]"+"\n所在线程:"+Thread.currentThread().getName()+" - 当前线程数:"+Thread.getAllStackTraces().size() +"\n\r");
+            commandList.get(cmd).Execute(param);
         }
-
-
     }
 
 
+    @Override
+    public void Execute(String param) {
+        getCmds();
+    }
 }

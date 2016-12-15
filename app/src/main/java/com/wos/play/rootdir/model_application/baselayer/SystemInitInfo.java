@@ -27,9 +27,9 @@ public class SystemInitInfo {
     //连接类型
     private  String connectionType = "HTTP";
     //终端编号
-    private String terminalNo = "0000";
+    private String terminalNo = "";
     //服务器ip
-    private String serverip = "127.0.0.1";
+    private String serverip = "172.16.0.167";
     //服务器端口
     private String serverport = "9000";
     //公司id
@@ -46,7 +46,49 @@ public class SystemInitInfo {
     private String jsonStore = "/mnt/sdcard/wosplayer/jsoninfo/";
     // 图标存储路径
     private String appicon = "/mnt/sdcard/wosplayer/appicon/";
+    //主ftp-IP地址
+    private String ftpAddress = "172.16.0.17";
 
+    //主ftp-端口
+    private String ftpPort = "21";
+
+    //主ftp 用户名
+    private String ftpUser = "ftp";
+
+    //住ftp 密码
+    private String ftpPass = "FTPmedia";
+
+    public String getFtpAddress() {
+        return ftpAddress;
+    }
+
+    public void setFtpAddress(String ftpAddress) {
+        this.ftpAddress = ftpAddress;
+    }
+
+    public String getFtpPort() {
+        return ftpPort;
+    }
+
+    public void setFtpPort(String ftpPort) {
+        this.ftpPort = ftpPort;
+    }
+
+    public String getFtpUser() {
+        return ftpUser;
+    }
+
+    public void setFtpUser(String ftpUser) {
+        this.ftpUser = ftpUser;
+    }
+
+    public String getFtpPass() {
+        return ftpPass;
+    }
+
+    public void setFtpPass(String ftpPass) {
+        this.ftpPass = ftpPass;
+    }
 
     public String getConnectionType() {
         return connectionType;
@@ -190,6 +232,11 @@ public class SystemInitInfo {
             map.put("basepath",basepath);
             map.put("jsonStore",jsonStore);
             map.put("appicon",appicon);
+            map.put("ftpAddress",ftpAddress);
+            map.put("ftpPort",ftpPort);
+            map.put("ftpUser",ftpUser);
+            map.put("ftpPass",ftpPass);
+
             String content = AppsTools.mapToJson(map);
             SdCardTools.writeJsonToSdcard(infos,content);
         } catch (Exception e) {
@@ -207,30 +254,39 @@ public class SystemInitInfo {
         return sysInfo;
     }
 
+    //初始化数据
     private void initValue() {
         try {
             //连接类型
-            connectionType = contentEntity.GetStringDefualt("connectionType","HTTP");
+            connectionType = contentEntity.GetStringDefualt("connectionType");
             //终端编号
-            terminalNo = contentEntity.GetStringDefualt("terminalNo","0000");
+            terminalNo = contentEntity.GetStringDefualt("terminalNo");
             //服务器ip
-            serverip = contentEntity.GetStringDefualt("serverip","172.16.0.216");
+            serverip = contentEntity.GetStringDefualt("serverip");
             //服务器端口
-            serverport = contentEntity.GetStringDefualt("serverport","9000");
+            serverport = contentEntity.GetStringDefualt("serverport");
             //公司id
-            companyid = contentEntity.GetStringDefualt("companyid","999");
+            companyid = contentEntity.GetStringDefualt("companyid");
             //心跳时间
-            heartBeatInterval = contentEntity.GetStringDefualt("heartBeatInterval","300000");
+            heartBeatInterval = contentEntity.GetStringDefualt("heartBeatInterval");
             //重启时间
-            sleepTime = contentEntity.GetStringDefualt("sleepTime","99999");
+            sleepTime = contentEntity.GetStringDefualt("sleepTime");
             //容量达到多少时 会清理资源
-            storageLimits = contentEntity.GetStringDefualt("storageLimits","50");
+            storageLimits = contentEntity.GetStringDefualt("storageLimits");
             //资源保存路径
-            basepath = contentEntity.GetStringDefualt("basepath","/mnt/sdcard/wosplayer/source/");
+            basepath = contentEntity.GetStringDefualt("basepath");
             //json保存路径
-            jsonStore = contentEntity.GetStringDefualt("jsonStore","/mnt/sdcard/wosplayer/jsoninfo/");
+            jsonStore = contentEntity.GetStringDefualt("jsonStore");
             // 图标存储路径
-            appicon = contentEntity.GetStringDefualt("appicon","/mnt/sdcard/wosplayer/appicon/");
+            appicon = contentEntity.GetStringDefualt("appicon");
+            //ftp地址
+            ftpAddress = contentEntity.GetStringDefualt("ftpAddress");
+            //ftp端口号
+            ftpPort = contentEntity.GetStringDefualt("ftpPort");
+            //ftp用户名
+            ftpUser = contentEntity.GetStringDefualt("ftpUser");
+            //ftp密码
+            ftpPass = contentEntity.GetStringDefualt("ftpPass");
         } catch (Exception e) {
             e.printStackTrace();
         }

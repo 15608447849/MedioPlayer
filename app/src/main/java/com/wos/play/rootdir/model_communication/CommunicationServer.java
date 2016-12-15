@@ -228,10 +228,12 @@ public class CommunicationServer extends Service {
         layeThread.start();
     }
 
+
+
     //上线 url
     private String makeOnlineUri() {
         //http://192.168.6.14:9000/terminal/heartBeat?cmd=HRBT%3A10000555
-        return "http://" + ip + ":" + port + "/terminal/heartBeat?cmd=ONLI:" + terminalId;
+        return generateUri("ONLI:" + terminalId);
     }
     /**
      * 文件下载进度,状态
@@ -246,6 +248,16 @@ public class CommunicationServer extends Service {
 //        http://192.168.6.14:9000/terminal/heartBeat?cmd=HRBT%3A10000555
         return "http://" + ip + ":" + port + "/terminal/heartBeat?cmd=" + param;
     }
+    //文件下载调度通知
+    private void fileDownloadNotifiy(String param) {
+        sendCmds(generateFileDownLoadUrl(param));
+    }
+
+    private String generateFileDownLoadUrl(String param) {
+        return generateUri(param + terminalId);
+    }
+
+
     /**
      * 终端上线特别处理
      */
@@ -269,6 +281,7 @@ public class CommunicationServer extends Service {
      * 2 .发送 心跳指令
      * 3. 发送 文件下载状态
      * 4. 发送 文件下载进度
+     * 5. 发送 文件下载通知
      */
     private void sendCmds(String url) {
         //URLEncoder.encode

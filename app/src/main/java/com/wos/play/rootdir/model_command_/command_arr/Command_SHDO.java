@@ -2,6 +2,8 @@ package com.wos.play.rootdir.model_command_.command_arr;
 
 
 import cn.trinea.android.common.util.ShellUtils;
+
+import com.wos.play.rootdir.model_command_.kernel.iCommand;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 
 /**

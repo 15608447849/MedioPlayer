@@ -157,7 +157,8 @@ public class ImageUtils {
         return new MeImageView(context);
     }
     //创建 imageview
-    public static DoubleScaleImageView createImageViewScale(Context context){
+    public static MeImageView createImageViewScale(Context context){
+       // return new MeImageView(context);
         return new DoubleScaleImageView(context);
     }
     //创建imagebutton

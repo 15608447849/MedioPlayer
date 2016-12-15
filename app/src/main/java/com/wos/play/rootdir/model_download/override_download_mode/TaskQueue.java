@@ -2,12 +2,12 @@ package com.wos.play.rootdir.model_download.override_download_mode;
 
 import android.content.Context;
 
+import com.wos.play.rootdir.model_universal.tool.Logs;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
-
-import com.wos.play.rootdir.model_universal.tool.Logs;
 
 /**
  * Created by user on 2016/11/25.
@@ -32,7 +32,7 @@ public class TaskQueue extends Observable { //被观察者
     //下载助手
     private LoaderHelper helper;
     public void init(Context context,int loaderModel){
-        Logs.i(TAG,"初始化 下载队列");
+        Logs.i(TAG,"初始化 下载队列对象...");
         if (helper==null){
             helper = new LoaderHelper(context,loaderModel);
             //绑定关系
