@@ -6,7 +6,6 @@ import android.os.Bundle;
 
 import com.wos.play.rootdir.model_communication.CommuniReceiverMsgBroadCasd;
 import com.wos.play.rootdir.model_universal.tool.AppsTools;
-import com.wos.play.rootdir.model_universal.tool.Logs;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -80,7 +79,7 @@ public class DownloadCallImp {
             return;
         }
         if (context != null) {
-            Logs.i(TAG, "send msg to server : " + param);
+//            Logs.i(TAG, "send msg to server : " + param);
             if (intent == null) {
                 intent = new Intent();
             }

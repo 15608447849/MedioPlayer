@@ -9,20 +9,30 @@ import com.wos.play.rootdir.model_download.override_download_mode.Task;
 
 public class TaskFactory {
 
-    //根据 一个 url -> 变成一个 task  对象
 
+
+    /**
+     * 根据 一个 url -> 变成一个 task  对象
+     *
+     * @param uri 完整路径
+     * @param ftpip 地址
+     * @param ftpport 端口
+     * @param ftpusr 用户
+     * @param ftppass 密码
+     * @param file 文件名
+     * @return
+     */
     public static Task gnrTask(String uri,String ftpip,String ftpport,String ftpusr,String ftppass,String file){
 
         Task task = new Task(SystemInitInfo.get().getBasepath(),SystemInitInfo.get().getTerminalNo());
+        task.setUrl(uri);
 
         if(uri.startsWith("http")){
            task.setType(Task.Type.HTTP);
-           task.setUrl(uri);
            return task;
         }
         if(uri.startsWith("file")){
             task.setType(Task.Type.FILE);
-            task.setUrl(uri);//待处理
             return task;
         }
         if (uri.startsWith("ftp")){
@@ -76,7 +86,22 @@ public class TaskFactory {
     }
 
 
+    public static Task gnrTask(Task oldTask,String newTaskName){
+        Task task = new Task(SystemInitInfo.get().getBasepath(),SystemInitInfo.get().getTerminalNo());
 
+
+
+
+
+
+
+
+
+
+
+        return task;
+
+    }
     public static Task gnrTask(String uri){
         return gnrTask(uri,null,null,null,null,null);
     }
@@ -85,6 +110,15 @@ public class TaskFactory {
         return gnrTask(uri,null,null,null,null,file);
     }
 
+    /**
+     *
+     * @param uri 完整url
+     * @param ftpip ftp地址
+     * @param ftpport ftp端口
+     * @param ftpusr ftp用户
+     * @param ftppass ftp 密码
+     * @return
+     */
     public static Task gnrTask(String uri,String ftpip,String ftpport,String ftpusr,String ftppass) {
         return gnrTask(uri,ftpip,ftpport,ftpusr,ftppass,null);
     }

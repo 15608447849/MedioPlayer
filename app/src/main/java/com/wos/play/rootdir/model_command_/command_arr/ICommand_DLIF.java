@@ -79,7 +79,7 @@ public class ICommand_DLIF implements iCommand {
     //发送广播 -> 告诉通讯服务 ->我要下载任务 fileDownloadNotifiy()
     private synchronized void sendNotifyToServer(String param) {
         if (context != null) {
-            Logs.i(TAG, "发送下载通知到服务器 - " + param);
+            Logs.i(TAG, "下载通知 到 调度服务器 - >>>  " + (param.equals("DLRS:")?" DLRS - 开始下载任务命令":" DLRS - 下载任务完成命令"));
             if (intent == null) {
                 intent = new Intent();
             }
@@ -127,12 +127,12 @@ public class ICommand_DLIF implements iCommand {
     //下载准备
     private void downloadZB(String param) {
         String[] var = null;
-        if (param == null) {
+        if (param != null) {
             if (param.startsWith("[")) {
                 param = param.substring(param.indexOf("[") + 1);
             }
             if (param.endsWith("]")) {
-                param = param.substring(param.lastIndexOf("]"));
+                param = param.substring(0,param.lastIndexOf("]"));
             }
             var = param.split(",");
         } else {
@@ -143,10 +143,15 @@ public class ICommand_DLIF implements iCommand {
                     SystemInitInfo.get().getFtpPass()
             };
         }
-        resetFTP(var[0], var[1], var[2], var[3]);
-        //发送下载队列
-        sendDownList();
-//      downloadEndNotifiy();
+        Logs.d(TAG,"设置 ftp 信息 :"+var);
+        if (var.length == 4){
+
+            resetFTP(var[0], var[1], var[2], var[3]);
+            //发送下载队列
+            sendDownList();
+            downloadEndNotifiy();
+        }
+
     }
 
     private void resetFTP(String ip, String port, String user, String pass) {

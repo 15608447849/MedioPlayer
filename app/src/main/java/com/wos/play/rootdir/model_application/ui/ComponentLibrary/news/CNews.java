@@ -336,7 +336,7 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
         //开始计时器
         unLoadContent();
         if (!flag_ones) {
-            UiHttpProxy.getPeoxy().getContent(url, mBroadAction);
+            UiHttpProxy.getPeoxy().update(url, mBroadAction,UiHttpProxy.NEWS_TYPE);
         }
         flag_ones = false;
         startTimer(updateTime * 1000);

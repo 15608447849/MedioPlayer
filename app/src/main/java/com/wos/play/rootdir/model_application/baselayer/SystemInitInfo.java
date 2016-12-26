@@ -190,11 +190,10 @@ public class SystemInitInfo {
     //初始化 读取 - > sdcard 目录下的 一个配置文件 ->
     private void initRead() {
         if (FileUtils.isFileExist(infos)){
-            //读取  内容转成 map
+            //读取 内容转成 map
           readInfo();
         }
-
-         //创建
+        //创建
         //如果不可以创建 ->
     }
 

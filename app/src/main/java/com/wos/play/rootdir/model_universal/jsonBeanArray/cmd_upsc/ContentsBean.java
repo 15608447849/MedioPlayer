@@ -52,7 +52,7 @@ public class ContentsBean {
     }
 
     public int getUpdateFreq() {
-        return updateFreq;
+        return updateFreq==0?30:updateFreq;
     }
 
     public void setUpdateFreq(int updateFreq) {

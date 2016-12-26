@@ -307,7 +307,7 @@ public class CommunicationServer extends Service {
      * @param t 服务器返回值
      */
     private void processingResults(String t) {
-        if (t.trim().equals("cmd:error") || t.trim().equals("cmd:success") || t.trim().equals("cmd:sucess")) {
+        if (t.trim().equals("cmd:error") || t.trim().equals("cmd:success") || t.trim().equals("cmd:sucess") || t.trim().equals("cmd:timeout") ) {
             return;
         }
         StringTokenizer stz = null;

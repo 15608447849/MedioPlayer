@@ -7,8 +7,6 @@ import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.widget.ImageView;
 
-import com.wos.play.rootdir.model_universal.tool.Logs;
-
 /**
  * Created by user on 2016/11/29.
  * lzp.yw.com.medioplayer.model_application.ui.ComponentLibrary.weather.LedImageView
@@ -47,9 +45,9 @@ public class MeImageView extends ImageView{
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-        int x = (int) event.getX();
-        int y = (int) event.getY();
-        Logs.e(TAG,"onTouchEvent - action:"+event.getAction()+" x :"+x +" y :"+y);
+//        int x = (int) event.getX();
+//        int y = (int) event.getY();
+//        Logs.e(TAG,"onTouchEvent - action:"+event.getAction()+" x :"+x +" y :"+y);
 //      return super.onTouchEvent(event);
         return isTouch?isTouch:super.onTouchEvent(event);
     }

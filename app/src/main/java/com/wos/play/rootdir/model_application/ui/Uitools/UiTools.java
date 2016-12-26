@@ -7,7 +7,6 @@ import com.wos.play.rootdir.model_application.baselayer.BaseActivity;
 import com.wos.play.rootdir.model_application.baselayer.SystemInitInfo;
 import com.wos.play.rootdir.model_application.schedule.ScheduleReader;
 import com.wos.play.rootdir.model_application.ui.UiFactory.UiDataFilter;
-import com.wos.play.rootdir.model_application.ui.UiHttp.UiHttpProxy;
 import com.wos.play.rootdir.model_universal.tool.AppsTools;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 import com.wos.play.rootdir.model_universal.tool.MD5Util;
@@ -23,6 +22,7 @@ import cn.trinea.android.common.util.FileUtils;
  */
 
 public class UiTools {
+    private static final String TAG = "UI-工具";
     private static boolean isInit = false;
     private static File contentDir = null;
     private static String basepath;
@@ -30,44 +30,46 @@ public class UiTools {
     private static String weatherIconPath = null; //白天 day 黑夜 night
     private static String def_source_dir = null;
 
-    public static void init(Context context) {
-        final BaseActivity context1 = (BaseActivity) context;
+    public static void init(final BaseActivity activity) {
+        if (!isInit){
+            Logs.i(TAG," 初始化 - UI 工具");
+            UiDataFilter.getUiDataFilter().init(activity);// UI 过滤
+            basepath = SystemInitInfo.get().getBasepath();
+            appicon = SystemInitInfo.get().getAppicon();
+            contentDir = new File(SystemInitInfo.get().getJsonStore());//json根目录
+            //解压缩
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    if (isInit) {
+                        try {
+                            unzipWeatherIcon(activity, appicon);
+                            unzipDefSource(activity, basepath);
+                            //初始化排期读取
+                            ScheduleReader.getReader().initSch(SystemInitInfo.get().getJsonStore());
 
-        basepath = SystemInitInfo.get().getBasepath();
-        appicon = SystemInitInfo.get().getAppicon();
-        contentDir = new File(SystemInitInfo.get().getJsonStore());//json根目录
-
-
-        //
-        isInit = true;
-        //解压缩
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if (isInit) {
-                    try {
-                        UiHttpProxy.getPeoxy().init(context1);
-                        UiDataFilter.init(context1);// UI 过滤
-                        unzipWeatherIcon(context1, appicon);
-                        unzipDefSource(context1, basepath);
-//                        Mvitamios.initStreamMedia(context1); //初始化vitimio
-                        //初始化排期读取
-//                     ScheduleReader.getReader().initSch(SystemInitInfo.get().getJsonStore());
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
-            }
-        }).start();
+            }).start();
+            isInit = true;
+        }
+
+
 
     }
 
 
     public static void uninit() {
-        ScheduleReader.getReader().unInit();//关闭排期读取
-        UiDataFilter.unInit();
-        UiHttpProxy.getPeoxy().unInit();//ui下载关闭();//ui下载关闭
-        isInit = false;
+        if (isInit){
+            Logs.i(TAG," 注销 - UI 工具");
+            ScheduleReader.getReader().unInit();//关闭排期读取
+            UiDataFilter.getUiDataFilter().unInit();
+            isInit = false;
+        }
+
     }
 
     /**
@@ -134,7 +136,7 @@ public class UiTools {
 
     //存入数据 内容目录下  文件名请进行md5加密
     public static boolean storeContentToDirFile(String filename, String content) {
-        if (content == null && content.equals("")) {
+        if (content == null || content.equals("")) {
             return false;
         }
         if (!contentDir.exists()) {

@@ -63,6 +63,4 @@ public class DataListEntiy {
     public void clear(){
         map.clear();
     }
-
-
 }

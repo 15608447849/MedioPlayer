@@ -2,8 +2,11 @@ package com.wos.play.rootdir.model_application.ui.UiHttp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
 
 import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
+import com.wos.play.rootdir.model_command_.kernel.CommandPostBroad;
 import com.wos.play.rootdir.model_download.entity.UrlList;
 import com.wos.play.rootdir.model_download.override_download_mode.Task;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.content_gallary.DataObjsBean;
@@ -12,32 +15,34 @@ import com.wos.play.rootdir.model_universal.jsonBeanArray.content_weather.BaiduA
 import com.wos.play.rootdir.model_universal.tool.AppsTools;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-import rx.Observable;
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
-
-import static com.wos.play.rootdir.model_application.ui.Uitools.UiTools.storeContentToDirFile;
+import static com.wos.play.rootdir.model_universal.tool.AppsTools.uriTransionString;
 
 /**
  * Created by user on 2016/11/18.
  *  单例化
  */
-public class UiHttpProxy {
+public class UiHttpProxy{
     private static final String TAG = "_UiHttpProxy";
 
     private Context context;
+    private Handler handler ;
 
+
+
+    private boolean isInit = false;
     private static UiHttpProxy proxy;
+    private ExecutorService executor;
+
     private UiHttpProxy(){
 
     }
-
     public static UiHttpProxy getPeoxy(){
         if (proxy==null){
             proxy = new UiHttpProxy();
@@ -46,14 +51,42 @@ public class UiHttpProxy {
     }
     //初始化
     public void init(Context context){
-        this.context = context;
+
+        if (!isInit) {
+            Logs.i(TAG," 初始化 - UI网络访问类");
+            this.context = context;
+            handler = new Handler();
+            executor = Executors.newCachedThreadPool();
+            intent = new Intent();
+            isInit = true;
+        }
     }
     //消亡
     public void unInit(){
-        this.context = null;
+        if (isInit) {
+            Logs.i(TAG," 注销 - UI网络访问类");
+            if (executor!=null){
+                try {
+                    executor.shutdown();
+                    if(!executor.awaitTermination(2 * 1000, TimeUnit.MILLISECONDS)){
+                        //超时的时候向线程池中所有的线程发出中断(interrupted)。
+                        executor.shutdownNow();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }finally {
+                    executor=null;
+                }
+            }
+            this.context = null;
+            intent = null;
+            bundle = null;
+            isInit = false;
+        }
     }
 
-    private Intent intent = new Intent();
+    private Intent  intent;
+    private Bundle bundle;
     private ReentrantLock lock = new ReentrantLock();
     //发送指定广播
     private void sendUiComponet(String uiAction) {
@@ -63,149 +96,114 @@ public class UiHttpProxy {
         }
     }
 
+    private void sendTaskList(ArrayList<Task> list) {
+        if (context!=null && list!=null && list.size()>0){
+            if (bundle==null){
+                bundle = new Bundle();
+            }else{
+                bundle.clear();
+            }
+            intent.setAction(CommandPostBroad.ACTION);
+            bundle.putParcelableArrayList(CommandPostBroad.PARAM3,list);
+            intent.putExtras(bundle);
+            context.sendBroadcast(intent);
+        }
+    }
 
-    //图集 咨询等
-    public void getContent(final String url, final String broadAction) {
+    public static final int GALLERY_TYPE = 0;
+    public static final int NEWS_TYPE = 1;
+    public static final int WEATHRE_TYPE = 2;
+
+
+    public void update(final String url,final String action, final int type){
+        if (executor!=null && !executor.isShutdown()){
+            Logs.i(TAG, "UI - 网络访问操作  - [" + url+"]" +" current thread - "+Thread.currentThread().getName() );
+            if (url==null)  return;
+            executor.execute(new Runnable() {
+                public void run() {
+                    try {
+                       switch (type){
+                           case GALLERY_TYPE:
+                           case NEWS_TYPE:
+                               func1(url,action);
+                               break;
+                           case WEATHRE_TYPE:
+                               func2(url,action);
+                               break;
+                       }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+      }
+    }
+
+    private void func1(String url, String action) {
+
         try {
-            lock.lock();
-            Logs.i(TAG, "局部访问 - " + url);
-            Observable
-                    .just(url)
-                    .map(new Func1<String, String>() {
-                        @Override
-                        public String call(String newUrl) {
-                            return AppsTools.uriTransionString(AppsTools.urlEncodeParam(newUrl), null, null);//访问URL;
-                        }
-                    })
-                    .map(new Func1<String, String>() {
+            String result = uriTransionString(AppsTools.urlEncodeParam(url), null, null);//访问URL;
+            if (result==null) return;
+            result = AppsTools.justResultIsBase64decode(result);//base64 解密
+            if (result==null) return;
+            UiTools.storeContentToDirFile(url, result);//数据存储
 
-                        @Override
-                        public String call(String result) {
-                            return AppsTools.justResultIsBase64decode(result);//base64 解密
-                        }
-                    })
-                    .map(new Func1<String, GallaryBean>() {
-                        @Override
-                     public GallaryBean call(String datas) {
-                            UiTools.storeContentToDirFile(url, datas);//数据存储
-                        return  AppsTools.parseJsonWithGson(datas, GallaryBean.class);
-                        }
-                    })
-                    .flatMap(new Func1<GallaryBean, Observable<DataObjsBean>>() {
-                        @Override
-                        public Observable<DataObjsBean> call(GallaryBean gallaryBean) {
-                            return Observable.from(gallaryBean.getDataObjs());
-                        }
-                    })
-                    .map(new Func1<DataObjsBean, UrlList>() {
-                        @Override
-                        public UrlList call(DataObjsBean dataObjsBean) {
-                            UrlList listObj = new UrlList();
+            GallaryBean gallaryBean = AppsTools.parseJsonWithGson(result, GallaryBean.class);
+            if (gallaryBean==null) return;
+            List<DataObjsBean> dataObjList = gallaryBean.getDataObjs();
+            if (dataObjList!=null && dataObjList.size()>0) {
+                UrlList listObj = new UrlList();
+                for (DataObjsBean datas : dataObjList) {
+                    listObj.addTaskOnList(datas.getUrl());
+                    if (datas.getUrls() != null && !datas.getUrls().equals("")) {
+                        //切割字符串
+                        String[] urlarr = datas.getUrls().split(",");
 
-                            listObj.addTaskOnList(dataObjsBean.getUrl());
-
-                            if (dataObjsBean.getUrls() != null && !dataObjsBean.getUrls().equals("")) {
-                                //切割字符串
-                                String[] urlarr = dataObjsBean.getUrls().split(",");
-
-                                for (int i = 0; i < urlarr.length; i++) {
-                                    listObj.addTaskOnList(urlarr[i]);
-                                }
-                            }
-
-                            return listObj;
+                        for (int i = 0; i < urlarr.length; i++) {
+                            listObj.addTaskOnList(urlarr[i]);
                         }
-                    })
-                    .toList()// 合并
-                    .map(new Func1<List<UrlList>, UrlList>() {
-                        @Override
-                        public UrlList call(List<UrlList> urlLists) {
-                            UrlList list = new UrlList(context);
-                            for (UrlList urls : urlLists) {
-                                for (Task task : urls.getList()) {
-                                    list.addTaskOnList(task);
-                                }
-                            }
-                            return list;
-                        }
-                    })
-                    .subscribeOn(Schedulers.io()) //执行在异步
-                    .unsubscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())//回到主线程
-
-                    .subscribe(new Observer<UrlList>() {
-                        @Override
-                        public void onCompleted() {
-                            //发送广播 - 通知组件
-                            sendUiComponet(broadAction);
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                                e.printStackTrace();
-                        }
-
-                        @Override
-                        public void onNext(UrlList list) {
-                                    list.sendTaskToRemote();
-                                    list.destory();
-                        }
-                    });
-
+                    }
+                }
+                sendTaskList(listObj.getList());
+                sendAction(action);
+            }
         } catch (Exception e) {
             e.printStackTrace();
-        }finally {
+        }
+    }
+
+    private void sendAction(final String action) {
+        try {
+            lock.lock();
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    //发送广播 - 通知组件
+                    sendUiComponet(action);
+                }
+            });
+        } finally {
             lock.unlock();
         }
     }
 
 
+    private void func2(String url, final String action) {
 
-
-    //天气
-    public void getWeateher(final String url, final String broadAction) {
-        //upsg commad ->  copy  thanks you
         try {
-            lock.lock();
-            Logs.i(TAG, "局部访问 - " + url);
-            Observable.just(url)
-                    .map(new Func1<String, String>() {
-                        @Override
-                        public String call(String url) {
-                            return AppsTools.uriTransionString(url, AppsTools.baiduApiMap(), null);
-                        }
-                    })
-                    .map(new Func1<String, String>() {
-
-                        @Override
-                        public String call(String result) {
-                                return AppsTools.justResultIsUNICODEdecode(result);
-                        }
-                    })
-                    .map(new Func1<String, BaiduApiObject>() {
-                        @Override
-                        public BaiduApiObject call(String datas) {
-
-                                 //存数据
-                                    storeContentToDirFile(url, datas);
-                                    return AppsTools.parseJsonWithGson(datas, BaiduApiObject.class);
-                    }})
-                    .subscribeOn(Schedulers.io()) //执行在异步
-                    .unsubscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())//回到主线程
-                    .subscribe(new Action1<BaiduApiObject>() {
-                        @Override
-                        public void call(BaiduApiObject obj) {
-                            if (obj != null && obj.getErrNum() == 0 && obj.getErrMsg().equals("success")) {
-                                //发送广播 刷新ui
-                                sendUiComponet(broadAction);
-                            }
-                        }
-                    });
+            String result = uriTransionString(url, AppsTools.baiduApiMap(), null);
+            if (result==null) return;
+            result = AppsTools.justResultIsUNICODEdecode(result);
+            UiTools.storeContentToDirFile(url, result);
+            BaiduApiObject obj = AppsTools.parseJsonWithGson(result, BaiduApiObject.class);
+            if (obj != null && obj.getErrNum() == 0 && obj.getErrMsg().equals("success")) {
+                //发送广播 刷新ui
+                sendAction(action);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
 
+    }
 
 }

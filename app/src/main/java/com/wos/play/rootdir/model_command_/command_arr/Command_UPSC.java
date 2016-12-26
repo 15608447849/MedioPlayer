@@ -50,7 +50,7 @@ public class Command_UPSC implements iCommand {
         intent = new Intent();
         basePath = SystemInitInfo.get().getBasepath();
         storageLimits = SystemInitInfo.get().getStorageLimits();
-        taskStore = new UrlList(context);
+        taskStore = new UrlList();
     }
 
     private static ReentrantLock lock = new ReentrantLock();
@@ -92,7 +92,6 @@ public class Command_UPSC implements iCommand {
                     endTime = System.currentTimeMillis();
                     Logs.e(TAG, "清理资源 用时 : " + (endTime - startTime) + " 毫秒 ");
                     sendDataSaveTask();
-//                    taskStore.sendTkToRemote();
                     nonotifyDownLoad();
                 }
             }
@@ -224,7 +223,7 @@ public class Command_UPSC implements iCommand {
     private void clearSdcardSource() {
         //如果 true  清理!
         if (SdCardTools.justFileBlockVolume(basePath,storageLimits)) {
-            SdCardTools.clearTargetDir(basePath, taskStore.getListNames());
+            SdCardTools.clearTargetDir(basePath, taskStore.getTaskListFileNames());
         }
     }
 
@@ -240,7 +239,7 @@ public class Command_UPSC implements iCommand {
         }
         //二维码
         if (contentType.equals(CONTENT_TYPE.qrCode)){
-            Logs.d(TAG, "二维码 - " + content.getContentSource());
+
             taskStore.addTaskOnList(content.getContentSource());
         }
         //按钮
@@ -270,12 +269,13 @@ public class Command_UPSC implements iCommand {
         if (contentType.equals(CONTENT_TYPE.clock)) {//swf
             taskStore.addTaskOnList(content.getContentSource());
         }
-        //文本控件
-        if (contentType.equals(CONTENT_TYPE.text)) {
-        }
+
         //天气
         if (contentType.equals(weather)) {
             getUrlSource(content.getContentSource(), weather);
+        }
+        //文本控件
+        if (contentType.equals(CONTENT_TYPE.text)) {
         }
         //流媒体
         if (contentType.equals(CONTENT_TYPE.media)) {
@@ -299,10 +299,11 @@ public class Command_UPSC implements iCommand {
     private void getUrlSource(String contentSource, String type) {//
 
         try {
-            Logs.i(TAG, " 内容 url :" + contentSource);
+            Logs.i(TAG, " content - url [ " + contentSource+" ]");
             res = null;
             res = AppsTools.uriTransionString(AppsTools.urlEncodeParam(contentSource), null, null);
-            if (type.equals(CONTENT_TYPE.gallary) || type.equals(CONTENT_TYPE.news)) {  //咨询 图集
+            if (type.equals(CONTENT_TYPE.gallary) || type.equals(CONTENT_TYPE.news) || type.equals(CONTENT_TYPE.weather)) {  //咨询 图集 天气 ,base64解码
+
                 res = AppsTools.justResultIsBase64decode(res);
             }
             if (res != null) {

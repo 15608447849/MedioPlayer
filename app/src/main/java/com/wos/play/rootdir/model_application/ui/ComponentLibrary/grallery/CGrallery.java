@@ -355,7 +355,7 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
         //开始计时器
         unLoadContent();
         if (!flag_ones) {
-            UiHttpProxy.getPeoxy().getContent(url, mBroadAction);
+            UiHttpProxy.getPeoxy().update(url, mBroadAction,UiHttpProxy.GALLERY_TYPE);
         }
         flag_ones = false;
         startTimer(updateTime * 1000);

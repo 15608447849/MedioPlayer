@@ -75,20 +75,11 @@ public class ToolsActivity extends BaseActivity {
         ButterKnife.bind(this);
         registBroad(1);
         if(gotoApp()){
-            //初始化数据
-            initData();
             //初始化控件信息
             initViewValue();
         }
     }
 
-
-    /**
-     * 初始化数据对象
-     */
-    private void initData() {
-
-    }
     /**
      *  加载数据
      */
@@ -216,7 +207,7 @@ public class ToolsActivity extends BaseActivity {
         param.put("corpId",SystemInitInfo.get().getCompanyid());
         param.put("code",SystemInitInfo.get().getCompanyid());
         param.put("ip", AppsTools.getLocalIpAddress());
-        param.put("mac", AppsTools.getLocalMacAddressFromBusybox());
+        param.put("mac", AppsTools.getMacAddress(getApplicationContext()));
         if (screenSize==null){
             screenSize = AppsTools.getScreenSize(getApplicationContext());
         }

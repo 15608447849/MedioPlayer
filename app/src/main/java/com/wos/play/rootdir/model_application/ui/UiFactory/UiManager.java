@@ -1,12 +1,12 @@
 package com.wos.play.rootdir.model_application.ui.UiFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.wos.play.rootdir.model_application.ui.UiElements.page.IviewPage;
 import com.wos.play.rootdir.model_application.ui.UiStore.PagerStore;
 import com.wos.play.rootdir.model_universal.tool.Logs;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import static android.R.attr.id;
 
@@ -18,7 +18,7 @@ public class UiManager {
     private static UiManager instants = null;
     private boolean isInit = false;
     private UiManager() {
-        init();
+
     }
     public static UiManager getInstans(){
         if (instants == null){
@@ -30,10 +30,18 @@ public class UiManager {
     /**
      */
     public void initData() {
-        try {
-            isInit = true;
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (isInit){
+            return;
+        }
+        Logs.i(TAG," 初始化 - UI 管理器");
+        init();
+        isInit = true;
+    }
+    public void unInitData(){
+        if (isInit){
+            Logs.i(TAG," 注销 - UI 管理器");
+            stopTask();
+            isInit=false;
         }
     }
 

@@ -2,6 +2,8 @@ package com.wos.play.rootdir.model_universal.tool;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Looper;
 import android.util.Base64;
 import android.util.DisplayMetrics;
@@ -26,6 +28,7 @@ import java.net.MalformedURLException;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -51,45 +54,60 @@ public class AppsTools {
     }
 
     private static String callCmd(String cmd,String filter) {
-        String result = "";
-        String line = "";
+        String result = null;
+
         try {
+
             Process proc = Runtime.getRuntime().exec(cmd);
             InputStreamReader is = new InputStreamReader(proc.getInputStream());
             BufferedReader br = new BufferedReader(is);
 
+            String line = null;
             //执行命令cmd，只取结果中含有filter的这一行
-            while ((line = br.readLine ()) != null && line.contains(filter)== false) {
+            while ((line = br.readLine ()) != null && !line.contains(filter)) {
                 //result += line;
-                Logs.i("line: "+line);
             }
-
             result = line;
-            Logs.i("result "+result);
         }
         catch(Exception e) {
             e.printStackTrace();
         }
         return result;
     }
+
+    // 获取 mac 地址
+    public static String getMacAddress(Context context){
+
+        String mac = getLocalMacAddressFromBusybox();
+        if (mac==null)
+            mac = getLocalMacAddressFromWifiInfo(context);
+        return mac;
+    }
+
+
+    //根据Wifi信息获取本地Mac
+    public static String getLocalMacAddressFromWifiInfo(Context context){
+        WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        WifiInfo info = wifi.getConnectionInfo();
+        return info.getMacAddress();
+    }
     /**
-     * get mac
+     * get busybox mac
      */
     public static String getLocalMacAddressFromBusybox(){
-        String result = "";
-        String Mac = "";
+        String result = null;
         result = callCmd("busybox ifconfig","HWaddr");
 
         //如果返回的result == null，则说明网络不可取
         if(result==null){
-            return "网络出错，请检查网络";
+            return null;
         }
-
+        String Mac = "";
         //对该行数据进行解析
         //例如：eth0      Link encap:Ethernet  HWaddr 00:16:E8:3E:DF:67
         if(result.length()>0 && result.contains("HWaddr")==true){
             Mac = result.substring(result.indexOf("HWaddr")+6, result.length()-1);
-            Logs.i("Mac:"+Mac+" Mac.length: "+Mac.length());
+            Logs.i("Mac:"+Mac+" Mac.length: "+ Mac.length());
 
             if(Mac.length()>1){
                 Mac = Mac.replaceAll(" ", "");
@@ -207,8 +225,6 @@ public class AppsTools {
      *
      */
     public static String justUriIsBase64GetUrl(String url){
-
-
         if (url.trim().lastIndexOf("=Base64")!=-1){
             url=url.trim().substring(0,url.lastIndexOf("=Base64"));
             Logs.e(TAG," delete Base64 -> url  "+url);
@@ -228,7 +244,7 @@ public class AppsTools {
             e.printStackTrace();
         }
         return null;
-    };
+    }
 
     /**
      * 把url转化为文本格式数据
@@ -237,12 +253,15 @@ public class AppsTools {
      * @return the xml data or "" if catch Exception
      */
     public static String uriTransionString(String urlString,Map<String,String> header,Map<String,String> ParamMap) {
+        if (urlString == null) return null;
+
         URL url;
         String result = null;
         try {
             url = new URL(urlString);
         } catch (MalformedURLException e1) {
-            e1.printStackTrace();
+            System.out.println("URL failt :"+urlString);
+            System.err.println(e1.getMessage());
             return result;
         }
         System.out.println("URL success :"+urlString);
@@ -542,14 +561,43 @@ public class AppsTools {
         }
     }
 
-    //生成城市url
-    public static String generWeateherContentUrl(String city) {
-        System.out.println("当前城市: "+city);
+
+
+    public static String mUrlEncode(String param){
+        if (justParamIsURLEncode(param)){
+            try {
+                param = URLEncoder.encode(param,"UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+        return param;
+    }
+    //判断参数 是否 encode
+    public static boolean justParamIsURLEncode(String param){
         try {
-            city = URLEncoder.encode(city,"UTF-8");
+            if (param.contains("+")){ //需要编码
+                return true;
+            }
+            String var1 = URLDecoder.decode(param,"UTF-8");
+
+            if (var1.equals(param)){
+                return true;  //需要encode
+            }
+             else {
+                return false;//不需要
+            }
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+
+        return true;
+    }
+
+    //生成->城市url
+    public static String generWeateherContentUrl(String city) {
+        System.out.println("-当前城市 ["+city+"]");
+        city = mUrlEncode(city);
         return "http://apis.baidu.com/apistore/weatherservice/recentweathers?cityname="+city;
     }
 
@@ -583,14 +631,14 @@ public class AppsTools {
             if (var3!=null && var3.length>0){
                 for (int i=0;i<var3.length;i++){
                     if (var3[i].contains("=")){
-                        var1= var1 + var3[i].substring(0,var3[i].indexOf("=")+1) + URLEncoder.encode(var3[i].substring(var3[i].indexOf("=")+1),"UTF-8");
+                        var1= var1 + var3[i].substring(0,var3[i].indexOf("=")+1) + mUrlEncode(var3[i].substring(var3[i].indexOf("=")+1));
                     }
                     if (i!=var3.length-1){
                         var1+="&";
                     }
                 }
             }
-        } catch (UnsupportedEncodingException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return url;
         }

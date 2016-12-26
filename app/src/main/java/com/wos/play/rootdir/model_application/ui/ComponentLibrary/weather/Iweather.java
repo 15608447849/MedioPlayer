@@ -63,7 +63,7 @@ public class Iweather extends FrameLayout implements IAdvancedComponent {
             this.x = (int) cb.getCoordX();
             this.y = (int) cb.getCoordY();
             layoutParams = new AbsoluteLayout.LayoutParams(width, height, x, y);
-            if (cb.getContents() != null && cb.getContents().size() == 1) {
+            if (cb.getContents() != null ) {//&& cb.getContents().size() == 1
                 uptimes = cb.getContents().get(0).getUpdateFreq();
                 url_style = cb.getContents().get(0).getContentSource();  // http://172.16.0.17:9000/content/getContentSource/weather?contentsourcetype=weather¤tCity=长沙"
                 url_content = AppsTools.generWeateherContentUrl(cb.getContents().get(0).getCity());
@@ -233,7 +233,7 @@ public class Iweather extends FrameLayout implements IAdvancedComponent {
     //刷新ui 刷新内容
     private void startBaiDuApi() {
         //  - 去通讯服务 - >
-        UiHttpProxy.getPeoxy().getWeateher(url_content, mBroadAction);
+        UiHttpProxy.getPeoxy().update(url_content, mBroadAction,UiHttpProxy.WEATHRE_TYPE);
     }
 
     //获取天气样式

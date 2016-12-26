@@ -5,14 +5,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
 
-import com.wos.play.rootdir.model_command_.command_arr.Command_SYTI;
 import com.wos.play.rootdir.model_command_.command_arr.Command_UPSC;
-import com.wos.play.rootdir.model_command_.command_arr.Command_VOLU;
 import com.wos.play.rootdir.model_command_.command_arr.ICommand_DLIF;
 import com.wos.play.rootdir.model_command_.command_arr.ICommand_SORE_JsonDataStore;
+import com.wos.play.rootdir.model_download.override_download_mode.Task;
 import com.wos.play.rootdir.model_universal.tool.CMD_INFO;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -43,9 +43,9 @@ public class CommandPostServer extends Service implements iCommand{
     private void initData() {
 
         //syncTime
-        commandList.put(CMD_INFO.SYTI,new Command_SYTI(getApplicationContext()));
+//        commandList.put(CMD_INFO.SYTI,new Command_SYTI(getApplicationContext()));
         // 音量控制
-        commandList.put(CMD_INFO.VOLU, new Command_VOLU());
+//        commandList.put(CMD_INFO.VOLU, new Command_VOLU());
         //关闭终端
 //        commandList.put(CMD_INFO.SHDO, new Command_SHDO());
         //收到排期
@@ -104,6 +104,8 @@ public class CommandPostServer extends Service implements iCommand{
         }
     }
 
+
+
     // 命令
     private class CmdObj{
         public String cmd = null;
@@ -152,7 +154,10 @@ public class CommandPostServer extends Service implements iCommand{
             commandList = new HashMap<>();
             initData();
         }
-        addCmds(cmd,param);
+        if (cmd!=null){
+            addCmds(cmd,param);
+        }
+
     }
 
     private void executes(String cmd, String param){
@@ -167,4 +172,14 @@ public class CommandPostServer extends Service implements iCommand{
     public void Execute(String param) {
         getCmds();
     }
+
+    //ui 更新下载任务
+    public void reserveTaskList(ArrayList<Task> parcelableArrayList) {
+        if (parcelableArrayList!=null && parcelableArrayList.size()>0 ){
+            Logs.i(TAG," UI - 更新下载任务 - 数量:" + parcelableArrayList.size());
+            ICommand_DLIF.get(getApplicationContext()).saveTaskList(parcelableArrayList);
+            ICommand_DLIF.get(null).downloadStartNotifiy();
+        }
+    }
+
 }

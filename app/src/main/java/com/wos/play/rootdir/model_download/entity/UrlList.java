@@ -60,9 +60,7 @@ public class UrlList {
             return;
         }
 
-        tasks.add(TaskFactory.gnrTask(url));
-        Logs.d(TAG, " 添加成功 - [" + url+"]");
-
+       addTaskOnList(TaskFactory.gnrTask(url));
     }
 
     /**
@@ -75,10 +73,15 @@ public class UrlList {
         if (tasks == null) {
             return;
         }
-        tasks.add(task);
+        if (!tasks.contains(task)){
+            tasks.add(task);
+            Logs.d(TAG, "添加任务 task - " + task.printInfo() +" - success");
+        }else {
+            Logs.d(TAG, "添加任务 task - " + task.printInfo() +" - exits");
+        }
+
         if (AppsTools.isMp4Suffix(task.getFileName())) {
-            task.setFileName(AppsTools.tanslationMp4ToPng(task.getFileName()));
-            addTaskOnList(task);
+            addTaskOnList(TaskFactory.gnrTask(AppsTools.tanslationMp4ToPng(task.getUrl())));
         }
     }
     //收取任务列表
@@ -98,14 +101,22 @@ public class UrlList {
     //发送任务到远程服务
     public void sendTaskToRemote(){
         if (context != null && tasks !=null && getListSize()>0) {
-            Logs.i(TAG, "准备下载 - 任务队列大小 : " + getListSize());
+            Logs.i(TAG, "任务url 队列 - 发送下载任务 到 下载中心 ");
+            printTasks();
             //发送任务->下载服务
             bundle.clear();
             bundle.putParcelableArrayList(DownloadBroad.PARAM1, tasks);
             intent.putExtras(bundle);
             context.sendBroadcast(intent);
-            Logs.i(TAG,"##########  sendDownLoadTaskList() success ##########");
             initLoadingList();
+        }
+    }
+
+    private void printTasks() {
+        if (tasks!=null){
+            for (Task task : tasks){
+                Logs.d(TAG,"["+task.getFileName()+"]");
+            }
         }
     }
 
@@ -119,7 +130,7 @@ public class UrlList {
         return tasks;
     }
 
-    public ArrayList<String> getListNames() {
+    public ArrayList<String> getTaskListFileNames() {
         ArrayList<String> list = new ArrayList<>();
         for (Task task : tasks){
             list.add(task.getFileName());

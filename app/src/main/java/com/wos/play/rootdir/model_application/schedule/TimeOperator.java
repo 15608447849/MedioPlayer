@@ -38,7 +38,7 @@ public class TimeOperator {
         System.out.println("Today's Local date : " + today);
 
     }
-    //只包含日期，没有时间
+    //只包含日期，没有时间 - 获取当天日期
     public static String getToday(){
         LocalDate today = LocalDate.now();
        return today.toString();
@@ -76,7 +76,7 @@ public class TimeOperator {
     }
 
     /*
-   * 将时间转换为时间戳
+   * 将时间字符串转换为时间戳
    */
     public static String dateToStamp(String s){
         String res = null;
@@ -101,13 +101,13 @@ public class TimeOperator {
         return ts;
     }
     /**
-     * 比较时间大小
+     * 比较时间大小  boolean 清除年月日
      */
     public static int compareTime(long timeStamp1 ,long timeStamp2,boolean clearY_M_D){
 
-        System.out.println("timeStamp1-");
+//        System.out.println("timeStamp1-");
         printTargetTimeStamp(timeStamp1);
-        System.out.println("timeStamp2-");
+//        System.out.println("timeStamp2-");
         printTargetTimeStamp(timeStamp2);
 
         int result= 0;
@@ -125,27 +125,13 @@ public class TimeOperator {
                 c2.clear(Calendar.MONTH);
                 c2.clear(Calendar.YEAR);
                 c2.set(Calendar.DATE,1);
-
             }
-//            System.out.println("11-");
-//            printTargetTimeStamp(c1.getTimeInMillis());
-//            System.out.println("22-");
-//            printTargetTimeStamp(c2.getTimeInMillis());
-//            System.out.println("->"+c1.toString());
-//            System.out.println("->"+c2.toString());
+
 
          result=c1.compareTo(c2);
         }catch(Exception e){
             e.printStackTrace();
         }
-
-        /*if(result==0)
-            System.out.println("timeStamp1 相等 timeStamp2");
-        else if(result<0)
-            System.out.println("timeStamp1 小于 timeStamp1");
-        else
-            System.out.println("timeStamp1 大于 timeStamp2");*/
-
         return result;
     }
 
@@ -157,11 +143,11 @@ public class TimeOperator {
     public static void printlnResult(int result,int type){
         String var = type == 0?"开始时间":"结束时间";
         if(result==0)
-            System.out.println(var+" 相等 当前时间");
+            System.out.println(var+" == 当前时间");
         else if(result<0)
-            System.out.println(var+" 小于 当前时间");
+            System.out.println(var+" < 当前时间");
         else
-            System.out.println(var+" 大于 当前时间");
+            System.out.println(var+" > 当前时间");
     }
 
     /**
@@ -228,27 +214,29 @@ public class TimeOperator {
         return getMillisecond(dateToStamp(),Long.valueOf(end));
     }
 
+    //判断开始时间和结束时间
     public static int justStart_EndTime(long startTime,long endTime) {
 
-        int result = -1;
+        int result = Efficacy.TYPE.error;
+
         int res = TimeOperator.compareTime(startTime, TimeOperator.dateToStamp(), true);
         printlnResult(res,0);
         if (res != 0) {
             if (res > 0) {
-                //开始时间大于 当前时间
-                result = 3;
+                //开始时间 > 当前时间
+                result = Efficacy.TYPE.after_the_current_time;
             }
-            if (res < 0) {
-                //判断 结束时间
+            if (res < 0) {// 开始时间<当前时间
+                //继续 判断 结束时间
                 res = TimeOperator.compareTime(endTime, TimeOperator.dateToStamp(), true);
                 printlnResult(res,1);
                 if (res != 0) {
                     if (res > 0) {
                         //结束时间 大于 当前时间
-                        result = 2;
+                        result = Efficacy.TYPE.in_the_current_time;
                     } else {
                         //结束时间 小于 当前时间
-                        result = 1;
+                        result = Efficacy.TYPE.before_the_current_time;
                     }
                 }
             }
@@ -260,14 +248,14 @@ public class TimeOperator {
             if (res != 0) {
                 if (res > 0) {
                     //结束时间 大于 当前时间
-                    result = 2;
+                    result = Efficacy.TYPE.in_the_current_time;
                 } else {
                     //结束时间 小于 当前时间
-                    result = 1;
+                    result = Efficacy.TYPE.before_the_current_time;
                 }
             } else {
                 //结束时间 == 当前时间
-                result = -1;
+                result = Efficacy.TYPE.error;
             }
         }
         return result;

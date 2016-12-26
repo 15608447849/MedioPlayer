@@ -42,7 +42,7 @@ public class CStreamMedioForVitamio extends FrameLayout implements IComponent{
             this.x = (int)cb.getCoordX();
             this.y = (int)cb.getCoordY();
             layoutParams = new AbsoluteLayout.LayoutParams(width,height,x,y);
-            if (cb.getContents()!=null && cb.getContents().size()==1) {
+            if (cb.getContents()!=null ) {//&& cb.getContents().size()==1
                 createContent(cb.getContents().get(0));
             }
             this.isInitData = true;

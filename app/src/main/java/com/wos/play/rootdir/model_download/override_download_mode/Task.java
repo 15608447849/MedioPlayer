@@ -218,6 +218,14 @@ public class Task implements Parcelable {
         }
     };
 
+    @Override
+    public boolean equals(Object o) {
+        if (this.type == Type.FTP && ((Task)o).getType()==Type.FTP){
+            return this.fileName.equals(((Task)o).getFileName());
+        }else {
+            return super.equals(o);
+        }
+    }
 
     public String printInfo(){
 
@@ -233,13 +241,13 @@ public class Task implements Parcelable {
         }
 
         if (type==Type.FTP){
-            sb.append("当前类型 - ftp , ");
-            sb.append("address - "+ ftpAddress +" , ");
-            sb.append("port - "+ ftpPort +" , ");
-            sb.append("user - "+ ftpUser +" , ");
-            sb.append("pass - "+ ftpPass +" , ");
-            sb.append("资源远程路径 - "+ remotePath+fileName+" , ");
-            sb.append("资源本地路径 - "+ savePath+fileName);
+            sb.append("当前类型 - ftp [");
+            sb.append(ftpAddress +" ; ");
+            sb.append(ftpPort +" ; ");
+            sb.append(ftpUser +" ; ");
+            sb.append(ftpPass +"]");
+            sb.append("资源远程路径 - ["+ remotePath+fileName+"]");
+            sb.append("资源本地路径 - ["+ savePath+fileName+"]");
         }
         return sb.toString()+" - hashcode ["+this.hashCode()+"]";
     }

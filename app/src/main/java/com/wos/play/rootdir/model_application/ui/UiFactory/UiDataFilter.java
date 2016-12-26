@@ -6,11 +6,13 @@ import com.wos.play.rootdir.model_application.baselayer.BaseActivity;
 import com.wos.play.rootdir.model_application.schedule.LocalScheduleObject;
 import com.wos.play.rootdir.model_application.ui.UiElements.page.IviewPage;
 import com.wos.play.rootdir.model_application.ui.UiElements.page.pagesView;
+import com.wos.play.rootdir.model_application.ui.UiHttp.UiHttpProxy;
 import com.wos.play.rootdir.model_application.ui.UiStore.ImageStore;
 import com.wos.play.rootdir.model_application.ui.UiStore.PagerStore;
 import com.wos.play.rootdir.model_application.ui.Uitools.ImageAsyLoad;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.PagesBean;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ProgramBean;
+import com.wos.play.rootdir.model_universal.tool.AppsTools;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 
 import java.util.List;
@@ -22,48 +24,66 @@ import java.util.List;
 public class UiDataFilter {
     private static final String TAG = "_uidataFilete";
 
-    private  static boolean isInit = false;
+    private  boolean isInit = false;
 
-    public static BaseActivity activity = null;
+    public  BaseActivity activity = null;
 
-    private static int homeKey = -1;
+    private int homeKey = -1;
 
-    private static Handler handler ;
+    private Handler handler ;
+
+    private static UiDataFilter uidf;
 
 
+    private UiDataFilter() {
+    }
+    public static UiDataFilter getUiDataFilter(){
+        if (uidf==null){
+            uidf = new UiDataFilter();
+        }
+        return uidf;
 
-    //是否初始化
-    public static boolean isInit() {
-        return isInit;
     }
 
-    public static void init(BaseActivity activity){
-        UiDataFilter.activity = activity;
-        UiManager.getInstans().initData();
-        handler = new Handler();
 
 
-        isInit = true;
+    public void init(BaseActivity activity){
+
+       if (!AppsTools.checkUiThread()){
+            Logs.e(TAG,"不在UI主线程 - 不可执行 ");
+            return;
+        }
+        if (!isInit){
+            Logs.i(TAG," 初始化 - UI 数据过滤类");
+            this.activity = activity;
+            handler = new Handler();
+            UiManager.getInstans().initData();
+            UiHttpProxy.getPeoxy().init(activity);
+            isInit = true;
+        }
+
     }
 
-    public static void unInit(){
-        UiDataFilter.activity = null;
-        handler = null;
-        ImageAsyLoad.clear();
-        ImageStore.getInstants().clearCache();
-        isInit = false;
+    public void unInit(){
+        if (isInit) {
+            Logs.i(TAG, " 注销 - UI 数据过滤类");
+            UiManager.getInstans().unInitData();
+            UiHttpProxy.getPeoxy().unInit();//ui下载关闭();
+            ImageStore.getInstants().clearCache();
+            ImageAsyLoad.clear();
+            this.activity = null;
+            handler = null;
+            isInit = false;
+        }
     }
 
-    public static void  filter(final LocalScheduleObject current){
+    public void  filter(final LocalScheduleObject current){
         Logs.i(TAG," 转换数据中 ...");
         if (!isInit){
             Logs.e(TAG," 未初始化 activity - 不可执行 ");
             return;
         }
-//        if (!AppsTools.checkUiThread()){
-//            Logs.e(TAG,"不在UI主线程 - 不可执行 ");
-//            return;
-//        }
+
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -80,7 +100,7 @@ public class UiDataFilter {
 
 
     // 创建 布局层
-    private static void createLayout(ProgramBean program) {
+    private void createLayout(ProgramBean program) {
         UiManager.getInstans().stopTask();
         homeKey =-1;
        // ViewStore.getInstant().pageTanslationCache();//页面 转存
@@ -93,7 +113,7 @@ public class UiDataFilter {
     }
 
     //循环遍历所有页面存储
-    private static void repeatPageStore(List<PagesBean> pages) {
+    private void repeatPageStore(List<PagesBean> pages) {
         int key;
         IviewPage pageView;
         for (PagesBean page : pages){
