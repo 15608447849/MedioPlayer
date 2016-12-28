@@ -56,7 +56,6 @@ public class UrlList {
             return;
         }
         if (url == null || url.equals("") || url.equals("null")) {
-            Logs.e(TAG, " 添加失败 [" + url+"]");
             return;
         }
 
@@ -69,7 +68,7 @@ public class UrlList {
      * @param task
      */
     public synchronized void addTaskOnList(Task task) {
-        Logs.d(TAG, "添加任务 task - " + task.getFileName());
+//        Logs.d(TAG, "添加任务 task - " + task.getFileName());
         if (tasks == null) {
             return;
         }

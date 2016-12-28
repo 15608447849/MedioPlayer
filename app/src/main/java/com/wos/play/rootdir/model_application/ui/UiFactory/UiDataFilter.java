@@ -14,6 +14,7 @@ import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.PagesBean;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ProgramBean;
 import com.wos.play.rootdir.model_universal.tool.AppsTools;
 import com.wos.play.rootdir.model_universal.tool.Logs;
+import com.wos.play.rootdir.model_universal.tool.UnImpl;
 
 import java.util.List;
 
@@ -77,10 +78,17 @@ public class UiDataFilter {
         }
     }
 
+
+
+
     public void  filter(final LocalScheduleObject current){
         Logs.i(TAG," 转换数据中 ...");
         if (!isInit){
             Logs.e(TAG," 未初始化 activity - 不可执行 ");
+            return;
+        }
+
+        if (UnImpl.func_CB(current.getSchedule().getType())){
             return;
         }
 

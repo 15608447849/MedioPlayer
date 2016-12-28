@@ -36,7 +36,7 @@ public class Rules {
 
         private RepeatTypeBean repeatType;
         private String startday;
-        private Object endday;
+        private String endday;
         private boolean stop;
         private boolean repeatWholeDay;
         private String startTime;
@@ -65,11 +65,11 @@ public class Rules {
             this.startday = startday;
         }
 
-        public Object getEndday() {
+        public String getEndday() {
             return endday;
         }
 
-        public void setEndday(Object endday) {
+        public void setEndday(String endday) {
             this.endday = endday;
         }
 

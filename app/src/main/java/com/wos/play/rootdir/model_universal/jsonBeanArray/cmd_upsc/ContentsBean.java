@@ -6,7 +6,7 @@ package com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc;
  * lzp
  *
  */
-public class ContentsBean {
+public class ContentsBean extends PublicAttibute{
     /**
      * id : 0
      * componentId : 756

@@ -1,12 +1,14 @@
 package com.wos.play.rootdir.model_application.schedule;
 
+import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ScheduleBean;
+import com.wos.play.rootdir.model_universal.tool.AppsTools;
+import com.wos.play.rootdir.model_universal.tool.Logs;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ScheduleBean;
-
 /**
- * Created by user on 2016/11/9.
+ * Created by lzp on 2016/11/9.
  *
  */
 public class LocalScheduleObject {
@@ -26,11 +28,12 @@ public class LocalScheduleObject {
         this.type = type;
     }
 
-    public void startTimer(TimerTask timerTask, long millisecond){
+    public void startTimer(TimerTask atimerTask, long millisecond){
         stopTimer();
-        timerTask = timerTask;
+        this.timerTask = atimerTask;
         timer = new Timer();
         timer.schedule(timerTask,millisecond);
+        Logs.d("本地时间对象","排期id - "+schedule.getId()+" - "+AppsTools.printTimes(millisecond));
     }
     public void stopTimer(){
         if (timerTask!=null){
@@ -78,4 +81,6 @@ public class LocalScheduleObject {
     public void setSchedule(ScheduleBean schedule) {
         this.schedule = schedule;
     }
+
+
 }

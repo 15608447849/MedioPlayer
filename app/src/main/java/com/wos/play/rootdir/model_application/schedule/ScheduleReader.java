@@ -1,5 +1,6 @@
 package com.wos.play.rootdir.model_application.schedule;
 
+import com.wos.play.rootdir.model_application.ui.UiFactory.UiDataFilter;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ScheduleBean;
 import com.wos.play.rootdir.model_universal.tool.AppsTools;
 import com.wos.play.rootdir.model_universal.tool.Logs;
@@ -103,7 +104,7 @@ public class ScheduleReader implements ListeningScheduleEventThread.OnScheduleEv
 
 
     //根据类型 获取 string
-    private String getScheduleType(Integer type) {
+    public static String getScheduleType(Integer type) {
         String var = null;
         switch (type) {
             case 1:
@@ -161,7 +162,7 @@ public class ScheduleReader implements ListeningScheduleEventThread.OnScheduleEv
     private void deleteGroupSchedule(int type) {
 
         if (scheduleMap.containsKey(type)) {
-            Logs.e(TAG, "删除一组排期 \n type ==" + getScheduleType(type) + " 现在大小 : " + scheduleMap.get(type).size());
+            Logs.e(TAG, "删除一组排期 \n type ==" + getScheduleType(type) + " 组 _ 排期数量 : " + scheduleMap.get(type).size());
             scheduleMap.get(type).clear();
         }
 
@@ -254,7 +255,8 @@ public class ScheduleReader implements ListeningScheduleEventThread.OnScheduleEv
 
     //还有可用排期存在?
     private boolean isExit() {
-        if (scheduleMap.get(4).size() > 0) {
+
+        if (scheduleMap.get(1).size() > 0) {
             return true;
         }
         if (scheduleMap.get(2).size() > 0) {
@@ -263,7 +265,7 @@ public class ScheduleReader implements ListeningScheduleEventThread.OnScheduleEv
         if (scheduleMap.get(3).size() > 0) {
             return true;
         }
-        if (scheduleMap.get(1).size() > 0) {
+        if (scheduleMap.get(4).size() > 0) {
             return true;
         }
         if (scheduleMap.get(5).size() > 0) {
@@ -293,10 +295,10 @@ public class ScheduleReader implements ListeningScheduleEventThread.OnScheduleEv
     /*------------------------------------分组过滤---------------------------------------------------------------------------------*/
     private ParseScheTempObject filterScheduleList() {
 
-        //优先级 :插播4 >点播 2>重复 3> 轮播 1 >5重复
+        //优先级 :插播4 >点播2 > 重复3 > 轮播1 >默认5
         if (scheduleMap.get(4).size() > 0) {
             Logs.i(TAG, "返回全部的 插播 排期");
-            return new ParseScheTempObject(3, scheduleMap.get(4));
+            return new ParseScheTempObject(4, scheduleMap.get(4));
         }
         if (scheduleMap.get(2).size() > 0) {
             Logs.i(TAG, "返回全部的 点播 排期");
@@ -312,7 +314,7 @@ public class ScheduleReader implements ListeningScheduleEventThread.OnScheduleEv
         }
         if (scheduleMap.get(5).size() > 0) {
             Logs.i(TAG, "返回全部的 默认 排期");
-            return new ParseScheTempObject(1, scheduleMap.get(1));
+            return new ParseScheTempObject(5, scheduleMap.get(5));
         }
         return null;
     }
@@ -340,7 +342,7 @@ public class ScheduleReader implements ListeningScheduleEventThread.OnScheduleEv
                     break;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Logs.e(TAG,"filterOnlySchudule() - "+ e.getMessage());
         }
         return scheBean;
     }
@@ -357,39 +359,45 @@ public class ScheduleReader implements ListeningScheduleEventThread.OnScheduleEv
         ArrayList<LocalScheduleObject> storeList = new ArrayList<>();
 
         for (ScheduleBean entity : schduleList) {
-            int result = Efficacy.justTime(entity);
-
-            if (result == Efficacy.TYPE.error || result == Efficacy.TYPE.before_the_current_time) {
-                continue;
-            }
-            if (result == Efficacy.TYPE.after_the_current_time) {//添加到未到时间 排期列表
-                addNotToTimeSchdule(
-                        new LocalScheduleObject(
-                                entity.getType(),
-                                initTimeTask(),
-                                TimeOperator.getMillisecond(entity.getStartTime()
-                                )
-                        ));
-            }
-            if (result == Efficacy.TYPE.in_the_current_time) {
-                storeList.add(new LocalScheduleObject(entity.getStartTime(), entity.getEndTime(), entity));
-            }
+            effiOnlySchduler(storeList, entity);
         }
-
-
         return storeList;
+    }
+
+    //检查单个排期
+    private void effiOnlySchduler(ArrayList<LocalScheduleObject> storeList, ScheduleBean entity) {
+        int result = Efficacy.justTime(entity);
+
+        if (result == Efficacy.TYPE.error || result == Efficacy.TYPE.before_the_current_time) {//错误 或者 当前时间 之前 -> 下一次
+            return;
+        }
+        if (result == Efficacy.TYPE.after_the_current_time) {//添加到未到时间 排期列表
+            addNotToTimeSchdule(
+                    new LocalScheduleObject(
+                            entity.getType(),
+                            initTimeTask(),
+                            TimeOperator.getMillisecond(entity.getStartTime())
+                    ));
+        }
+        if (result == Efficacy.TYPE.in_the_current_time) {
+            storeList.add(new LocalScheduleObject(entity.getStartTime(), entity.getEndTime(), entity));
+        }
     }
 
     // 快速 排序 1
     private LocalScheduleObject sortList(ArrayList<LocalScheduleObject> storeList) {
-        if (storeList.size() > 0) {
-            if (storeList.size() == 1) {
-                return storeList.get(0);
-            } else {
-                //排序 - 按 - 开始时间大小
-                storeList = sortSchudule(storeList);
-                return storeList.get(0);
+        try {
+            if (storeList.size() > 0) {
+                if (storeList.size() == 1) {
+                    return storeList.get(0);
+                } else {
+                    //排序 - 按 - 开始时间大小
+                    storeList = sortSchudule(storeList);
+                    return storeList.get(0);
+                }
             }
+        } catch (Exception e) {
+            Logs.e(TAG,"sortList() - "+e.getMessage());
         }
         return null;
     }
@@ -406,9 +414,9 @@ public class ScheduleReader implements ListeningScheduleEventThread.OnScheduleEv
                 return a - b > 0 ? -1 : a - b == 0 ? 0 : 1;  //-1代表前者小，0代表两者相等，1代表前者大。
             }
         });
-        for (int i = 0; i < playList.size(); i++) {
-            System.out.println("index : " + i + " - " + playList.get(i).getStart());
-        }
+//        for (int i = 0; i < playList.size(); i++) {
+//            System.out.println("index : " + i + " - " + playList.get(i).getStart());
+//        }
         return playList;
     }
 
@@ -465,18 +473,22 @@ public class ScheduleReader implements ListeningScheduleEventThread.OnScheduleEv
                 addScheduleToMap(entity);
             }
             Logs.i(TAG, "---分组 完成---");
-            current = parseing();
+            try {
+                current = parseing();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             Logs.i(TAG, "---解析 完成---");
 
-//            if (current==null){
-//                Logs.i(TAG,"---没有可播放排期任务---");
-//                return;
-//            }
-            //转换数据
-//            UiDataFilter.getUiDataFilter().filter(current);
-//            current.startTimer(initTimeTask(),TimeOperator.getMillisecond(current.getEnd()));
+            if (current==null){
+                Logs.i(TAG,"---没有可播放排期任务---");
+                return;
+            }
+            current.startTimer(initTimeTask(),TimeOperator.getMillisecond(current.getEnd()));
             Logs.i(TAG, "---设置时间完成---");
-            //发送 排期信息 -> ui制作
+
+            //转换数据 - 发送 排期信息 -> ui制作
+            UiDataFilter.getUiDataFilter().filter(current);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

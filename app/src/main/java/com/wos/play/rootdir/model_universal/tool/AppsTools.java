@@ -260,11 +260,11 @@ public class AppsTools {
         try {
             url = new URL(urlString);
         } catch (MalformedURLException e1) {
-            System.out.println("URL failt :"+urlString);
+            System.out.println("URL connect failt :"+urlString);
             System.err.println(e1.getMessage());
             return result;
         }
-        System.out.println("URL success :"+urlString);
+//        System.out.println("URL success :"+urlString);
         HttpURLConnection httpUrlConnection;
         OutputStream out = null;
         BufferedReader br = null;
@@ -325,7 +325,7 @@ public class AppsTools {
         }else{
             httpUrlConnection.connect();//只是建立了一个与服务器的tcp连接没有实际发送http请求。
         }
-            System.out.println("httpUrlConnection connect()");
+//            System.out.println("httpUrlConnection connect()");
             //连接
             if (httpUrlConnection.getResponseCode()==200){
             br = new BufferedReader( new InputStreamReader(httpUrlConnection.getInputStream(),"UTF-8"));//<===注意，实际发送请求的代码段就在这里
@@ -340,7 +340,7 @@ public class AppsTools {
             }
             //断开连接
             httpUrlConnection.disconnect();
-            System.out.println("httpUrlConnection disconnect()");
+//            System.out.println("httpUrlConnection disconnect()");
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -646,4 +646,35 @@ public class AppsTools {
     }
 
 
+    public static String  printTimes(long millisecond){
+     StringBuffer sb =new StringBuffer();
+
+        sb.append("时间差约等-:");
+
+        String val = "" ;
+      
+        if (millisecond<1000){
+            val ="毫秒";
+        }
+        else
+        if ( (millisecond=millisecond/1000) > 0 && millisecond<60){
+            //毫秒 -> 秒
+            val = "秒";
+        }
+        else
+        if ((millisecond=millisecond/60)>0 && millisecond<60){
+            val = "分";
+        }
+        else
+        if ((millisecond=millisecond/60)>0 && millisecond<12){
+            val = "小时";
+        }
+        else
+        if ((millisecond=millisecond/24)>0){
+            val = "天";
+        }
+       sb.append(millisecond).append(val);
+        return sb.toString();
+
+    }
 }

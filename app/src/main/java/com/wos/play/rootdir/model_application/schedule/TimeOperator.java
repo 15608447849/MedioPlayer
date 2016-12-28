@@ -61,6 +61,10 @@ public class TimeOperator {
         System.out.println("What is value of this instant " + timestamp);
     }
 
+    // 获取Calendar
+    public static Calendar getCalendar(){
+        return Calendar.getInstance();
+    }
 
     /**
      * 传递时间戳 变成具体日期
@@ -79,6 +83,10 @@ public class TimeOperator {
    * 将时间字符串转换为时间戳
    */
     public static String dateToStamp(String s){
+        if (RegexMatches(s)){
+           s = (s.split("\\s"))[1];
+        }
+        s = getToday() +" " +s;
         String res = null;
         try {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -104,7 +112,6 @@ public class TimeOperator {
      * 比较时间大小  boolean 清除年月日
      */
     public static int compareTime(long timeStamp1 ,long timeStamp2,boolean clearY_M_D){
-
 //        System.out.println("timeStamp1-");
         printTargetTimeStamp(timeStamp1);
 //        System.out.println("timeStamp2-");
@@ -113,8 +120,8 @@ public class TimeOperator {
         int result= 0;
         try
         {
-        java.util.Calendar c1=java.util.Calendar.getInstance();
-        java.util.Calendar c2=java.util.Calendar.getInstance();
+        java.util.Calendar c1=getCalendar();
+        java.util.Calendar c2=getCalendar();
         c1.setTimeInMillis(timeStamp1);
         c2.setTimeInMillis(timeStamp2);
             if (clearY_M_D){
@@ -126,8 +133,6 @@ public class TimeOperator {
                 c2.clear(Calendar.YEAR);
                 c2.set(Calendar.DATE,1);
             }
-
-
          result=c1.compareTo(c2);
         }catch(Exception e){
             e.printStackTrace();
@@ -159,8 +164,8 @@ public class TimeOperator {
         try
         {
             java.text.DateFormat df=new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            java.util.Calendar c1=java.util.Calendar.getInstance();
-            java.util.Calendar c2=java.util.Calendar.getInstance();
+            java.util.Calendar c1=getCalendar();
+            java.util.Calendar c2=getCalendar();
             c1.setTime(df.parse(time1));
             c2.setTime(df.parse(time2));
             result=c1.compareTo(c2);
@@ -182,17 +187,14 @@ public class TimeOperator {
      * 忽略年月日
      */
     public static long getMillisecond(long start,long end){
-
-
         long milli = 0;
-        java.util.Calendar s=java.util.Calendar.getInstance();
-        java.util.Calendar d=java.util.Calendar.getInstance();
+        java.util.Calendar s=getCalendar();
+        java.util.Calendar d=getCalendar();
         s.setTimeInMillis(start);
         d.setTimeInMillis(end);
         milli = ((d.get(Calendar.HOUR_OF_DAY) - s.get(Calendar.HOUR_OF_DAY)) * 60 * 60 *1000);
         milli += ((d.get(Calendar.MINUTE) - s.get(Calendar.MINUTE)) * 60 *1000);
         milli += ((d.get(Calendar.SECOND) - s.get(Calendar.SECOND))*1000);
-        System.err.println("------------------- 时间差 : "+milli +" 毫秒 " );
         return milli;
     }
 
@@ -207,14 +209,22 @@ public class TimeOperator {
     /**
      * 计算毫秒数 差值
      * 忽略年月日
-     * 冲当前时间到结束
+     * 当前时间->结束时间
      */
     public static long getMillisecond(String end){
-
-        return getMillisecond(dateToStamp(),Long.valueOf(end));
+        if (RegexMatches(end)){
+            end = (end.split("\\s"))[1];
+        }
+        long endDate = dateToStamp()+1000;
+        try {
+            endDate = Long.valueOf(end);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+        return getMillisecond(dateToStamp(),endDate);
     }
 
-    //判断开始时间和结束时间
+    /**判断开始时间和结束时间与当前时间的关系*/
     public static int justStart_EndTime(long startTime,long endTime) {
 
         int result = Efficacy.TYPE.error;
@@ -260,4 +270,42 @@ public class TimeOperator {
         }
         return result;
     }
+
+
+    //获取今天是这周的第几天
+    public static int getDateInWeekDay(Date date){
+        Calendar cal = getCalendar();
+        if (date!=null){
+            cal.setTime(date);
+        }
+        return cal.get(Calendar.DAY_OF_WEEK);
+    }
+    //获取今天是这月的第几天
+    public static int getDateInMonthDay(Date date){
+        Calendar cal = getCalendar();
+        if (date!=null){
+            cal.setTime(date);
+        }
+        return cal.get(Calendar.DAY_OF_MONTH);
+    }
+
+    //获取今天是第几年
+    public static int getDateInYear(Date date){
+        Calendar cal = getCalendar();
+        if (date!=null){
+            cal.setTime(date);
+        }
+        return cal.get(Calendar.YEAR);
+    }
+
+    //获取今年第几个月
+    public static int getDateYearInMonth(Date date){
+        Calendar cal = getCalendar();
+        if (date!=null){
+            cal.setTime(date);
+        }
+        return cal.get(Calendar.MONTH)+1;
+    }
+
+
 }

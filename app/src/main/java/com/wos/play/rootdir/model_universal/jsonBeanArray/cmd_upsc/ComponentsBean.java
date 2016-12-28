@@ -7,7 +7,7 @@ import java.util.List;
  * lzp
  * 组件
  */
-public class ComponentsBean {
+public class ComponentsBean extends PublicAttibute{
     /**
      * id : 756
      * label : 新建资讯7
@@ -27,21 +27,15 @@ public class ComponentsBean {
      * titleShowType : 1
      * hasContent : true
      */
-    private int id;
     private String label;
     private double coordX;
     private double coordY;
     private double width;
     private double height;
-    private int componentTypeId;
     private String componentTypeCode;
-    private boolean interactEnabled;
-    private int order;
     private int backgroundAlpha;//背景透明度
     private String backgroundColor;//背景颜色
     private String backgroundPic;//背景图片url
-    private String backgroundPicName;
-    private int titleShowType;
 
     public int getBackgroundAlpha() {
         return backgroundAlpha;
@@ -114,13 +108,7 @@ public class ComponentsBean {
         this.height = height;
     }
 
-    public int getComponentTypeId() {
-        return componentTypeId;
-    }
 
-    public void setComponentTypeId(int componentTypeId) {
-        this.componentTypeId = componentTypeId;
-    }
 
     public String getComponentTypeCode() {
         return componentTypeCode;
@@ -130,21 +118,7 @@ public class ComponentsBean {
         this.componentTypeCode = componentTypeCode;
     }
 
-    public boolean isInteractEnabled() {
-        return interactEnabled;
-    }
 
-    public void setInteractEnabled(boolean interactEnabled) {
-        this.interactEnabled = interactEnabled;
-    }
-
-    public int getOrder() {
-        return order;
-    }
-
-    public void setOrder(int order) {
-        this.order = order;
-    }
 
 
 
@@ -164,21 +138,9 @@ public class ComponentsBean {
         this.backgroundPic = backgroundPic;
     }
 
-    public String getBackgroundPicName() {
-        return backgroundPicName;
-    }
 
-    public void setBackgroundPicName(String backgroundPicName) {
-        this.backgroundPicName = backgroundPicName;
-    }
 
-    public int getTitleShowType() {
-        return titleShowType;
-    }
 
-    public void setTitleShowType(int titleShowType) {
-        this.titleShowType = titleShowType;
-    }
 
     public boolean isHasContent() {
         return hasContent;

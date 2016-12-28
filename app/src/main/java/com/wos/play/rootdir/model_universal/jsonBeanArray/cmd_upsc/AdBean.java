@@ -5,14 +5,44 @@ import java.util.List;
 /**
  * Created by user on 2016/10/27.
  */
-public class AdBean {
-    public int getId() {
-        return id;
+public class AdBean extends PublicAttibute{
+
+    /**
+     * id : 365
+     * coordX : 0.0
+     * coordY : 0.0
+     * width : 0.0
+     * height : 0.0
+     * backgroundColor : #FFFFFF
+     * components : []
+     * adEnabled : false
+     * waitTime : 0
+     */
+    private double coordX;
+    private double coordY;
+    private double width;
+    private double height;
+    private String backgroundColor;
+    private String background;
+
+    public String getBackground() {
+        return background;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setBackground(String background) {
+        this.background = background;
     }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    private String label;
+    private List<ComponentsBean> components;
 
     public double getCoordX() {
         return coordX;
@@ -54,21 +84,6 @@ public class AdBean {
         this.backgroundColor = backgroundColor;
     }
 
-    public boolean isAdEnabled() {
-        return adEnabled;
-    }
-
-    public void setAdEnabled(boolean adEnabled) {
-        this.adEnabled = adEnabled;
-    }
-
-    public int getWaitTime() {
-        return waitTime;
-    }
-
-    public void setWaitTime(int waitTime) {
-        this.waitTime = waitTime;
-    }
 
     public List<ComponentsBean> getComponents() {
         return components;
@@ -78,25 +93,5 @@ public class AdBean {
         this.components = components;
     }
 
-    /**
-     * id : 365
-     * coordX : 0.0
-     * coordY : 0.0
-     * width : 0.0
-     * height : 0.0
-     * backgroundColor : #FFFFFF
-     * components : []
-     * adEnabled : false
-     * waitTime : 0
-     */
-     private int id;
-    private double coordX;
-    private double coordY;
-    private double width;
-    private double height;
-    private String backgroundColor;
-    private boolean adEnabled;
-    private int waitTime;
-    private List<ComponentsBean> components;
 
 }

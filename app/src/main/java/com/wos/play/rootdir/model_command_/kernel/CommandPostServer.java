@@ -162,7 +162,7 @@ public class CommandPostServer extends Service implements iCommand{
 
     private void executes(String cmd, String param){
         if (commandList.containsKey(cmd)) {
-            Logs.i(TAG,"执行指令{"+cmd +" ]"+"参数: [ "+ param+" ]"+"\n所在线程:"+Thread.currentThread().getName()+" - 当前线程数:"+Thread.getAllStackTraces().size() +"\n\r");
+            Logs.i(TAG,"执行指令["+cmd +"]"+"参数: ["+ param+"]"+"\n所在线程:"+Thread.currentThread().getName()+" - 当前线程数:"+Thread.getAllStackTraces().size() +"\n\r");
             commandList.get(cmd).Execute(param);
         }
     }

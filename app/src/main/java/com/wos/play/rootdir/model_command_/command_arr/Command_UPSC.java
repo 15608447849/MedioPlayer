@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.wos.play.rootdir.model_application.baselayer.SystemInitInfo;
+import com.wos.play.rootdir.model_application.schedule.ScheduleReader;
 import com.wos.play.rootdir.model_command_.kernel.CommandPostBroad;
 import com.wos.play.rootdir.model_command_.kernel.iCommand;
 import com.wos.play.rootdir.model_download.entity.UrlList;
@@ -24,6 +25,7 @@ import com.wos.play.rootdir.model_universal.tool.CMD_INFO;
 import com.wos.play.rootdir.model_universal.tool.CONTENT_TYPE;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 import com.wos.play.rootdir.model_universal.tool.SdCardTools;
+import com.wos.play.rootdir.model_universal.tool.UnImpl;
 
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
@@ -65,14 +67,12 @@ public class Command_UPSC implements iCommand {
      */
     @Override
     public void Execute(String param) {
-        Long startTime;//开始时间
-        Long endTime;//结束时间
+        Logs.d(TAG, "Command_UPSC - uri [ " + param +" ]");
         try {
             lock.lock();
-            Logs.d(TAG, "获取排期 uri : " + param);
             res = null;
             res = uriTransionString(param, null, null);
-            if (res != null) {
+            if (res != null && !res.equals("") && !res.equals("[]")) {
                 //保存json数据
                 ICommand_SORE_JsonDataStore.getInstent(context).clearJsonMap();
                 ICommand_SORE_JsonDataStore.getInstent(context).addEntity("main", param, false); //main 保存主文件的 文件名
@@ -80,19 +80,8 @@ public class Command_UPSC implements iCommand {
                 //解析json
                 List<ScheduleBean> list = AppsTools.parseJonToList(res, ScheduleBean[].class);
 
-                if (list != null) {
-                    taskStore.initLoadingList();
-                    startTime = System.currentTimeMillis();
-                    parseScheduleList(list);
-
-                    endTime = System.currentTimeMillis();
-                    Logs.e(TAG, "解析排期 用时 : " + (endTime - startTime) + " 毫秒 ");
-                    startTime = System.currentTimeMillis();
-                    clearSdcardSource();
-                    endTime = System.currentTimeMillis();
-                    Logs.e(TAG, "清理资源 用时 : " + (endTime - startTime) + " 毫秒 ");
-                    sendDataSaveTask();
-                    nonotifyDownLoad();
+                if (list.size()>0) {
+                    mExcuteMother(list);
                 }
             }
         } catch (Exception e) {
@@ -101,8 +90,18 @@ public class Command_UPSC implements iCommand {
             lock.unlock();
         }
     }
+    //执行处
+    private void mExcuteMother(List<ScheduleBean> list) {
 
-
+        Long startTime = System.currentTimeMillis();
+        taskStore.initLoadingList();
+        parseScheduleList(list);//解析入口
+        clearSdcardSource();
+        sendDataSaveTask();
+        nonotifyDownLoad();
+        Long endTime = System.currentTimeMillis();
+        Logs.i(TAG, "解析排期 总用时 : " + (endTime - startTime) + " 毫秒 ");
+    }
 
 
     /**
@@ -111,10 +110,9 @@ public class Command_UPSC implements iCommand {
      * @param schedulelist
      */
     private void parseScheduleList(List<ScheduleBean> schedulelist) {
-        Logs.d(TAG, "排期总数: " + schedulelist.size());
+        Logs.d(TAG, "排期总数 : " + schedulelist.size());
         for (ScheduleBean schedule : schedulelist) {
             parseSchedule(schedule);
-            Logs.i(TAG, "-------------------------------------------------解析完一个排期----------------------------------------------------------");
         }
     }
 
@@ -124,6 +122,10 @@ public class Command_UPSC implements iCommand {
      * @param schedule
      */
     private void parseSchedule(ScheduleBean schedule) {
+        Logs.d(TAG, "开始解析 排期 - [ "+ schedule.getId()+" ] - 类型 - "+ ScheduleReader.getScheduleType(schedule.getType()));
+       if (UnImpl.func_CB(schedule.getType())){
+           return;
+       }
         parseProgram(schedule.getProgram());
     }
 
@@ -137,18 +139,27 @@ public class Command_UPSC implements iCommand {
     }
 
     /**
-     * 解析布局
+     * 解析布局 ->
      * 1 广告列表
      * 2 页面内标
      *
      * @param layout
      */
     private void parseLayout(LayoutBean layout) {
+//        parseLayout_ad(layout);
+        parseLayout_page(layout);
+    }
+    //广告入口
+    private void parseLayout_ad(LayoutBean layout) {
+
         if (layout.getAd() != null && layout.getAd().size() > 0) {
             for (AdBean ad : layout.getAd()) {
                 parseAd(ad);
             }
         }
+    }
+    //页面入口
+    private void parseLayout_page(LayoutBean layout) {
         if (layout.getPages() != null && layout.getPages().size() > 0) {
             for (PagesBean pages : layout.getPages()) {
                 parsePages(pages);
@@ -162,7 +173,6 @@ public class Command_UPSC implements iCommand {
      * @param ad
      */
     private void parseAd(AdBean ad) {
-        Logs.d(TAG,"解析广告");
         if (ad.getComponents() != null && ad.getComponents().size() > 0) {
             for (ComponentsBean component : ad.getComponents()) {
                 parseComponet(component);
@@ -177,19 +187,18 @@ public class Command_UPSC implements iCommand {
      * @param page
      */
     private void parsePages(PagesBean page) {
-        Logs.d(TAG,"解析页面");
-        taskStore.addTaskOnList(page.getBackground());
+        Logs.d(TAG,"解析页面 - << "+page.getId() +" - "+ page.getLabel()+" 主页 - +"+page.isHome()+">>");
+        taskStore.addTaskOnList(page.getBackground()); //添加页面背景图片
         if (page.getComponents() != null && page.getComponents().size() > 0) {
             for (ComponentsBean components : page.getComponents()) {
-                parseComponet(components);
+                parseComponet(components);//解析内容
             }
         }
 
         if (page.getPages() != null && page.getPages().size() > 0) {
             for (PagesBean subpage : page.getPages()) {
-                parsePages(subpage);
+                parsePages(subpage);//页面下面的页面
             }
-
         }
     }
 
@@ -199,7 +208,7 @@ public class Command_UPSC implements iCommand {
      * @param component
      */
     private void parseComponet(ComponentsBean component) {
-        taskStore.addTaskOnList(component.getBackgroundPic());
+        taskStore.addTaskOnList(component.getBackgroundPic());//添加内容背景图
         if (component.getContents() != null && component.getContents().size() > 0) {
             for (ContentsBean content : component.getContents()) {
                 parseContent(content);
@@ -232,7 +241,7 @@ public class Command_UPSC implements iCommand {
     */
     private void parseContentSourece(String contentType, ContentsBean content) {
 
-        Logs.d(TAG, ">>>> 解析具体内容 类型 - " + contentType );
+        Logs.d(TAG, " 解析具体内容 - 类型 - >>>>  [ " + contentType +" ]" );
         //图片
         if (contentType.equals(CONTENT_TYPE.image)) {
             taskStore.addTaskOnList(content.getContentSource());
