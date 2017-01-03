@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,20 +19,28 @@ import java.util.regex.Pattern;
 
 public class TimeOperator {
     /**
-     * 对比时间格式是否正确
+     * 对比时间格式是否正确 -> true 1997-01-01 00:00:00
+     * false - 00:00:00
      * @param matcherStr
      * @return
      */
-    public static boolean RegexMatches (String matcherStr){
+    public static boolean RegexMatches (String matcherStr,boolean isf){
         String date = "((((1[6-9]|[2-9]\\d)\\d{2})-(1[02]|0?[13578])-([12]\\d|3[01]|0?[1-9]))|(((1[6-9]|[2-9]\\d)\\d{2})-(1[012]|0?[13456789])-([12]\\d|30|0?[1-9]))|(((1[6-9]|[2-9]\\d)\\d{2})-0?2-(1\\d|2[0-8]|0?[1-9]))|(((1[6-9]|[2-9]\\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00))-0?2-29-))";
         String space = "\\s";
         String time = "([01]?\\d|2[0-3]):[0-5]?\\d:[0-5]?\\d";
-        String pattern = date+space+time;
+        String pattern;
+        if (isf){
+            pattern  = date+space+time;
+        }else{
+            pattern = time;
+        }
+
         Pattern pattenrn = Pattern.compile(pattern);
         Matcher matcher = pattenrn.matcher(matcherStr);
         boolean flog = matcher.matches();
         return flog;
     }
+
     //只包含日期，没有时间
     public static void printToday(){
         LocalDate today = LocalDate.now();
@@ -83,10 +92,14 @@ public class TimeOperator {
    * 将时间字符串转换为时间戳
    */
     public static String dateToStamp(String s){
-        if (RegexMatches(s)){
+
+        if (RegexMatches(s,true)){
            s = (s.split("\\s"))[1];
         }
-        s = getToday() +" " +s;
+        if (RegexMatches(s,false)){
+            s = getToday() +" " + s;
+        }
+
         String res = null;
         try {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -209,19 +222,24 @@ public class TimeOperator {
     /**
      * 计算毫秒数 差值
      * 忽略年月日
-     * 当前时间->结束时间
+     * 当前时间 -> 结束时间
      */
     public static long getMillisecond(String end){
-        if (RegexMatches(end)){
+        System.out.println("getMillisecond(String end) - end - 1 -> "+ end);
+        if (RegexMatches(end,true)){
             end = (end.split("\\s"))[1];
+        }
+        if (RegexMatches(end,false)){
+            end = dateToStamp(end);
         }
         long endDate = dateToStamp()+1000;
         try {
+            System.out.println("getMillisecond(String end) - end - 2 ->"+ end);
             endDate = Long.valueOf(end);
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
-        return getMillisecond(dateToStamp(),endDate);
+        return getMillisecond(dateToStamp(),endDate);//当前时间 - 结束 时间的时间差 - 毫秒数
     }
 
     /**判断开始时间和结束时间与当前时间的关系*/
@@ -307,5 +325,27 @@ public class TimeOperator {
         return cal.get(Calendar.MONTH)+1;
     }
 
+    // 获取 以今天为准 向前 N天的 日期 ,例如  2017-01-03
+    public static String getTodayGotoDays(int days_chazhi){
+        String dateString = null;
+        try {
+            Date date=new Date();//取时间
+
+            Calendar calendar = new GregorianCalendar();
+            calendar.setTime(date);
+            if (days_chazhi!=0){
+                calendar.add(calendar.DATE,days_chazhi);//把日期往后增加一天.整数往后推,负数往前移动
+            }
+            date=calendar.getTime(); //这个时间就是日期往后推一天的结果
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            dateString = formatter.format(date);
+            if (RegexMatches(dateString,true)){
+                dateString = (dateString.split("\\s"))[0];
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dateString;
+    }
 
 }
