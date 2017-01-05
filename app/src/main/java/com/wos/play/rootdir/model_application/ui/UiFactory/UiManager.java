@@ -30,18 +30,18 @@ public class UiManager {
     /**
      */
     public void initData() {
-        if (isInit){
-            return;
+        if (!isInit){
+            init();
+            isInit = true;
+            Logs.i(TAG,"初始化 - UI 页面管理器 - 完成");
         }
-        Logs.i(TAG," 初始化 - UI 管理器");
-        init();
-        isInit = true;
+
     }
     public void unInitData(){
         if (isInit){
-            Logs.i(TAG," 注销 - UI 管理器");
             stopTask();
             isInit=false;
+            Logs.i(TAG,"注销 - UI 页面管理器");
         }
     }
 

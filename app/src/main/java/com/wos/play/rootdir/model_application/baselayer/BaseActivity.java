@@ -82,7 +82,7 @@ public class BaseActivity extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
-        stopActivityOnArr(this);
+//        stopActivityOnArr(this);
     }
 
     @Override
@@ -113,8 +113,6 @@ public class BaseActivity extends Activity {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         }
     }
-
-
     protected Toast mToast = null;
     /**
      * 显示一个Toast信息
@@ -129,12 +127,16 @@ public class BaseActivity extends Activity {
         }
         mToast.show();
     }
+    private boolean isOnBack = false;
+    protected void setIsOnBack(boolean flag){
+        isOnBack = flag;
+    }
 
     // 返回键
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) { // 如果是手机上的返回键
-           Logs.e(TAG,"--- 点击了 back Key ---");
+        if (keyCode == KeyEvent.KEYCODE_BACK && !isOnBack) { // 如果是手机上的返回键
+//           Logs.e(TAG,"--- 点击了 back Key ---");
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -186,11 +188,10 @@ public class BaseActivity extends Activity {
         intent.putExtras(bundle);
         this.sendBroadcast(intent);
     }
+    //通讯服务发来的消息 接收处
     protected void receiveService(final String result) {
 
     }
-
-
     /**
      *
      *
@@ -214,15 +215,16 @@ public class BaseActivity extends Activity {
 
         //初始化 UI
         protected void initUI(){
-            Logs.i(TAG,"--------------初始化 UI 元素--------------");
+            Logs.d(TAG,"初始化UI - 开始");
             UiTools.init(this);
+            Logs.d(TAG,"初始化UI - 结束");
         }
 
         protected void unInitUI(){
+            Logs.d(TAG,"注销UI - 开始");
             UiTools.uninit();
-            Logs.i(TAG,"-----------------注销 UI 元素-----------------");
+            Logs.d(TAG,"注销UI - 结束");
         }
-
 
     private FragmentTransaction fragmentTransaction;
     /**
@@ -231,37 +233,25 @@ public class BaseActivity extends Activity {
     private FragmentTransaction getFragmentTransaction(){
         return this.getFragmentManager().beginTransaction();
     }
-
     /**
      * 替换 一个 view -> fragment
      */
     public void repleaceViewToFragment(ViewGroup view, Fragment fragment){
-        Logs.i(TAG," repleace View To Fragment - \n view id: "+view.getId() +" \n fragment:"+fragment);
+        Logs.i(TAG,"- 替换 View To Fragment -  view id:[ "+view.getId() +" ] - fragment:[ "+fragment+" ]");
+
         fragmentTransaction = getFragmentTransaction();
         fragmentTransaction.replace(view.getId(), fragment);
-        fragmentTransaction.commit();
+        fragmentTransaction.commitAllowingStateLoss();
     }
-
     //删除一个fragments
     public void deleteFragments(Fragment fragment){
-        Logs.i(TAG,"- delete Fragment - "+ fragment);
+        Logs.i(TAG,"- 删除 Fragment - "+ fragment);
         fragmentTransaction = getFragmentTransaction();
         fragmentTransaction.remove(fragment);
-        fragmentTransaction.commit();
-
+        fragmentTransaction.commitAllowingStateLoss();
     }
-
     //返回全局context
     public Context getAppContext(){
         return this.getApplicationContext();
     }
-
-
-
-
-
-
-
-
-
 }

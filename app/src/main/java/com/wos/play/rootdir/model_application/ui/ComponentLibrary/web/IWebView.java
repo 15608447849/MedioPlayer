@@ -91,13 +91,17 @@ public class IWebView extends WebView implements IComponentUpdate {
 
     @Override
     public void setAttrbute() {
-        this.setLayoutParams(layoutParams);
-        this.setAlpha(backgroundAlpha);
-        if (bgImageUrl==null){
-            //设置背景颜色
-            this.setBackgroundColor(Color.parseColor(UiTools.TanslateColor(backgroundColor)));
-        }else{
-            loadBg();
+        try {
+            this.setLayoutParams(layoutParams);
+            this.setAlpha(backgroundAlpha);
+            if (bgImageUrl==null){
+                //设置背景颜色
+                this.setBackgroundColor(Color.parseColor(UiTools.TanslateColor(backgroundColor)));
+            }else{
+                loadBg();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -135,7 +139,7 @@ public class IWebView extends WebView implements IComponentUpdate {
     @Override
     public void stopWork() {
         try {
-            this.destroy();
+//            this.destroy();
             unLoadContent();
             unLayouted(); //移除布局
 
@@ -158,7 +162,7 @@ public class IWebView extends WebView implements IComponentUpdate {
     @Override
     public void unloadBg() {
         if (bgimage!=null){
-            bgimage.recycle();
+//            bgimage.recycle();
             bgimage = null;
         }
     }
@@ -171,6 +175,7 @@ public class IWebView extends WebView implements IComponentUpdate {
     @Override
     public void loadContent() {
         Logs.i(TAG,"URL - "+ url);
+
         this.loadUrl(url);
     }
 

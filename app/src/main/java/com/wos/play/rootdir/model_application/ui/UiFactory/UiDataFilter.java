@@ -5,7 +5,7 @@ import android.os.Handler;
 import com.wos.play.rootdir.model_application.baselayer.BaseActivity;
 import com.wos.play.rootdir.model_application.schedule.LocalScheduleObject;
 import com.wos.play.rootdir.model_application.ui.UiElements.page.IviewPage;
-import com.wos.play.rootdir.model_application.ui.UiElements.page.pagesView;
+
 import com.wos.play.rootdir.model_application.ui.UiHttp.UiHttpProxy;
 import com.wos.play.rootdir.model_application.ui.UiStore.ImageStore;
 import com.wos.play.rootdir.model_application.ui.UiStore.PagerStore;
@@ -55,19 +55,20 @@ public class UiDataFilter {
             return;
         }
         if (!isInit){
-            Logs.i(TAG," 初始化 - UI 数据过滤类");
+
             this.activity = activity;
             handler = new Handler();
             UiManager.getInstans().initData();
             UiHttpProxy.getPeoxy().init(activity);
             isInit = true;
+            Logs.i(TAG,"初始化 - UI数据过滤类 - 完成");
         }
 
     }
 
     public void unInit(){
         if (isInit) {
-            Logs.i(TAG, " 注销 - UI 数据过滤类");
+            Logs.i(TAG, "注销 - UI 数据过滤类");
             UiManager.getInstans().unInitData();
             UiHttpProxy.getPeoxy().unInit();//ui下载关闭();
             ImageStore.getInstants().clearCache();
@@ -82,12 +83,12 @@ public class UiDataFilter {
 
 
     public void  filter(final LocalScheduleObject current){
-        Logs.i(TAG," 转换数据中 ...");
+
         if (!isInit){
             Logs.e(TAG," 未初始化 activity - 不可执行 ");
             return;
         }
-
+        Logs.i(TAG,"  = = = = = = = = = UI 转换数据中 = = = = = = = = = ");
         if (UnImpl.func_CB(current.getSchedule().getType())){
             return;
         }
@@ -102,7 +103,7 @@ public class UiDataFilter {
                 }
             }
         });
-
+        Logs.i(TAG,"  = = = = = = = = = UI 数据转换完成 = = = = = = = = = ");
     }
 
 
@@ -125,13 +126,10 @@ public class UiDataFilter {
         int key;
         IviewPage pageView;
         for (PagesBean page : pages){
-
             key = page.getId();
-//            pageView = ViewStore.getInstant().getPageCache(key);
-//            if (pageView==null){
-//                 无缓存 - 创建
-                pageView = new pagesView(activity,page);
-//            }
+            //创建
+            pageView = new IviewPage(activity,page);
+
             if (pageView.isHome()){
                 homeKey = key;
             }

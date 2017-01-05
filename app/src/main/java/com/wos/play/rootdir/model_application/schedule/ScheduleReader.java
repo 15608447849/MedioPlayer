@@ -69,7 +69,7 @@ public class ScheduleReader implements ListeningScheduleEventThread.OnScheduleEv
         if (isInit) {
             return;
         }
-        Logs.i(TAG, "- - - 初始化 排期读取 - - -\n" + filedirPath);
+        Logs.i(TAG, "初始化 - 排期读取类 - 排期目录:[" + filedirPath+"]");
         this.filedirPath = filedirPath;
         initScheduleMap();
         initNotToTimeSchuduleMap();
@@ -241,7 +241,7 @@ public class ScheduleReader implements ListeningScheduleEventThread.OnScheduleEv
     }
 
     private void stopWork() {
-        Logs.i(TAG, "---------------排期停止中-----------");
+        Logs.i(TAG, "==============排期停止中===========");
         //清理当前正在使用的排期
         if (current != null) {
             current.stopTimer();
@@ -327,20 +327,26 @@ public class ScheduleReader implements ListeningScheduleEventThread.OnScheduleEv
         ArrayList<ScheduleBean> schduleList = arr.scheArr;
         LocalScheduleObject scheBean = null;
         try {
-            switch (type) {
-                case 1://轮播
-                case 5://默认
-                    scheBean = new LocalScheduleObject(
-                            dateToStamp(TimeOperator.getToday() + " " + "00:00:00"),
-                            dateToStamp(TimeOperator.getToday() + " " + "23:59:59"),
-                            schduleList.get(0));
-                    break;
-                case 4://插播
-                case 3://重复
-                case 2://点播
-                    scheBean = filete(schduleList);
-                    break;
+            if (type == 1 || type == 5){
+                scheBean = new LocalScheduleObject(
+                        dateToStamp(TimeOperator.getToday() + " " + "00:00:00"),
+                        dateToStamp(TimeOperator.getToday() + " " + "23:59:59"),
+                        schduleList.get(0));
             }
+            if (type == 4 || type == 3 || type == 2){
+                scheBean = filete(schduleList);
+            }
+//            switch (type) {
+//                case 1://轮播
+//                case 5://默认
+//
+//                    break;
+//                case 4://插播
+//                case 3://重复
+//                case 2://点播
+//
+//                    break;
+//            }
         } catch (Exception e) {
             Logs.e(TAG,"filterOnlySchudule() - "+ e.getMessage());
         }
@@ -467,7 +473,7 @@ public class ScheduleReader implements ListeningScheduleEventThread.OnScheduleEv
             }
 
             stopWork();
-            Logs.i(TAG, " ----------------------开始解析排期----------------------------- ");
+            Logs.i(TAG, "==========开始解析排期==========");
             //分组
             for (ScheduleBean entity : scheduleList) {
                 addScheduleToMap(entity);
@@ -478,15 +484,15 @@ public class ScheduleReader implements ListeningScheduleEventThread.OnScheduleEv
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            Logs.i(TAG, "---解析 完成---");
+            Logs.i(TAG, "===========解析排期完成==========");
 
             if (current==null){
                 Logs.i(TAG,"---没有可播放排期任务---");
                 return;
             }
             current.startTimer(initTimeTask(),TimeOperator.getMillisecond(current.getEnd()));
-            Logs.i(TAG, "---设置时间完成---");
-
+            Logs.i(TAG, "--- 排期 - 设置时间 - 完成 ---");
+            Logs.i(TAG, "\n\r");
             //转换数据 - 发送 排期信息 -> ui制作
             UiDataFilter.getUiDataFilter().filter(current);
         } catch (Exception e) {

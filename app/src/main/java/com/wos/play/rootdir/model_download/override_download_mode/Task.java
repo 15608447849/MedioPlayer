@@ -3,6 +3,8 @@ package com.wos.play.rootdir.model_download.override_download_mode;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import cn.trinea.android.common.util.FileUtils;
+
 /**
  * Created by user on 2016/11/25.
  */
@@ -50,9 +52,13 @@ public class Task implements Parcelable {
 
     private TaskCall call;//接口回调
 
-    public Task(String savePath,String terminalNo) {
+    /**
+     *
+     * @param savePath 文件存放路径 - 不存在会自动创建
+     * @param terminalNo 终端id
+     */
+    public Task(String terminalNo) {
         state = State.NEW;
-        this.savePath = savePath;
         this.terminalNo = terminalNo;
     }
 
@@ -149,6 +155,13 @@ public class Task implements Parcelable {
 
     public void setSavePath(String savePath) {
         this.savePath = savePath;
+        try {
+            if(!FileUtils.isFolderExist(savePath)){
+                FileUtils.makeDirs(savePath);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public String getTerminalNo() {

@@ -53,18 +53,18 @@ public class UiHttpProxy{
     public void init(Context context){
 
         if (!isInit) {
-            Logs.i(TAG," 初始化 - UI网络访问类");
             this.context = context;
             handler = new Handler();
             executor = Executors.newCachedThreadPool();
             intent = new Intent();
             isInit = true;
+            Logs.i(TAG,"初始化 - UI网络代理类 - 完成");
         }
     }
     //消亡
     public void unInit(){
         if (isInit) {
-            Logs.i(TAG," 注销 - UI网络访问类");
+            Logs.i(TAG,"注销 - UI网络访问类");
             if (executor!=null){
                 try {
                     executor.shutdown();

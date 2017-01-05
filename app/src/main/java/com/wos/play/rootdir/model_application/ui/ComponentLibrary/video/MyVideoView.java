@@ -267,34 +267,42 @@ public class MyVideoView extends SurfaceView implements MediaController.MediaPla
         //如果 播放路径不存在 或者 表层持有者 不存在
         if (mUri == null || mSurfaceHolder == null) {
             // not ready for playback just yet, will try again later (没有准备好回放,稍后会再试一次)
-            Logs.e(TAG,"播放路径(mUri)不存在 或者 表层持有者(mSurfaceHolder)不存在\nmUri = ["+mUri+"] - mSurfaceHolder = ["+mSurfaceHolder+"]");
+            Logs.e(TAG,"播放路径-mUri-[ "+mUri+" ]\n视图层-mSurfaceHolder = [ "+mSurfaceHolder+" ]");
+            Logs.d(TAG,"==================================打开视频失败========================================");
             return;
         }
 
-        // 发送广播，关掉系统的音乐播放器
-        Intent i = new Intent("com.android.music.musicservicecommand");
-        i.putExtra("command", "pause");
-        mContext.sendBroadcast(i);
+        try {
+            // 发送广播，关掉系统的音乐播放器
+            Intent i = new Intent("com.android.music.musicservicecommand");
+            i.putExtra("command", "pause");
+            mContext.sendBroadcast(i);
 
-        // 播放器存在
-        if (mMediaPlayer != null) { //释放
-            Logs.e(TAG,"视频播放器 已存在") ;
-            mMediaPlayer.stop();
-            mMediaPlayer.reset(); //重置释放
-            mMediaPlayer.release();
-            mMediaPlayer = null; //置为空
-            Logs.e(TAG,"释放底层播放器 成功");
+            // 播放器存在
+            if (mMediaPlayer != null) { //释放
+                Logs.e(TAG,"视频播放器 已存在") ;
+                mMediaPlayer.stop();
+                mMediaPlayer.reset(); //重置释放
+                mMediaPlayer.release();
+                mMediaPlayer = null; //置为空
+                Logs.e(TAG,"释放底层播放器 成功");
+            }
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+            return;
         }
 
         try {
-            Logs.d(TAG,"设置视频中.. ...");
+            Logs.d(TAG,"#### 设置视频中..... ####");
             mIsPrepared = false; //是否准备完成 no!
 
-            //            mMediaPlayer = MediaPlayer.create(mContext,mUri);
+//            mMediaPlayer = MediaPlayer.create(mContext,mUri);
+//            Logs.d(TAG," 视屏播放器 同步执行");
             mMediaPlayer = new MediaPlayer(); //新建播放器
             Logs.d(TAG," 创建视频播放器 ");
             mMediaPlayer.setDataSource(mContext, mUri); //设置数据源
             Logs.d(TAG," 设置数据源完成");
+
 
             mMediaPlayer.setOnPreparedListener(mPreparedListener); //准备监听
             Logs.d(TAG," 设置 准备完成 监听");
@@ -325,7 +333,7 @@ public class MyVideoView extends SurfaceView implements MediaController.MediaPla
             Logs.d(TAG," 设置是否循环播放(true)");
 
             mMediaPlayer.prepareAsync();//异步准备
-//            Logs.d(TAG," 视屏播放器 异步执行");
+            Logs.d(TAG," 视屏播放器 异步执行");
 
             //start();//开始
         } catch (Exception e) {

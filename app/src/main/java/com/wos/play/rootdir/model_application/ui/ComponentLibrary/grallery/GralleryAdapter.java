@@ -34,6 +34,7 @@ public class GralleryAdapter extends BaseAdapter {
     GralleryAdapter(Context context){
         this.context = context;
     }
+
     //设置选择项
     public void setSelectItem(int selectItem) {
 
@@ -109,7 +110,7 @@ public class GralleryAdapter extends BaseAdapter {
             iv = (MeImageView) convertView;
         }
 
-      //  iv.setImageBitmap(ImageUtils.getBitmap(imageNameList.get(position)));
+        iv.setImageBitmap(ImageUtils.getBitmap(imageNameList.get(position)));
         ImageAsyLoad.loadBitmap(imageNameList.get(position),iv);
         if(selectItem==position){
             iv.setBackgroundColor(Color.BLACK);

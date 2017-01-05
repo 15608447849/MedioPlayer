@@ -654,27 +654,27 @@ public class AppsTools {
         String val = "" ;
       
         if (millisecond<1000){
-            val ="毫秒";
+            val =" 毫秒";
         }
         else
         if ( (millisecond=millisecond/1000) > 0 && millisecond<60){
             //毫秒 -> 秒
-            val = "秒";
+            val = " 秒";
         }
         else
         if ((millisecond=millisecond/60)>0 && millisecond<60){
-            val = "分";
+            val = " 分钟";
         }
         else
         if ((millisecond=millisecond/60)>0 && millisecond<12){
-            val = "小时";
+            val = " 小时";
         }
         else
         if ((millisecond=millisecond/24)>0){
-            val = "天";
+            val = " 天";
         }
        sb.append(millisecond).append(val);
         return sb.toString();
-
     }
+
 }

@@ -6,8 +6,10 @@ import android.os.Bundle;
 
 import com.wos.play.rootdir.model_application.baselayer.SystemInitInfo;
 import com.wos.play.rootdir.model_application.schedule.ScheduleReader;
+import com.wos.play.rootdir.model_application.schedule.TimeOperator;
 import com.wos.play.rootdir.model_command_.kernel.CommandPostBroad;
 import com.wos.play.rootdir.model_command_.kernel.iCommand;
+import com.wos.play.rootdir.model_download.entity.TaskFactory;
 import com.wos.play.rootdir.model_download.entity.UrlList;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.AdBean;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
@@ -272,7 +274,7 @@ public class Command_UPSC implements iCommand {
         }
         //电子报
         if (contentType.equals(CONTENT_TYPE.epaper)) {
-            parseEpaper(content.getContentSource());
+            parseEpaper(content);
         }
         //时钟
         if (contentType.equals(CONTENT_TYPE.clock)) {//swf
@@ -400,9 +402,25 @@ public class Command_UPSC implements iCommand {
         }
     }
 
-    //解析电子报
-    private void parseEpaper(String contentSource) {
+    /*解析电子报 - 规则 从今天开始 - 获取 向前的 keepDays 数量
+    *
+    *
+    * */
+    private void parseEpaper(ContentsBean contentSource) {
 
+        //获取 1 - 内容的路径
+        // 内容的保持天数
+        //拼接下载内容 - 日期.zip
+        //文件存放路径
+
+        String contentPath = contentSource.getContentSource();
+        String localPath = SystemInitInfo.get().getEpaperSourcePath() + contentPath;
+        int keepDays = contentSource.getDaysKeep();
+        Logs.d(TAG,"电子报 - 本地路径 ["+localPath+"]");
+        for (int i = 0;i<keepDays;i++){
+            //根据天数 获取 日期
+            taskStore.addTaskOnList(TaskFactory.gnrTask(contentPath,localPath, TimeOperator.getTodayGotoDays(-i)+".zip"));
+        }
     }
 
 

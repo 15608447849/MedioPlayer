@@ -3,8 +3,6 @@ package com.wos.play.rootdir.model_application.ui.UiStore;
 import android.graphics.Bitmap;
 import android.util.LruCache;
 
-import com.wos.play.rootdir.model_universal.tool.Logs;
-
 /**
  * Created by user on 2016/12/2.
  */
@@ -40,7 +38,7 @@ public class ImageStore {
                 @Override
                 protected void entryRemoved(boolean evicted, String key,
                                             Bitmap oldValue, Bitmap newValue) {
-                    Logs.i(TAG,"evicted - "+evicted +"\nkey - "+key+"\n oldValue -"+oldValue +"\n newValue - "+newValue);
+//                    Logs.i(TAG,"evicted - "+evicted +"\nkey - "+key+"\n oldValue -"+oldValue +"\n newValue - "+newValue);
                     removeImageCache(key);
                 }
             };
@@ -62,7 +60,7 @@ public class ImageStore {
             if (bitmap==null){
                 return;
             }
-            Logs.e(TAG," add bitmap to cache - " +CacheMap);
+//            Logs.e(TAG," add bitmap to cache - " +CacheMap);
             if (CacheMap.get(tag) == null || CacheMap.get(tag).isRecycled()) {
 //                Logs.i(TAG,"添加 bitmap - key - "+tag +"\n bitmap - "+bitmap);
                 CacheMap.put(tag,bitmap);

@@ -17,37 +17,41 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Logs.e("MainActivity","活动层-------------onCreate----------------------");
         setContentView(R.layout.activity_main);
         initUI();
-        Logs.e("MainActivity","-------------onCreate----------------------");
+
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Logs.e("MainActivity","活动层-------------onStart----------------------");
     }
     @Override
     protected void onResume() {
         super.onResume();
-        Logs.e("MainActivity","-------------onResume----------------------");
+        Logs.e("MainActivity","活动层-------------onResume----------------------");
     }
-
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Logs.e("MainActivity","活动层-------------onPause----------------------");
+    }
     @Override
     protected void onStop() {
-        Logs.e("MainActivity","-------------onStop----------------------");
-        unInitUI();
+        Logs.e("MainActivity","活动层-------------onStop----------------------");
         super.onStop();
-
     }
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Logs.e("MainActivity","-------------onDestroy----------------------");
+        Logs.e("MainActivity","活动层-------------onDestroy----------------------");
+        unInitUI();
     }
-
-
 
     //获取activity的底层layout
     @Override
     public ViewGroup getActivityLayout() {
         return (AbsoluteLayout) findViewById(main_layout);
     }
-
-
-
 }

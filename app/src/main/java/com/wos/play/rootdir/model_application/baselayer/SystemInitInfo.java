@@ -46,6 +46,8 @@ public class SystemInitInfo {
     private String jsonStore = "/mnt/sdcard/wosplayer/jsoninfo/";
     // 图标存储路径
     private String appicon = "/mnt/sdcard/wosplayer/appicon/";
+    //电子报zip文件保存路径
+    private String epaperSourcePath = "/mnt/sdcard/wosplayer/epapers/";
     //主ftp-IP地址
     private String ftpAddress = "172.16.0.17";
 
@@ -114,8 +116,6 @@ public class SystemInitInfo {
         this.serverip = serverip;
     }
 
-
-
     public String getCompanyid() {
         return companyid;
     }
@@ -180,6 +180,13 @@ public class SystemInitInfo {
         this.appicon = appicon;
     }
 
+    public String getEpaperSourcePath() {
+        return epaperSourcePath;
+    }
+
+    public void setEpaperSourcePath(String epaperSourcePath) {
+        this.epaperSourcePath = epaperSourcePath;
+    }
 
     //构造
     private SystemInitInfo() {
@@ -229,6 +236,7 @@ public class SystemInitInfo {
             map.put("sleepTime",sleepTime);
             map.put("storageLimits",storageLimits);
             map.put("basepath",basepath);
+            map.put("epaperPath",epaperSourcePath);
             map.put("jsonStore",jsonStore);
             map.put("appicon",appicon);
             map.put("ftpAddress",ftpAddress);
@@ -274,6 +282,8 @@ public class SystemInitInfo {
             storageLimits = contentEntity.GetStringDefualt("storageLimits");
             //资源保存路径
             basepath = contentEntity.GetStringDefualt("basepath");
+            //电子报资源路径
+            epaperSourcePath = contentEntity.GetStringDefualt("epaperPath");
             //json保存路径
             jsonStore = contentEntity.GetStringDefualt("jsonStore");
             // 图标存储路径

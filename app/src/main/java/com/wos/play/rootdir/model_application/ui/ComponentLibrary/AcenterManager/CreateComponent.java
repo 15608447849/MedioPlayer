@@ -1,4 +1,4 @@
-package com.wos.play.rootdir.model_application.ui.ComponentLibrary.a_centerManager;
+package com.wos.play.rootdir.model_application.ui.ComponentLibrary.AcenterManager;
 
 import android.content.Context;
 import android.util.LruCache;
@@ -21,6 +21,7 @@ public class CreateComponent {
     private static final String packageName = "com.wos.play.rootdir.model_application.ui.ComponentLibrary.";
     private static Map<String,String> referenceViewMap = new HashMap<String,String>();
     static{
+        referenceViewMap.put(CONTENT_TYPE.epaper,packageName+"epapers.CEpapersMain");
         referenceViewMap.put(CONTENT_TYPE.image,packageName+"image.CMorePictures");
         referenceViewMap.put(CONTENT_TYPE.button,packageName+"button.CButton");
         referenceViewMap.put(CONTENT_TYPE.video,packageName+"video.CMedio");
@@ -32,6 +33,7 @@ public class CreateComponent {
         referenceViewMap.put(CONTENT_TYPE.weather,packageName+"weather.Iweather");
         referenceViewMap.put(CONTENT_TYPE.marquee,packageName+"scrolltextview.CMarquee");
         referenceViewMap.put(CONTENT_TYPE.news,packageName+"news.CNews");
+
     }
 
 
@@ -59,7 +61,7 @@ public class CreateComponent {
                //先获取 type
                String type = component.getComponentTypeCode();
                if (!referenceViewMap.containsKey(type)){
-                   throw new Exception("component type not fount - "+type);
+                   throw new Exception("Component Type Not Fount : "+type);
                }
                //获取全类名
                String className = referenceViewMap.get(type);
@@ -73,7 +75,7 @@ public class CreateComponent {
 
        } catch (Exception e) {
 //           e.printStackTrace();
-           Logs.e("createComponent"," 创建组件错误 :"+e.getMessage());
+           Logs.e("创建组件错误",e.getMessage());
        }
        return iplay;
     }

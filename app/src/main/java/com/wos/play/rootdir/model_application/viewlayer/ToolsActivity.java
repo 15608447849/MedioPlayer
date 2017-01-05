@@ -22,6 +22,7 @@ import butterknife.ButterKnife;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
 
+import static butterknife.ButterKnife.bind;
 import static com.wos.play.rootdir.R.id.HeartBeatInterval;
 
 /**
@@ -42,6 +43,8 @@ public class ToolsActivity extends BaseActivity {
     public EditText terminalNo;
     @Bind(R.id.BasePath)
     public EditText BasePath;
+    @Bind(R.id.EpaperPath)
+    public EditText EpaperPath;
     @Bind(R.id.SchudulePath)
     public EditText SchudulePath;
     @Bind(HeartBeatInterval)
@@ -65,18 +68,27 @@ public class ToolsActivity extends BaseActivity {
     public Button btnGetID;
     @Bind(R.id.btnSaveData)
     public Button btnSaveData;
-
+    private boolean isBind = false;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_wostools);
-        ButterKnife.bind(this);
         registBroad(1);
         if(gotoApp()){
+            setContentView(R.layout.activity_wostools);
+            bind(this);
             //初始化控件信息
             initViewValue();
+            isBind = true;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (isBind){
+            ButterKnife.unbind(this);
         }
     }
 
@@ -96,7 +108,8 @@ public class ToolsActivity extends BaseActivity {
             StorageLimits.setText(SystemInitInfo.get().getStorageLimits());//sdcard 阔值
             RestartBeatInterval.setText(SystemInitInfo.get().getSleepTime());//重启时间
             BasePath.setText(catPathfile(SystemInitInfo.get().getBasepath()));//资源文件夹
-            SchudulePath.setText(catPathfile(SystemInitInfo.get().getJsonStore()));//排期文件夹
+            EpaperPath.setText(catPathfile(SystemInitInfo.get().getEpaperSourcePath()));//电子报资源文件夹
+            SchudulePath.setText(catPathfile(SystemInitInfo.get().getJsonStore()));//排期json文件夹
             ftpaddress.setText(SystemInitInfo.get().getFtpAddress());
             ftpport.setText(SystemInitInfo.get().getFtpPort());
             ftpuser.setText(SystemInitInfo.get().getFtpUser());
@@ -132,10 +145,17 @@ public class ToolsActivity extends BaseActivity {
         SystemInitInfo.get().setFtpPort(ftpport.getText().toString());// 端口
         SystemInitInfo.get().setFtpUser(ftpuser.getText().toString());// 用户名
         SystemInitInfo.get().setFtpPass(ftppass.getText().toString());// 密码
+        //资源保存路径
         String dirpath = SdCardTools.getAppSourceDir(this) + completePath(BasePath.getText().toString());
         if (SdCardTools.MkDir(dirpath)) {
             SystemInitInfo.get().setBasepath(dirpath);
         }
+        //电子报保存路径
+        dirpath =SdCardTools.getAppSourceDir(this) + completePath(EpaperPath.getText().toString());
+        if (SdCardTools.MkDir(dirpath)){
+            SystemInitInfo.get().setEpaperSourcePath(dirpath);
+        }
+        //json保存路径
         dirpath = SdCardTools.getAppSourceDir(this) + completePath(SchudulePath.getText().toString());
         if (SdCardTools.MkDir(dirpath)){
             SystemInitInfo.get().setJsonStore(dirpath);
@@ -256,6 +276,7 @@ public class ToolsActivity extends BaseActivity {
             sendMsgCommServer("sendTerminaOnline", null);
             unregistBroad();
             this.startActivity(new Intent(this, MainActivity.class));
+            this.stopActivityOnArr(this);
             return false;
         }
         return true;
