@@ -148,6 +148,9 @@ public class DownloadCallImp {
         if (DownloadState == 1) {//失败
             nitifyMsg(task.getTerminalNo(), task.getFileName(), 4);
         }
+        if (DownloadState == -1){
+            //文件上传
+        }
         if (task.getCall() != null) {
             task.getCall().downloadResult(task);
         }

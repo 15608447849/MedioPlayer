@@ -1,7 +1,7 @@
 package com.wos.play.rootdir.model_download.override_download_mode;
 
 
-
+import com.wos.play.rootdir.model_universal.tool.Logs;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
@@ -9,11 +9,14 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import cn.trinea.android.common.util.FileUtils;
 
 /**
  * Created by Administrator on 2016/6/25.
@@ -400,19 +403,57 @@ public class FtpHelper {
          * @param e
          */
         public void error(Exception e);
+
+
+
+
+
     }
 
 
+    /**
+     * 上传文件
+     */
+    /**
+     * 上传单个文件.
+     *
+     * @param localPath
+     *            本地文件路径
+     * @return true上传成功, false上传失败
+     * @throws IOException
+     */
+    public void uploadingSingle(String localPath,String uploadFileAlias,String remotePath){
+        try {
+            // 打开FTP服务
+            openConnect();
 
+            // 设置模式
+            ftpClient.setFileTransferMode(org.apache.commons.net.ftp.FTP.STREAM_TRANSFER_MODE);
+            remotePath = remotePath.endsWith("/")?remotePath:remotePath.substring(0,remotePath.lastIndexOf("/")+1);
+            // FTP下创建文件夹
+            ftpClient.makeDirectory(remotePath);
+            ftpClient.changeWorkingDirectory(remotePath);
+            //不带进度的方式
+            // 创建输入流
+            InputStream inputStream = new FileInputStream(localPath);
 
-
-
-
-
-
-
-
-
+            // 上传单个文件
+           boolean flag = ftpClient.storeFile(
+                    (uploadFileAlias==null||uploadFileAlias.equals(""))?localPath.substring(localPath.lastIndexOf("/")+1):uploadFileAlias, //上传的文件名
+                    inputStream
+            );
+            //关闭文件流
+            inputStream.close();
+            Logs.i(TAG,"远程文件目录- ["+remotePath +"] -"+(flag?" upload success":" upload failt"));
+            //删除文件
+            FileUtils.deleteFile(localPath);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            //关闭ftp服务器
+            closeConnect();
+        }
+    }
 
 
 

@@ -66,6 +66,7 @@ public class CImageView extends MeImageView implements IContentView{
         if (UiTools.fileIsExt(imagePath)){
            this.setImageBitmap(ImageUtils.getBitmap(imagePath));
         }else {
+            this.setImageBitmap(ImageUtils.getBitmap(UiTools.getDefImagePath()));
             if (bridge != null) {
                 bridge.playOver(this);
             }

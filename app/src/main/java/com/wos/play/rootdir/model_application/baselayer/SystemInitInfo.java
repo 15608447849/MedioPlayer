@@ -29,7 +29,7 @@ public class SystemInitInfo {
     //终端编号
     private String terminalNo = "";
     //服务器ip
-    private String serverip = "172.16.0.167";
+    private String serverip = "172.16.2.74";//"192.168.7.3";
     //服务器端口
     private String serverport = "9000";
     //公司id
@@ -49,7 +49,7 @@ public class SystemInitInfo {
     //电子报zip文件保存路径
     private String epaperSourcePath = "/mnt/sdcard/wosplayer/epapers/";
     //主ftp-IP地址
-    private String ftpAddress = "172.16.0.17";
+    private String ftpAddress = "192.168.7.3";
 
     //主ftp-端口
     private String ftpPort = "21";

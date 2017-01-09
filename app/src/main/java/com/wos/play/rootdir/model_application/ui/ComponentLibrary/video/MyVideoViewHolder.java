@@ -24,14 +24,18 @@ public class MyVideoViewHolder implements IContentView{
     public int getLength() {
         return length;
     }
+
+    @Override
+    public void setMedioInterface(MedioInterface bridge) {
+        this.medioEr = bridge;
+    }
+
     private boolean isInitData;
     private boolean isLayout ;
 
     //多媒体控件播放
     private MedioInterface medioEr = null;
-    public void setMedio(MedioInterface medio){
-        this.medioEr = medio;
-    }
+
 
     //构造
     public MyVideoViewHolder(Context context, FrameLayout layout, ContentsBean content) {
@@ -99,10 +103,10 @@ public class MyVideoViewHolder implements IContentView{
         if (videoPath!=null && UiTools.fileIsExt(videoPath)){
             video.start(layout,videoPath,false);
         }else{
-//            if (medioEr!=null){
-//                medioEr.playOver(this);
-//            }
             video.start(layout,UiTools.getDefVideoPath(),false);
+            if (medioEr!=null){
+                medioEr.playOver(this);
+            }
         }
 
     }

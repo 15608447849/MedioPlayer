@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import com.wos.play.rootdir.model_universal.tool.Logs;
+
 /**
  * Created by user on 2016/11/2.
  * 用于 接受 app -> 通讯的 消息
@@ -26,6 +28,8 @@ public class CommuniReceiverMsgBroadCasd extends BroadcastReceiver{
 
         if (commServer!=null){
             commServer.receiveAppMsg(intent.getExtras().getString(PARAM1),intent.getExtras().getString(PARAM2));
+        }else{
+            Logs.e(TAG,"通讯服务不存在");
         }
 
     }

@@ -7,6 +7,7 @@ import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.wos.play.rootdir.model_universal.tool.AppsTools;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 import com.wos.play.rootdir.model_universal.tool.MD5Util;
 
@@ -92,11 +93,19 @@ public class LoaderHelper implements Observer {//观察者
      * @param task
      */
     private void parseDatas(Task task){
-        Logs.i(TAG,"准备下载 - 任务 -> : "+ task.printInfo());
+        Logs.i(TAG,"上传下载 中心 - 任务 :[ "+ task.printInfo()+" ]");
+        int type = task.getType();
+        if (type == Task.Type.HTTP_UPLOAD_SINGLE){
+            httpFileUpload(task);
+        }else
+        if (type == Task.Type.FTP_UPLOAD_SINGLE){
+            //ftp文件上传
+            ftpFileUpload(task);
+        }else
         if (cn.trinea.android.common.util.FileUtils.isFileExist(task.getSavePath()+task.getFileName())){
             caller.downloadResult(task,0);
         }else{
-            int type = task.getType();
+
             if (type == Task.Type.HTTP){
                 httpDownload(task);
             }else
@@ -111,6 +120,10 @@ public class LoaderHelper implements Observer {//观察者
             }
         }
     }
+
+
+
+
     //复制本地文件到 -app 资源目录下
     private void cpFile(Task task) {
         File jhFile = null;
@@ -287,6 +300,7 @@ public class LoaderHelper implements Observer {//观察者
     }
 
 
+
     /**
      * 被观察者
      * 数据
@@ -302,9 +316,22 @@ public class LoaderHelper implements Observer {//观察者
 
 
 
-
-
-
+    //ftp文件上传
+    private void ftpFileUpload(Task task) {
+        //ip port user pass  - 本地文件路径 远程路径
+        new FtpHelper(task.getFtpAddress(),task.getFtpPort(),task.getFtpUser(),task.getFtpPass()).uploadingSingle(task.getLocalPath(),null,task.getRemotePath());
+        caller.downloadResult(task,-1);
+    }
+    // http 文件上传
+    private void httpFileUpload(Task task) {
+       final String filepath = task.getLocalPath();
+        final String url = task.getUrl();
+        if (cn.trinea.android.common.util.FileUtils.isFileExist(filepath) && !"".equals(url)){
+            AppsTools.urlFileUpload(url,filepath);
+            cn.trinea.android.common.util.FileUtils.deleteFile(filepath);
+        }
+        caller.downloadResult(task,-1);
+    }
 
 
 

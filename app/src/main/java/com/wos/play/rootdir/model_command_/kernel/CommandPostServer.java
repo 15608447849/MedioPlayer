@@ -5,7 +5,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
 
+import com.wos.play.rootdir.model_command_.command_arr.Command_SYTI;
+import com.wos.play.rootdir.model_command_.command_arr.Command_SCRN;
 import com.wos.play.rootdir.model_command_.command_arr.Command_UPSC;
+import com.wos.play.rootdir.model_command_.command_arr.Command_VOLU;
 import com.wos.play.rootdir.model_command_.command_arr.ICommand_DLIF;
 import com.wos.play.rootdir.model_command_.command_arr.ICommand_SORE_JsonDataStore;
 import com.wos.play.rootdir.model_download.override_download_mode.Task;
@@ -42,10 +45,10 @@ public class CommandPostServer extends Service implements iCommand{
     private HashMap<String, iCommand> commandList = null;
     private void initData() {
 
-        //syncTime
-//        commandList.put(CMD_INFO.SYTI,new Command_SYTI(getApplicationContext()));
+        //syncTime时间同步
+        commandList.put(CMD_INFO.SYTI,new Command_SYTI(getApplicationContext()));
         // 音量控制
-//        commandList.put(CMD_INFO.VOLU, new Command_VOLU());
+        commandList.put(CMD_INFO.VOLU, new Command_VOLU());
         //关闭终端
 //        commandList.put(CMD_INFO.SHDO, new Command_SHDO());
         //收到排期
@@ -54,6 +57,8 @@ public class CommandPostServer extends Service implements iCommand{
         commandList.put(CMD_INFO.DLIF, ICommand_DLIF.get(getApplicationContext()));
         //下载完资源 保存json数据
         commandList.put(CMD_INFO.SORE, ICommand_SORE_JsonDataStore.getInstent(getApplicationContext()));
+        //截屏 - 定时和实时
+        commandList.put(CMD_INFO.SCRN,new Command_SCRN(getApplicationContext()));
     }
 
     public CommandPostServer() {
@@ -148,7 +153,7 @@ public class CommandPostServer extends Service implements iCommand{
      * 收到一个命令 ->放入队列中 -> 轮询队列有命令 取出来 执行
      */
     public void reserveCmd(String cmd, String param){
-        Logs.i(TAG,"命令 ["+cmd+ " ]  -  参数: [ "+ param+" ]");
+//        Logs.i(TAG,"命令 ["+cmd+ " ]  -  参数: [ "+ param +" ]");
 
         if (commandList==null){
             commandList = new HashMap<>();
@@ -162,7 +167,7 @@ public class CommandPostServer extends Service implements iCommand{
 
     private void executes(String cmd, String param){
         if (commandList.containsKey(cmd)) {
-            Logs.i(TAG,"执行指令["+cmd +"]"+"参数: ["+ param+"]"+"\n所在线程:"+Thread.currentThread().getName()+" - 当前线程数:"+Thread.getAllStackTraces().size() +"\n\r");
+            Logs.i(TAG,"执行指令[ "+cmd +" ]"+"参数: [ "+ param+" ]"+"\n所在线程 -["+Thread.currentThread().getName()+"] - 线程数:"+Thread.getAllStackTraces().size());
             commandList.get(cmd).Execute(param);
         }
     }

@@ -132,7 +132,7 @@ public class CommunicationServer extends Service {
      * 收到一个app给我的消息到服务器
      */
     public void receiveAppMsg(String mothername, String msg) {
-//        Logs.e(TAG,"反射调用 : " + mothername+"("+ msg+")");
+//        Logs.e(TAG,"反射调用 >>> " + mothername+"("+ msg+"){...}");
         invokeMother(mothername, msg);
     }
     /**
@@ -251,6 +251,11 @@ public class CommunicationServer extends Service {
     //文件下载调度通知
     private void fileDownloadNotifiy(String param) {
         sendCmds(generateFileDownLoadUrl(param));
+    }
+
+    //定时截屏通知
+    private void pointTimeScreen(String param){
+        sendCmds(generateUri(param));
     }
 
     private String generateFileDownLoadUrl(String param) {

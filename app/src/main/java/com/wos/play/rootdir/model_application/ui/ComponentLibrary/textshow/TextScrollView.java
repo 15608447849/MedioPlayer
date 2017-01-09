@@ -9,13 +9,14 @@ import android.widget.TextView;
 
 import com.wos.play.rootdir.R;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.IContentView;
+import com.wos.play.rootdir.model_application.ui.UiInterfaces.MedioInterface;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
 
 /**
  * Created by user on 2016/11/15.
  * 上下滚动 文本框
  */
-public class TextScrollView extends ScrollView implements IContentView {
+public class TextScrollView extends ScrollView implements IContentView{
 
     private Context context;
     private int length;
@@ -27,6 +28,11 @@ public class TextScrollView extends ScrollView implements IContentView {
     @Override
     public int getLength() {
         return length==0?30:length;
+    }
+
+    @Override
+    public void setMedioInterface(MedioInterface bridge) {
+
     }
 
     @Override

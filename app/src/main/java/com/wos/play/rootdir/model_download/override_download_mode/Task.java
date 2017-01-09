@@ -15,7 +15,8 @@ public class Task implements Parcelable {
         int HTTP = 0;
         int FTP = 1;
         int FILE = 2;
-        int NONE = 4;
+        int FTP_UPLOAD_SINGLE = 5;
+       int HTTP_UPLOAD_SINGLE = 6;
     }
 
     interface State {
@@ -53,8 +54,6 @@ public class Task implements Parcelable {
     private TaskCall call;//接口回调
 
     /**
-     *
-     * @param savePath 文件存放路径 - 不存在会自动创建
      * @param terminalNo 终端id
      */
     public Task(String terminalNo) {

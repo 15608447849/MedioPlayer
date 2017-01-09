@@ -491,7 +491,7 @@ public class ScheduleReader implements ListeningScheduleEventThread.OnScheduleEv
                 return;
             }
             current.startTimer(initTimeTask(),TimeOperator.getMillisecond(current.getEnd()));
-            Logs.i(TAG, "--- 排期 - 设置时间 - 完成 ---");
+            Logs.i(TAG, "======= 排期 - 设置时间 - 完成 ========= 播放[ "+getScheduleType(current.getSchedule().getType())+" ]");
             Logs.i(TAG, "\n\r");
             //转换数据 - 发送 排期信息 -> ui制作
             UiDataFilter.getUiDataFilter().filter(current);

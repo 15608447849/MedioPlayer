@@ -52,6 +52,32 @@ public class TimeOperator {
         LocalDate today = LocalDate.now();
        return today.toString();
     }
+    //年月日 时分秒
+    public static String  getTodayString(){
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+        return df.format(new Date());
+    }
+    public static String getToday(boolean y,boolean m,boolean d,boolean h,boolean mie,boolean s,String spaceMark,String spaceMark2){
+        spaceMark = spaceMark ==null?"":spaceMark;
+        spaceMark2 = spaceMark2 ==null?"":spaceMark2;
+        Calendar cal = Calendar.getInstance();
+        int year = cal.get(Calendar.YEAR);//获取年份
+        int month=cal.get(Calendar.MONTH);//获取月份 月份要+1
+        int day=cal.get(Calendar.DATE);//获取日
+        int hour=cal.get(Calendar.HOUR);//小时
+        int minute=cal.get(Calendar.MINUTE);//分
+        int second=cal.get(Calendar.SECOND);//秒
+
+        StringBuilder sb = new StringBuilder();
+       sb.append(y?year+spaceMark:"");
+       sb.append(m?(month+1)+spaceMark:"");
+       sb.append(d?day+spaceMark2:"");
+
+       sb.append(h?hour+spaceMark:"");
+       sb.append(mie?minute+spaceMark:"");
+       sb.append(s?second:"");
+        return sb.toString();
+    }
     public static void printNowTime(){ //默认的格式是hh:mm:ss:nnn，这里的nnn是纳秒
         LocalTime time = LocalTime.now();
         System.out.println("local time now : " + time);
@@ -64,6 +90,7 @@ public class TimeOperator {
         int day = today.getDayOfMonth();
         System.out.printf("Year : %d Month : %d day : %d \t %n", year, month, day);
     }
+
     //时间戳
     public static void printTimeStamp(){ //比如Date.from(Instant)是用来将Instant转换成java.util.Date的，而Date.toInstant()是将Date转换成Instant的
         Instant timestamp = Instant.now();
@@ -85,7 +112,6 @@ public class TimeOperator {
         Date date = new Date(lt);
         res = simpleDateFormat.format(date);
         System.out.println(" -> "+res);//"当前时间戳:"+s+
-
     }
 
     /*
@@ -196,6 +222,51 @@ public class TimeOperator {
     }
 
     /**
+     * 比较时间大小
+     * 例子:2008-01-25 he 2010-01-01
+     *
+     if(result==0)
+     System.out.println(result+"->timeStamp1 相等 timeStamp2");
+     else if(result<0)
+     System.out.println(result+"->timeStamp1 小于 timeStamp2");
+     else
+     System.out.println(result+"->timeStamp1 大于 timeStamp2");
+     */
+    public static int compareTime_clearTime(String time1 ,String time2){
+        int result= 0;
+        try
+        {
+            java.text.DateFormat df=new java.text.SimpleDateFormat("yyyy-MM-dd");
+            java.util.Calendar c1=getCalendar();
+            java.util.Calendar c2=getCalendar();
+            c1.setTime(df.parse(time1));
+            c2.setTime(df.parse(time2));
+            result=c1.compareTo(c2);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    /**
+     * 计算毫秒数
+     *  2011-02-02 00:00:00 - 2015-02-02 23:50:50
+     */
+    public static long getMillis(String strMin,String strMax){
+
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date date1 = sdf.parse(strMin);
+            Date date2 = sdf.parse(strMax);
+            return date2.getTime()-date1.getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    /**
      * 计算毫秒数 差值
      * 忽略年月日
      */
@@ -210,6 +281,7 @@ public class TimeOperator {
         milli += ((d.get(Calendar.SECOND) - s.get(Calendar.SECOND))*1000);
         return milli;
     }
+
 
     /**
      * 计算毫秒数 差值

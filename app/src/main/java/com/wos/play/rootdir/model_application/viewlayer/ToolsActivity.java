@@ -22,7 +22,6 @@ import butterknife.ButterKnife;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
 
-import static butterknife.ButterKnife.bind;
 import static com.wos.play.rootdir.R.id.HeartBeatInterval;
 
 /**
@@ -74,12 +73,12 @@ public class ToolsActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        registBroad(1);
-        if(gotoApp()){
+        if(checkConfigFile()){
             setContentView(R.layout.activity_wostools);
-            bind(this);
+            ButterKnife.bind(this);
             //初始化控件信息
             initViewValue();
+            registBroad(1);//注册服务 消息广播
             isBind = true;
         }
     }
@@ -89,6 +88,7 @@ public class ToolsActivity extends BaseActivity {
         super.onDestroy();
         if (isBind){
             ButterKnife.unbind(this);
+            unregistBroad();
         }
     }
 
@@ -261,26 +261,33 @@ public class ToolsActivity extends BaseActivity {
         if (!isGetDataing){ //不在获取数据中
             if(save()){
                 //进入应用
-                gotoApp();
+                checkConfigFile();
             }
         }
     }
 
     /**
+     * 检查配置文件
      * 进入应用界面
      */
-    private boolean gotoApp() {
+    private boolean checkConfigFile() {
+
         if (SystemInitInfo.get().isConfig()){
             // 已设置过服务器信息
             //发送上线指令
-            sendMsgCommServer("sendTerminaOnline", null);
-            unregistBroad();
-            this.startActivity(new Intent(this, MainActivity.class));
+//          sendMsgCommServer("sendTerminaOnline", null);
+            startMain(true);
             this.stopActivityOnArr(this);
             return false;
         }
         return true;
     }
+    //跳转到 主页面
+    private void startMain(boolean flag) {
+        Intent intent = new Intent(this, MainActivity.class);
+        this.startActivity(intent);
+    }
+
     //收到服务器的返回值
     @Override
     public void receiveService(final String result) {

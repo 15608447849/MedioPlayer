@@ -6,4 +6,5 @@ package com.wos.play.rootdir.model_application.ui.UiInterfaces;
 
 public interface IContentView extends Iview{
     int getLength();
+    void setMedioInterface(MedioInterface bridge);
 }

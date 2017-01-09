@@ -15,6 +15,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +39,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import cn.trinea.android.common.util.FileUtils;
 
 import static android.support.v7.widget.StaggeredGridLayoutManager.TAG;
 
@@ -244,6 +247,67 @@ public class AppsTools {
             e.printStackTrace();
         }
         return null;
+    }
+    public static void urlFileUpload(String uploadUrl,String filepath){
+        if (!FileUtils.isFileExist(filepath)){
+            return;
+        }
+        FileInputStream inputStream = null;
+        OutputStream outStream = null;
+        try {
+            URL url =new URL(uploadUrl);
+            HttpURLConnection con=(HttpURLConnection)url.openConnection();
+            /* 允许Input、Output，不使用Cache */
+            con.setDoInput(true);
+            con.setDoOutput(true);
+            con.setUseCaches(false);
+
+            /* 设置传送的method=POST */
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Charset", "UTF-8");
+            con.setConnectTimeout(30000);
+            con.setReadTimeout(60000);
+            con.setRequestProperty("Connection", "keep-alive");  //设置连接的状态
+            con.setRequestProperty("Content-Type","application/octet-stream");
+            // 头字段
+//            con.setRequestProperty("Accept", "*/*");
+//            con.setRequestProperty("Accept-Charset", "UTF-8,*;q=0.5");
+//            con.setRequestProperty("Accept-Encoding", "gzip,deflate");
+//            con.setRequestProperty("Accept-Language", "zh-CN");
+//            con.setRequestProperty("User-Agent", "Android");
+
+            inputStream = new FileInputStream(filepath);
+            outStream = con.getOutputStream();
+            byte [] cache = new byte[1024];
+            int len ;
+            while( (len = inputStream.read(cache))!=-1){
+                outStream.write(cache,0,len);
+            }
+            outStream.flush();
+            if ((len = con.getResponseCode()) == 200) {
+                System.out.println("文件上传成功 - ["+filepath+"]");
+            }else{
+                System.err.println("文件上传失败 - 错误码 :["+len+"]");
+            }
+
+            //断开连接
+            con.disconnect();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally{
+                if (inputStream != null){
+                    try {
+                        inputStream.close();
+                    } catch (IOException e) {
+                    }
+                }
+                if (outStream!=null){
+                    try {
+                    outStream.close();
+                } catch (IOException e) {
+                }
+                }
+        }
     }
 
     /**

@@ -61,7 +61,7 @@ public class AdBean extends PublicAttibute{
     }
 
     public double getHeight() {
-        return height;
+        return height>0?height:-1;
     }
 
     public void setHeight(double height) {
@@ -69,7 +69,7 @@ public class AdBean extends PublicAttibute{
     }
 
     public double getWidth() {
-        return width;
+        return width>0?width:-1;
     }
 
     public void setWidth(double width) {

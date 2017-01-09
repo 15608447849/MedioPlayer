@@ -174,7 +174,7 @@ public class IWebView extends WebView implements IComponentUpdate {
 
     @Override
     public void loadContent() {
-        Logs.i(TAG,"URL - "+ url);
+        Logs.i(TAG,"网页 - URL :[ "+ url+" ]");
 
         this.loadUrl(url);
     }

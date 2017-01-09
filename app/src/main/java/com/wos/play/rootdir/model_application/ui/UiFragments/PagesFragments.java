@@ -57,11 +57,12 @@ public class PagesFragments extends Fragment{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Logs.i(TAG,"碎片 - -onCreateView() ");
+//        Logs.i(TAG,"碎片 - -onCreateView() ");
         if (layout == null){
             //创建绝对布局
             layout  = new AbsoluteLayout(getActivity());
             layout.setLayoutParams(new AbsoluteLayout.LayoutParams(w, h,x,y));
+
             if (isBgColor){
                 try {
                     layout.setBackgroundColor(Color.parseColor(UiTools.TanslateColor(backgroud)));
@@ -76,7 +77,7 @@ public class PagesFragments extends Fragment{
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Logs.i(TAG,"碎片 - -onViewCreated()");
+//        Logs.i(TAG,"碎片 - -onViewCreated()");
         if (layout!=null){
                     createConponent();
         }
@@ -85,26 +86,26 @@ public class PagesFragments extends Fragment{
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Logs.i(TAG,"碎片 - -onActivityCreated()");
+//        Logs.i(TAG,"碎片 - -onActivityCreated()");
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        Logs.i(TAG,"碎片 - -onStart");
+//        Logs.i(TAG,"碎片 - -onStart");
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Logs.i(TAG,"碎片 - -onResume()");
+//        Logs.i(TAG,"碎片 - -onResume()");
         exeComponents(); //执行组件
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        Logs.i(TAG,"碎片 - -onPause()");
+//        Logs.i(TAG,"碎片 - -onPause()");
         unexeComponents(); // 结束执行组件
     }
 
@@ -153,22 +154,22 @@ public class PagesFragments extends Fragment{
     @Override
     public void onStop() {
         super.onStop();
-        Logs.i(TAG,"碎片 - -onStop()");
+//        Logs.i(TAG,"碎片 - -onStop()");
     }
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Logs.i(TAG,"碎片 - -onDestroyView()");
+//        Logs.i(TAG,"碎片 - -onDestroyView()");
     }
     @Override
     public void onDetach() {
         super.onDetach();
-        Logs.i(TAG,"碎片 - -onDetach()");
+//        Logs.i(TAG,"碎片 - -onDetach()");
     }
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Logs.i(TAG,"碎片 - -onDestroy()");
+//        Logs.i(TAG,"碎片 - -onDestroy()");
     }
 
 

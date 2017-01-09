@@ -59,7 +59,7 @@ public class CMedio extends FrameLayout implements IComponent,MedioInterface{
         }
     }
     private ArrayList<IContentView> contentArr = null;
-    //添加 图片组件
+    //添加 图片组件-视频组件
     private void addContentImp(IContentView content){
         if (contentArr==null){
             contentArr = new ArrayList<>();
@@ -88,9 +88,11 @@ public class CMedio extends FrameLayout implements IComponent,MedioInterface{
                 }
                 if (imp!=null){
                     addContentImp(imp);
+                    imp.setMedioInterface(this);
                     imp = null;
                 }
             }
+            playNumber = contentArr.size();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -188,10 +190,15 @@ public class CMedio extends FrameLayout implements IComponent,MedioInterface{
             currentIView = null;
         }
     }
-    //和 视频控件 通讯
+
+    private int playNumber = 0;
+    //和 视频控件 图片控件 通讯
     @Override
     public void playOver(Iview playView) {
-        loadContent();
+        playNumber--;
+        if (playNumber>0){
+            loadContent();
+        }
     }
 
 

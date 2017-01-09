@@ -20,7 +20,6 @@ public class MainActivity extends BaseActivity {
         Logs.e("MainActivity","活动层-------------onCreate----------------------");
         setContentView(R.layout.activity_main);
         initUI();
-
     }
     @Override
     protected void onStart() {
@@ -30,11 +29,15 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        //发送上线指令 ONLI
+        sendMsgCommServer("sendTerminaOnline", null);
         Logs.e("MainActivity","活动层-------------onResume----------------------");
     }
     @Override
     protected void onPause() {
         super.onPause();
+        //发送下线指令 OFLI
+
         Logs.e("MainActivity","活动层-------------onPause----------------------");
     }
     @Override
