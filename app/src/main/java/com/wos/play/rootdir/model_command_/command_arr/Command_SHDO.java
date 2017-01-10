@@ -29,6 +29,13 @@ public class Command_SHDO implements iCommand {
 
     @Override
     public void Execute(String param) {
+        
+        if (param==null || param.equals("")){
+            shutDown();
+            return;
+        }
+        
+        
         //OPEN:0-13:00:00;1-13:00:00;2-13:00:00;3-13:00:00;4-13:00:00;5-13:00:00;6-13:00:00  - > 自动开机
         //0-15:17:00;1-15:17:00;2-15:17:00;3-15:17:00;4-15:17:00;5-15:17:00;6-15:17:00
         if (param.equals("false")){
@@ -45,6 +52,12 @@ public class Command_SHDO implements iCommand {
         timerTask = getTask();
         timer = ICommand_TimeParse.getInstans().parse(param,timerTask);
      }
+
+    //关机
+    private void shutDown() {
+        Logs.e("关机","========= 关闭终端 ===========");
+        ShellUtils.execCommand("reboot -p",true,false);
+    }
 
     private void closeTermail() {
         //# echo  mem>/sys/power/state    使系统进行睡眠

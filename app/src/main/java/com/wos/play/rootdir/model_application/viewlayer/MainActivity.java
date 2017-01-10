@@ -37,7 +37,7 @@ public class MainActivity extends BaseActivity {
     protected void onPause() {
         super.onPause();
         //发送下线指令 OFLI
-
+        sendMsgCommServer("sendTerminalOffLine", null);
         Logs.e("MainActivity","活动层-------------onPause----------------------");
     }
     @Override

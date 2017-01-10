@@ -12,6 +12,7 @@ import com.wos.play.rootdir.model_command_.command_arr.Command_SYTI;
 import com.wos.play.rootdir.model_command_.command_arr.Command_UPSC;
 import com.wos.play.rootdir.model_command_.command_arr.Command_VOLU;
 import com.wos.play.rootdir.model_command_.command_arr.ICommand_DLIF;
+import com.wos.play.rootdir.model_command_.command_arr.ICommand_REBO;
 import com.wos.play.rootdir.model_command_.command_arr.ICommand_SORE_JsonDataStore;
 import com.wos.play.rootdir.model_download.override_download_mode.Task;
 import com.wos.play.rootdir.model_universal.tool.CMD_INFO;
@@ -55,6 +56,8 @@ public class CommandPostServer extends Service implements iCommand{
         commandList.put(CMD_INFO.SHDO, new Command_SHDO());
         //开启终端
         commandList.put(CMD_INFO.OPEN, new Command_OPEN());
+        //重启终端
+        commandList.put(CMD_INFO.REBO, new ICommand_REBO());
         //收到排期
         commandList.put(CMD_INFO.UPSC, new Command_UPSC(getApplicationContext()));
         //下载调度

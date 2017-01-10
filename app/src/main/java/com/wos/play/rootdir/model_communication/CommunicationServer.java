@@ -227,7 +227,12 @@ public class CommunicationServer extends Service {
         });
         layeThread.start();
     }
-
+    /**
+     * 下线
+     */
+    private void sendTerminalOffLine(){
+        sendCmds(makeOffLineUri());
+    }
 
 
     //上线 url
@@ -235,6 +240,14 @@ public class CommunicationServer extends Service {
         //http://192.168.6.14:9000/terminal/heartBeat?cmd=HRBT%3A10000555
         return generateUri("ONLI:" + terminalId);
     }
+    /**
+     * 下线
+     */
+    private String makeOffLineUri(){
+        return generateUri("OFLI:" + terminalId);
+    }
+
+
     /**
      * 文件下载进度,状态
      */

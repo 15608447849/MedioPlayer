@@ -27,6 +27,9 @@ public class Command_OPEN implements iCommand {
     }
     @Override
     public void Execute(String param) {
+        if (param==null||param.equals("")){
+            return;
+        }
         //OPEN:0-13:00:00;1-13:00:00;2-13:00:00;3-13:00:00;4-13:00:00;5-13:00:00;6-13:00:00  - > 自动开机
         //0-15:17:00;1-15:17:00;2-15:17:00;3-15:17:00;4-15:17:00;5-15:17:00;6-15:17:00
         if (param.equals("false")){
