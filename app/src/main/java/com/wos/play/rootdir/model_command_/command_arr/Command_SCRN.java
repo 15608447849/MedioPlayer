@@ -75,7 +75,7 @@ public class Command_SCRN implements iCommand,Command_SCRN_RtThread.RtThreadActi
 //    public static String screenCommand = "su\nscreencap -p #\nexit";
     public static String screenCommand = "screencap -p #";
     //设置 本地文件路径
-    private final String savePath = "/mnt/sdcard/wosimageTems/";
+    private final String savePath = "/mnt/sdcard/tems/";
 
     @Override
     public void Execute(String param) {

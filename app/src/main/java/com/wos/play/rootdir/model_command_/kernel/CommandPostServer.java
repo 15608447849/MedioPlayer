@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
 
-import com.wos.play.rootdir.model_command_.command_arr.Command_SYTI;
+import com.wos.play.rootdir.model_command_.command_arr.Command_OPEN;
 import com.wos.play.rootdir.model_command_.command_arr.Command_SCRN;
+import com.wos.play.rootdir.model_command_.command_arr.Command_SHDO;
+import com.wos.play.rootdir.model_command_.command_arr.Command_SYTI;
 import com.wos.play.rootdir.model_command_.command_arr.Command_UPSC;
 import com.wos.play.rootdir.model_command_.command_arr.Command_VOLU;
 import com.wos.play.rootdir.model_command_.command_arr.ICommand_DLIF;
@@ -50,7 +52,9 @@ public class CommandPostServer extends Service implements iCommand{
         // 音量控制
         commandList.put(CMD_INFO.VOLU, new Command_VOLU());
         //关闭终端
-//        commandList.put(CMD_INFO.SHDO, new Command_SHDO());
+        commandList.put(CMD_INFO.SHDO, new Command_SHDO());
+        //开启终端
+        commandList.put(CMD_INFO.OPEN, new Command_OPEN());
         //收到排期
         commandList.put(CMD_INFO.UPSC, new Command_UPSC(getApplicationContext()));
         //下载调度

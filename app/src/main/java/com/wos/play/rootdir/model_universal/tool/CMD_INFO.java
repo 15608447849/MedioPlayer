@@ -245,4 +245,6 @@ public class CMD_INFO {
      * 下载调度
      */
     public static final String DLIF = "DLIF:";
+    //开机
+    public static final String OPEN = "OPEN:";
 }

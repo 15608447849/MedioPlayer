@@ -1,6 +1,5 @@
 package com.wos.play.rootdir.model_command_.command_arr;
 
-
 import com.wos.play.rootdir.model_command_.kernel.iCommand;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 
@@ -10,23 +9,22 @@ import java.util.TimerTask;
 import cn.trinea.android.common.util.ShellUtils;
 
 /**
- * Created by user on 2016/9/6.
+ * Created by user on 2017/1/10.
  */
-public class Command_SHDO implements iCommand {
+
+public class Command_OPEN implements iCommand {
 
 
-    private Timer timer;
+        private Timer timer;
     private TimerTask timerTask;
     private TimerTask getTask(){
         return new TimerTask() {
             @Override
             public void run() {
-                closeTermail();
+                openTermail();
             }
         };
     }
-
-
     @Override
     public void Execute(String param) {
         //OPEN:0-13:00:00;1-13:00:00;2-13:00:00;3-13:00:00;4-13:00:00;5-13:00:00;6-13:00:00  - > 自动开机
@@ -44,17 +42,16 @@ public class Command_SHDO implements iCommand {
         }
         timerTask = getTask();
         timer = ICommand_TimeParse.getInstans().parse(param,timerTask);
-     }
+    }
 
-    private void closeTermail() {
+    private void openTermail() {
+        Logs.e("开机","=========== 自动开启 ===========");
+        //"sleep "+time+" &&
         //# echo  mem>/sys/power/state    使系统进行睡眠
         //# echo  on>/sys/power/state     使系统从睡眠中唤醒过来
-        //休眠多久后关机
-//        String commands =  "sleep "+time+" && reboot -p";
-//        String commands =  "sleep "+time+" && echo mem>/sys/power/state";
-
-        Logs.e("关机","========= 自动关闭 ===========");
-        String commands ="echo mem>/sys/power/state";
+        String commands ="echo on>/sys/power/state";
         ShellUtils.execCommand(commands,true,false);
     }
+
+
 }

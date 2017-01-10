@@ -45,7 +45,7 @@ public class ICommand_TimeParse {
         public String DATE_END = "#jieshishijian";
     }
 
-    public Timer parse(String param, TimerTask task) {
+    public long parse(String param){
         //SCRN: 0-17:00:00; 1-17:00:00; 2-17:00:00; 3-17:00:00; 4-17:00:00; 5-17:00:00; 6-17:00:00 & 2017-01-01,2017-01-29
         //SHDO: 0-10:00:00; 1-11:00:00; 2-12:00:00; 3-13:00:00; 4-14:00:00; 5-15:00:00; 6-16:00:00
 
@@ -54,11 +54,18 @@ public class ICommand_TimeParse {
         //查看最后一个 是不是 包含 &
         HashMap<String,String> map = checkString(timeparam);
         if (map!=null){
-         long times = getTimes(map);
-            if (task!=null){
+            return getTimes(map);
+        }
+        return -1;
+    }
+
+    public Timer parse(String param, TimerTask task) {
+
+         long times = parse(param);
+            if (task!=null && times!=-1){
                 return getTimes(task,times);
             }
-        }
+
         return null;
     }
 
