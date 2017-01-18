@@ -50,6 +50,7 @@ public class MainActivity extends BaseActivity {
         super.onDestroy();
         Logs.e("MainActivity","活动层-------------onDestroy----------------------");
         unInitUI();
+
     }
 
     //获取activity的底层layout

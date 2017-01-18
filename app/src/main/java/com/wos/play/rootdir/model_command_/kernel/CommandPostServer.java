@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import cn.trinea.android.common.util.ShellUtils;
+
 public class CommandPostServer extends Service implements iCommand{
     private static final String TAG = "_CommandPostServer";
     @Override
@@ -47,25 +49,35 @@ public class CommandPostServer extends Service implements iCommand{
 
     private HashMap<String, iCommand> commandList = null;
     private void initData() {
-
-        //syncTime时间同步
-        commandList.put(CMD_INFO.SYTI,new Command_SYTI(getApplicationContext()));
         // 音量控制
         commandList.put(CMD_INFO.VOLU, new Command_VOLU());
-        //关闭终端
-        commandList.put(CMD_INFO.SHDO, new Command_SHDO());
-        //开启终端
-        commandList.put(CMD_INFO.OPEN, new Command_OPEN());
-        //重启终端
-        commandList.put(CMD_INFO.REBO, new ICommand_REBO());
         //收到排期
         commandList.put(CMD_INFO.UPSC, new Command_UPSC(getApplicationContext()));
         //下载调度
         commandList.put(CMD_INFO.DLIF, ICommand_DLIF.get(getApplicationContext()));
         //下载完资源 保存json数据
         commandList.put(CMD_INFO.SORE, ICommand_SORE_JsonDataStore.getInstent(getApplicationContext()));
-        //截屏 - 定时和实时
-        commandList.put(CMD_INFO.SCRN,new Command_SCRN(getApplicationContext()));
+        boolean isRoot = false;
+        try {
+            //有root权限
+            isRoot = ShellUtils.checkRootPermission();
+        } catch (Exception e) {
+            Logs.e(TAG,"执行root权限判断错误:"+e.getMessage());
+        }
+        if (isRoot){
+            //syncTime时间同步
+            commandList.put(CMD_INFO.SYTI,new Command_SYTI(getApplicationContext()));
+            //关闭终端
+            commandList.put(CMD_INFO.SHDO, new Command_SHDO());
+            //开启终端
+            commandList.put(CMD_INFO.OPEN, new Command_OPEN());
+            //重启终端
+            commandList.put(CMD_INFO.REBO, new ICommand_REBO());
+            //截屏 - 定时和实时
+            commandList.put(CMD_INFO.SCRN,new Command_SCRN(getApplicationContext()));
+        }else{
+            Logs.e(TAG,"无\'root\'权限,无法执行 [时间同步][截屏][关闭终端]等操作.");
+        }
     }
 
     public CommandPostServer() {

@@ -3,6 +3,7 @@ package com.wos.play.rootdir.model_monitor.tools;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.os.Environment;
 
 import java.util.List;
 
@@ -56,7 +57,30 @@ public class Stools {
     }
 
 
-
+    /**
+     * sd卡是否可用
+     *
+     * @return
+     */
+    public static boolean isSdCardAvailable() {
+        return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
+    }
+    /**
+     * 创建根缓存目录
+     *
+     * @return
+     */
+    public static String createRootPath(Context context ) {
+        String cacheRootPath = "/mnt/sdcard/wosplayer";
+        if (isSdCardAvailable()) {
+            // /sdcard/Android/data/<application package>/cache
+            cacheRootPath = context.getExternalCacheDir().getPath();
+        } else {
+            // /data/data/<application package>/cache
+            cacheRootPath = context.getCacheDir().getPath();
+        }
+        return cacheRootPath;
+    }
 
 
 }
