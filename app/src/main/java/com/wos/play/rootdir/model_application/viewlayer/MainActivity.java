@@ -19,10 +19,12 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         Logs.e("MainActivity","活动层-------------onCreate----------------------");
         setContentView(R.layout.activity_main);
-        initUI();
+        setIsOnBack(false);
+        setStopOnDestory(false);
     }
     @Override
     protected void onStart() {
+        initUI();
         super.onStart();
         Logs.e("MainActivity","活动层-------------onStart----------------------");
     }
@@ -43,14 +45,13 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onStop() {
         Logs.e("MainActivity","活动层-------------onStop----------------------");
+        unInitUI();
         super.onStop();
     }
     @Override
     protected void onDestroy() {
         super.onDestroy();
         Logs.e("MainActivity","活动层-------------onDestroy----------------------");
-        unInitUI();
-
     }
 
     //获取activity的底层layout

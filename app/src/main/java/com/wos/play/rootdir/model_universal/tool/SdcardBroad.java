@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.wos.play.rootdir.model_monitor.soexcute.RunJniHelper;
-
 
 /**
  * Created by user on 2016/11/7.
@@ -28,7 +26,7 @@ public class SdcardBroad extends BroadcastReceiver{
             SdCardTools.checkSdCard(context);
             //开启监听服务
 //          context.startService(new Intent(context, WatchServer.class));
-            RunJniHelper.getInstance().startMservice(context.getPackageName()+"/com.wos.play.rootdir.model_monitor.kernes.WatchServer", SdCardTools.app_dir);
+          //  RunJniHelper.getInstance().startMservice(context.getPackageName()+"/com.wos.play.rootdir.model_monitor.kernes.WatchServer", SdCardTools.app_dir);
         }
     }
 }

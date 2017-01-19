@@ -46,6 +46,7 @@ public class Stools {
             ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
             String currentPackageName = cn.getClassName();
             for (String activityClassName : activityList){
+//                Logs.i(">>>>>>>"," ** " +activityClassName +" -  ## "+currentPackageName);
                 if (activityClassName.equals(currentPackageName)){
                     return true;
                 }

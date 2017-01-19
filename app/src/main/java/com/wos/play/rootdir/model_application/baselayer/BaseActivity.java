@@ -74,11 +74,18 @@ public class BaseActivity extends Activity {
         super.onPause();
     }
 
+    private boolean isStopOnDestory = true;
+
+    public void setStopOnDestory(boolean stopOnDestory) {
+        isStopOnDestory = stopOnDestory;
+    }
 
     @Override
     protected void onStop() {
         super.onStop();
-      stopActivityOnArr(this);
+        if (isStopOnDestory){
+            stopActivityOnArr(this);
+        }
     }
 
     @Override

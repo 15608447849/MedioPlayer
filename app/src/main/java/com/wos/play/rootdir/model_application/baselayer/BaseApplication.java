@@ -7,6 +7,7 @@ import android.content.Intent;
 import com.wos.play.rootdir.model_command_.kernel.CommandPostServer;
 import com.wos.play.rootdir.model_communication.CommunicationServer;
 import com.wos.play.rootdir.model_download.kernel.DownloadServer;
+import com.wos.play.rootdir.model_monitor.kernes.WatchServer;
 
 /**
  * Created by user on 2016/10/26.
@@ -31,6 +32,8 @@ public class BaseApplication extends Application{
             startAppServer(DownloadServer.class);
             //打开 通讯服务
             startAppServer(CommunicationServer.class);
+            //打开监听
+            startAppServer(WatchServer.class);
         }
         if ("communication".equals(serverName)){
             //通讯服务
@@ -56,6 +59,8 @@ public class BaseApplication extends Application{
             closeAppServer(CommandPostServer.class);
             // 下载服务
             closeAppServer(DownloadServer.class);
+            //关闭监听
+            closeAppServer(WatchServer.class);
         }
         if ("communication".equals(serverName)){
             //通讯服务
