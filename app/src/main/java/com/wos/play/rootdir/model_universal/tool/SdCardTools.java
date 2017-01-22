@@ -3,6 +3,7 @@ package com.wos.play.rootdir.model_universal.tool;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -77,7 +78,7 @@ import java.util.List;
  */
 public class SdCardTools {
     private static String TAG = "sdcard Tools";
-    public static final String app_dir ="/wosplayer";
+    private static final String app_dir ="/wosplayer";
     public static  final String Construction_Bank_dir_source ="/construction_bank/source/";
     public static  final String Construction_Bank_dir_xmlfile ="/construction_bank/xml/";
     private static String appSourcePath = null;
@@ -390,16 +391,16 @@ public class SdCardTools {
      # /mnt/usb_storage
      */
     public static void checkSdCard(Context context) {
-        String tags = "#file_sdcard";
+        String tags = "#检查sdcard目录";
         if(!SdCardTools.existSDCard()){
             Log.e(tags," sdcard is no exist ! ");
             appSourcePath = getDataDataAppDir(context);
-            Log.e(tags," application store dir-> "+appSourcePath);
+            Log.e(tags," store dir-> "+appSourcePath);
         }else{
             appSourcePath=getSDPath();
             String [] paths = SdCardTools.getVolumePaths(context);
             if (paths!=null && paths.length>0){
-                File dir = null;
+                File dir;
                 Log.i(tags,"---------------------------------- sd card path info ------------------------------------");
                 Log.i(tags," 当前 sdcard path:"+ appSourcePath+"\n 可存贮的所有路径数量:"+ paths.length);
                 for (String path : paths){
@@ -454,21 +455,21 @@ public class SdCardTools {
      */
     public static boolean MkDir(String pathdir) {
         try {
-            Log.i("Mkdir","创建 - "+pathdir);
+//            Log.i("Mkdir","创建 - "+pathdir);
             if (pathdir.endsWith("/")){
                 pathdir = pathdir.substring(0,pathdir.lastIndexOf("/"));
-                Log.i("Mkdir","修改 - "+pathdir);
+//                Log.i("Mkdir","修改 - "+pathdir);
             }
             File folder = new File(pathdir);
             if (!folder.exists()) {
                 if (folder.mkdirs()){
-                    Log.i("Mkdir","成功 - "+pathdir);
+                    Log.i("Mkdir","创建成功 - "+pathdir);
                 }else{
-                    Log.i("Mkdir","失败 - "+pathdir);
-
+                    Log.i("Mkdir","创建失败 - "+pathdir);
                 }
             }
             if (folder.exists() && folder.isDirectory()){
+//                Log.i("Mkdir","文件夹存在 - "+pathdir);
                 return true;
             }
         } catch (Exception e) {
@@ -569,6 +570,14 @@ public class SdCardTools {
             }
             Log.i(TAG,"备份数据完成");
         }
+    }
+
+    public static String getDircConfigPath(Context context){
+        ApplicationInfo appinfo = context.getApplicationInfo();
+        return  "/data/data/" + appinfo.packageName + "/storeDir.config";
+    }
+    public static String getDircConfigPathValue(Context context){
+        return  cn.trinea.android.common.util.FileUtils.readFile(getDircConfigPath(context),"utf-8").toString();
     }
 
 }

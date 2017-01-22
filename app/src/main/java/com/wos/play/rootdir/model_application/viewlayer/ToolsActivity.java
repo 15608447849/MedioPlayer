@@ -8,7 +8,7 @@ import android.widget.EditText;
 
 import com.wos.play.rootdir.R;
 import com.wos.play.rootdir.model_application.baselayer.BaseActivity;
-import com.wos.play.rootdir.model_application.baselayer.SystemInitInfo;
+import com.wos.play.rootdir.model_application.baselayer.SystemInfos;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.TerminalNo;
 import com.wos.play.rootdir.model_universal.tool.AppsTools;
 import com.wos.play.rootdir.model_universal.tool.Logs;
@@ -19,9 +19,11 @@ import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import cn.trinea.android.common.util.ShellUtils;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
 
+import static cn.trinea.android.common.util.ShellUtils.execCommand;
 import static com.wos.play.rootdir.R.id.HeartBeatInterval;
 
 /**
@@ -67,6 +69,10 @@ public class ToolsActivity extends BaseActivity {
     public Button btnGetID;
     @Bind(R.id.btnSaveData)
     public Button btnSaveData;
+
+    @Bind(R.id.openPointEdit)
+    public EditText openPointEdit;
+
     private boolean isBind = false;
 
 
@@ -78,7 +84,7 @@ public class ToolsActivity extends BaseActivity {
             ButterKnife.bind(this);
             //初始化控件信息
             initViewValue();
-            registBroad(1);//注册服务 消息广播
+            registBroad(1);//注册服务消息广播
             isBind = true;
         }
     }
@@ -100,20 +106,20 @@ public class ToolsActivity extends BaseActivity {
         try
         {
             btnSaveData.setEnabled(false);
-            serverip.setText(SystemInitInfo.get().getServerip());
-            serverport.setText(SystemInitInfo.get().getServerport());
-            companyid.setText(SystemInitInfo.get().getCompanyid());
-            terminalNo.setText(SystemInitInfo.get().getTerminalNo());
-            heartbeattime.setText(SystemInitInfo.get().getHeartBeatInterval());//心跳
-            StorageLimits.setText(SystemInitInfo.get().getStorageLimits());//sdcard 阔值
-            RestartBeatInterval.setText(SystemInitInfo.get().getSleepTime());//重启时间
-            BasePath.setText(catPathfile(SystemInitInfo.get().getBasepath()));//资源文件夹
-            EpaperPath.setText(catPathfile(SystemInitInfo.get().getEpaperSourcePath()));//电子报资源文件夹
-            SchudulePath.setText(catPathfile(SystemInitInfo.get().getJsonStore()));//排期json文件夹
-            ftpaddress.setText(SystemInitInfo.get().getFtpAddress());
-            ftpport.setText(SystemInitInfo.get().getFtpPort());
-            ftpuser.setText(SystemInitInfo.get().getFtpUser());
-            ftppass.setText(SystemInitInfo.get().getFtpPass());
+            serverip.setText(SystemInfos.get().getServerip());
+            serverport.setText(SystemInfos.get().getServerport());
+            companyid.setText(SystemInfos.get().getCompanyid());
+            terminalNo.setText(SystemInfos.get().getTerminalNo());
+            heartbeattime.setText(SystemInfos.get().getHeartBeatInterval());//心跳
+            StorageLimits.setText(SystemInfos.get().getStorageLimits());//sdcard 阔值
+            RestartBeatInterval.setText(SystemInfos.get().getSleepTime());//重启时间
+            BasePath.setText(catPathfile(SystemInfos.get().getBasepath()));//资源文件夹
+            EpaperPath.setText(catPathfile(SystemInfos.get().getEpaperSourcePath()));//电子报资源文件夹
+            SchudulePath.setText(catPathfile(SystemInfos.get().getJsonStore()));//排期json文件夹
+            ftpaddress.setText(SystemInfos.get().getFtpAddress());
+            ftpport.setText(SystemInfos.get().getFtpPort());
+            ftpuser.setText(SystemInfos.get().getFtpUser());
+            ftppass.setText(SystemInfos.get().getFtpPass());
             //焦点默认在这个控件上
             serverip.setFocusable(true);
         }catch(Exception e)
@@ -134,36 +140,42 @@ public class ToolsActivity extends BaseActivity {
      */
     public void GetViewValue()
     {
-        SystemInitInfo.get().setServerport(serverport.getText().toString());
-        SystemInitInfo.get().setStorageLimits(StorageLimits.getText().toString());
-        SystemInitInfo.get().setSleepTime(RestartBeatInterval.getText().toString());
-        SystemInitInfo.get().setHeartBeatInterval(heartbeattime.getText().toString());
-        SystemInitInfo.get().setCompanyid(companyid.getText().toString());
-        SystemInitInfo.get().setTerminalNo(terminalNo.getText().toString());
-        SystemInitInfo.get().setServerip(serverip.getText().toString());
-        SystemInitInfo.get().setFtpAddress(ftpaddress.getText().toString());//ftp 地址
-        SystemInitInfo.get().setFtpPort(ftpport.getText().toString());// 端口
-        SystemInitInfo.get().setFtpUser(ftpuser.getText().toString());// 用户名
-        SystemInitInfo.get().setFtpPass(ftppass.getText().toString());// 密码
+        SystemInfos.get().setServerport(serverport.getText().toString());
+        SystemInfos.get().setStorageLimits(StorageLimits.getText().toString());
+        SystemInfos.get().setSleepTime(RestartBeatInterval.getText().toString());
+        SystemInfos.get().setHeartBeatInterval(heartbeattime.getText().toString());
+        SystemInfos.get().setCompanyid(companyid.getText().toString());
+        SystemInfos.get().setTerminalNo(terminalNo.getText().toString());
+        SystemInfos.get().setServerip(serverip.getText().toString());
+        SystemInfos.get().setFtpAddress(ftpaddress.getText().toString());//ftp 地址
+        SystemInfos.get().setFtpPort(ftpport.getText().toString());// 端口
+        SystemInfos.get().setFtpUser(ftpuser.getText().toString());// 用户名
+        SystemInfos.get().setFtpPass(ftppass.getText().toString());// 密码
+
+
+        String storeDirc = SdCardTools.getDircConfigPathValue(getApplicationContext());
+        if (storeDirc==null){
+            new IllegalStateException("没有保存资源文件目录路径,无法获取资源路径主目录.");
+        }
         //资源保存路径
-        String dirpath = SdCardTools.getAppSourceDir(this) + completePath(BasePath.getText().toString());
+        String dirpath = storeDirc + completePath(BasePath.getText().toString());
         if (SdCardTools.MkDir(dirpath)) {
-            SystemInitInfo.get().setBasepath(dirpath);
+            SystemInfos.get().setBasepath(dirpath);
         }
         //电子报保存路径
-        dirpath =SdCardTools.getAppSourceDir(this) + completePath(EpaperPath.getText().toString());
+        dirpath = storeDirc + completePath(EpaperPath.getText().toString());
         if (SdCardTools.MkDir(dirpath)){
-            SystemInitInfo.get().setEpaperSourcePath(dirpath);
+            SystemInfos.get().setEpaperSourcePath(dirpath);
         }
         //json保存路径
-        dirpath = SdCardTools.getAppSourceDir(this) + completePath(SchudulePath.getText().toString());
+        dirpath = storeDirc + completePath(SchudulePath.getText().toString());
         if (SdCardTools.MkDir(dirpath)){
-            SystemInitInfo.get().setJsonStore(dirpath);
+            SystemInfos.get().setJsonStore(dirpath);
         }
         //app icon 路径
-        dirpath = SdCardTools.getAppSourceDir(this) + "/appicon/";
+        dirpath = storeDirc + "/appicon/";
         if (SdCardTools.MkDir(dirpath)){
-            SystemInitInfo.get().setAppicon(dirpath);
+            SystemInfos.get().setAppicon(dirpath);
         }
     }
 
@@ -224,8 +236,8 @@ public class ToolsActivity extends BaseActivity {
             param.clear();
         }
         param.put("version",String.valueOf(AppsTools.getLocalVersionCode(getApplicationContext())));
-        param.put("corpId",SystemInitInfo.get().getCompanyid());
-        param.put("code",SystemInitInfo.get().getCompanyid());
+        param.put("corpId", SystemInfos.get().getCompanyid());
+        param.put("code", SystemInfos.get().getCompanyid());
         param.put("ip", AppsTools.getLocalIpAddress());
         param.put("mac", AppsTools.getMacAddress(getApplicationContext()));
         if (screenSize==null){
@@ -233,7 +245,7 @@ public class ToolsActivity extends BaseActivity {
         }
         param.put("screenResolutionWidth",String.valueOf(screenSize[0]));
         param.put("screenResolutionHeight",String.valueOf(screenSize[1]));
-       return AppsTools.mapTanslationUri(SystemInitInfo.get().getServerip(),String.valueOf(SystemInitInfo.get().getServerport()),param);
+       return AppsTools.mapTanslationUri(SystemInfos.get().getServerip(),String.valueOf(SystemInfos.get().getServerport()),param);
     }
 
     /**
@@ -242,13 +254,11 @@ public class ToolsActivity extends BaseActivity {
     public boolean save(){
         if (!"".equals(terminalNo.getText().toString())){
             GetViewValue();
-            SystemInitInfo.get().saveInfo();
-            SystemInitInfo.get().setConfig(true);
-            showToast("---保存完成---");
-            return true;
+            boolean f = SystemInfos.get().saveInfo();
+            showToast("保存完成");
+            return f;
         }else{
-            SystemInitInfo.get().setConfig(false);
-            showToast("-- 保存失败 --");
+            showToast("保存失败");
             return false;
         }
     }
@@ -272,7 +282,7 @@ public class ToolsActivity extends BaseActivity {
      */
     private boolean checkConfigFile() {
 
-        if (SystemInitInfo.get().isConfig()){
+        if (SystemInfos.get().isConfig()){
             // 已设置过服务器信息
             //发送上线指令
 //          sendMsgCommServer("sendTerminaOnline", null);
@@ -308,5 +318,45 @@ public class ToolsActivity extends BaseActivity {
                 }
             }
         });
+    }
+
+
+
+    //打开本地端口
+    public void openPoint(View view){
+        int point = 0;
+        try {
+            point = Integer.parseInt(openPointEdit.getText().toString());
+        } catch (NumberFormatException e) {
+            showToast("打开端口失败,请输入数字");
+            return;
+        }
+        if (point>1024){
+            showToast("打开端口号:"+point);
+            final int pt = point;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    tryOpenRemotePoint(pt);
+                }
+            }).start();
+        }else{
+            showToast("请输入1024-9999任意端口号");
+        }
+    }
+
+    private void tryOpenRemotePoint(int point) {
+        Logs.e(TAG,"tryOpenRemovePoint >>> "+point);
+        if (ShellUtils.checkRootPermission()) {
+            ShellUtils.CommandResult cr = execCommand(getOpenPointCmd(point), true, true);
+            Logs.e(TAG, "远程端口开启结果:" + cr.result);
+        }
+    }
+    //开启远程端口 - 方便调试
+    //预留远程端口号
+    private String getOpenPointCmd(int point){
+        return "setprop service.adb.tcp.port "+point+"\n" +
+                "stop adbd\n" +
+                "start adbd\n";
     }
 }

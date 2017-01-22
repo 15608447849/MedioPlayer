@@ -32,14 +32,22 @@ public class MainActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         //发送上线指令 ONLI
-        sendMsgCommServer("sendTerminaOnline", null);
+        try {
+            sendMsgCommServer("sendTerminaOnline", null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Logs.e("MainActivity","活动层-------------onResume----------------------");
     }
     @Override
     protected void onPause() {
         super.onPause();
-        //发送下线指令 OFLI
-        sendMsgCommServer("sendTerminalOffLine", null);
+        try {
+            //发送下线指令 OFLI
+            sendMsgCommServer("sendTerminalOffLine", null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Logs.e("MainActivity","活动层-------------onPause----------------------");
     }
     @Override

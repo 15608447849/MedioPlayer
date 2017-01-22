@@ -5,6 +5,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.os.Environment;
 
+import com.wos.play.rootdir.model_universal.tool.Logs;
+
 import java.util.List;
 
 /**
@@ -46,7 +48,7 @@ public class Stools {
             ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
             String currentPackageName = cn.getClassName();
             for (String activityClassName : activityList){
-//                Logs.i(">>>>>>>"," ** " +activityClassName +" -  ## "+currentPackageName);
+                Logs.i("监听服务"," 获取 " +activityClassName +" - 当前 "+currentPackageName);
                 if (activityClassName.equals(currentPackageName)){
                     return true;
                 }

@@ -2,7 +2,7 @@ package com.wos.play.rootdir.model_application.baselayer;
 
 import com.wos.play.rootdir.model_universal.tool.AppsTools;
 import com.wos.play.rootdir.model_universal.tool.DataListEntiy;
-import com.wos.play.rootdir.model_universal.tool.SdCardTools;
+import com.wos.play.rootdir.model_universal.tool.Logs;
 
 import java.util.HashMap;
 
@@ -12,24 +12,24 @@ import cn.trinea.android.common.util.FileUtils;
  * Created by user on 2016/12/13.
  */
 
-public class SystemInitInfo {
-
-    private boolean isConfig = false;
-
+public class SystemInfos {
+    private  static  final String TAG = "系统配置";
     public boolean isConfig() {
-        return isConfig;
+        //加载一次数据
+        readInfo();
+        //然后判断端口号是否为空
+        Logs.i(TAG,"终端号:"+terminalNo);
+        return !terminalNo.equals("");
     }
 
-    public void setConfig(boolean config) {
-        isConfig = config;
-    }
+
 
     //连接类型
     private  String connectionType = "HTTP";
     //终端编号
     private String terminalNo = "";
     //服务器ip
-    private String serverip = "172.16.2.74";//"192.168.7.3";
+    private String serverip = "192.168.7.3";//"192.168.7.3";
     //服务器端口
     private String serverport = "9000";
     //公司id
@@ -189,81 +189,24 @@ public class SystemInitInfo {
     }
 
     //构造
-    private SystemInitInfo() {
+    private SystemInfos() {
         contentEntity = new DataListEntiy();
-        initRead();
     }
-    private static final String infos = "/mnt/sdcard/wos.conf";
+    private static final String infos = "/mnt/sdcard/wosplayer/wos.conf";
     //初始化 读取 - > sdcard 目录下的 一个配置文件 ->
-    private void initRead() {
-        if (FileUtils.isFileExist(infos)){
-            //读取 内容转成 map
-          readInfo();
-        }
-        //创建
-        //如果不可以创建 ->
-    }
 
-    //读取信息
+
+
+
+
+    //读取信息  -> 读取内容转成map
     private void readInfo() {
-        String content =  SdCardTools.readerJsonToMemory(infos);
+        try {
+        String content =  FileUtils.readFile(infos,"utf-8").toString();
+        Logs.i(TAG,"读取系统配置信息: [\n"+content+"\n]");
         if (content!=null && !content.equals("")){
-            try {
-                contentEntity.setMap(AppsTools.jsonTxtToMap(content));
-//                赋值
-                initValue();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-    //保存信息
-    public void saveInfo(){
-        initContent();
-    }
-
-    private void initContent() {
-        try {
-            HashMap map = contentEntity.getMap();
-            map.clear();
-            map.put("connectionType",connectionType);
-            map.put("terminalNo",terminalNo);
-            map.put("serverip",serverip);
-            map.put("serverport",serverport);
-            map.put("companyid",companyid);
-            map.put("heartBeatInterval",heartBeatInterval);
-            map.put("serverport",serverport);
-            map.put("sleepTime",sleepTime);
-            map.put("storageLimits",storageLimits);
-            map.put("basepath",basepath);
-            map.put("epaperPath",epaperSourcePath);
-            map.put("jsonStore",jsonStore);
-            map.put("appicon",appicon);
-            map.put("ftpAddress",ftpAddress);
-            map.put("ftpPort",ftpPort);
-            map.put("ftpUser",ftpUser);
-            map.put("ftpPass",ftpPass);
-
-            String content = AppsTools.mapToJson(map);
-            SdCardTools.writeJsonToSdcard(infos,content);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    private  static  SystemInitInfo sysInfo;
-    private DataListEntiy contentEntity;
-    public static SystemInitInfo get(){
-        if (sysInfo==null){
-            sysInfo = new SystemInitInfo();
-        }
-        return sysInfo;
-    }
-
-    //初始化数据
-    private void initValue() {
-        try {
+            contentEntity.setMap(AppsTools.jsonTxtToMap(content));
+//                                  赋值
             //连接类型
             connectionType = contentEntity.GetStringDefualt("connectionType");
             //终端编号
@@ -296,10 +239,61 @@ public class SystemInitInfo {
             ftpUser = contentEntity.GetStringDefualt("ftpUser");
             //ftp密码
             ftpPass = contentEntity.GetStringDefualt("ftpPass");
+        }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        isConfig = true;
+    }
+    //保存信息
+    public boolean saveInfo(){
+        try {
+            HashMap map = contentEntity.getMap();
+            map.clear();
+            map.put("connectionType",connectionType);
+            map.put("terminalNo",terminalNo);
+            map.put("serverip",serverip);
+            map.put("serverport",serverport);
+            map.put("companyid",companyid);
+            map.put("heartBeatInterval",heartBeatInterval);
+            map.put("serverport",serverport);
+            map.put("sleepTime",sleepTime);
+            map.put("storageLimits",storageLimits);
+            map.put("basepath",basepath);
+            map.put("epaperPath",epaperSourcePath);
+            map.put("jsonStore",jsonStore);
+            map.put("appicon",appicon);
+            map.put("ftpAddress",ftpAddress);
+            map.put("ftpPort",ftpPort);
+            map.put("ftpUser",ftpUser);
+            map.put("ftpPass",ftpPass);
+
+            String content = AppsTools.mapToJson(map);
+
+           boolean flag =  FileUtils.writeFile(infos,content);
+           Logs.i(TAG,"保存的系统配置文件内容:[\n"+content +"\n]\n 存储结果:"+flag);
+            if (!flag){
+                clearValue();
+            }
+            return flag;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private void clearValue() {
+        terminalNo = "";
+    }
+
+
+    private  static SystemInfos sysInfo;
+    private DataListEntiy contentEntity;
+    public static SystemInfos get(){
+        if (sysInfo==null){
+            sysInfo = new SystemInfos();
+            sysInfo.readInfo();
+        }
+        return sysInfo;
     }
 
 

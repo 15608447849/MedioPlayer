@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.wos.play.rootdir.model_application.baselayer.SystemInitInfo;
+import com.wos.play.rootdir.model_application.baselayer.SystemInfos;
 import com.wos.play.rootdir.model_command_.kernel.iCommand;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 import com.wos.play.rootdir.model_universal.tool.MD5Util;
@@ -28,7 +28,7 @@ public class ICommand_SORE_JsonDataStore implements iCommand {
     private Context c;
     private ICommand_SORE_JsonDataStore(Context c){
         this.c  = c;
-        jsonStoreDir =  SystemInitInfo.get().getJsonStore();
+        jsonStoreDir =  SystemInfos.get().getJsonStore();
 
     }
 

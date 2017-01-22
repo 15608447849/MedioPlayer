@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.wos.play.rootdir.model_application.baselayer.SystemInitInfo;
+import com.wos.play.rootdir.model_application.baselayer.SystemInfos;
 import com.wos.play.rootdir.model_application.schedule.TimeOperator;
 import com.wos.play.rootdir.model_command_.kernel.iCommand;
 import com.wos.play.rootdir.model_communication.CommuniReceiverMsgBroadCasd;
@@ -123,7 +123,7 @@ public class Command_SCRN implements iCommand,Command_SCRN_RtThread.RtThreadActi
         //设置文件名
         String filename = TimeOperator.getToday(true,true,true,true,true,true,"-","#")+".png";
         //设置 远程文件目录
-        String remotePath = "/Android/"+ SystemInitInfo.get().getTerminalNo()+"/ScreenCapturerDirc/";
+        String remotePath = "/Android/"+ SystemInfos.get().getTerminalNo()+"/ScreenCapturerDirc/";
         //设置响应服务器
         String ftpUrl = getFTPUrls(remotePath+filename);
 
@@ -136,9 +136,9 @@ public class Command_SCRN implements iCommand,Command_SCRN_RtThread.RtThreadActi
     //ftp_url   -> [ CAPT:10000406（终端号）,1483786140221（日期）,ftp://ftp:FTPmedia@172.16.0.17:21/ShotcutPic-10000406/1483786140221.jpg（ftp地址）]
     private String getFTPUrls(String str) {
         return "CAPT:"
-                +SystemInitInfo.get().getTerminalNo()+","
+                + SystemInfos.get().getTerminalNo()+","
                 +TimeOperator.dateToStamp()+","
-                +"ftp://"+SystemInitInfo.get().getFtpUser()+":"+SystemInitInfo.get().getFtpPass()+"@"+SystemInitInfo.get().getFtpAddress()+":"+SystemInitInfo.get().getFtpPort()+str;
+                +"ftp://"+ SystemInfos.get().getFtpUser()+":"+ SystemInfos.get().getFtpPass()+"@"+ SystemInfos.get().getFtpAddress()+":"+ SystemInfos.get().getFtpPort()+str;
     }
 
     //生成图片
@@ -212,7 +212,7 @@ public class Command_SCRN implements iCommand,Command_SCRN_RtThread.RtThreadActi
     }
 
     //文件上传接口 -> http://配置的IP地址:端口号/terminal/jpgUpload?terminalId=终端号
-    private final String uploadUrl = "http://"+SystemInitInfo.get().getServerip()+":"+SystemInitInfo.get().getServerport()+"/terminal/jpgUpload?terminalId="+SystemInitInfo.get().getTerminalNo();
+    private final String uploadUrl = "http://"+ SystemInfos.get().getServerip()+":"+ SystemInfos.get().getServerport()+"/terminal/jpgUpload?terminalId="+ SystemInfos.get().getTerminalNo();
    // private final String uploadUrl = "http://"+"172.16.2.74"+":"+"9000"+"/terminal/jpgUpload?terminalId="+"10000013";
     private void uploadServer(String localpath) {
 

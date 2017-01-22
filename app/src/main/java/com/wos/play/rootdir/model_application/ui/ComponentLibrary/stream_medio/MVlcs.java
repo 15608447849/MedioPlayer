@@ -23,17 +23,20 @@ import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 public class MVlcs extends SurfaceView implements SurfaceHolder.Callback, IVideoPlayer {
     private static final String TAG = "MVlcs";
     private BaseActivity activity;
-    private String uri ;
+    private String uri;
+
     public MVlcs(Context context, String path) {  // private String path; //"http://222.36.5.53:9800/live/xktv.m3u8";//"http://218.89.69.211:8088/streamer/yb01/yb01-500.m3u8";
-       super(context);
+        super(context);
         uri = (path == null || path.equals("")) ? "http://devimages.apple.com/iphone/samples/bipbop/gear1/prog_index.m3u8" : path;
 
-        if (context!=null && context instanceof BaseActivity) {
+        if (context != null && context instanceof BaseActivity) {
             this.activity = (BaseActivity) context;
             try {
                 initStreamMedia();
             } catch (Exception e) {
+                mMediaPlayer = null;
                 e.printStackTrace();
+
             }
 
         }
@@ -41,6 +44,7 @@ public class MVlcs extends SurfaceView implements SurfaceHolder.Callback, IVideo
     }
 
     private LibVLC mMediaPlayer;
+
     private void initStreamMedia() throws Exception {
         mMediaPlayer = VLCInstance.getLibVlcInstance(activity.getApplicationContext());
         mSurfaceView = this;
@@ -53,13 +57,18 @@ public class MVlcs extends SurfaceView implements SurfaceHolder.Callback, IVideo
     private SurfaceHolder mSurfaceHolder;
 
     private void start() {
-        if (uri==null || uri.equals("")){
-            Logs.e(TAG,"错误的直播路径: "+uri);
+        if (uri == null || uri.equals("")) {
+            Logs.e(TAG, "错误的直播路径: " + uri);
             return;
+        }else{
+            Logs.i(TAG,"直播地址:"+uri);
         }
-        mMediaPlayer.eventVideoPlayerActivityCreated(true);
-        mSurfaceView.setKeepScreenOn(true);
-        mMediaPlayer.playMRL(uri);
+        if (mMediaPlayer != null) {
+            mMediaPlayer.eventVideoPlayerActivityCreated(true);
+            mSurfaceView.setKeepScreenOn(true);
+           // mMediaPlayer.playMRL("http://218.89.69.211:8088/streamer/yb01/yb01-500.m3u8");
+        }
+
     }
 
     public void pause() {
@@ -71,14 +80,13 @@ public class MVlcs extends SurfaceView implements SurfaceHolder.Callback, IVideo
     }
 
 
-
-
     private int mVideoHeight;
     private int mVideoWidth;
     private int mVideoVisibleHeight;
     private int mVideoVisibleWidth;
     private int mSarNum;
     private int mSarDen;
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         setSurfaceSize(mVideoWidth, mVideoHeight, mVideoVisibleWidth, mVideoVisibleHeight, mSarNum, mSarDen);
@@ -92,6 +100,7 @@ public class MVlcs extends SurfaceView implements SurfaceHolder.Callback, IVideo
             mMediaPlayer.attachSurface(holder.getSurface(), this);
         }
     }
+
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         mSurfaceHolder = holder;
@@ -103,6 +112,7 @@ public class MVlcs extends SurfaceView implements SurfaceHolder.Callback, IVideo
             mVideoWidth = width;
         }
     }
+
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         if (mMediaPlayer != null) {
@@ -121,39 +131,39 @@ public class MVlcs extends SurfaceView implements SurfaceHolder.Callback, IVideo
     }
 
 
-
-
-
     private ViewGroup viewGroup;
     private boolean isLayout = false;
-    public void allowPlay(ViewGroup vp){
-     //设置布局
-        if (vp!=null && mMediaPlayer!=null ){
-            if (!isLayout){
-                viewGroup = vp;
-                this.setLayoutParams(new ViewGroup.LayoutParams(MATCH_PARENT,MATCH_PARENT));
-                viewGroup.addView(this);
-                isLayout = true;
+
+    public void allowPlay(ViewGroup vp) {
+        try {
+            //设置布局
+            if (vp != null && mMediaPlayer != null) {
+                if (!isLayout) {
+                    viewGroup = vp;
+                    this.setLayoutParams(new ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT));
+                    viewGroup.addView(this);
+                    isLayout = true;
+                }
+                //开始播放
+                start();
             }
-            //开始播放
-            start();
-        }
-    }
-    public void unAllowPlay(){
-        if (viewGroup!=null && mMediaPlayer!=null && isLayout){
-            //停止播放
-            pause();
-            viewGroup.removeView(this);
-            isLayout  = false;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-
-
-
-
-
-
+    public void unAllowPlay() {
+        try {
+            if (viewGroup != null && mMediaPlayer != null && isLayout) {
+                //停止播放
+                pause();
+                viewGroup.removeView(this);
+                isLayout = false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 
 }

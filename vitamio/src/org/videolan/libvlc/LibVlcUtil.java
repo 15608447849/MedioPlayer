@@ -103,7 +103,7 @@ public class LibVlcUtil {
         ApplicationInfo ai = context.getApplicationInfo();
         String libDir ;
         boolean flag = ((ai.flags & ApplicationInfo.FLAG_SYSTEM) > 0);
-        android.util.Log.e("vlc","是否是系统应用 - "+flag);
+        android.util.Log.e(TAG,"是否是系统应用 - "+flag);
         if (flag){
             libDir =  "/system";
         }else{
@@ -125,23 +125,20 @@ public class LibVlcUtil {
             } catch (Exception e) { }
         }
 
-        Log.i(TAG, "machine = " + (elf.e_machine == EM_ARM ? "arm" : elf.e_machine == EM_386 ? "x86" : "mips"));
-        Log.i(TAG, "arch = " + elf.att_arch);
-        Log.i(TAG, "fpu = " + elf.att_fpu);
-        boolean hasNeon = false, hasFpu = false, hasArmV6 = false,
-                hasArmV7 = false, hasMips = false, hasX86 = false;
+//        Log.i(TAG, "machine = " + (elf.e_machine == EM_ARM ? "arm" : elf.e_machine == EM_386 ? "x86" : "mips"));
+//        Log.i(TAG, "arch = " + elf.att_arch);
+//        Log.i(TAG, "fpu = " + elf.att_fpu);
+        boolean hasNeon = false, hasFpu = false, hasArmV6 = false,hasArmV7 = false, hasMips = false, hasX86 = false;
+
         float bogoMIPS = -1;
         int processors = 0;
 
-        if(CPU_ABI.equals("x86") ||
-           CPU_ABI2.equals("x86")) {
+        if(CPU_ABI.equals("x86") || CPU_ABI2.equals("x86")) {
             hasX86 = true;
-        } else if(CPU_ABI.equals("armeabi-v7a") ||
-                  CPU_ABI2.equals("armeabi-v7a")) {
+        } else if(CPU_ABI.equals("armeabi-v7a") || CPU_ABI2.equals("armeabi-v7a")) {
             hasArmV7 = true;
             hasArmV6 = true; /* Armv7 is backwards compatible to < v6 */
-        } else if(CPU_ABI.equals("armeabi") ||
-                  CPU_ABI2.equals("armeabi")) {
+        } else if(CPU_ABI.equals("armeabi") || CPU_ABI2.equals("armeabi")) {
             hasArmV6 = true;
         }
 
@@ -150,6 +147,7 @@ public class LibVlcUtil {
             BufferedReader br = new BufferedReader(fileReader);
             String line;
             while((line = br.readLine()) != null) {
+
                 if(!hasArmV7 && line.contains("ARMv7")) {
                     hasArmV7 = true;
                     hasArmV6 = true; /* Armv7 is backwards compatible to < v6 */
@@ -172,6 +170,7 @@ public class LibVlcUtil {
                     hasFpu = true;
                 if(line.startsWith("processor"))
                     processors++;
+
                 if(bogoMIPS < 0 && line.toLowerCase(Locale.ENGLISH).contains("bogomips")) {
                     String[] bogo_parts = line.split(":");
                     try {
@@ -180,6 +179,7 @@ public class LibVlcUtil {
                         bogoMIPS = -1; // invalid bogomips
                     }
                 }
+
             }
             fileReader.close();
         } catch(IOException ex){
@@ -306,6 +306,7 @@ public class LibVlcUtil {
         if (!file.exists() || !file.canRead())
             return null;
 
+        Log.e(TAG,"readlib:"+path);
         RandomAccessFile in = null;
         try {
             in = new RandomAccessFile(file, "r");

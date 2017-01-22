@@ -81,9 +81,9 @@ public class AppsTools {
     // 获取 mac 地址
     public static String getMacAddress(Context context){
 
-        String mac = getLocalMacAddressFromBusybox();
-        if (mac==null)
-            mac = getLocalMacAddressFromWifiInfo(context);
+        String mac = getLocalMacAddressFromWifiInfo(context);
+        if (mac==null || "".equals(mac))
+            mac = getLocalMacAddressFromBusybox();
         return mac;
     }
 
@@ -518,7 +518,6 @@ public class AppsTools {
                     fileOutputStream.write(buffer, 0 ,length);
                 }
                 fileOutputStream.flush();
-                System.out.println("ReadAssectsDataToSdCard() ----------success--------------");
                 return true;
             }
         } catch (Exception e) {

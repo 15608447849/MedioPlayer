@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 
 import com.wos.play.rootdir.model_application.baselayer.AppMessageBroad;
-import com.wos.play.rootdir.model_application.baselayer.SystemInitInfo;
+import com.wos.play.rootdir.model_application.baselayer.SystemInfos;
 import com.wos.play.rootdir.model_command_.command_arr.Command_SYTI;
 import com.wos.play.rootdir.model_command_.kernel.CommandPostBroad;
 import com.wos.play.rootdir.model_universal.httpconnect.HttpProxy;
@@ -75,14 +75,13 @@ public class CommunicationServer extends Service {
      * 发送上线指令
      */
     private void initparam() {//String otherPackage
-        Logs.e(TAG, " 服务器信息 配置完成 -> " + SystemInitInfo.get().isConfig());
-        if (SystemInitInfo.get().isConfig()) {
+        boolean isconfig = SystemInfos.get().isConfig();
+        Logs.e(TAG, " 服务器信息 配置完成 -> " + isconfig);
+        if (isconfig) {
             // 已设置过服务器信息
-
                 initData();
                 sendONLI(makeOnlineUri());//上线 -> 延时上线
 //              startLoopHeartbeat();//开始心跳 -> 改变开始位置 在收到上线信息之后 发送心跳
-
         }
     }
 
@@ -94,10 +93,10 @@ public class CommunicationServer extends Service {
     private String terminalId = null;
     private int heartBeatTime = 0;
     private void initData() {
-            ip = SystemInitInfo.get().getServerip();
-            port = SystemInitInfo.get().getServerport();
-            terminalId = SystemInitInfo.get().getTerminalNo();//"10000090";//"10000141";//"10001110";//"10000125";;//dataList.GetStringDefualt("terminalNo","0000");
-            heartBeatTime = Integer.parseInt(SystemInitInfo.get().getHeartBeatInterval());
+            ip = SystemInfos.get().getServerip();
+            port = SystemInfos.get().getServerport();
+            terminalId = SystemInfos.get().getTerminalNo();//"10000090";//"10000141";//"10001110";//"10000125";;//dataList.GetStringDefualt("terminalNo","0000");
+            heartBeatTime = Integer.parseInt(SystemInfos.get().getHeartBeatInterval());
     }
     /**
      * 通过 广播 接受 其他 进程 发来的消息的,

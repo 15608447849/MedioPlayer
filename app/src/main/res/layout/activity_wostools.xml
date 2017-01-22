@@ -356,6 +356,32 @@
                 android:onClick="saveData"
                 android:text="保存" />
         </LinearLayout>
+        <!-- 打开本地端口 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="150dp"
+            >
+            <EditText
+                android:id="@+id/openPointEdit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="9999"
+                android:layout_weight="1"
+                android:inputType="number"
+                >
+
+            </EditText>
+            <Button
+                android:id="@+id/openPointBtn"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:onClick="openPoint"
+                android:text="确定" />
+        </LinearLayout>
       </LinearLayout>
     </ScrollView>
 

@@ -3,7 +3,7 @@ package com.wos.play.rootdir.model_application.ui.Uitools;
 import android.content.Context;
 
 import com.wos.play.rootdir.model_application.baselayer.BaseActivity;
-import com.wos.play.rootdir.model_application.baselayer.SystemInitInfo;
+import com.wos.play.rootdir.model_application.baselayer.SystemInfos;
 import com.wos.play.rootdir.model_application.schedule.ScheduleReader;
 import com.wos.play.rootdir.model_application.ui.UiFactory.UiDataFilter;
 import com.wos.play.rootdir.model_universal.tool.AppsTools;
@@ -33,10 +33,10 @@ public class UiTools {
     public static void init(final BaseActivity activity) {
         if (!isInit){
             UiDataFilter.getUiDataFilter().init(activity);// UI 过滤
-            basepath = SystemInitInfo.get().getBasepath();//资源路径
-            appicon = SystemInitInfo.get().getAppicon();//天气图标
-            epaper_path_dir = SystemInitInfo.get().getEpaperSourcePath();//电子报
-            contentDir = new File(SystemInitInfo.get().getJsonStore());//json根目录
+            basepath = SystemInfos.get().getBasepath();//资源路径
+            appicon = SystemInfos.get().getAppicon();//天气图标
+            epaper_path_dir = SystemInfos.get().getEpaperSourcePath();//电子报
+            contentDir = new File(SystemInfos.get().getJsonStore());//json根目录
             //解压缩
             new Thread(new Runnable() {
                 @Override
@@ -46,7 +46,7 @@ public class UiTools {
                             unzipWeatherIcon(activity, appicon);
                             unzipDefSource(activity, basepath);
                             //初始化排期读取
-                            ScheduleReader.getReader().initSch(SystemInitInfo.get().getJsonStore());
+                            ScheduleReader.getReader().initSch(SystemInfos.get().getJsonStore());
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -200,9 +200,9 @@ public class UiTools {
      * @param basepath
      */
     private static void unzipDefSource(Context context, String basepath) {
-        String outputdir =  basepath.substring(0, basepath.lastIndexOf("/"));
-        outputdir =  outputdir.substring(0, outputdir.lastIndexOf("/")+1);
-
+//        String outputdir =  basepath.substring(0, basepath.lastIndexOf("/"));
+//        outputdir =  outputdir.substring(0, outputdir.lastIndexOf("/")+1);
+        final String outputdir = basepath;
         if (fileDirIsExt(outputdir + "defSource/")) {
             //判断文件是否存在
             if (fileIsExt(outputdir + "defSource/def_image.png") && fileIsExt(outputdir + "defSource/def_video.mp4")){
@@ -244,7 +244,7 @@ public class UiTools {
     public static void unZipFiles(String unzipFilePath,String outputDir,boolean isDelete){
 
         //执行解压缩
-        Logs.i("unzip", "解压缩 - >" + unzipFilePath);
+        Logs.i("unzip", "解压缩 -> " + unzipFilePath);
         try {
             AppsTools.UnZip(unzipFilePath, outputDir);
             if (isDelete){

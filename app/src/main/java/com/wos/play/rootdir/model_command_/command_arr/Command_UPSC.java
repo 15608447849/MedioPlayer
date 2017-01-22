@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.wos.play.rootdir.model_application.baselayer.SystemInitInfo;
+import com.wos.play.rootdir.model_application.baselayer.SystemInfos;
 import com.wos.play.rootdir.model_application.schedule.ScheduleReader;
 import com.wos.play.rootdir.model_application.schedule.TimeOperator;
 import com.wos.play.rootdir.model_command_.kernel.CommandPostBroad;
@@ -52,8 +52,8 @@ public class Command_UPSC implements iCommand {
         this.context = context;
         bundle = new Bundle();
         intent = new Intent();
-        basePath = SystemInitInfo.get().getBasepath();
-        storageLimits = SystemInitInfo.get().getStorageLimits();
+        basePath = SystemInfos.get().getBasepath();
+        storageLimits = SystemInfos.get().getStorageLimits();
         taskStore = new UrlList();
     }
 
@@ -414,7 +414,7 @@ public class Command_UPSC implements iCommand {
         //文件存放路径
 
         String contentPath = contentSource.getContentSource();
-        String localPath = SystemInitInfo.get().getEpaperSourcePath() + contentPath;
+        String localPath = SystemInfos.get().getEpaperSourcePath() + contentPath;
         int keepDays = contentSource.getDaysKeep();
         Logs.d(TAG,"电子报 - 本地路径 ["+localPath+"]");
         for (int i = 0;i<keepDays;i++){

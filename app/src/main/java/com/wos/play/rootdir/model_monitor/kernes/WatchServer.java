@@ -10,13 +10,13 @@ import android.support.annotation.Nullable;
 import com.wos.play.rootdir.model_application.viewlayer.ToolsActivity;
 import com.wos.play.rootdir.model_monitor.tools.Stools;
 import com.wos.play.rootdir.model_universal.tool.Logs;
+import com.wos.play.rootdir.model_universal.tool.SdCardTools;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.trinea.android.common.util.FileUtils;
 import cn.trinea.android.common.util.ShellUtils;
-
-import static cn.trinea.android.common.util.ShellUtils.execCommand;
 
 /**
  * Created by user on 2016/12/8.
@@ -26,7 +26,6 @@ import static cn.trinea.android.common.util.ShellUtils.execCommand;
  */
 public class WatchServer extends Service {
     private static final String TAG = "守护监听服务";
-
     //bind
     @Nullable
     @Override
@@ -38,13 +37,12 @@ public class WatchServer extends Service {
     public void onCreate() {
         super.onCreate();
         handler.post(SetAppInit);
-        Logs.i(TAG, " onCreate -- 监听");
+        Logs.i(TAG, "onCreate -- 监听");
     }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Logs.i(TAG, " onDestroy -- 监听");
+        Logs.i(TAG, "onDestroy -- 监听");
     }
 
     /**
@@ -59,11 +57,21 @@ public class WatchServer extends Service {
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Logs.i(TAG, " onStartCommand -- 监听");
-        handler.postDelayed(LoopActivitys, loopTime);
+
+        Logs.i(TAG, "onStartCommand -- 监听"+android.os.Process.myPid());
+
+        startWatch();
         return START_NOT_STICKY;
     }
 
+    private boolean isWatching = false;
+    private void startWatch() {
+        if (!isWatching){
+            Logs.i(TAG," <<<<<<<<<<<<<< - - 开始监听 - - >>>>>>>>>>>>");
+//            isWatching = true;
+            handler.postDelayed(LoopActivitys, loopTime);
+        }
+    }
 
 
     private static List<String> activityList = null;
@@ -75,7 +83,7 @@ public class WatchServer extends Service {
         activityList.add("com.wos.play.rootdir.model_application.viewlayer.EpaperActivity");
     }
 
-    private final int loopTime = 10 * 1000;
+    private final int loopTime = 50 * 1000;
     private Handler handler = new Handler();
     private final Runnable LoopActivitys = new Runnable() {
         @Override
@@ -84,11 +92,16 @@ public class WatchServer extends Service {
             handler.postDelayed(LoopActivitys, loopTime);
         }
     };
+    private static boolean isCheck = true;
     private final Runnable SetAppInit = new Runnable() {
         @Override
         public void run() {
-//            tryOpenRemovePoint();
-            excuteAppMoveSystem();
+            if (isCheck){
+                excuteAppMoveSystem();
+                ckeckConfigPath();
+                isCheck = false;
+            }
+
         }
     };
 
@@ -113,62 +126,70 @@ public class WatchServer extends Service {
         return "mount -o remount,rw /system" + "\n" +
 //                "mount -o remount,rw /data" + "\n" +
                 "mkdir /system/libtem"+"\n"+
-                "cp /data/data/com.wos.play.rootdir/lib/* /system/libtem"+"\n"+
-                "chmod 777 /system/libtem/*"+"\n"+
-                "cp /system/libtem/* /system/lib"+"\n"+
-                "rm -rf /system/libtem"+"\n"+
+                "cp /data/data/com.wos.play.rootdir/lib/* /system/lib"+"\n"+
+                "chmod 777 /system/lib/*"+"\n"+
                 "cp " + _packagepath + " /system/app/" + alias + "\n"+
                 "chmod 777 /system/app/"+alias+"\n"+
-//                "cp " + _packagepath + " /system/app/" + alias.substring(0,alias.lastIndexOf(".")+1)+"odex" + "\n" +
-//                "mount -o remount,ro /system" + "\n";
-//                "mount -o remount,ro /data"+"\n";
                 "rm -rf "+_packagepath+"\n"+
                 "rm -rf /data/dalvik-cache/data*"+"\n";
     }
 
-    private static boolean isCheckAppSystem = false;
+
     //检测root权限 放入system
     private void excuteAppMoveSystem() {
         Logs.e(TAG,"excuteAppMoveSystem >>> ");
-        if (ShellUtils.checkRootPermission() && !isCheckAppSystem) {
+        if (ShellUtils.checkRootPermission()) {
             ApplicationInfo appinfo = getApplicationContext().getApplicationInfo();
             String packagepath = appinfo.sourceDir;
-            //如果不在system目录下  (appInfo.flags & ApplicationInfo.FLAG_SYSTEM) > 0 //系统程序,放在/system/app
+            //如果不在system目录下  (appInfo.flags & ApplicationInfo.FLAG_SYSTEM) > 0 //系统程序存在/system/app下
             boolean flag = ((appinfo.flags & ApplicationInfo.FLAG_SYSTEM) > 0);
-            if (!flag) {    //packagepath.contains("/data/app/")
+            if (!flag) {
+                //packagepath.contains("/data/app/")
 //                String alias = packagepath.substring(packagepath.lastIndexOf("/") + 1);
 
-                String alias = "zzz.apk";
-                Logs.e(TAG, "执行copy源apk路径:" + packagepath + " - 移动路径 :/sysytem/app/" + alias);
+                String alias = "WosTerminal.apk";
+                Logs.e(TAG, "源apk路径:" + packagepath + " - 移动路径 :/sysytem/app/" + alias);
                 String cmd = genereteCommand(packagepath, alias);
-                Logs.e(TAG, "adb shell >>> \n[ " + cmd + " ]");
+                Logs.e(TAG, "adb shell >>>[\n" + cmd + "]");
                 ShellUtils.CommandResult cr=ShellUtils.execCommand(cmd,true,true);
                 Logs.e(TAG,"提升权限结果:"+cr.result);
                 if (cr.result == 0){
                     ShellUtils.execCommand("reboot",true);
                 }
             }
-            isCheckAppSystem = true;
+
         }
     }
 
 
-    private static boolean isOpenPoint = false;
-    //开启远程端口 - 方便调试
-    //预留远程端口号
-    private final String COMMAND_OPEN_POINT =
-            "setprop service.adb.tcp.port 9999\n" +
-                    "stop adbd\n" +
-                    "start adbd\n";
 
-    private void tryOpenRemovePoint() {
-        Logs.e(TAG,"tryOpenRemovePoint >>> ");
-        if (ShellUtils.checkRootPermission() && !isOpenPoint) {
-            ShellUtils.CommandResult cr = execCommand(COMMAND_OPEN_POINT, true, true);
-            Logs.d(TAG, "远程端口开启结果:" + cr.result);
-            isOpenPoint = true;
+
+
+
+    //检查设置配置文件根目录
+    //检查是  system 还是 data 下面.
+    //执行文件目录判断类
+    private void ckeckConfigPath(){
+       String dirPath = SdCardTools.getDircConfigPath(getApplicationContext());
+       String storeDir = SdCardTools.getAppSourceDir(getApplicationContext());
+       boolean isExist =  FileUtils.isFileExist(dirPath);
+        if (isExist){
+            //如果文件存在
+            //获取文件的资源存储目录路径
+            //判断和检测的路径是不是一样,不一样再处理
+            String rstoreDir = FileUtils.readFile(dirPath,"utf-8").toString();
+            if (!rstoreDir.equals(storeDir)){
+                Logs.e(TAG,"在["+ dirPath +"]中保存资源文件目录'路径' - ["+rstoreDir +"] - 与检测值不一致.检测值:["+storeDir+"]");
+            }
+        }else{
+            //如果文件不存在
+            //保存文件资源目录路径字符串
+            boolean f = FileUtils.writeFile(dirPath,storeDir);
+            Logs.i(TAG,"在["+ dirPath +"]中保存资源文件目录'路径' - ["+storeDir +"] - "+ (f?"成功":"失败"));
         }
     }
+
+
 
 
 }

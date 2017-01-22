@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.wos.play.rootdir.model_application.baselayer.SystemInitInfo;
+import com.wos.play.rootdir.model_application.baselayer.SystemInfos;
 import com.wos.play.rootdir.model_command_.kernel.iCommand;
 import com.wos.play.rootdir.model_communication.CommuniReceiverMsgBroadCasd;
 import com.wos.play.rootdir.model_download.entity.UrlList;
@@ -137,10 +137,10 @@ public class ICommand_DLIF implements iCommand {
             var = param.split(",");
         } else {
             var = new String[]{
-                    SystemInitInfo.get().getFtpAddress(),
-                    SystemInitInfo.get().getFtpPort(),
-                    SystemInitInfo.get().getFtpUser(),
-                    SystemInitInfo.get().getFtpPass()
+                    SystemInfos.get().getFtpAddress(),
+                    SystemInfos.get().getFtpPort(),
+                    SystemInfos.get().getFtpUser(),
+                    SystemInfos.get().getFtpPass()
             };
         }
         Logs.d(TAG,"设置 ftp 信息 :"+var);
