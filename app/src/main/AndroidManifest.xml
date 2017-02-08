@@ -1,48 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="lzp.yw.com.medioplayer">
+    package="com.wos.play.rootdir">
+
     <!-- 权限 -->
+    <!-- 网络 -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+
+    <!-- 时区 -->
     <uses-permission android:name="android.permission.SET_TIME_ZONE" />
+    <!-- 往SDCard写入数据权限 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- 在SDCard中挂载和反挂载文件系统,系统权限 -->
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <!-- 开机启动权限 -->
+
+
+    <uses-permission android:name="android.permission.BROADCAST_STICKY" />
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACTION_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RESTART_PACKAGES" />
+
     <application
         android:name=".model_application.baselayer.BaseApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:supportsRtl="true"
-        android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+        android:sharedUserId="android.uid.system"
+        android:supportsRtl="true">
+
+        <!-- Don't forgot InitActivity
+        <activity
+            android:name="io.vov.vitamio.activity.InitActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+    -->
 
         <!-- 基础activity //Android:theme="@android:style/Theme.NoTitleBar" @android:style/Theme.NoTitleBar.Fullscreen -->
-        <activity
-            android:name=".model_application.baselayer.BaseActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".model_application.baselayer.BaseActivity"
+            android:launchMode="singleTask"
+            />
 
         <!-- 配置服务器信息 activity -->
         <activity android:name=".model_application.viewlayer.ToolsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!-- 主界面 -->
-        <activity android:name=".model_application.viewlayer.MainActivity" />
-        <!-- 读取排期 广播 -->
-        <receiver android:name=".model_application.schedule.ScheduleReadBroad" >
-            <intent-filter>
-                <action android:name="com.broad.schedule.read"/>
-            </intent-filter>
+        <!-- UI 主界面
+        SingleTask"模式：只有一个task中会有，如果已经有其他的task并且包含该实例，那就直接调用那个task的实例；如果没有任何task中有该Activity的实例，则新建一个task，将该实例装入，作为task的根元素，但是该实例不会独占该task"
+        SingleInstance"模式：该Activity实例会独占task，其它Activity不能存在那个task里，如果它启动了一个新的Activity，不管新的Activity实例的launch mode 如何，新的Activity都将会到别的task里运行
+-->
+        <activity
+            android:name=".model_application.viewlayer.MainActivity"
+            android:launchMode="singleTask" />
 
-        </receiver>
-
-
+        <!-- 电子报显示 -->
+        <activity
+            android:name=".model_application.viewlayer.EpaperActivity"
+            android:theme="@style/Theme.AppCompat.Light.Dialog" />
         <!--
         通讯服务 android:label="_medioplayerServer" android:process=":remote"
         冒号’:’这个前缀将把这个名字附加到你的包所运行的标准进程名字的后面作为新的进程名称 android:process=":remote_communication"  android:enabled="true"
@@ -50,27 +77,71 @@
         -->
         <service
             android:name=".model_communication.CommunicationServer"
-            android:process="lzp.yw.communticate" />
+            android:process="play.communticate" />
         <!-- 派发任务 服务 -->
         <service
             android:name=".model_command_.kernel.CommandPostServer"
-            android:process=":remote" />
+            android:process="play.command" />
         <!-- 下载服务 -->
         <service
             android:name=".model_download.kernel.DownloadServer"
-            android:process="lzp.yw.download"/>
+            android:process="play.download" />
 
-        <!-- 拨叉sdcard 广播 -->
-        <receiver android:name=".model_universal.tool.SdcardBroad">
-            <intent-filter android:priority="1000">
-                <action android:name="android.intent.action.MEDIA_MOUNTED"/>
+        <!-- 守护 进程 服务-->
+        <service
+            android:name="com.wos.play.rootdir.model_monitor.kernes.WatchServer"
+            android:persistent="true"
+            android:process="play.watch" />
+
+
+        <!-- 开机自启动广播-->
+        <!--<receiver android:name="com.wos.play.rootdir.model_monitor.broads.InitBootBroad"-->
+        <!--android:process="lzp.wathch.server">-->
+        <!--<intent-filter>-->
+        <!--<action android:name="android.intent.action.BOOT_COMPLETED"/>-->
+        <!--<category android:name="android.intent.category.DEFAULT" />-->
+        <!--<category android:name="android.intent.category.HOME" />-->
+        <!--<category android:name="android.intent.category.LAUNCHER" />-->
+        <!--</intent-filter>-->
+        <!--</receiver>-->
+
+
+        <!-- 拨叉sdcard 广播          <intent-filter android:priority="1000">      <data android:scheme="file" />
+                <category android:name="android.intent.category.LAUNCHER" /> <intent-filter>
                 <action android:name="android.intent.action.MEDIA_EJECT" />
-                <data android:scheme="file"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_MOUNTED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.BATTERY_CHANGED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SCREEN_ON" />
+            </intent-filter>-->
+        <receiver
+            android:name="com.wos.play.rootdir.model_monitor.broads.SdcardBroad"
+            android:process="play.watch"
+            >
+                <intent-filter>
+                    <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                </intent-filter>
+
+                <intent-filter>
+                    <action android:name="android.intent.action.MEDIA_MOUNTED"/>
+                    <action android:name="android.intent.action.MEDIA_UNMOUNTED"/>
+                    <data android:scheme="file"/>
+                </intent-filter>
+
+            <intent-filter>
+                <action android:name="COM.WOS.PLAYER.BROADS"/>
             </intent-filter>
         </receiver>
+
+
     </application>
-
-
-
 
 </manifest>
