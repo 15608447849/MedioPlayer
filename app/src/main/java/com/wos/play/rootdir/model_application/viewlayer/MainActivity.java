@@ -19,7 +19,7 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         Logs.e("MainActivity","活动层-------------onCreate----------------------");
         setContentView(R.layout.activity_main);
-        setIsOnBack(false);
+        setIsOnBack(true);
         setStopOnDestory(false);
     }
     @Override

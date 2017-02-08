@@ -39,7 +39,18 @@ android {
         ndk {
             moduleName "serverHelper"         //生成的so名字
             ldLibs "log"
-            abiFilters "armeabi", "armeabi-v7a", "x86"  //输出指定三种abi体系结构下的so库。
+            abiFilters "armeabi-v7a"//, "x86", "armeabi"  //输出指定三种abi体系结构下的so库。
+        }
+    }
+    sourceSets {
+        main {
+            manifest.srcFile 'src/main/AndroidManifest.xml'
+            java.srcDirs = ['src/main/java'] //Java代码
+            res.srcDirs = ['src/main/res']  //资源文件
+            jniLibs.srcDirs = ['src/main/jniLibs'] //so库
+//            aidl.srcDirs = ['src/main/aidl'] //aidl文件
+//            renderscript.srcDirs = ['src/mian/']
+
         }
     }
     buildTypes {
@@ -55,12 +66,12 @@ android {
     }
 
 //    //编译jni
-//   task nativeLibsToJar(type: Zip, description: "create a jar archive of the native libs") {
-//        destinationDir file("$projectDir/libs")
-//        baseName "Native_Libs2"
-//        extension "jar"
-//        from fileTree(dir: "libs", include: "**/*.so")
-//        into "lib"
+//   task nativeLibsToJar(type: Zip, description: "#[create a jar archive of the native libs]") {
+//        destinationDir file("$projectDir/libs") //目的地
+//        baseName "Native_Libs" //基础名字
+//        extension "jar" //扩展
+//        from fileTree(dir: "libs/armeabi-v7a", include: "**/*.so") //从..来
+//        into "lib" //信息
 //    }
 //    tasks.withType(JavaCompile) {
 //        compileTask -> compileTask.dependsOn(nativeLibsToJar)
@@ -91,5 +102,5 @@ dependencies {
     compile 'joda-time:joda-time:2.9.5'
     compile files('libs/pinyin4j-2.5.0.jar')
 //     compile 'com.charonchui.vitamio:vitamio:4.2.2'
-    compile project(':vitamio')
+//    compile project(':vitamio')
 }

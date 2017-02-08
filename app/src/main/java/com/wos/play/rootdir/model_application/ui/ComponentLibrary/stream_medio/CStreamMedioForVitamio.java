@@ -7,6 +7,7 @@ import android.widget.FrameLayout;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.IComponent;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
+import com.wos.play.rootdir.model_universal.tool.Logs;
 
 /**
  * Created by user on 2016/11/21.
@@ -101,8 +102,8 @@ public class CStreamMedioForVitamio extends FrameLayout implements IComponent{
     public void createContent(Object object) {
         try {
             ContentsBean content = (ContentsBean)object;
-            video = new Mvitamios(context,content.getContentSource());//content.getContentSource()
-           // video = new MVlcs(context,content.getContentSource());//content.getContentSource()
+          video = new Mvitamios(context,content.getContentSource());//content.getContentSource()
+//            video = new MVlcs(context,content.getContentSource());//content.getContentSource()
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -110,7 +111,12 @@ public class CStreamMedioForVitamio extends FrameLayout implements IComponent{
 
     @Override
     public void loadContent() {
-        video.allowPlay(this);
+        if (video!=null){
+            video.allowPlay(this);
+        }else{
+            Logs.e(TAG,"流媒体无法播放. 播放器 null");
+        }
+
     }
 
     @Override

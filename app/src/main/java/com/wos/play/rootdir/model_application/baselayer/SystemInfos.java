@@ -18,7 +18,7 @@ public class SystemInfos {
         //加载一次数据
         readInfo();
         //然后判断端口号是否为空
-        Logs.i(TAG,"终端号:"+terminalNo);
+        Logs.i(TAG,"SystemInfos()_isConfig() 终端号:"+terminalNo);
         return !terminalNo.equals("");
     }
 
@@ -29,7 +29,7 @@ public class SystemInfos {
     //终端编号
     private String terminalNo = "";
     //服务器ip
-    private String serverip = "192.168.7.3";//"192.168.7.3";
+    private String serverip = "172.16.0.216";//"192.168.7.3";
     //服务器端口
     private String serverport = "9000";
     //公司id

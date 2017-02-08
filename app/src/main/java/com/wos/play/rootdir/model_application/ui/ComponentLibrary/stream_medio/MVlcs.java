@@ -36,7 +36,6 @@ public class MVlcs extends SurfaceView implements SurfaceHolder.Callback, IVideo
             } catch (Exception e) {
                 mMediaPlayer = null;
                 e.printStackTrace();
-
             }
 
         }
@@ -57,6 +56,7 @@ public class MVlcs extends SurfaceView implements SurfaceHolder.Callback, IVideo
     private SurfaceHolder mSurfaceHolder;
 
     private void start() {
+        uri = "http://218.89.69.211:8088/streamer/yb01/yb01-500.m3u8";
         if (uri == null || uri.equals("")) {
             Logs.e(TAG, "错误的直播路径: " + uri);
             return;
@@ -66,7 +66,7 @@ public class MVlcs extends SurfaceView implements SurfaceHolder.Callback, IVideo
         if (mMediaPlayer != null) {
             mMediaPlayer.eventVideoPlayerActivityCreated(true);
             mSurfaceView.setKeepScreenOn(true);
-           // mMediaPlayer.playMRL("http://218.89.69.211:8088/streamer/yb01/yb01-500.m3u8");
+            //mMediaPlayer.playMRL(uri);
         }
 
     }

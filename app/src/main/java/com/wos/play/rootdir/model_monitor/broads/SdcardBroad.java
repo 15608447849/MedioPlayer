@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.wos.play.rootdir.model_monitor.soexcute.RunJniHelper;
 import com.wos.play.rootdir.model_monitor.tools.Stools;
 
 
@@ -27,9 +26,10 @@ public class SdcardBroad extends BroadcastReceiver{
 //        if(action.equals(Intent.ACTION_MEDIA_EJECT)){
 //
 //        }
+
         if(action.equals(Intent.ACTION_MEDIA_MOUNTED)){
             String path = Stools.createRootPath(context);
-            RunJniHelper.getInstance().startMservice(context.getPackageName()+"/com.wos.play.rootdir.model_monitor.kernes.WatchServer", path);
+         //   RunJniHelper.getInstance().startMservice(context.getPackageName()+"/com.wos.play.rootdir.model_monitor.kernes.WatchServer", path);
         }
 
 

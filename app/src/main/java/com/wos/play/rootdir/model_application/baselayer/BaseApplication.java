@@ -17,12 +17,10 @@ public class BaseApplication extends Application{
     @Override
     public void onCreate() {
         super.onCreate();
-//        Logs.i("###################### app start ######################");
         appContext = this.getApplicationContext();
-//        checkSdCard();
     }
     /**
-     * 初始化 打开所有服务
+     * 初始化打开所有服务
      */
     public void initStartServer(String serverName){
         if ("all".equals(serverName)){
@@ -33,7 +31,7 @@ public class BaseApplication extends Application{
             //打开 通讯服务
             startAppServer(CommunicationServer.class);
             //打开监听
-            startAppServer(WatchServer.class);
+           //startAppServer(WatchServer.class);
         }
         if ("communication".equals(serverName)){
             //通讯服务

@@ -202,11 +202,20 @@ public class ToolsActivity extends BaseActivity {
      */
     public void getId(View view){
 
-        if (!isGetDataing){  //不在获取数据中
-            //加载控件值
-            GetViewValue();
-            //访问网络(通过 通信服务)
-            getTerminal();
+
+        if (!isGetDataing){//不在获取数据中
+            try {
+                GetViewValue();//加载控件值
+            } catch (Exception e) {
+                showToast("加载控件值失败");
+                return;
+            }
+
+            if(AppsTools.isNetworkConnected(getApplicationContext())){//判断网络状态是否可用
+                getTerminal(); //访问网络(通过 通信服务)
+            }else{
+                showToast("请检查网络是否有效");
+            }
         }
 
     }
@@ -345,6 +354,7 @@ public class ToolsActivity extends BaseActivity {
         }
     }
 
+    //在异步线程执行
     private void tryOpenRemotePoint(int point) {
         Logs.e(TAG,"tryOpenRemovePoint >>> "+point);
         if (ShellUtils.checkRootPermission()) {

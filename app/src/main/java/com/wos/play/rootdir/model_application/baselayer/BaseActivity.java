@@ -203,7 +203,7 @@ public class BaseActivity extends Activity {
         bundle.putString(CommuniReceiverMsgBroadCasd.PARAM2, methodsParam);
         intent.putExtras(bundle);
         getApplication().sendBroadcast(intent);
-        Logs.d(TAG,"-" + methodsName+" - "+methodsParam);
+//        Logs.d(TAG,"-" + methodsName+" - "+methodsParam);
     }
 
     //通讯服务发来的消息 接收处
