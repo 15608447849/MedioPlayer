@@ -14,6 +14,8 @@ import com.wos.play.rootdir.model_universal.tool.Logs;
  */
 
 public class CStreamMedioForVitamio extends FrameLayout implements IComponent{
+
+
     private static final java.lang.String TAG = "CMorePictures";
     private int componentId;
     private int width;

@@ -2,6 +2,7 @@ package com.wos.play.rootdir.model_application.ui.ComponentLibrary.stream_medio;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +20,7 @@ import static io.vov.vitamio.MediaPlayer.VIDEOQUALITY_HIGH;
  * Created by user on 2016/11/21.
  */
 
-public class Mvitamios implements MediaPlayer.OnInfoListener, MediaPlayer.OnBufferingUpdateListener,MediaPlayer.OnErrorListener{
+public class Mvitamios implements MediaPlayer.OnInfoListener, MediaPlayer.OnBufferingUpdateListener,MediaPlayer.OnErrorListener {
     private static final String TAG = "Vitamio";
     private BaseActivity activity;
     private ViewGroup layout; //
@@ -30,12 +31,10 @@ public class Mvitamios implements MediaPlayer.OnInfoListener, MediaPlayer.OnBuff
     private boolean isLayout = false;
 
 
-
-
-
     private boolean isStardEnable = false;
     private Uri uri;
     private VideoView mVideoView;
+
     public Mvitamios(Context context, String path) {  // private String path; //"http://222.36.5.53:9800/live/xktv.m3u8";//"http://218.89.69.211:8088/streamer/yb01/yb01-500.m3u8";
         if (context instanceof BaseActivity) {
             this.activity = (BaseActivity) context;
@@ -51,7 +50,7 @@ public class Mvitamios implements MediaPlayer.OnInfoListener, MediaPlayer.OnBuff
         if (activity != null) {
             isInit = io.vov.vitamio.Vitamio.isInitialized(activity.getApplicationContext());
         }
-        Logs.d(TAG," - vitamio isInitialized() - " + isInit );
+        Logs.d(TAG, " - vitamio isInitialized() - " + isInit);
     }
 
     //初始化控件
@@ -60,7 +59,7 @@ public class Mvitamios implements MediaPlayer.OnInfoListener, MediaPlayer.OnBuff
             if (activity != null) {
                 root = LayoutInflater.from(activity).inflate(R.layout.stream_layout, null);
                 mVideoView = (VideoView) root.findViewById(R.id.buffer);
-                Logs.d(TAG," - vitamio initView() - ok");
+                Logs.d(TAG, " - vitamio initView() - ok");
             }
         }
     }
@@ -68,7 +67,7 @@ public class Mvitamios implements MediaPlayer.OnInfoListener, MediaPlayer.OnBuff
     //1 设置布局 2 设置开始播放状态 true
     private void settingLayout(ViewGroup vp) {
         if (isInit) {//已经初始化
-            Logs.d(TAG," -settingLayout() - "+vp);
+            Logs.d(TAG, " -settingLayout() - " + vp);
             if (layout != null) {
                 removeLayout();
             }
@@ -79,28 +78,30 @@ public class Mvitamios implements MediaPlayer.OnInfoListener, MediaPlayer.OnBuff
 
     public void allowPlay(ViewGroup layout) {
         if (isInit) {
-            Logs.d(TAG, "allowPlay() - "+ layout);
+            Logs.d(TAG, "allowPlay() - " + layout);
+            handler.postDelayed(runPlays,layerTime);
             isStardEnable = true;
             settingLayout(layout);
             playVideo();
         }
+        //开始循环handler
     }
 
     public void unAllowPlay() {
         if (isInit) {
-            Logs.d(TAG,"unAllowPlay()");
+            Logs.d(TAG, "unAllowPlay()");
+            handler.removeCallbacks(runPlays);
+
             playVideoStop();
             isStardEnable = false;
             removeLayout();
-
         }
     }
 
 
-
     private void addLayout() {
         if (root != null && !isLayout) {
-            Logs.d(TAG,"addLayout()");
+            Logs.d(TAG, "addLayout()");
             layout.addView(root);
             isLayout = true;
         }
@@ -108,21 +109,17 @@ public class Mvitamios implements MediaPlayer.OnInfoListener, MediaPlayer.OnBuff
 
     private void removeLayout() {
         if (root != null && isLayout) {
-            Logs.d(TAG,"removeLayout()");
+            Logs.d(TAG, "removeLayout()");
             layout.removeView(root);
             isLayout = false;
         }
     }
 
 
-
-
-
-
     //播放
     private void playVideo() {
         if (isStardEnable) {//允许播放
-            Logs.d(TAG,"playVideo() : "+ uri);
+            Logs.d(TAG, "playVideo() : " + uri);
             try {
 
 //                mVideoView.setMediaController(new MediaController(activity));
@@ -146,20 +143,22 @@ public class Mvitamios implements MediaPlayer.OnInfoListener, MediaPlayer.OnBuff
             }
         }
     }
+
     //停止
     private void playVideoStop() {
-        if (isInit && isLayout){
-            Logs.d(TAG,"playVideoStop()");
+        if (isInit && isLayout) {
+            Logs.d(TAG, "playVideoStop()");
             mVideoView.stopPlayback();
         }
     }
+
     @Override
     public boolean onInfo(MediaPlayer mp, int what, int extra) {
         switch (what) {
             case MediaPlayer.MEDIA_INFO_BUFFERING_START:
                 if (mVideoView.isPlaying()) {
                     mVideoView.pause();
-               }
+                }
                 break;
             case MediaPlayer.MEDIA_INFO_BUFFERING_END:
                 mVideoView.start();
@@ -168,11 +167,12 @@ public class Mvitamios implements MediaPlayer.OnInfoListener, MediaPlayer.OnBuff
                 //Logs.d(TAG,"进度 : " + extra + "kb/s" + "  ");
                 break;
             default:
-                Logs.d(TAG,"onInfo -  code "+what);
+                Logs.d(TAG, "onInfo -  code " + what);
                 break;
         }
         return true;
     }
+
     @Override
     public void onBufferingUpdate(MediaPlayer mp, int percent) {
         //Logs.d(TAG,"进度百分比 : " + percent + "%  ");
@@ -180,7 +180,25 @@ public class Mvitamios implements MediaPlayer.OnInfoListener, MediaPlayer.OnBuff
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
-        Logs.d(TAG,"onError : " + what + extra + "kb/s" + " ");
+        Logs.d(TAG, "onError : " + what + extra + "kb/s" + " ");
         return true;
     }
+
+
+    private Handler handler = new Handler();
+    private final int layerTime = 3*60*1000;
+    private final Runnable runPlays = new Runnable() {
+        @Override
+        public void run() {
+            //释放资源
+            playVideoStop();
+            if (isLayout){
+                //重新开始
+                playVideo();
+                handler.postDelayed(runPlays,layerTime);
+            }
+        }
+    };
+
+
 }
