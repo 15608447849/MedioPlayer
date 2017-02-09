@@ -24,7 +24,7 @@ public class CStreamMedioForVitamio extends FrameLayout implements IComponent{
     private AbsoluteLayout.LayoutParams layoutParams;
     private String streamUrl;
     private Mvitamios video;
-//    private MVlcs video;
+
     private boolean isInitData;
     private boolean isLayout;
     public CStreamMedioForVitamio(Context context, AbsoluteLayout layout, ComponentsBean component) {
@@ -103,7 +103,6 @@ public class CStreamMedioForVitamio extends FrameLayout implements IComponent{
         try {
             ContentsBean content = (ContentsBean)object;
           video = new Mvitamios(context,content.getContentSource());//content.getContentSource()
-//            video = new MVlcs(context,content.getContentSource());//content.getContentSource()
         } catch (Exception e) {
             e.printStackTrace();
         }
