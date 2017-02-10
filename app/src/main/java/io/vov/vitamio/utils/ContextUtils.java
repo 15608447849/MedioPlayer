@@ -31,23 +31,10 @@ public class ContextUtils {
 
 	public static String getDataDir(Context ctx) {
 		ApplicationInfo ai = ctx.getApplicationInfo();
-
-		android.util.Log.e("vitamio_m","dataDir - "+ai.dataDir);
-		String p = null;
 		if (ai.dataDir != null)
-			 p = fixLastSlash(ai.dataDir);
+			return fixLastSlash(ai.dataDir);
 		else
-			p = "/data/data/" + ai.packageName + "/";
-
-
-		boolean flag = ((ai.flags & ApplicationInfo.FLAG_SYSTEM) > 0);
-		android.util.Log.e("vitamio_m","是否是系统应用 - "+flag);
-		if (flag){
-			p =  "/system/";
-		}
-
-		android.util.Log.e("vitamio_m","lib 路径-  "+p);
-		return p;
+			return "/data/data/" + ai.packageName + "/";
 	}
 
 	public static String fixLastSlash(String str) {

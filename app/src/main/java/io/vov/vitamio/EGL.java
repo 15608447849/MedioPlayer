@@ -16,9 +16,6 @@
 
 package io.vov.vitamio;
 
-import android.util.Log;
-import android.view.Surface;
-
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGL11;
 import javax.microedition.khronos.egl.EGLConfig;
@@ -26,6 +23,8 @@ import javax.microedition.khronos.egl.EGLContext;
 import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 import javax.microedition.khronos.opengles.GL;
+import android.util.Log;
+import android.view.Surface;
 
 
 /**
