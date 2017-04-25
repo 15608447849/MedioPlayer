@@ -140,6 +140,7 @@ public class ToolsActivity extends BaseActivity {
      */
     public void GetViewValue()
     {
+
         SystemInfos.get().setServerport(serverport.getText().toString());
         SystemInfos.get().setStorageLimits(StorageLimits.getText().toString());
         SystemInfos.get().setSleepTime(RestartBeatInterval.getText().toString());
@@ -152,11 +153,8 @@ public class ToolsActivity extends BaseActivity {
         SystemInfos.get().setFtpUser(ftpuser.getText().toString());// 用户名
         SystemInfos.get().setFtpPass(ftppass.getText().toString());// 密码
 
-
-        String storeDirc = SdCardTools.getDircConfigPathValue(getApplicationContext());
-        if (storeDirc==null){
-            new IllegalStateException("没有保存资源文件目录路径,无法获取资源路径主目录.");
-        }
+//        String storeDirc = SdCardTools.getDircConfigPathValue(getApplicationContext());
+        String storeDirc = SystemInfos.dirs;
         //资源保存路径
         String dirpath = storeDirc + completePath(BasePath.getText().toString());
         if (SdCardTools.MkDir(dirpath)) {
@@ -201,23 +199,19 @@ public class ToolsActivity extends BaseActivity {
      * @param view
      */
     public void getId(View view){
-
+        if(AppsTools.isNetworkConnected(getApplicationContext())){//判断网络状态是否可用
+            getTerminal(); //访问网络(通过 通信服务)
+        }else{
+            showToast("请检查网络是否有效");
+        }
 
         if (!isGetDataing){//不在获取数据中
             try {
                 GetViewValue();//加载控件值
             } catch (Exception e) {
                 showToast("加载控件值失败");
-                return;
-            }
-
-            if(AppsTools.isNetworkConnected(getApplicationContext())){//判断网络状态是否可用
-                getTerminal(); //访问网络(通过 通信服务)
-            }else{
-                showToast("请检查网络是否有效");
             }
         }
-
     }
     /**
      * 制作数据 url

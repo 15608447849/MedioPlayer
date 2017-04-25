@@ -192,7 +192,8 @@ public class SystemInfos {
     private SystemInfos() {
         contentEntity = new DataListEntiy();
     }
-    private static final String infos = "/mnt/sdcard/wosplayer/wos.conf";
+    public static final String dirs = "/mnt/sdcard/wosplayer";
+    private static final String infos = dirs+"/wos.conf";
     //初始化 读取 - > sdcard 目录下的 一个配置文件 ->
 
 
@@ -202,11 +203,16 @@ public class SystemInfos {
     //读取信息  -> 读取内容转成map
     private void readInfo() {
         try {
-        String content =  FileUtils.readFile(infos,"utf-8").toString();
-        Logs.i(TAG,"读取系统配置信息: [\n"+content+"\n]");
-        if (content!=null && !content.equals("")){
-            contentEntity.setMap(AppsTools.jsonTxtToMap(content));
-//                                  赋值
+            //判断文件是否存在
+            if (!FileUtils.isFolderExist(dirs)){
+                return;
+            }
+
+            StringBuilder sb =  FileUtils.readFile(infos,"utf-8");
+        if (sb!=null && !sb.toString().equals("")){
+            Logs.i(TAG,"读取系统配置信息: [\n"+sb.toString()+"\n]");
+            contentEntity.setMap(AppsTools.jsonTxtToMap(sb.toString()));
+            //赋值
             //连接类型
             connectionType = contentEntity.GetStringDefualt("connectionType");
             //终端编号
