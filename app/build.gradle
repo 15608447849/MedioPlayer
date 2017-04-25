@@ -36,11 +36,6 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
-//        ndk {
-//            moduleName "serverHelper"         //生成的so名字
-//            ldLibs "log"
-//            abiFilters "armeabi-v7a"//, "x86", "armeabi"  //输出指定三种abi体系结构下的so库。
-//        }
     }
     sourceSets {
         main {
@@ -50,7 +45,6 @@ android {
             jniLibs.srcDirs = ['src/main/jniLibs'] //so库
 //            aidl.srcDirs = ['src/main/aidl'] //aidl文件
 //            renderscript.srcDirs = ['src/mian/']
-
         }
     }
     buildTypes {

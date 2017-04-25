@@ -86,44 +86,13 @@
         <service
             android:name=".model_download.kernel.DownloadServer"
             android:process="play.download" />
-
         <!-- 守护 进程 服务-->
         <service
             android:name="com.wos.play.rootdir.model_monitor.kernes.WatchServer"
             android:persistent="true"
             android:process="play.watch" />
-
-
-        <!-- 开机自启动广播-->
-        <!--<receiver android:name="com.wos.play.rootdir.model_monitor.broads.InitBootBroad"-->
-        <!--android:process="lzp.wathch.server">-->
-        <!--<intent-filter>-->
-        <!--<action android:name="android.intent.action.BOOT_COMPLETED"/>-->
-        <!--<category android:name="android.intent.category.DEFAULT" />-->
-        <!--<category android:name="android.intent.category.HOME" />-->
-        <!--<category android:name="android.intent.category.LAUNCHER" />-->
-        <!--</intent-filter>-->
-        <!--</receiver>-->
-
-
-        <!-- 拨叉sdcard 广播          <intent-filter android:priority="1000">      <data android:scheme="file" />
-                <category android:name="android.intent.category.LAUNCHER" /> <intent-filter>
-                <action android:name="android.intent.action.MEDIA_EJECT" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.MEDIA_MOUNTED" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.BATTERY_CHANGED" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.SCREEN_ON" />
-            </intent-filter>-->
         <receiver
-            android:name="com.wos.play.rootdir.model_monitor.broads.SdcardBroad"
+            android:name="com.wos.play.rootdir.model_monitor.soexcute.SystemBroads"
             android:process="play.watch"
             >
                 <intent-filter>
@@ -140,8 +109,6 @@
                 <action android:name="COM.WOS.PLAYER.BROADS"/>
             </intent-filter>
         </receiver>
-
-
     </application>
 
 </manifest>

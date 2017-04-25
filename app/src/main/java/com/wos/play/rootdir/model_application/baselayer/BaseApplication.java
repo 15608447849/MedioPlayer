@@ -87,9 +87,4 @@ public class BaseApplication extends Application{
     public void closeAppServer(Class<?> serverClass){
         stopService(new Intent(appContext,serverClass));
     }
-
-
-
-
-
 }

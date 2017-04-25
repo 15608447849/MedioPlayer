@@ -207,7 +207,6 @@ public class SystemInfos {
             if (!FileUtils.isFolderExist(dirs)){
                 return;
             }
-
             StringBuilder sb =  FileUtils.readFile(infos,"utf-8");
         if (sb!=null && !sb.toString().equals("")){
             Logs.i(TAG,"读取系统配置信息: [\n"+sb.toString()+"\n]");
