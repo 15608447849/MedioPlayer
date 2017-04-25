@@ -1,9 +1,9 @@
 package io.vov.vitamio;
 
 /**
- * Created by user on 2017/2/8.
+ * Created by 793065165 on 2017/2/10.
  */
 
 public class BuildConfig {
-    public static boolean DEBUG = false;
+    public static final boolean DEBUG = false;
 }

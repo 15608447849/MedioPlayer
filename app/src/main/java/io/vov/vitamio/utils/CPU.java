@@ -15,15 +15,15 @@
  */
 package io.vov.vitamio.utils;
 
-import android.os.Build;
-import android.text.TextUtils;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import android.os.Build;
+import android.text.TextUtils;
 
 public class CPU {
 	private static final Map<String, String> cpuinfo = new HashMap<String, String>();

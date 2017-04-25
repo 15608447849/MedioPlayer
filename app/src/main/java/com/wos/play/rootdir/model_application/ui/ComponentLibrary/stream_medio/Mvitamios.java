@@ -14,7 +14,7 @@ import com.wos.play.rootdir.model_universal.tool.Logs;
 import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.widget.VideoView;
 
-import static io.vov.vitamio.MediaPlayer.VIDEOQUALITY_HIGH;
+
 
 /**
  * Created by user on 2016/11/21.
@@ -124,7 +124,7 @@ public class Mvitamios implements MediaPlayer.OnInfoListener, MediaPlayer.OnBuff
 
 //                mVideoView.setMediaController(new MediaController(activity));
 //                mVideoView.requestFocus();
-                mVideoView.setVideoQuality(VIDEOQUALITY_HIGH);
+                mVideoView.setVideoQuality(io.vov.vitamio.MediaPlayer.VIDEOQUALITY_HIGH);
                 mVideoView.setOnInfoListener(this);
                 mVideoView.setOnBufferingUpdateListener(this);
                 mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
