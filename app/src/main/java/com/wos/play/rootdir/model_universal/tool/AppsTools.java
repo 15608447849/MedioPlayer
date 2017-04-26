@@ -84,8 +84,8 @@ public class AppsTools {
     public static String getMacAddress(Context context){
 
         String mac = getLocalMacAddressFromWifiInfo(context);
-        if (mac==null || "".equals(mac))
-            mac = getLocalMacAddressFromBusybox();
+        if (mac==null || "".equals(mac));
+            //mac = getLocalMacAddressFromBusybox();
         return mac;
     }
 
@@ -197,9 +197,7 @@ public class AppsTools {
     public static String mapTanslationUri(String ip,String port,Map<String,String> map){
 
         StringBuffer sb = new StringBuffer("http://");
-
         sb.append(ip).append(":").append(port).append("/").append("terminal/apply").append("?");
-
         for (Object o : map.entrySet()) {
             Map.Entry entry = (Map.Entry) o;
             Object key = entry.getKey();

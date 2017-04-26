@@ -2,6 +2,7 @@ package com.wos.play.rootdir.model_application.ui.ComponentLibrary.epapers;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -18,21 +19,21 @@ import java.util.List;
 
 /**
  * Created by user on 2017/1/4.
- *  电子报的activity的适配器
+ * 电子报的activity的适配器
  */
 
-public class EActivityGrallyAdpter extends BaseAdapter{
+public class EActivityGrallyAdpter extends BaseAdapter {
 
     private Context context;
-    private List<File> list ;
+    private List<File> list;
 
     public EActivityGrallyAdpter(Context context, List<File> list) {
         this.context = context;
         this.list = list;
     }
 
-    public File getSource(int pos){
-        if (list!=null && pos<list.size() && pos>=0){
+    public File getSource(int pos) {
+        if (list != null && pos < list.size() && pos >= 0) {
             return list.get(pos);
         }
         return null;
@@ -40,9 +41,9 @@ public class EActivityGrallyAdpter extends BaseAdapter{
 
     @Override
     public int getCount() {
-        if (list ==null || list.size()==0){
+        if (list == null || list.size() == 0) {
             return 0;
-        }else {
+        } else {
             return list.size();
         }
     }
@@ -59,6 +60,7 @@ public class EActivityGrallyAdpter extends BaseAdapter{
 
     //选择项
     private int selectItem;
+
     //设置选择项
     public void setSelectItem(int selectItem) {
 
@@ -72,24 +74,23 @@ public class EActivityGrallyAdpter extends BaseAdapter{
     public View getView(int position, View convertView, ViewGroup parent) {
 
         MeImageView iv = null;
-        if (convertView==null){
-            iv= ImageUtils.createImageView(context);
+        if (convertView == null) {
+            iv = ImageUtils.createImageView(context);
             iv.setAdjustViewBounds(true);
             Gallery.LayoutParams params = new Gallery.LayoutParams(150, 150);
             iv.setLayoutParams(params);
-            iv. setScaleType(ImageView.ScaleType.FIT_XY);
-            iv.setPadding(2,2,2,2);
+            iv.setScaleType(ImageView.ScaleType.FIT_XY);
+            iv.setPadding(2, 2, 2, 2);
             convertView = iv;
-        }else{
+        } else {
             iv = (MeImageView) convertView;
         }
 
         String thumbImagePath = getThunbImagePath(getSource(position));
-        ImageAsyLoad.loadBitmap(thumbImagePath,iv);
-        if(selectItem==position){
+        ImageAsyLoad.loadBitmap(thumbImagePath, iv);
+        if (selectItem == position) {
             iv.setBackgroundColor(Color.WHITE);
-        }
-        else{//未选中
+        } else {//未选中
             iv.setBackgroundColor(Color.BLACK);
         }
         return convertView;
@@ -98,14 +99,14 @@ public class EActivityGrallyAdpter extends BaseAdapter{
 
     //封面图
     public String getThunbImagePath(File source) {
-        if (source!=null){
+        if (source != null) {
             //循环遍历 - 找出 文件名 thumb_开头的文件
             String[] list = source.list();
-            if (list!=null && list.length>0){
-                for (int i=0;i<list.length;i++){
+            if (list != null && list.length > 0) {
+                for (int i = 0; i < list.length; i++) {
 
-                    if (list[i].contains("thumb_")){
-                        return source+"/"+list[i];
+                    if (list[i].contains("thumb_")) {
+                        return source + "/" + list[i];
                     }
                 }
             }
@@ -115,24 +116,19 @@ public class EActivityGrallyAdpter extends BaseAdapter{
 
     //内容图
     public String getContentImagePath(File source) {
-        if (source!=null){
+        if (source != null) {
+            Log.i("EActivityGrallyAdpter", "内容图--source not null---");
             //循环遍历 - 找出 文件名 thumb_开头的文件
             String[] list = source.list();
-            if (list!=null && list.length>0){
-                for (int i=0;i<list.length;i++){
-
-                    if (list[i].contains("thumb_")){
-                        return source+"/"+list[i].substring(list[i].indexOf("_")+1);
+            if (list != null && list.length > 0) {
+                for (String aList : list) {
+                    if (aList.contains("thumb_")) {
+                        return source + "/" + aList.substring(aList.indexOf("_") + 1);
                     }
                 }
             }
         }
+        Log.i("EActivityGrallyAdpter", "----------内容图--默认图片");
         return UiTools.getDefImagePath();
     }
-
-
-
-
-
-
 }

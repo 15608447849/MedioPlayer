@@ -19,10 +19,9 @@ import java.util.List;
 import cn.trinea.android.common.util.FileUtils;
 
 public class EpaperActivity extends BaseActivity {
+
     public static final String TAG = "EpaperActivity";
     public static final String PATHKEY = "paperFilepath";
-
-
 
     private String path = "";
     private DragImageView image;
@@ -38,33 +37,30 @@ public class EpaperActivity extends BaseActivity {
         initIntent();
     }
 
-
     //初始化路径
     private void initIntent() {
-       String path = this.getIntent().getStringExtra(PATHKEY);
-        if (path==null || !FileUtils.isFolderExist(path)){
+        String path = this.getIntent().getStringExtra(PATHKEY);
+        if (path == null || !FileUtils.isFolderExist(path)) {
             stopActivityOnArr(this);
             return;
         }
 
-        Logs.i(TAG,"打开电子报 - [ " + path+" ]");
+        Logs.i(TAG, "打开电子报 - [ " + path + " ]");
 //        mFile = new File(path);
         File[] files = new File(path).listFiles();
         List<File> arrList = new ArrayList<>();
-        for (int i=0;i<files.length;i++){
+        for (int i = 0; i < files.length; i++) {
             File sFile = files[i];
-            if (sFile.isDirectory() && sFile.list().length>0){
+            if (sFile.isDirectory() && sFile.list().length > 0) {
                 arrList.add(sFile);
             }
         }
-        if (arrList.size()>0){
+        if (arrList.size() > 0) {
             initView(arrList);
-        }else{
+        } else {
             stopActivityOnArr(this);
         }
     }
-
-
 
 
     //初始化视图
@@ -72,7 +68,7 @@ public class EpaperActivity extends BaseActivity {
         image = (DragImageView) findViewById(R.id.epaper_act_show);
 
         grallery = (Gallery) findViewById(R.id.epaper_act_gallery);
-        adpter = new EActivityGrallyAdpter(this,list);
+        adpter = new EActivityGrallyAdpter(this, list);
         grallery.setAdapter(adpter);
         grallery.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -87,11 +83,12 @@ public class EpaperActivity extends BaseActivity {
             }
         });
     }
+
     //选择文件 填充 imageView
     private void selectFile(int position) {
         String contentPath = adpter.getContentImagePath(adpter.getSource(position));
-        if (image!=null){
-            ImageAsyLoad.loadBitmap(contentPath,image);
+        if (image != null) {
+            ImageAsyLoad.loadBitmap(contentPath, image);
         }
     }
 
