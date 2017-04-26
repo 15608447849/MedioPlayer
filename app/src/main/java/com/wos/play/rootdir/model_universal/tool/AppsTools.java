@@ -86,6 +86,8 @@ public class AppsTools {
         String mac = getLocalMacAddressFromWifiInfo(context);
         if (mac==null || "".equals(mac));
             //mac = getLocalMacAddressFromBusybox();
+
+
         return mac;
     }
 
