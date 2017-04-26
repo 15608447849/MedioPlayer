@@ -24,14 +24,14 @@ public class BaseApplication extends Application{
      */
     public void initStartServer(String serverName){
         if ("all".equals(serverName)){
+            //打开监听
+            startAppServer(WatchServer.class);
             //打开 命令分发服务
             startAppServer(CommandPostServer.class);
             //打开 下载服务
             startAppServer(DownloadServer.class);
             //打开 通讯服务
             startAppServer(CommunicationServer.class);
-            //打开监听
-           //startAppServer(WatchServer.class);
         }
         if ("communication".equals(serverName)){
             //通讯服务

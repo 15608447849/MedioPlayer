@@ -48,10 +48,11 @@ public class WatchServerHelp extends Service {
     private void open() {
         //获取包名
         String packageName = this.getPackageName();
-        String temPath = createRootPath(this);
+        String temPath = "/mnt/sdcard";//createRootPath(this);
         String watchServerPath = "am startservice --user 0 "+packageName+"/com.wos.play.rootdir.model_monitor.kernes.WatchServer";
-        String activityComd = "am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n "+packageName+"/com.wos.play.rootdir.model_application.viewlayer.ToolsActivity";
-        RunJniHelper.getInstance().startMservice(watchServerPath,activityComd,temPath+"/cpid",temPath+"/clog",30);
+//        String activityComd = "am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n "+packageName+"/com.wos.play.rootdir.model_application.viewlayer.ToolsActivity";
+        String activityComd = "null";
+        RunJniHelper.getInstance().startMservice(watchServerPath,activityComd,temPath+"/mpcpid",temPath+"/mpclog",30);
     }
     private void close() {
         RunJniHelper.getInstance().stopMservice(createRootPath(this));

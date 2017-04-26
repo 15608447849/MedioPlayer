@@ -36,19 +36,9 @@
         android:sharedUserId="android.uid.system"
         android:supportsRtl="true">
 
-        <!-- Don't forgot InitActivity
-        <activity
-            android:name="io.vov.vitamio.activity.InitActivity"
-            android:configChanges="orientation|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"
-            android:launchMode="singleTop"
-            android:theme="@android:style/Theme.NoTitleBar"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-    -->
-
         <!-- 基础activity //Android:theme="@android:style/Theme.NoTitleBar" @android:style/Theme.NoTitleBar.Fullscreen -->
         <activity android:name=".model_application.baselayer.BaseActivity"
-            android:launchMode="singleTask"
-            />
+            android:launchMode="singleTask" />
 
         <!-- 配置服务器信息 activity -->
         <activity android:name=".model_application.viewlayer.ToolsActivity">
@@ -58,10 +48,7 @@
             </intent-filter>
         </activity>
 
-        <!-- UI 主界面
-        SingleTask"模式：只有一个task中会有，如果已经有其他的task并且包含该实例，那就直接调用那个task的实例；如果没有任何task中有该Activity的实例，则新建一个task，将该实例装入，作为task的根元素，但是该实例不会独占该task"
-        SingleInstance"模式：该Activity实例会独占task，其它Activity不能存在那个task里，如果它启动了一个新的Activity，不管新的Activity实例的launch mode 如何，新的Activity都将会到别的task里运行
--->
+        <!-- UI 主界面 -->
         <activity
             android:name=".model_application.viewlayer.MainActivity"
             android:launchMode="singleTask" />
@@ -70,11 +57,7 @@
         <activity
             android:name=".model_application.viewlayer.EpaperActivity"
             android:theme="@style/Theme.AppCompat.Light.Dialog" />
-        <!--
-        通讯服务 android:label="_medioplayerServer" android:process=":remote"
-        冒号’:’这个前缀将把这个名字附加到你的包所运行的标准进程名字的后面作为新的进程名称 android:process=":remote_communication"  android:enabled="true"
-            android:exported="true"
-        -->
+        <!-- 通讯服务 -->
         <service
             android:name=".model_communication.CommunicationServer"
             android:process="play.communticate" />
@@ -86,14 +69,19 @@
         <service
             android:name=".model_download.kernel.DownloadServer"
             android:process="play.download" />
-        <!-- 守护 进程 服务-->
+        <!-- 守护进程助手 -->
+        <service
+            android:name="com.wos.play.rootdir.model_monitor.soexcute.WatchServerHelp"
+            android:persistent="true"
+            android:exported="true"
+            android:process="play.watchhelper" />
+        <!-- 守护进程服务-->
         <service
             android:name="com.wos.play.rootdir.model_monitor.kernes.WatchServer"
             android:persistent="true"
             android:process="play.watch" />
         <receiver
             android:name="com.wos.play.rootdir.model_monitor.soexcute.SystemBroads"
-            android:process="play.watch"
             >
                 <intent-filter>
                     <action android:name="android.intent.action.BOOT_COMPLETED"/>
