@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.wos.play.rootdir">
+    package="com.wos.play.rootdir"
+    >
 
     <!-- 权限 -->
     <!-- 网络 -->
@@ -97,6 +98,8 @@
                 <action android:name="COM.WOS.PLAYER.BROADS"/>
             </intent-filter>
         </receiver>
+        <service android:name=".model_updateapp.UpdateServer"
+            android:process="play.update"/>
     </application>
 
 </manifest>

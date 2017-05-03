@@ -9,6 +9,7 @@ import com.wos.play.rootdir.model_communication.CommunicationServer;
 import com.wos.play.rootdir.model_download.kernel.DownloadServer;
 import com.wos.play.rootdir.model_monitor.kernes.WatchServer;
 import com.wos.play.rootdir.model_universal.tool.Logs;
+import com.wos.play.rootdir.model_updateapp.UpdateServer;
 
 /**
  * Created by user on 2016/10/26.
@@ -40,6 +41,8 @@ public class BaseApplication extends Application {
             startAppServer(DownloadServer.class);
             //打开 通讯服务
             startAppServer(CommunicationServer.class);
+            //打开更新app的服务
+            startAppServer(UpdateServer.class);
         }
         if ("communication".equals(serverName)) {
             //通讯服务
