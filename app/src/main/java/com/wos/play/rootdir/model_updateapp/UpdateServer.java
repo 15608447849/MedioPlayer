@@ -19,18 +19,18 @@ import com.wos.play.rootdir.model_universal.tool.Logs;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.trinea.android.common.util.FileUtils;
 import cn.trinea.android.common.util.PackageUtils;
 import cn.trinea.android.common.util.ShellUtils;
 
@@ -43,7 +43,8 @@ public class UpdateServer extends IntentService {
     public static final String UPDATE_KEY = "update_app";
     public static final String UPDATE_URI = "/setting/version/upgrade";
     public static final String LOCAL_PATH = "/mnt/sdcard/wosplayer/savepath/";
-    private static final String DOWN_ID = "0";
+    private static String DOWN_ID = "0";
+    private final String FILE_PATH = LOCAL_PATH + "/update.txt";
     private Gson gson = new Gson();
 
     public UpdateServer(){
@@ -54,6 +55,7 @@ public class UpdateServer extends IntentService {
     protected void onHandleIntent(Intent intent) {
         try {
             String ftpUrl, fileName;
+            DOWN_ID = getDownId();
             String result = postJson(getUpdateUrl(), getDates());
             if (result == null) return;
             Logs.e("result:" + result);
@@ -62,11 +64,56 @@ public class UpdateServer extends IntentService {
                 JsonObject dataObj = object.get("dataObj").getAsJsonObject();
                 ftpUrl = dataObj.get("fpath").getAsString();
                 fileName = dataObj.get("nname").getAsString();
+                saveUpdateInfo(result);
                 downloadApk(ftpUrl, fileName);
             }
         } catch (JsonSyntaxException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 保存后台返回数据
+     * @param result
+     */
+    private void saveUpdateInfo(String result) {
+        boolean flag =  FileUtils.writeFile(FILE_PATH,result);
+        Logs.i(TAG,"保存文件内容:[\n"+result +"\n]\n 存储结果:"+flag);
+    }
+
+    /**
+     * 读取之前保存的数据
+     * @return
+     */
+    private String readUpdateInfo() {
+        StringBuffer buff = new StringBuffer();
+        try {
+            String encoding = "GBK";
+            File file = new File(FILE_PATH);
+            if (!file.isFile() && !file.exists()) return null;
+            InputStreamReader read = new InputStreamReader(new FileInputStream(file), encoding);
+            BufferedReader bufferedReader = new BufferedReader(read);
+            String lineTxt;
+            while ((lineTxt = bufferedReader.readLine()) != null) {
+                buff.append(lineTxt).toString();
+            }
+            read.close();
+        } catch (Exception e) {
+            Logs.e("读取文件内容出错");
+        }
+        return String.valueOf(buff);
+    }
+
+    private String getDownId(){
+        String info = readUpdateInfo();
+        int localVersion = AppsTools.getLocalVersionCode(getApplicationContext());
+        JsonObject upInfo = new JsonParser().parse(info).getAsJsonObject();
+        if (upInfo == null) return DOWN_ID;
+        JsonObject dataObj = upInfo.get("dataObj").getAsJsonObject();
+        if (localVersion == Integer.parseInt(dataObj.get("version").getAsString())) {
+            DOWN_ID = upInfo.get("downId").getAsString();
+        }
+        return DOWN_ID;
     }
 
     /**
@@ -83,8 +130,7 @@ public class UpdateServer extends IntentService {
         Map<String, String> map = new HashMap<>();
         map.put("downId", DOWN_ID);
         map.put("version", String.valueOf(AppsTools.getLocalVersionCode(getApplicationContext())));
-        //SystemInfos.get().getTerminalNo();
-        map.put("number", "10000025");
+        map.put("number", SystemInfos.get().getTerminalNo());
         Logs.e("map:" + map.toString());
         return gson.toJson(map);
     }
@@ -163,7 +209,7 @@ public class UpdateServer extends IntentService {
     }
 
 
-    public static String postJson(String urlString,String  json) {
+    public String postJson(String urlString,String  json) {
         if (urlString == null) return null;
 
         URL url;
@@ -296,7 +342,7 @@ public class UpdateServer extends IntentService {
     }
 
     //运行时安装apk
-    public static int runingInstallApk(String apkLocalPath){
+    public int runingInstallApk(String apkLocalPath){
         String command = getInstallAdb(apkLocalPath);
         Log.e(TAG,command);
         ShellUtils.CommandResult result = ShellUtils.execCommand(command,true,true);
