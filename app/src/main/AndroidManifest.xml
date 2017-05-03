@@ -81,25 +81,24 @@
             android:name="com.wos.play.rootdir.model_monitor.kernes.WatchServer"
             android:persistent="true"
             android:process="play.watch" />
+        <!-- 更新app -->
+        <service android:name=".model_updateapp.UpdateServer"
+            android:process="play.update"/>
+        <!-- 开机广播 -->
         <receiver
-            android:name="com.wos.play.rootdir.model_monitor.soexcute.SystemBroads"
-            >
+            android:name="com.wos.play.rootdir.model_monitor.soexcute.SystemBroads">
                 <intent-filter>
                     <action android:name="android.intent.action.BOOT_COMPLETED"/>
                 </intent-filter>
-
-                <intent-filter>
-                    <action android:name="android.intent.action.MEDIA_MOUNTED"/>
-                    <action android:name="android.intent.action.MEDIA_UNMOUNTED"/>
-                    <data android:scheme="file"/>
-                </intent-filter>
-
-            <intent-filter>
-                <action android:name="COM.WOS.PLAYER.BROADS"/>
-            </intent-filter>
         </receiver>
-        <service android:name=".model_updateapp.UpdateServer"
-            android:process="play.update"/>
+        <!-- sdcard 广播 -->
+        <receiver
+            android:name="com.wos.play.rootdir.model_monitor.broads.SdcardBroad">
+            <action android:name="android.intent.action.MEDIA_MOUNTED"/>
+            <action android:name="android.intent.action.MEDIA_UNMOUNTED"/>
+            <data android:scheme="file"/>
+        </receiver>
+
     </application>
 
 </manifest>

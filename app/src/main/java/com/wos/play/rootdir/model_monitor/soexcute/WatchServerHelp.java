@@ -21,7 +21,6 @@ public class WatchServerHelp extends Service {
     public static final int CLOSE_DEAMS_ALL = 888;
     public static final int RESET_DEAMS = 999;
 
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent!=null){
