@@ -15,7 +15,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -39,6 +41,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -662,18 +665,12 @@ public class AppsTools {
     public static String generWeateherContentUrl(String city) {
         System.out.println("-当前城市 ["+city+"]");
         city = mUrlEncode(city);
-        return "http://apis.baidu.com/apistore/weatherservice/recentweathers?cityname="+city;
+//        return "http://apis.baidu.com/apistore/weatherservice/recentweathers?cityname="+city;
+        return "http://wthrcdn.etouch.cn/weather_mini?city="+city;
+
     }
 
-    private static Map<String,String> baiduApiMap;
-    //百度api 天气 appkey
-    public static Map<String,String> baiduApiMap(){
-        if (baiduApiMap==null){
-            baiduApiMap = new HashMap<>();
-            baiduApiMap.put("apikey","3a36d13c23c8065dcf1a1f584f5a5092");
-        }
-       return baiduApiMap;
-    }
+
 
     //unicode 解码
     public static String justResultIsUNICODEdecode(String res) {
@@ -758,6 +755,45 @@ public class AppsTools {
             }
         }
         return false;
+    }
+
+    //获取短整形
+    private static int getShort(byte[] data) {
+        return (int) ((data[0] << 8) | data[1] & 0xFF);
+    }
+    //天气api结果解析
+    public static String getJsonStringFromGZIP(String content) {
+        String jsonString = null;
+        try {
+            InputStream is = new ByteArrayInputStream(content.getBytes());
+            BufferedInputStream bis = new BufferedInputStream(is);
+            bis.mark(2);
+            // 取前两个字节
+            byte[] header = new byte[2];
+            int result = bis.read(header);
+            // reset输入流到开始位置
+            bis.reset();
+            // 判断是否是GZIP格式
+            int headerData = getShort(header);
+            if (result != -1 && headerData == 0x1f8b) {
+                is = new GZIPInputStream(bis);
+            } else {
+                is = bis;
+            }
+            InputStreamReader reader = new InputStreamReader(is, "utf-8");
+            char[] data = new char[100];
+            int readSize;
+            StringBuffer sb = new StringBuffer();
+            while ((readSize = reader.read(data)) > 0) {
+                sb.append(data, 0, readSize);
+            }
+            jsonString = sb.toString();
+            bis.close();
+            reader.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return jsonString;
     }
 
 

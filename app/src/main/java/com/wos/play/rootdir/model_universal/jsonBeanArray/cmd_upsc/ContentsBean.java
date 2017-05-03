@@ -40,6 +40,12 @@ public class ContentsBean extends PublicAttibute{
     private boolean transparent;//是否透明
     private int updateFreq;//高级控件更新频率
 
+    //网页相关 - 判断类型
+    private String htmlType;
+    //网页 - url
+    private String url;
+    private boolean outsideChain;
+
     //天气 城市
     private String city;
 
@@ -215,5 +221,29 @@ public class ContentsBean extends PublicAttibute{
 
     public void setTransparent(boolean transparent) {
         this.transparent = transparent;
+    }
+
+    public String getHtmlType() {
+        return htmlType;
+    }
+
+    public void setHtmlType(String htmlType) {
+        this.htmlType = htmlType;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public boolean isOutsideChain() {
+        return outsideChain;
+    }
+
+    public void setOutsideChain(boolean outsideChain) {
+        this.outsideChain = outsideChain;
     }
 }

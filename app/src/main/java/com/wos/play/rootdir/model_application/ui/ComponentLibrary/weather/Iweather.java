@@ -10,7 +10,7 @@ import com.wos.play.rootdir.model_application.ui.UiHttp.UiHttpProxy;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.IAdvancedComponent;
 import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
-import com.wos.play.rootdir.model_universal.jsonBeanArray.content_weather.BaiduApiObject;
+import com.wos.play.rootdir.model_universal.jsonBeanArray.content_weather.OtweatherBean;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.content_weather.WeathersBean;
 import com.wos.play.rootdir.model_universal.tool.AppsTools;
 import com.wos.play.rootdir.model_universal.tool.Logs;
@@ -65,7 +65,7 @@ public class Iweather extends FrameLayout implements IAdvancedComponent {
             layoutParams = new AbsoluteLayout.LayoutParams(width, height, x, y);
             if (cb.getContents() != null ) {//&& cb.getContents().size() == 1
                 uptimes = cb.getContents().get(0).getUpdateFreq();
-                url_style = cb.getContents().get(0).getContentSource();  // http://172.16.0.17:9000/content/getContentSource/weather?contentsourcetype=weather¤tCity=长沙"
+                url_style = cb.getContents().get(0).getContentSource();
                 url_content = AppsTools.generWeateherContentUrl(cb.getContents().get(0).getCity());
             }
             this.isInitData = true;
@@ -278,13 +278,14 @@ public class Iweather extends FrameLayout implements IAdvancedComponent {
 
         if (jsonContent != null) {
             try {
-                BaiduApiObject baiduApi = AppsTools.parseJsonWithGson(jsonContent, BaiduApiObject.class);
-                if (baiduApi != null && baiduApi.getErrNum() == 0 && baiduApi.getErrMsg().equals("success")) {
-//                    存在数据
+                OtweatherBean obj = AppsTools.parseJsonWithGson(jsonContent, OtweatherBean.class);
+                if (obj != null && obj.getStatus() == 1000 && obj.getDesc().equals("OK")) {
+                    //存在数据
 //                    解析
-                    parseBaiduData(baiduApi);
-                }else{
-                    throw new Exception("百度天气api err : "+ url_content);
+                    parseBaiduData(obj);
+                }
+               else{
+                    throw new Exception("天气api err : "+ url_content);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -293,13 +294,13 @@ public class Iweather extends FrameLayout implements IAdvancedComponent {
     }
 
     //解析百度api 数据
-    private void parseBaiduData(BaiduApiObject baiduApi) {
+    private void parseBaiduData(OtweatherBean api) {
         //解析数据
         String[] arr = new String[4];
-        arr[0] = baiduApi.getRetData().getCity();//城市
-        arr[1] = baiduApi.getRetData().getToday().getType();//类型
-        arr[2] = baiduApi.getRetData().getToday().getLowtemp() + " ~ " + baiduApi.getRetData().getToday().getHightemp();//温度
-        arr[3] = baiduApi.getRetData().getToday().getFengli();//风力
+        arr[0] = api.getData().getCity();//城市
+        arr[1] = api.getData().getForecast().get(0).getType();//类型
+        arr[2] =api.getData().getForecast().get(0).getLow() + " ~ " + api.getData().getForecast().get(0).getHigh();//温度
+        arr[3] = api.getData().getForecast().get(0).getFengxiang()+"\t"+api.getData().getForecast().get(0).getFengli();//风向 + 风力
         if (led != null) {
             led.setValue(arr);
         }

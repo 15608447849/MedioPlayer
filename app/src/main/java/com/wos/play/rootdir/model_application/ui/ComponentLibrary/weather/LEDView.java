@@ -9,7 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
+
+import com.wos.play.rootdir.R;
+import com.wos.play.rootdir.model_application.ui.Uitools.ImageUtils;
+import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
+import com.wos.play.rootdir.model_universal.tool.PinYinUtils;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -18,16 +22,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import com.wos.play.rootdir.R;
-import com.wos.play.rootdir.model_application.ui.Uitools.ImageUtils;
-import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
-import com.wos.play.rootdir.model_universal.tool.PinYinUtils;
-
 public class LEDView {
 
 
 	private static final String FONT_DIGITAL_7 = "fonts" + File.separator+ "digital-7.ttf";
-	private static final int REFRESH_DELAY = 500;//时间刷新延时秒数
+	private static final int REFRESH_DELAY = 1000;//时间刷新延时秒数
 	private static final int TEXT_DELAY = 5 * 1000;//时间刷新延时秒数
 
 	private final Handler mHandler = new Handler();
@@ -50,11 +49,10 @@ public class LEDView {
 
 
 
-	private TextView timeView;
-	private TextView houseView;
-	private TextView weekView;
+//	private TextView timeView;
+//	private TextView houseView;
+//	private TextView weekView;
 	private ImageView image;
-
 	private AutoTextView mTextView02;
 	public LEDView(Context context, ViewGroup vp) {
 		init(context,vp);
@@ -65,28 +63,28 @@ public class LEDView {
 	SimpleDateFormat df1 = null;
 	SimpleDateFormat df2 = null;
 	private void initTime() {
-		df1 = new SimpleDateFormat("yyyy-MM-dd");//年月日
-		df2 = new SimpleDateFormat("HH:mm:ss");//时分秒
+		df1 = new SimpleDateFormat("yyyy年MM月dd日");//年月日
+		df2 = new SimpleDateFormat("当前时间:HH时mm分");//时分秒
 	}
 	private void init(Context context,ViewGroup vp) {
 		layout = vp;
 		view = LayoutInflater.from(context).inflate(R.layout.ledview, null);
-		timeView = (TextView) view.findViewById(R.id.ledview_clock_ydt);
-		houseView = (TextView) view.findViewById(R.id.ledview_clock_hms);
-		weekView = (TextView)view.findViewById(R.id.ledview_clock_week);
+//		timeView = (TextView) view.findViewById(R.id.ledview_clock_ydt);
+//		houseView = (TextView) view.findViewById(R.id.ledview_clock_hms);
+//		weekView = (TextView)view.findViewById(R.id.ledview_clock_week);
 		AssetManager assets = context.getAssets();
 		Typeface font = Typeface.createFromAsset(assets, FONT_DIGITAL_7);
-		timeView.setTypeface(font);// 设置字体
-		houseView.setTypeface(font);// 设置字体
+//		timeView.setTypeface(font);// 设置字体
+//		houseView.setTypeface(font);// 设置字体
 		image = (ImageView)view.findViewById(R.id.show_icon);
 		mTextView02 = (AutoTextView) view.findViewById(R.id.switcher02);
 		layout.addView(view);
 	}
 
 	public void startTime() {
-		timeView.setText(getYesr());
-		weekView.setText(getWeekOfDate(new Date()));
-		mHandler.post(mTimeRefresher);
+//		timeView.setText(getYesr());
+//		weekView.setText(getWeekOfDate(new Date()));
+//		mHandler.post(mTimeRefresher);
 	}
 	public void startText(){
 		mHandler.post(mStringRefresher);
@@ -104,7 +102,7 @@ public class LEDView {
 	}
 	//计算时间
 	private void exeing(){
-		houseView.setText(getHouse());
+		//houseView.setText(getHouse());
 	}
 	//获取当前年月日
 	private String getYesr() {
@@ -132,7 +130,7 @@ public class LEDView {
 	 * @param val 城市,类型,温度,风力
 	 */
 	public void setValue(String[] val){
-		System.out.println("- - - - - - - - setValue() - - - - - - ");
+//		System.out.println("- - - - - - - - setValue() - - - - - - ");
 		if (strings==null){
 			strings = new ArrayList<>();
 		}else{
@@ -140,25 +138,40 @@ public class LEDView {
 		}
 
 		for (int index = 0;index < val.length ;index++){
-			strings.add(index,val[index]);
+			strings.add(val[index]);
 		}
 
 		//根据类型 -> 获取bitmap
 		image.setImageBitmap(tanslateTypeToBitmap(val[1]));
 	}
 
-
-
 	private int currentIndex = 0;
 	private void texttans() {
+		if (strings==null) strings = new ArrayList<>();
 
-		if (strings!=null && strings.size()>0){
-			if (currentIndex == strings.size()){
-				currentIndex = 0;
+		if (currentIndex >= strings.size()){
+			if (currentIndex==strings.size()){
+				mTextView02.setText(getYesr());
+				currentIndex++;
+			}else{
+				if (currentIndex == (strings.size()+1)){
+					mTextView02.setText(getWeekOfDate(new Date()));
+					currentIndex++;
+				}else{
+					if (currentIndex == (strings.size()+2)){
+						mTextView02.setText(getHouse());
+						currentIndex=0;
+					}
+				}
+
 			}
+
+		}else{
 			mTextView02.setText(strings.get(currentIndex));
 			currentIndex++;
 		}
+
+
 	}
 
 
@@ -171,12 +184,12 @@ public class LEDView {
 		path = UiTools.getDateSx()+path;
 		// 去对应文件夹 获取 bitmap
 		path = UiTools.getWeatherIconPath()+path+".png";
-		System.out.println("bitmap path -:"+path);
+//		System.out.println("bitmap path -:"+path);
 		if (UiTools.fileIsExt(path)){
-			System.out.println("bitmap 存在 -");
+//			System.out.println("bitmap 存在 -");
 			return ImageUtils.getBitmap(path);
 		}
-		System.out.println("bitmap 不存在 -");
+//		System.out.println("bitmap 不存在 -");
 		return null;
 	}
 

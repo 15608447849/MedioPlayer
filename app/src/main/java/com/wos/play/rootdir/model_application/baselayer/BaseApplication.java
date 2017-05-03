@@ -7,7 +7,6 @@ import android.content.Intent;
 import com.wos.play.rootdir.model_command_.kernel.CommandPostServer;
 import com.wos.play.rootdir.model_communication.CommunicationServer;
 import com.wos.play.rootdir.model_download.kernel.DownloadServer;
-import com.wos.play.rootdir.model_monitor.kernes.WatchServer;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 import com.wos.play.rootdir.model_updateapp.UpdateServer;
 
@@ -34,7 +33,7 @@ public class BaseApplication extends Application {
     public void initStartServer(String serverName) {
         if ("all".equals(serverName)) {
             //打开监听
-            startAppServer(WatchServer.class);
+            //startAppServer(WatchServer.class);
             //打开 命令分发服务
             startAppServer(CommandPostServer.class);
             //打开 下载服务

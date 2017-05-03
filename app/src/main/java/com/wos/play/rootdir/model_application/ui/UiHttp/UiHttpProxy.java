@@ -11,7 +11,7 @@ import com.wos.play.rootdir.model_download.entity.UrlList;
 import com.wos.play.rootdir.model_download.override_download_mode.Task;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.content_gallary.DataObjsBean;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.content_gallary.GallaryBean;
-import com.wos.play.rootdir.model_universal.jsonBeanArray.content_weather.BaiduApiObject;
+import com.wos.play.rootdir.model_universal.jsonBeanArray.content_weather.OtweatherBean;
 import com.wos.play.rootdir.model_universal.tool.AppsTools;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 
@@ -191,12 +191,12 @@ public class UiHttpProxy{
     private void func2(String url, final String action) {
 
         try {
-            String result = uriTransionString(url, AppsTools.baiduApiMap(), null);
+            String result = uriTransionString(url, null, null);
             if (result==null) return;
-            result = AppsTools.justResultIsUNICODEdecode(result);
-            UiTools.storeContentToDirFile(url, result);
-            BaiduApiObject obj = AppsTools.parseJsonWithGson(result, BaiduApiObject.class);
-            if (obj != null && obj.getErrNum() == 0 && obj.getErrMsg().equals("success")) {
+            result = AppsTools.getJsonStringFromGZIP(result);
+            OtweatherBean obj = AppsTools.parseJsonWithGson(result, OtweatherBean.class);
+            if (obj != null && obj.getStatus() == 1000 && obj.getDesc().equals("OK")) {
+                UiTools.storeContentToDirFile(url, result);
                 //发送广播 刷新ui
                 sendAction(action);
             }

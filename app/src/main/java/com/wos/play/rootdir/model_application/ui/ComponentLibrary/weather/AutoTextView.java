@@ -83,7 +83,7 @@ public class AutoTextView extends TextSwitcher implements
 	public View makeView() {
 		// TODO Auto-generated method stub
 		TextView t = new TextView(mContext);
-		t.setGravity(Gravity.CENTER);
+		t.setGravity(Gravity.LEFT);
 		t.setTextSize(mHeight);
 		t.setMaxLines(2);
 		return t;
