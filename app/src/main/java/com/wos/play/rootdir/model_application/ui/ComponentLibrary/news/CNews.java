@@ -167,7 +167,7 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
         showLayout = new CshowLayout(context, this, new OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 结束图层上面的内容
+                //结束图层上面的内容
                 //隐藏图层
                 hindShowLayout();
                 listView.setVisibility(View.VISIBLE);
@@ -179,8 +179,9 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //点击list 子项
-                showShowLayout(position);
-                listView.setVisibility(View.GONE);
+                if (showShowLayout(position)){
+                    listView.setVisibility(View.GONE);
+                }
             }
         });
 
@@ -188,11 +189,14 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
 
 
     //弹出 放大的 视图层
-    private void showShowLayout(int position) {
+    private boolean showShowLayout(int position) {
+        NewsDataBeans data = adpter.getUdata(position);
+        if (data==null) return false;
         if (showLayout.getRootView().getVisibility() == View.GONE) {
             showLayout.getRootView().setVisibility(View.VISIBLE);
-            showLayout.setData(adpter.getUdata(position));
+            showLayout.setData(data);
         }
+        return true;
     }
 
     //隐藏放大的视图层

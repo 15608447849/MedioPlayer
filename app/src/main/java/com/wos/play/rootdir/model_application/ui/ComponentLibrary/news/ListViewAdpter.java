@@ -58,7 +58,6 @@ public class ListViewAdpter extends BaseAdapter{
         if (useDatas==null){
             return null;
         }
-
         return useDatas.get(position);
     }
     //index - 获取 无效数据源

@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
 import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.AbsoluteLayout;
@@ -14,7 +15,10 @@ import com.wos.play.rootdir.model_application.ui.UiInterfaces.IComponentUpdate;
 import com.wos.play.rootdir.model_application.ui.Uitools.ImageUtils;
 import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
+import com.wos.play.rootdir.model_universal.tool.AppsTools;
 import com.wos.play.rootdir.model_universal.tool.Logs;
+
+import cn.trinea.android.common.util.FileUtils;
 
 /**
  * Created by user on 2016/11/17.
@@ -60,59 +64,73 @@ public class IWebView extends WebView implements IComponentUpdate {
             if (bgImageUrl==null){
                 backgroundColor = cb.getBackgroundColor();
             }
-
             if (cb.getContents()!=null && cb.getContents().size()==1) {
-                if (cb.getContents().get(0).getHtmlType().equals("url")){
+                if (cb.getContents().get(0).getHtmlType().equals("url")){ //网络
                     this.url=cb.getContents().get(0).getUrl();
-                }else{
-                    this.url=cb.getContents().get(0).getContentSource(); //本地
+                    this.url  = url.startsWith("http")?url:"http://" + url;
+                    isLink = cb.getContents().get(0).isOutsideChain();
+                    domian = AppsTools.getDomian(url);
+                    this.setWebViewClient(new WebViewClient(){
+                        @Override
+                        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                            Log.i(TAG,"链接:"+url);
+                            if (!isLink && !url.contains(domian)) {
+                                loadUrl(preUrl);
+                                return true;
+                            }
+                            preUrl = url;
+                            return super.shouldOverrideUrlLoading(view, url);
+                        }
+                    });
+                }
+
+                if (cb.getContents().get(0).getHtmlType().equals("local")){
+                    //本地静态页面
+                  String file =  UiTools.getUrlTanslationFilename(cb.getContents().get(0).getContentSource());
+                    if (FileUtils.isFileExist(file)){
+                        try {
+                            file =  UiTools.unZipFiles(file,file.substring(0,file.lastIndexOf("."))+"_unzip",false);//解压缩
+
+                        } catch (Exception e) {
+                            file = null;
+                        }
+                        if (file!=null){
+                            url = "file://"+file+"/index.html";   //获取压缩的文件路径
+                        }
+                    }else{
+                        Log.i(TAG,"文件不存在");
+                        url = "about:blank";
+                    }
+                    this.setWebViewClient(new WebViewClient());
                 }
             }else {
-                this.url = "www.baidu.com";
+                this.url = "about:blank";
             }
-            this.url  = url.startsWith("http")?url:"http://" + url;
-            domian = url.substring(url.indexOf("/")+2);
-           if (domian.contains("/")){
-               domian =  domian.substring(0,domian.indexOf("/"));
-           }
-            if (domian.contains("www.")){
-                domian =  domian.substring(4);
-            }
-            Log.i(TAG,"加载外链:"+isLink+" 域名:"+domian);
-            isLink = cb.getContents().get(0).isOutsideChain();
-            this.getSettings().setDefaultTextEncodingName("UTF-8");//编码
-            this.getSettings().setJavaScriptEnabled(true);//js
-//            this.getSettings().setPluginState(WebSettings.PluginState.ON);//flash 有关系
-            this.setWebViewClient(new WebViewClient(){
-                @Override
-                public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                    Log.i(TAG,"链接:"+url);
-                    if (!isLink && !url.contains(domian)) {
-                        loadUrl(preUrl);
-                        return true;
-                    }
-                    preUrl = url;
-                    return super.shouldOverrideUrlLoading(view, url);
-                }
-            });
-            this.setWebChromeClient(new WebChromeClient() {
-                @Override
-                public void onProgressChanged(android.webkit.WebView view, int newProgress) {
-                    super.onProgressChanged(view, newProgress);
-                    if (newProgress == 100) {
-                        // 加载完成
-                        Logs.i(TAG, "页面加载完成");
-                    } else {
-                        // 加载进度
-                        //Logs.i(TAG, "页面加载中..." + newProgress);
-                    }
-                }
-            });
+            WebSettings webSettings = this.getSettings();
+            webSettings.setDefaultTextEncodingName("UTF-8");//编码
+            webSettings.setJavaScriptEnabled(true);//js
+            webSettings.setJavaScriptCanOpenWindowsAutomatically(true); //支持通过JS打开新窗口
+            //页面支持缩放：
+            webSettings.setJavaScriptEnabled(true);
+            webSettings.setBuiltInZoomControls(true);
+            webSettings.setSupportZoom(true);
+            //设置此属性，可任意比例缩放
+            webSettings.setUseWideViewPort(true);
+            webSettings.setLoadWithOverviewMode(true);
+
+            webSettings.setAllowFileAccess(true);  //设置可以访问文件
+            webSettings.setLoadsImagesAutomatically(true);  //支持自动加载图片
+            webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);  //关闭webview中缓存
+
+            this.setWebChromeClient(new WebChromeClient());
+            this.requestFocusFromTouch();//支持获取手势焦点
             this.isInitData = true;
         }catch (Exception e){
             e.printStackTrace();
         }
     }
+
+
 
     @Override
     public void setAttrbute() {

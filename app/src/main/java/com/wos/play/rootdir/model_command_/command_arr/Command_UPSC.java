@@ -269,7 +269,7 @@ public class Command_UPSC implements iCommand {
         }
         //咨询
         if (contentType.equals(CONTENT_TYPE.news)) {
-               getUrlSource(content.getContentSource(),CONTENT_TYPE.gallary);
+            getUrlSource(content.getContentSource(),CONTENT_TYPE.news);
         }
         //电子报
         if (contentType.equals(CONTENT_TYPE.epaper)) {
@@ -320,7 +320,6 @@ public class Command_UPSC implements iCommand {
             res = null;
             res = AppsTools.uriTransionString(AppsTools.urlEncodeParam(contentSource), null, null);
             if (type.equals(CONTENT_TYPE.gallary) || type.equals(CONTENT_TYPE.news) || type.equals(CONTENT_TYPE.weather)) {  //咨询 图集 天气 ,base64解码
-
                 res = AppsTools.justResultIsBase64decode(res);
             }
             if (res != null) {

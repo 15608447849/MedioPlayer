@@ -19,10 +19,8 @@ import java.util.List;
 import cn.trinea.android.common.util.FileUtils;
 
 public class EpaperActivity extends BaseActivity {
-
     public static final String TAG = "EpaperActivity";
     public static final String PATHKEY = "paperFilepath";
-
     private String path = "";
     private DragImageView image;
     private Gallery grallery;
@@ -44,7 +42,6 @@ public class EpaperActivity extends BaseActivity {
             stopActivityOnArr(this);
             return;
         }
-
         Logs.i(TAG, "打开电子报 - [ " + path + " ]");
 //        mFile = new File(path);
         File[] files = new File(path).listFiles();
@@ -62,11 +59,9 @@ public class EpaperActivity extends BaseActivity {
         }
     }
 
-
     //初始化视图
     private void initView(List<File> list) {
         image = (DragImageView) findViewById(R.id.epaper_act_show);
-
         grallery = (Gallery) findViewById(R.id.epaper_act_gallery);
         adpter = new EActivityGrallyAdpter(this, list);
         grallery.setAdapter(adpter);
@@ -76,7 +71,6 @@ public class EpaperActivity extends BaseActivity {
                 adpter.setSelectItem(position);
                 selectFile(position);
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
@@ -89,6 +83,7 @@ public class EpaperActivity extends BaseActivity {
         String contentPath = adpter.getContentImagePath(adpter.getSource(position));
         if (image != null) {
             ImageAsyLoad.loadBitmap(contentPath, image);
+
         }
     }
 

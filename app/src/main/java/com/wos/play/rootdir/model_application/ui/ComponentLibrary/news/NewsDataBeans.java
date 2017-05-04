@@ -11,6 +11,7 @@ public class NewsDataBeans {
         String PDF = "pdf";
         String IMAGE = "image";
         String VIDEO = "video";
+        String WORD = "word";
     }
     private String title;
     private String editer;
@@ -80,7 +81,7 @@ public class NewsDataBeans {
         newsDataBeans.setEditer(editer);
         newsDataBeans.setDateStr(createDate);
         newsDataBeans.setFilePath(filePath);
-        if (newsDataBeans.getFileType().equals(FileType.PDF)){
+        if (newsDataBeans.getFileType().equals(FileType.PDF) || newsDataBeans.getFileType().equals(FileType.WORD)){
             if (moreFileList!=null){
                     for (int i=0;i<moreFileList.length;i++){
                         moreFileList[i] = UiTools.getUrlTanslationFilename(moreFileList[i]);

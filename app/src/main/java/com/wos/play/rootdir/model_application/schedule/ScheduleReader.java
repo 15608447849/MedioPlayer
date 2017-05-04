@@ -472,7 +472,7 @@ public class ScheduleReader implements ListeningScheduleEventThread.OnScheduleEv
                 return;
             }
 
-            stopWork();
+            stopWork();//停止工作
             Logs.i(TAG, "==========开始解析排期==========");
             //分组
             for (ScheduleBean entity : scheduleList) {

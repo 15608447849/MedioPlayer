@@ -244,19 +244,18 @@ public class UiTools {
     }
 
     //解压缩文件
-    public static void unZipFiles(String unzipFilePath,String outputDir,boolean isDelete){
+    public static String unZipFiles(String unzipFilePath,String outputDir,boolean isDelete){
 
         //执行解压缩
-        Logs.i("unzip", "解压缩 -> " + unzipFilePath);
+        Logs.i("解压缩",unzipFilePath + " -> " + outputDir + (isDelete?" 删除zip包":" 不删除zip包"));
         try {
             AppsTools.UnZip(unzipFilePath, outputDir);
-            if (isDelete){
-                //删除 .zip文件
-                SdCardTools.DeleteFiles(unzipFilePath);
-            }
+            if (isDelete)  SdCardTools.DeleteFiles(unzipFilePath);   //删除 .zip文件
+            return outputDir;
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
     }
 
 }

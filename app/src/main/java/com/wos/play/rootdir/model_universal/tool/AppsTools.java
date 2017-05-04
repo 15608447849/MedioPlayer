@@ -796,6 +796,22 @@ public class AppsTools {
         return jsonString;
     }
 
+    //获取域名
+    public static String getDomian(String url) {
+
+        if (url==null) return null;
+        if (url.contains("http://") || url.contains("https://")){
+            url = url.substring(url.indexOf("/")+2);
+        }
+        if (url.contains("/")){
+            url =  url.substring(0,url.indexOf("/"));
+        }
+        if (url.contains("www.")){
+            url =  url.substring(4);
+        }
+
+        return url;
+    }
 
 
 

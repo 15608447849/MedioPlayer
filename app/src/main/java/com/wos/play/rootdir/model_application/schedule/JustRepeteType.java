@@ -5,6 +5,7 @@ import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ScheduleBean;
 
 /**
  * Created by user on 2016/11/9.
+ * 判断重复类型
  */
 
 public class JustRepeteType {
@@ -83,7 +84,7 @@ public class JustRepeteType {
         if (rep.isRepeatWholeDay()) {
             //全天
             //结束时间 - 今天的 23:59
-            entity.setEndTime(TimeOperator.dateToStamp(TimeOperator.getToday() + "\\s" + "23:59:59"));
+            entity.setEndTime(TimeOperator.dateToStamp(TimeOperator.getToday() + " " + "23:59:59"));
             result = 2;
         } else {
             //                判断时间段

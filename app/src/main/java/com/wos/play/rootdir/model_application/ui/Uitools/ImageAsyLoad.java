@@ -19,21 +19,16 @@ import rx.schedulers.Schedulers;
  */
 
 public class ImageAsyLoad {
-
-
-
     public static void loadBitmap(String filePath, final ImageView imageview){
-
-
         Subscription subscription = getSubscription(imageview);
         if (subscription!=null){
             subscription.unsubscribe();
-
         }
         subscription = Observable.just(filePath)
                 .map(new Func1<String, Bitmap>() {
                     @Override
                     public Bitmap call(String imageFilePath) {
+
                         return ImageUtils.getBitmap(imageFilePath);
                     }
                 })
@@ -48,15 +43,9 @@ public class ImageAsyLoad {
                 });
         addSubscription(imageview,subscription);
     }
-    
-    
-    
-    
-    
-    
+
+
     private static HashMap<ImageView,Subscription> subscriptionMap = null;
-    
-    
     private static void addSubscription(ImageView key,Subscription value){
         if (subscriptionMap==null){
             subscriptionMap = new HashMap<>();
@@ -107,10 +96,4 @@ public class ImageAsyLoad {
             }
         }
     }
-    
-    
-    
-    
-    
-    
 }

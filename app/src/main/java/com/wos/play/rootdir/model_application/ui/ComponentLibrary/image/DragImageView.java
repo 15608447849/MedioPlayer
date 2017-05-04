@@ -144,7 +144,6 @@ public class DragImageView extends MeImageView {
 
 		start_touch_x = (int) event.getX();
 		start_touch_y = current_touch_y - this.getTop();
-
 	}
 
 	/** 两个手指 只能放大缩小 **/
