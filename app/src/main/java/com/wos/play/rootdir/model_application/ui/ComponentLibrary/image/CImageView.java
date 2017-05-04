@@ -113,10 +113,4 @@ public class CImageView extends MeImageView implements IContentView{
         }
     }
 
-
-
-
-
-
-
 }

@@ -1,15 +1,19 @@
 package com.wos.play.rootdir.model_application.viewlayer;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.Gallery;
 
 import com.wos.play.rootdir.R;
 import com.wos.play.rootdir.model_application.baselayer.BaseActivity;
 import com.wos.play.rootdir.model_application.ui.ComponentLibrary.epapers.EActivityGrallyAdpter;
-import com.wos.play.rootdir.model_application.ui.ComponentLibrary.image.DragImageView;
+import com.wos.play.rootdir.model_application.ui.ComponentLibrary.image.MeImageView;
 import com.wos.play.rootdir.model_application.ui.Uitools.ImageAsyLoad;
+import com.wos.play.rootdir.model_application.ui.Uitools.ImageUtils;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 
 import java.io.File;
@@ -22,9 +26,10 @@ public class EpaperActivity extends BaseActivity {
     public static final String TAG = "EpaperActivity";
     public static final String PATHKEY = "paperFilepath";
     private String path = "";
-    private DragImageView image;
     private Gallery grallery;
     private EActivityGrallyAdpter adpter;
+
+    private MeImageView imageView;
 
     //适配器
     @Override
@@ -43,7 +48,6 @@ public class EpaperActivity extends BaseActivity {
             return;
         }
         Logs.i(TAG, "打开电子报 - [ " + path + " ]");
-//        mFile = new File(path);
         File[] files = new File(path).listFiles();
         List<File> arrList = new ArrayList<>();
         for (int i = 0; i < files.length; i++) {
@@ -61,7 +65,6 @@ public class EpaperActivity extends BaseActivity {
 
     //初始化视图
     private void initView(List<File> list) {
-        image = (DragImageView) findViewById(R.id.epaper_act_show);
         grallery = (Gallery) findViewById(R.id.epaper_act_gallery);
         adpter = new EActivityGrallyAdpter(this, list);
         grallery.setAdapter(adpter);
@@ -76,15 +79,16 @@ public class EpaperActivity extends BaseActivity {
 
             }
         });
+        ViewGroup vp = (ViewGroup) findViewById(R.id.epaper_act_layout);
+        imageView = ImageUtils.createImageView(this,3);
+        vp.addView(imageView,new FrameLayout.LayoutParams(-1,-1));
     }
 
     //选择文件 填充 imageView
     private void selectFile(int position) {
-        String contentPath = adpter.getContentImagePath(adpter.getSource(position));
-        if (image != null) {
-            ImageAsyLoad.loadBitmap(contentPath, image);
-
-        }
+        String contentPath = adpter.getImagePath(adpter.getSource(position));
+        Log.i(TAG,"显示大图:"+contentPath);
+        ImageAsyLoad.loadBitmap(contentPath,imageView);
     }
 
 

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.wos.play.rootdir"
-    >
+    package="com.wos.play.rootdir">
 
     <!-- 权限 -->
     <!-- 网络 -->
@@ -20,9 +19,7 @@
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <!-- 开机启动权限 -->
 
-
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
-
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.ACTION_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.GET_TASKS" />
@@ -38,13 +35,15 @@
         android:supportsRtl="true">
 
         <!-- 基础activity //Android:theme="@android:style/Theme.NoTitleBar" @android:style/Theme.NoTitleBar.Fullscreen -->
-        <activity android:name=".model_application.baselayer.BaseActivity"
+        <activity
+            android:name=".model_application.baselayer.BaseActivity"
             android:launchMode="singleTask" />
 
         <!-- 配置服务器信息 activity -->
         <activity android:name=".model_application.viewlayer.ToolsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -72,32 +71,33 @@
             android:process="play.download" />
         <!-- 守护进程助手 -->
         <service
-            android:name="com.wos.play.rootdir.model_monitor.soexcute.WatchServerHelp"
-            android:persistent="true"
+            android:name=".model_monitor.soexcute.WatchServerHelp"
             android:exported="true"
+            android:persistent="true"
             android:process="play.watchhelper" />
-        <!-- 守护进程服务-->
+        <!-- 守护进程服务 -->
         <service
-            android:name="com.wos.play.rootdir.model_monitor.kernes.WatchServer"
+            android:name=".model_monitor.kernes.WatchServer"
             android:persistent="true"
             android:process="play.watch" />
         <!-- 更新app -->
-        <service android:name=".model_updateapp.UpdateServer"
-            android:process="play.update"/>
+        <service
+            android:name=".model_updateapp.UpdateServer"
+            android:process="play.update" />
         <!-- 开机广播 -->
-        <receiver
-            android:name="com.wos.play.rootdir.model_monitor.soexcute.SystemBroads">
-                <intent-filter>
-                    <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                </intent-filter>
+        <receiver android:name=".model_monitor.soexcute.SystemBroads">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
         </receiver>
         <!-- sdcard 广播 -->
-        <receiver
-            android:name="com.wos.play.rootdir.model_monitor.broads.SdcardBroad">
-            <action android:name="android.intent.action.MEDIA_MOUNTED"/>
-            <action android:name="android.intent.action.MEDIA_UNMOUNTED"/>
-            <data android:scheme="file"/>
+        <receiver android:name=".model_monitor.broads.SdcardBroad">
+            <action android:name="android.intent.action.MEDIA_MOUNTED" />
+            <action android:name="android.intent.action.MEDIA_UNMOUNTED" />
+
+            <data android:scheme="file" />
         </receiver>
+
 
     </application>
 

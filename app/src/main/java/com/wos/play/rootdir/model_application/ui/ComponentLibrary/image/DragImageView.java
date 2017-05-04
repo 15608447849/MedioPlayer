@@ -3,6 +3,7 @@ package com.wos.play.rootdir.model_application.ui.ComponentLibrary.image;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 
 /****
@@ -70,7 +71,7 @@ public class DragImageView extends MeImageView {
 	 */
 	@Override
 	public void setImageBitmap(Bitmap bm) {
-		super.setImageBitmap(bm);
+		Log.i(TAG,"图片大小:"+bm.getWidth()+" "+bm.getHeight());
 		/** 获取图片宽高 **/
 		bitmap_W = bm.getWidth();
 		bitmap_H = bm.getHeight();
@@ -80,16 +81,16 @@ public class DragImageView extends MeImageView {
 
 		MIN_W = bitmap_W / 2;
 		MIN_H = bitmap_H / 2;
-
+		super.setImageBitmap(bm);
 	}
 
 
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-		this.screen_W = this.getMeasuredHeight();
+		this.screen_H = this.getMeasuredHeight();
 		this.screen_W = this.getMeasuredWidth();
-		System.out.println("image - onMeasure : ("+screen_W+"-"+screen_H+")");
+		Log.i(TAG,"onMeasure size : ("+screen_W+"-"+screen_H+")");
 	}
 
 	@Override

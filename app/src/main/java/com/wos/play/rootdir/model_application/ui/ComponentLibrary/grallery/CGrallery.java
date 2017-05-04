@@ -11,6 +11,7 @@ import android.widget.FrameLayout;
 import android.widget.Gallery;
 
 import com.wos.play.rootdir.R;
+import com.wos.play.rootdir.model_application.ui.ComponentLibrary.image.MeImageView;
 import com.wos.play.rootdir.model_application.ui.ComponentLibrary.video.MyVideoView;
 import com.wos.play.rootdir.model_application.ui.UiFactory.UiLocalBroad;
 import com.wos.play.rootdir.model_application.ui.UiHttp.UiHttpProxy;
@@ -207,7 +208,7 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
                 }
             } else {
 //                ishow.setImageDrawable(adapter.getDrawable(position));
-                ImageAsyLoad.loadBitmap(adapter.getBitmapString(position),ishow.getCurrentImageView());
+                ImageAsyLoad.loadBitmap(adapter.getBitmapString(position), (MeImageView) ishow.getCurrentImageView());
             }
         } catch (Exception e) {
             e.printStackTrace();

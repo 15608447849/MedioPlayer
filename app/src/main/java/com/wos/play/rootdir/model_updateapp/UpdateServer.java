@@ -106,6 +106,7 @@ public class UpdateServer extends IntentService {
 
     private String getDownId(){
         String info = readUpdateInfo();
+        if (info ==null || "".equals(info)) return "0";
         int localVersion = AppsTools.getLocalVersionCode(getApplicationContext());
         JsonObject upInfo = new JsonParser().parse(info).getAsJsonObject();
         if (upInfo == null) return DOWN_ID;

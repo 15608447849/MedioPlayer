@@ -19,9 +19,9 @@ public class ImagerSwitchFactory implements ViewSwitcher.ViewFactory{
     private MeImageView imager2;
     private int current = 0;
     public ImagerSwitchFactory(Context context){
-        imager1 = ImageUtils.createImageViewScale(context);
+        imager1 = ImageUtils.createImageView(context,2);
         initAttr(imager1,0);
-        imager2 = ImageUtils.createImageViewScale(context);
+        imager2 = ImageUtils.createImageView(context,2);
         initAttr(imager2,1);
     }
 

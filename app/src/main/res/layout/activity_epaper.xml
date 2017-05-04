@@ -1,24 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-        <com.wos.play.rootdir.model_application.ui.ComponentLibrary.image.DragImageView
-            android:id="@+id/epaper_act_show"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="6"
-            android:background="@android:color/white"
-            android:scaleType="fitXY"
-            />
+    >
     <Gallery
         android:id="@+id/epaper_act_gallery"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center_vertical"
-        android:spacing="16dp"
-        android:background="@android:color/darker_gray"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         />
-</LinearLayout>
+    <FrameLayout
+        android:id="@+id/epaper_act_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/epaper_act_gallery">
+
+    </FrameLayout>
+
+</RelativeLayout>

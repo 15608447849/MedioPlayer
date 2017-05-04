@@ -14,5 +14,6 @@
         android:text="2016-02-02"
         android:layout_margin="5dp"
         android:padding="5dp"
+        android:textColor="@color/drop_down_list_header_second_font_color"
         />
 </LinearLayout>

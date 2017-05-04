@@ -6,11 +6,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 
-import com.wos.play.rootdir.model_application.ui.ComponentLibrary.button.MeImageButton;
 import com.wos.play.rootdir.model_application.ui.ComponentLibrary.image.DoubleScaleImageView;
+import com.wos.play.rootdir.model_application.ui.ComponentLibrary.image.DragImageView;
 import com.wos.play.rootdir.model_application.ui.ComponentLibrary.image.MeImageView;
 import com.wos.play.rootdir.model_application.ui.UiStore.ImageStore;
 import com.wos.play.rootdir.model_universal.tool.AppsTools;
@@ -152,25 +151,17 @@ public class ImageUtils {
         imageView.setImageDrawable(null);
         Logs.i("imageUtils","回收图片bitmap...完成");
     }
-    //创建 imageview
-    public static MeImageView createImageView(Context context){
-        return new MeImageView(context);
+    /**
+     * 1 MeImageView
+     * 2 DoubleScaleImageView
+     * 3 DragImageView
+     * */
+    public static MeImageView createImageView(Context context,int type){
+        if (type == 1) return new MeImageView(context);
+        if (type == 2) return new DoubleScaleImageView(context);
+        if (type == 3) return new DragImageView(context);
+        return null;
     }
-    //创建 imageview
-    public static MeImageView createImageViewScale(Context context){
-       // return new MeImageView(context);
-        return new DoubleScaleImageView(context);
-    }
-    //创建imagebutton
-    public static ImageButton createImagerButton(Context context){
-        return new MeImageButton(context);
-    }
-
-
-
-
-
-
 
 
 

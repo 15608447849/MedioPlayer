@@ -3,6 +3,8 @@ package com.wos.play.rootdir.model_application.ui.Uitools;
 import android.graphics.Bitmap;
 import android.widget.ImageView;
 
+import com.wos.play.rootdir.model_application.ui.ComponentLibrary.image.MeImageView;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -19,7 +21,7 @@ import rx.schedulers.Schedulers;
  */
 
 public class ImageAsyLoad {
-    public static void loadBitmap(String filePath, final ImageView imageview){
+    public static void loadBitmap(String filePath, final MeImageView imageview){
         Subscription subscription = getSubscription(imageview);
         if (subscription!=null){
             subscription.unsubscribe();

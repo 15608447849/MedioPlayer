@@ -2,7 +2,6 @@ package com.wos.play.rootdir.model_application.ui.ComponentLibrary.epapers;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -75,18 +74,19 @@ public class EActivityGrallyAdpter extends BaseAdapter {
 
         MeImageView iv = null;
         if (convertView == null) {
-            iv = ImageUtils.createImageView(context);
+            iv = ImageUtils.createImageView(context,1);
             iv.setAdjustViewBounds(true);
             Gallery.LayoutParams params = new Gallery.LayoutParams(150, 150);
             iv.setLayoutParams(params);
             iv.setScaleType(ImageView.ScaleType.FIT_XY);
             iv.setPadding(2, 2, 2, 2);
+
             convertView = iv;
         } else {
             iv = (MeImageView) convertView;
         }
 
-        String thumbImagePath = getThunbImagePath(getSource(position));
+        final String thumbImagePath = getImagePath(getSource(position));
         ImageAsyLoad.loadBitmap(thumbImagePath, iv);
         if (selectItem == position) {
             iv.setBackgroundColor(Color.WHITE);
@@ -98,14 +98,13 @@ public class EActivityGrallyAdpter extends BaseAdapter {
 
 
     //封面图
-    public String getThunbImagePath(File source) {
+    public String getImagePath(File source) {
         if (source != null) {
             //循环遍历 - 找出 文件名 thumb_开头的文件
             String[] list = source.list();
             if (list != null && list.length > 0) {
                 for (int i = 0; i < list.length; i++) {
-
-                    if (list[i].contains("thumb_")) {
+                    if (list[i].contains(".png")) {
                         return source + "/" + list[i];
                     }
                 }
@@ -114,21 +113,4 @@ public class EActivityGrallyAdpter extends BaseAdapter {
         return UiTools.getDefImagePath();
     }
 
-    //内容图
-    public String getContentImagePath(File source) {
-        if (source != null) {
-            Log.i("EActivityGrallyAdpter", "内容图--source not null---");
-            //循环遍历 - 找出 文件名 thumb_开头的文件
-            String[] list = source.list();
-            if (list != null && list.length > 0) {
-                for (String aList : list) {
-                    if (aList.contains("thumb_")) {
-                        return source + "/" + aList.substring(aList.indexOf("_") + 1);
-                    }
-                }
-            }
-        }
-        Log.i("EActivityGrallyAdpter", "----------内容图--默认图片");
-        return UiTools.getDefImagePath();
-    }
 }

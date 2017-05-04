@@ -99,7 +99,7 @@ public class GralleryAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         MeImageView iv = null;
         if (convertView==null){
-            iv= ImageUtils.createImageView(context);
+            iv= ImageUtils.createImageView(context,1);
             iv.setAdjustViewBounds(true);
             Gallery.LayoutParams params = new Gallery.LayoutParams(150, 150);
             iv.setLayoutParams(params);
