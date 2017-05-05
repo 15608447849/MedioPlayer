@@ -76,6 +76,7 @@ public class UiTools {
      * @return
      */
     public static String TanslateColor(String colorValue) {
+        if (colorValue==null || "".equals(colorValue)) return "#000000";
         String color = null;
         try {
             if (colorValue.startsWith("#") && colorValue.length() == 7) {

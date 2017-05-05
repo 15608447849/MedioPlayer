@@ -87,9 +87,6 @@ public class MgridAdptes extends BaseAdapter {
 
 
 
-
-
-
     //视图持有者
     private class ViewHolder{
         TextView content; //内容 - 文件的文件名

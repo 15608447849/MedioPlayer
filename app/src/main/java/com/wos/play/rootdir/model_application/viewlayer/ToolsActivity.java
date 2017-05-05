@@ -207,7 +207,9 @@ public class ToolsActivity extends BaseActivity {
                     showToast("请检查网络是否有效");
                 }
             } catch (Exception e) {
-                showToast("加载控件值失败");
+                e.printStackTrace();
+                showToast("加载控件值失败 : "+ e.getMessage());
+                btnGetID.setEnabled(true);
             }
         }
     }

@@ -29,5 +29,7 @@ public class MeImageView extends ImageView{
            e.printStackTrace();
         }
     }
+    public void setImagePath(String path){
 
+    }
 }

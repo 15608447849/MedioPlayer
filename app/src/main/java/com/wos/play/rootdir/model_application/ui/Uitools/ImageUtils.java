@@ -25,6 +25,7 @@ import java.io.IOException;
 
 public class ImageUtils {
 
+    private static final int SCALE = 1200*800;
     public static Bitmap getBitmap(String filepath) {
         Bitmap bitmap = ImageStore.getInstants().getBitmapCache(filepath);
         if (bitmap==null || bitmap.isRecycled()){
@@ -72,14 +73,14 @@ public class ImageUtils {
             bitmap = BitmapFactory.decodeFileDescriptor(is.getFD(),
                     null, opts);
 
-            opts.inSampleSize = computeSampleSize(opts, -1, 1920*1080);
-            opts.inJustDecodeBounds = false;
+            opts.inSampleSize = computeSampleSize(opts, -1,SCALE);
+            opts.inJustDecodeBounds = false;//true时，decode不会创建Bitmap对象，但是可以获取图片的宽高
 
-            opts.inPreferredConfig = Bitmap.Config.RGB_565;
-            opts.inPurgeable = true;
-            opts.inInputShareable = true;
-            opts.inDither = false;
-            opts.inTempStorage = new byte[12 * 1024];
+            opts.inPreferredConfig = Bitmap.Config.RGB_565;//Bitmap.Config，默认为ARGB_8888
+            opts.inPurgeable = true;//当存储Pixel的内存空间在系统内存不足时是否可以被回收
+            opts.inInputShareable = true;//inPurgeable为true情况下才生效，是否可以共享一个InputStream
+            opts.inDither = false;//是否抖动，默认为false
+            opts.inTempStorage = new byte[12 * 1024]; //解码时的临时空间，建议16*1024
 
             bitmap =  BitmapFactory.decodeFileDescriptor(is.getFD(),
                     null, opts);
@@ -90,7 +91,8 @@ public class ImageUtils {
 
         return bitmap;
     }
-    private static int computeSampleSize(BitmapFactory.Options options, int minSideLength, int maxNumOfPixels) {// 最小边长 最大像素
+
+    public static int computeSampleSize(BitmapFactory.Options options, int minSideLength, int maxNumOfPixels) {// 最小边长 最大像素
         int initialSize = computeInitialSampleSize(options, minSideLength, maxNumOfPixels);
         int roundedSize;
         if (initialSize <= 8) {
@@ -160,7 +162,7 @@ public class ImageUtils {
         if (type == 1) return new MeImageView(context);
         if (type == 2) return new DoubleScaleImageView(context);
         if (type == 3) return new DragImageView(context);
-        return null;
+        return new MeImageView(context);
     }
 
 

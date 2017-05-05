@@ -110,6 +110,7 @@ public class CEpapersMain extends FrameLayout implements IComponent{
 
     //打开 电子报的入口!!
     private void startEpaperActivity(String itemFileAbsPath) {
+        //打开一个当前电子报的列表视图
         if (itemFileAbsPath!=null && context!=null){
             Intent intent =new Intent(context, EpaperActivity.class);
             intent.putExtra(EpaperActivity.PATHKEY,itemFileAbsPath);

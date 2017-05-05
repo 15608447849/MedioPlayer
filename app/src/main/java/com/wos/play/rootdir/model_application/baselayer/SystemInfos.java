@@ -4,6 +4,7 @@ import com.wos.play.rootdir.model_universal.tool.AppsTools;
 import com.wos.play.rootdir.model_universal.tool.DataListEntiy;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 
+import java.io.File;
 import java.util.HashMap;
 
 import cn.trinea.android.common.util.FileUtils;
@@ -205,7 +206,11 @@ public class SystemInfos {
         try {
             //判断文件是否存在
             if (!FileUtils.isFolderExist(dirs)){
-                return;
+                Logs.d(TAG,"文件不存在:"+dirs);
+                File file = new File(dirs);
+                if (!file.mkdir()){
+                    return;
+                }
             }
             StringBuilder sb =  FileUtils.readFile(infos,"utf-8");
         if (sb!=null && !sb.toString().equals("")){

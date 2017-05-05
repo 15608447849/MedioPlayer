@@ -1,21 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
-    <Gallery
-        android:id="@+id/epaper_act_gallery"
+    android:layout_width="match_parent"
+     >
+    <ListView
+        android:id="@+id/listview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_height="match_parent">
+    </ListView>
+    <com.wos.play.rootdir.model_application.ui.ComponentLibrary.image.DragImageView
+        android:id="@+id/imageview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
         />
-    <FrameLayout
-        android:id="@+id/epaper_act_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/epaper_act_gallery">
-
-    </FrameLayout>
-
-</RelativeLayout>
+</FrameLayout>
