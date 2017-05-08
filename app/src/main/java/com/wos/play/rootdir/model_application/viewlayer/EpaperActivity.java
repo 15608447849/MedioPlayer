@@ -20,11 +20,13 @@ import java.util.List;
 import cn.trinea.android.common.util.FileUtils;
 
 public class EpaperActivity extends BaseActivity {
+
     public static final String TAG = "EpaperActivity";
     public static final String PATHKEY = "paperFilepath";
     private GridView list;
     private EActivityGrallyAdpter adpter;
-private SubsamplingScaleImageView imageView;
+    private SubsamplingScaleImageView imageView;
+
     //适配器
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +67,7 @@ private SubsamplingScaleImageView imageView;
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         return super.onKeyDown(keyCode, event);
     }
+
     //初始化视图
     private void initView() {
         list = (GridView) findViewById(R.id.grid);
@@ -73,8 +76,8 @@ private SubsamplingScaleImageView imageView;
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String path = adpter.getSourceImagePath(adpter.getSource(position));
-                Logs.i(TAG,"选择: "+ path);
-                if (imageView!=null && imageView.getVisibility()==View.GONE ){
+                Logs.i(TAG, "选择: " + path);
+                if (imageView != null && imageView.getVisibility() == View.GONE) {
                     list.setVisibility(View.GONE);
                     imageView.setVisibility(View.VISIBLE);
                     imageView.setImage(ImageSource.uri(path));
@@ -82,11 +85,11 @@ private SubsamplingScaleImageView imageView;
             }
         });
 
-        imageView =  (SubsamplingScaleImageView)findViewById(R.id.imageView);
+        imageView = (SubsamplingScaleImageView) findViewById(R.id.imageView);
         imageView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if (imageView!=null && imageView.getVisibility() == View.VISIBLE){
+                if (imageView != null && imageView.getVisibility() == View.VISIBLE) {
                     imageView.recycle();
                     imageView.setVisibility(View.GONE);
                     list.setVisibility(View.VISIBLE);

@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.TextView;
 
 import com.wos.play.rootdir.R;
 import com.wos.play.rootdir.model_application.ui.ComponentLibrary.image.MeImageView;
@@ -72,15 +73,18 @@ public class EActivityGrallyAdpter extends BaseAdapter {
         ViewHolder holder = null;
         if (convertView == null) {
             holder = new ViewHolder();
-            convertView = LayoutInflater.from(context).inflate(R.layout.epaper_list_item_layout,null);
+            convertView = LayoutInflater.from(context).inflate(R.layout.epaper_list_item_layout, null);
             holder.image = (MeImageView) convertView.findViewById(R.id.thumb_image);
+            holder.thumb_text_view = (TextView) convertView.findViewById(R.id.thumb_text_view);
             convertView.setTag(holder);
         } else {
-           holder = (ViewHolder) convertView.getTag();
+            holder = (ViewHolder) convertView.getTag();
         }
         final String thumbImagePath = getThumbImagePath(getSource(position));
 //        ImageAsyLoad.loadBitmap(thumbImagePath, holder.image);
         holder.image.setImageBitmap(ImageUtils.getBitmap(thumbImagePath));
+        String path = getSource(position).getAbsolutePath();
+        holder.thumb_text_view.setText(path.substring(path.lastIndexOf("/") + 1, path.length()));
         return convertView;
     }
 
@@ -99,6 +103,7 @@ public class EActivityGrallyAdpter extends BaseAdapter {
         }
         return UiTools.getDefImagePath();
     }
+
     //封面图
     public String getSourceImagePath(File source) {
         if (source != null) {
@@ -115,8 +120,9 @@ public class EActivityGrallyAdpter extends BaseAdapter {
         return UiTools.getDefImagePath();
     }
 
-    private class ViewHolder{
+    private class ViewHolder {
         public MeImageView image;
+        TextView thumb_text_view;
     }
 
 
