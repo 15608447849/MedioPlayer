@@ -1,17 +1,15 @@
 package com.wos.play.rootdir.model_application.ui.ComponentLibrary.epapers;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 
+import com.wos.play.rootdir.R;
 import com.wos.play.rootdir.model_application.ui.ComponentLibrary.image.MeImageView;
-import com.wos.play.rootdir.model_application.ui.Uitools.ImageAsyLoad;
 import com.wos.play.rootdir.model_application.ui.Uitools.ImageUtils;
 import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
-import com.wos.play.rootdir.model_universal.tool.Logs;
 
 import java.io.File;
 import java.util.List;
@@ -71,22 +69,18 @@ public class EActivityGrallyAdpter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        MeImageView iv = null;
+        ViewHolder holder = null;
         if (convertView == null) {
-            iv = ImageUtils.createImageView(context,1);
-            iv.setLayoutParams(new AbsListView.LayoutParams(800, 1200));
-            iv.setAdjustViewBounds(true);
-            iv.setScaleType(ImageView.ScaleType.FIT_XY);
-            iv.setPadding(10,10,10,10);
-            iv.setFocusable(false);
-            convertView = iv;
+            holder = new ViewHolder();
+            convertView = LayoutInflater.from(context).inflate(R.layout.epaper_list_item_layout,null);
+            holder.image = (MeImageView) convertView.findViewById(R.id.thumb_image);
+            convertView.setTag(holder);
         } else {
-            iv = (MeImageView) convertView;
+           holder = (ViewHolder) convertView.getTag();
         }
-
         final String thumbImagePath = getThumbImagePath(getSource(position));
-        ImageAsyLoad.loadBitmap(thumbImagePath, iv);
-        Logs.i("电子报列表适配器:"+iv + thumbImagePath);
+//        ImageAsyLoad.loadBitmap(thumbImagePath, holder.image);
+        holder.image.setImageBitmap(ImageUtils.getBitmap(thumbImagePath));
         return convertView;
     }
 
@@ -106,7 +100,7 @@ public class EActivityGrallyAdpter extends BaseAdapter {
         return UiTools.getDefImagePath();
     }
     //封面图
-    public String getImagePath(File source) {
+    public String getSourceImagePath(File source) {
         if (source != null) {
             //循环遍历 - 找出 文件名 thumb_开头的文件
             String[] list = source.list();
@@ -120,5 +114,10 @@ public class EActivityGrallyAdpter extends BaseAdapter {
         }
         return UiTools.getDefImagePath();
     }
+
+    private class ViewHolder{
+        public MeImageView image;
+    }
+
 
 }

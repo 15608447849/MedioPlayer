@@ -4,13 +4,13 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.GridView;
 
+import com.davemorrissey.labs.subscaleview.ImageSource;
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.wos.play.rootdir.R;
 import com.wos.play.rootdir.model_application.baselayer.BaseActivity;
 import com.wos.play.rootdir.model_application.ui.ComponentLibrary.epapers.EActivityGrallyAdpter;
-import com.wos.play.rootdir.model_application.ui.ComponentLibrary.image.DragImageView;
-import com.wos.play.rootdir.model_application.ui.Uitools.ImageAsyLoad;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 
 import java.io.File;
@@ -22,11 +22,9 @@ import cn.trinea.android.common.util.FileUtils;
 public class EpaperActivity extends BaseActivity {
     public static final String TAG = "EpaperActivity";
     public static final String PATHKEY = "paperFilepath";
-
-    private DragImageView imageview;
-    private ListView listview;
+    private GridView list;
     private EActivityGrallyAdpter adpter;
-    Object[] arr = new Object[7];
+private SubsamplingScaleImageView imageView;
     //适配器
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,42 +63,38 @@ public class EpaperActivity extends BaseActivity {
     // 返回键
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (imageview!=null && imageview.getVisibility() == View.VISIBLE){
-            //清楚bitmap
-            imageview.clearBitmap();
-            imageview.setVisibility(View.GONE);
-            listview.setVisibility(View.VISIBLE);
-            Logs.i(TAG,"清理 image - bitmap");
-            return true;
-        }
         return super.onKeyDown(keyCode, event);
     }
-
-
     //初始化视图
     private void initView() {
-
-        imageview = (DragImageView) findViewById(R.id.imageview);
-        listview = (ListView) findViewById(R.id.listview);
-        listview.setAdapter(adpter);
-        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        list = (GridView) findViewById(R.id.grid);
+        list.setAdapter(adpter);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String path = adpter.getImagePath(adpter.getSource(position));
+                String path = adpter.getSourceImagePath(adpter.getSource(position));
                 Logs.i(TAG,"选择: "+ path);
-                if (imageview!=null && imageview.getVisibility() == View.GONE){
-                    listview.setVisibility(View.GONE);
-                    imageview.setVisibility(View.VISIBLE);
-                    arr[1] = path;
-                    ImageAsyLoad.regionBitmap(arr);
+                if (imageView!=null && imageView.getVisibility()==View.GONE ){
+                    list.setVisibility(View.GONE);
+                    imageView.setVisibility(View.VISIBLE);
+                    imageView.setImage(ImageSource.uri(path));
                 }
             }
         });
-        arr[0] = imageview;
-        arr[2] = getWindowManager().getDefaultDisplay().getWidth();
-        arr[3] = getWindowManager().getDefaultDisplay().getHeight();
-        arr[4] = getResources().getDisplayMetrics().densityDpi;
-        arr[5] = 2;
+
+        imageView =  (SubsamplingScaleImageView)findViewById(R.id.imageView);
+        imageView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (imageView!=null && imageView.getVisibility() == View.VISIBLE){
+                    imageView.recycle();
+                    imageView.setVisibility(View.GONE);
+                    list.setVisibility(View.VISIBLE);
+                }
+                return true;
+            }
+        });
+
     }
 
     @Override
@@ -111,10 +105,5 @@ public class EpaperActivity extends BaseActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if (imageview!=null && imageview.getVisibility() == View.VISIBLE){
-            //清楚bitmap
-            imageview.clearBitmap();
-            Logs.i(TAG,"onStop 清理 image - bitmap");
-        }
     }
 }
