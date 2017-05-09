@@ -275,4 +275,22 @@ public class UiTools {
         }
     }
 
+    public static String getImagePath(File source) {
+        return getImagePath(source,false);
+    }
+    //获取电子报图片路径,或缩略图
+    public static String getImagePath(File source, boolean isThumb) {
+        if (source != null) {
+            //循环遍历 - 找出 文件名 thumb_开头的文件
+            String[] list = source.list();
+            if (list != null && list.length > 0) {
+                for (String aList : list) {
+                    if(!aList.endsWith(".png")) continue;
+                    if (isThumb ==!aList.contains("thumb")) continue;
+                    return source + "/" + aList;
+                }
+            }
+        }
+        return getDefImagePath();
+    }
 }

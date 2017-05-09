@@ -1,13 +1,17 @@
 package com.wos.play.rootdir.model_application.ui.ComponentLibrary.epapers;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.wos.play.rootdir.R;
+import com.wos.play.rootdir.model_application.ui.Uitools.ImageUtils;
+import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -18,34 +22,36 @@ import java.util.ArrayList;
  */
 public class MgridAdptes extends BaseAdapter {
 
-
-    private Context context ;
+    private Context context;
 
     public MgridAdptes(Context context) {
         this.context = context;
     }
 
-    private ArrayList<File> fileList ;
+    private ArrayList<File> fileList;
 
-    public void setDataSource(ArrayList<File> list){
+    public void setDataSource(ArrayList<File> list) {
         fileList = list;
         this.notifyDataSetChanged();
     }
-    public File getItemFile(int index){
-        if (fileList!=null && index<fileList.size() && index>=0){
+
+    public File getItemFile(int index) {
+        if (fileList != null && index < fileList.size() && index >= 0) {
             return fileList.get(index);
 
         }
         return null;
     }
-    public String getItemFileName(int position){
-        if (fileList!=null && position<fileList.size() && position>=0){
+
+    public String getItemFileName(int position) {
+        if (fileList != null && position < fileList.size() && position >= 0) {
             return fileList.get(position).getName();
         }
         return "维护中";
-}
-    public String getItemFileAbsPath(int position){
-        if (fileList!=null && position<=fileList.size() && position>=0){
+    }
+
+    public String getItemFileAbsPath(int position) {
+        if (fileList != null && position <= fileList.size() && position >= 0) {
             return fileList.get(position).getAbsolutePath();
         }
         return null;
@@ -53,9 +59,9 @@ public class MgridAdptes extends BaseAdapter {
 
     @Override
     public int getCount() {
-        if (fileList!=null && fileList.size() > 0){
+        if (fileList != null && fileList.size() > 0) {
             return fileList.size();
-        }else{
+        } else {
             return 0;
         }
     }
@@ -73,25 +79,40 @@ public class MgridAdptes extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
-        if (convertView==null){
-            convertView = LayoutInflater.from(context).inflate(R.layout.mgridview_item_layout,null);
+        if (convertView == null) {
+            convertView = LayoutInflater.from(context).inflate(R.layout.mgridview_item_layout, null);
             holder = new ViewHolder();
             holder.content = (TextView) convertView.findViewById(R.id.mgrid_grid_item_text);
+            holder.epaper_item_image = (ImageView) convertView.findViewById(R.id.epaper_item_image);
             convertView.setTag(holder);
-        }else{
+        } else {
             holder = (ViewHolder) convertView.getTag();
         }
         holder.content.setText(getItemFileName(position));
+        holder.epaper_item_image.setImageBitmap(getBitmapByPosition(position));
         return convertView;
     }
 
-
-
-    //视图持有者
-    private class ViewHolder{
-        TextView content; //内容 - 文件的文件名
+    /**
+     * 获取当天日期报纸图片
+     */
+    private Bitmap getBitmapByPosition(int position) {
+        String filePath = UiTools.getDefImagePath();//取默认图片地址
+        if (fileList != null && position < fileList.size() && position >= 0) {
+            File[] files = fileList.get(position).listFiles();
+            if (files != null && files.length > 0) {
+                filePath = UiTools.getImagePath(files[0],true);//取第一张图片地址
+                if(filePath.endsWith("def_image.png")){
+                    filePath = UiTools.getImagePath(files[0]);//取第一张图片地址
+                }
+            }
+        }
+        return ImageUtils.getBitmap(filePath);
     }
 
-
-
+    //视图持有者
+    private class ViewHolder {
+        ImageView epaper_item_image;//第一张缩略图
+        TextView content; //内容 - 文件的文件名
+    }
 }

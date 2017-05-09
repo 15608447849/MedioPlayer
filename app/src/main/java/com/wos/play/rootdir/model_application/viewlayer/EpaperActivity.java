@@ -86,7 +86,7 @@ public class EpaperActivity extends BaseActivity implements View.OnClickListener
         sourceList = new ArrayList<>();//电子报图片路径list
         for (File sFile : files) {
             if (sFile.isDirectory() && sFile.list().length > 0) {
-                sourceList.add(getSourceImagePath(sFile));
+                sourceList.add(UiTools.getImagePath(sFile));
             }
         }
     }
@@ -212,21 +212,6 @@ public class EpaperActivity extends BaseActivity implements View.OnClickListener
                 initData(2);
                 break;
         }
-    }
-
-    //获取电子报图片路径
-    public String getSourceImagePath(File source) {
-        if (source != null) {
-            //循环遍历 - 找出 文件名 thumb_开头的文件
-            String[] list = source.list();
-            if (list != null && list.length > 0) {
-                for (String aList : list) {
-                    if (!aList.contains("thumb") && aList.contains(".png"))
-                        return source + "/" + aList;
-                }
-            }
-        }
-        return UiTools.getDefImagePath();
     }
 
 }

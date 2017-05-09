@@ -21,7 +21,7 @@ public class MGridView {
     private  View v;
     private TextView title;
     private GridView grid;
-    private Button refresh;
+    //private Button refresh;
     private boolean isInit = false;
 
     public MGridView(Context context) {
@@ -34,7 +34,7 @@ public class MGridView {
             v = LayoutInflater.from(context).inflate(R.layout.mgridview_layout,null);//根视图
             title = (TextView) v.findViewById(R.id.mgrid_title);
             grid = (GridView) v.findViewById(R.id.mgrid_grid);
-            refresh = (Button)v.findViewById(R.id.mgrid_refsh);
+            //refresh = (Button)v.findViewById(R.id.mgrid_refsh);
             isInit = true;
         }
     }
@@ -70,9 +70,9 @@ public class MGridView {
 
     //设置监听事件
     public void setButtonOnclick(View.OnClickListener clickEvent){
-        if (refresh!=null){
-            refresh.setOnClickListener(clickEvent);
-        }
+//        if (refresh!=null){
+//            refresh.setOnClickListener(clickEvent);
+//        }
     }
 
     //设置标题

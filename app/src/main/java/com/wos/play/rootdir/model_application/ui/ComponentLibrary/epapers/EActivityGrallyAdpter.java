@@ -80,44 +80,12 @@ public class EActivityGrallyAdpter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        final String thumbImagePath = getThumbImagePath(getSource(position));
-//        ImageAsyLoad.loadBitmap(thumbImagePath, holder.image);
+        final String thumbImagePath = UiTools.getImagePath(getSource(position),true);
+//      ImageAsyLoad.loadBitmap(thumbImagePath, holder.image);
         holder.image.setImageBitmap(ImageUtils.getBitmap(thumbImagePath));
         String path = getSource(position).getAbsolutePath();
         holder.thumb_text_view.setText(path.substring(path.lastIndexOf("/") + 1, path.length()));
         return convertView;
-    }
-
-    //封面图
-    public String getThumbImagePath(File source) {
-        if (source != null) {
-            //循环遍历 - 找出 文件名 thumb_开头的文件
-            String[] list = source.list();
-            if (list != null && list.length > 0) {
-                for (int i = 0; i < list.length; i++) {
-                    if (list[i].contains("thumb") && list[i].contains(".png")) {
-                        return source + "/" + list[i];
-                    }
-                }
-            }
-        }
-        return UiTools.getDefImagePath();
-    }
-
-    //封面图
-    public String getSourceImagePath(File source) {
-        if (source != null) {
-            //循环遍历 - 找出 文件名 thumb_开头的文件
-            String[] list = source.list();
-            if (list != null && list.length > 0) {
-                for (int i = 0; i < list.length; i++) {
-                    if (!list[i].contains("thumb") && list[i].contains(".png")) {
-                        return source + "/" + list[i];
-                    }
-                }
-            }
-        }
-        return UiTools.getDefImagePath();
     }
 
     private class ViewHolder {
