@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
@@ -20,6 +21,8 @@ import cn.trinea.android.common.util.FileUtils;
 
 public class EpaperActivity extends BaseActivity implements View.OnClickListener {
 
+    private ProgressBar tasksCompletedView;//进度条
+
     public static final String TAG = "EpaperActivity";
     public static final String PATHKEY = "paperFilepath";
     private ArrayList<String> sourceList;
@@ -29,6 +32,8 @@ public class EpaperActivity extends BaseActivity implements View.OnClickListener
     private ImageButton epaper_imageButton_previous;//上一页
     private ImageButton epaper_imageButton_next;//下一页
     private static int index = 0;//第几页
+    private boolean isLoading = true;//本次加载是否完成
+    private boolean lastClickTypeIsRight = true;//最近一次点击方向(上一次，下一次,默认是下一次(右))
 
     //适配器
     @Override
@@ -48,13 +53,19 @@ public class EpaperActivity extends BaseActivity implements View.OnClickListener
      * @param type
      */
     private void initData(int type) {
+        if (!isLoading) return;//上次加载未完成
+        isLoading = false;
+        tasksCompletedView.setVisibility(View.VISIBLE);
         close();
         switch (type) {
-            case 1://上一页就减
+            //上一页就减
+            case 1:
                 index--;
+                lastClickTypeIsRight = false;
                 break;
             case 2:
                 index++;
+                lastClickTypeIsRight = true;
                 break;
         }
         if (index >= sourceList.size()) index = 0;
@@ -88,7 +99,11 @@ public class EpaperActivity extends BaseActivity implements View.OnClickListener
 
     //初始化视图
     private void initView() {
+        tasksCompletedView = (ProgressBar) findViewById(R.id.tasksCompletedView);//进度条
+        tasksCompletedView.setEnabled(false);
+
         imageView = (SubsamplingScaleImageView) findViewById(R.id.imageView);
+        imageState();
         epaper_imageButton_back = (ImageButton) findViewById(R.id.epaper_imageButton_back);
         epaper_imageButton_previous = (ImageButton) findViewById(R.id.epaper_imageButton_previous);
         epaper_imageButton_next = (ImageButton) findViewById(R.id.epaper_imageButton_next);
@@ -102,6 +117,57 @@ public class EpaperActivity extends BaseActivity implements View.OnClickListener
         epaper_imageButton_next.setOnClickListener(this);
         epaper_imageButton_back.setOnClickListener(this);
         epaper_imageButton_previous.setOnClickListener(this);
+    }
+
+    /**
+     * 图片加载情况
+     */
+    private void imageState() {
+        imageView.setOnImageEventListener(new SubsamplingScaleImageView.OnImageEventListener() {
+            @Override
+            public void onReady() {
+                Logs.d(TAG, "onReady");
+            }
+
+            @Override
+            public void onImageLoaded() {
+                Logs.i(TAG, "onImageLoaded");
+                tasksCompletedView.setVisibility(View.GONE);
+                isLoading = true;
+            }
+
+            @Override
+            public void onPreviewLoadError(Exception e) {
+                isLoading = true;
+                Logs.i(TAG, "onPreviewLoadError");
+            }
+
+            @Override
+            public void onImageLoadError(Exception e) {
+                isLoading = true;
+                Logs.i(TAG, "onImageLoadError==" + sourceList.size() + "--" + index + "--1--" + sourceList.get(index));
+                UiTools.delete(sourceList, index);//删除该位置错误的图片
+                Logs.i(TAG, "onImageLoadError" + index + "--2--" + sourceList.size());
+
+                showToast("网络不可用或者版面不正确");
+                tasksCompletedView.setVisibility(View.GONE);
+                //根据最近一次点击的方向
+                if (lastClickTypeIsRight) initData(2);//加载下一页
+                else initData(1);//加载上一页
+            }
+
+            @Override
+            public void onTileLoadError(Exception e) {
+                Logs.i(TAG, "onTileLoadError");
+                isLoading = true;
+            }
+
+            @Override
+            public void onPreviewReleased() {
+                Logs.i(TAG, "onPreviewReleased");
+                isLoading = true;
+            }
+        });
     }
 
     @Override
@@ -125,7 +191,6 @@ public class EpaperActivity extends BaseActivity implements View.OnClickListener
         return false;
     }
 
-
     @Override
     protected void onStop() {
         super.onStop();
@@ -136,6 +201,7 @@ public class EpaperActivity extends BaseActivity implements View.OnClickListener
         int id = v.getId();
         switch (id) {
             case R.id.epaper_imageButton_back://返回
+                index = 0;
                 close();
                 stopActivityOnArr(this);
                 break;
@@ -162,4 +228,5 @@ public class EpaperActivity extends BaseActivity implements View.OnClickListener
         }
         return UiTools.getDefImagePath();
     }
+
 }
