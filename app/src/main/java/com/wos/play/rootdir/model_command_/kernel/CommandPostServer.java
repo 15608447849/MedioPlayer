@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
 
+import com.wos.play.rootdir.model_command_.command_arr.Command_UIRE;
 import com.wos.play.rootdir.model_command_.command_arr.Command_UPDC;
 import com.wos.play.rootdir.model_command_.command_arr.Command_OPEN;
 import com.wos.play.rootdir.model_command_.command_arr.Command_SCRN;
@@ -78,6 +79,8 @@ public class CommandPostServer extends Service implements iCommand{
             commandList.put(CMD_INFO.SCRN,new Command_SCRN(getApplicationContext()));
             //更新apk
             commandList.put(CMD_INFO.UPDC,new Command_UPDC(getApplicationContext()));
+            //重启播放器
+            commandList.put(CMD_INFO.UIRE,new Command_UIRE(getApplicationContext()));
         }else{
             Logs.e(TAG,"无\'root\'权限,无法执行 [时间同步][截屏][关闭终端]等操作.");
         }
@@ -158,6 +161,7 @@ public class CommandPostServer extends Service implements iCommand{
             Iterator<CmdObj> iterator = cmdList.iterator();
             if (iterator.hasNext()){
                 CmdObj obj = iterator.next();
+                Logs.i("obj.param" + obj.cmd + "========");
                 executes(obj.cmd,obj.param);
                 iterator.remove();
                 obj = null;

@@ -35,9 +35,9 @@
         android:supportsRtl="true">
 
         <!-- 基础activity //Android:theme="@android:style/Theme.NoTitleBar" @android:style/Theme.NoTitleBar.Fullscreen -->
-        <activity
-            android:name=".model_application.baselayer.BaseActivity"
-            android:launchMode="singleTask" />
+        <!--<activity-->
+            <!--android:name=".model_application.baselayer.BaseActivity"-->
+            <!--android:launchMode="singleTask" />-->
 
         <!-- 配置服务器信息 activity -->
         <activity android:name=".model_application.viewlayer.ToolsActivity">

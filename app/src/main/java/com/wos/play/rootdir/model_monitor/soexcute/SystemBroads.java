@@ -32,7 +32,7 @@ public class SystemBroads extends BroadcastReceiver {
                     +"\n\n" +
                     "========================================================================================================================\n" +
                     "========================================================================================================================\n");
-            //WatchServerHelp.openDeams(context);
+            WatchServerHelp.openDeams(context);
         }
         if(action.equals("android.intent.action.MEDIA_MOUNTED")){
            //sdcard等媒体介质装载

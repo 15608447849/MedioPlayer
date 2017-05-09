@@ -12,6 +12,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.RunTextInterface;
+import com.wos.play.rootdir.model_universal.tool.Logs;
 
 
 /**
@@ -139,11 +140,13 @@ public class RunTextView extends SurfaceView implements SurfaceHolder.Callback, 
         } else {//不滚动只画一次
             mExecute();
         }
+        startHelper();
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         Log.i(TAG, "surfaceChanged() 源宽高: [" + this.getWidth()+" - "+this.getHeight()+"] \n改变宽高 -" +width +" "+height);
+
     }
 
     @Override
@@ -158,18 +161,18 @@ public class RunTextView extends SurfaceView implements SurfaceHolder.Callback, 
             try {
                 mExecute();
                 Thread.sleep(speed);//休眠多少毫秒
-            } catch (InterruptedException ex) {
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
     }
 
     public synchronized void mExecute(){
-            try {
-                    draw();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        try {
+            draw();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -180,9 +183,10 @@ public class RunTextView extends SurfaceView implements SurfaceHolder.Callback, 
      */
     private void draw() {
         //锁定画布
-        Canvas canvas = mSurfaceHolder.lockCanvas();
+        if (getHolder()==null) return;
+        Canvas canvas = getHolder().lockCanvas();
 
-        if (mSurfaceHolder == null || canvas == null) {
+        if (canvas == null) {
             Log.e(TAG, "draw() : mSurfaceHolder or camvas - 不存在 - " + mSurfaceHolder+" - "+ canvas);
             return;
         }
@@ -296,6 +300,7 @@ public class RunTextView extends SurfaceView implements SurfaceHolder.Callback, 
     private Thread helper = null;
 
     public void startHelper(){
+        stopHelper();
         if (helper==null){
             helper = new Thread(this);
             loop = true;

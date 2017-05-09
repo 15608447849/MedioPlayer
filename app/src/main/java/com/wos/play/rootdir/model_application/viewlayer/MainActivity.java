@@ -6,6 +6,7 @@ import android.widget.AbsoluteLayout;
 
 import com.wos.play.rootdir.R;
 import com.wos.play.rootdir.model_application.baselayer.BaseActivity;
+import com.wos.play.rootdir.model_universal.tool.CMD_INFO;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 
 import static com.wos.play.rootdir.R.id.main_layout;
@@ -21,7 +22,19 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         setIsOnBack(false);
         setStopOnDestory(false);
+        registBroad(1);
     }
+
+    @Override
+    protected void receiveService(String result) {
+        Logs.i("MainActivity","接收广播：result->"+result);
+        if(CMD_INFO.UIRE.equals(result)){
+            stopActivityOnArr(this);
+            System.exit(0);
+            android.os.Process.killProcess(android.os.Process.myPid());
+        }
+    }
+
     @Override
     protected void onStart() {
         initUI();
