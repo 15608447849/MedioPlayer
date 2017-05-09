@@ -13,6 +13,8 @@ import com.wos.play.rootdir.model_universal.tool.SdCardTools;
 
 import java.io.File;
 import java.util.Calendar;
+import java.util.Iterator;
+import java.util.List;
 
 import cn.trinea.android.common.util.FileUtils;
 
@@ -31,7 +33,7 @@ public class UiTools {
     private static String epaper_path_dir = null;
 
     public static void init(final BaseActivity activity) {
-        if (!isInit){
+        if (!isInit) {
             UiDataFilter.getUiDataFilter().init(activity);// UI 过滤
             basepath = SystemInfos.get().getBasepath();//资源路径
             appicon = SystemInfos.get().getAppicon();//天气图标
@@ -54,14 +56,14 @@ public class UiTools {
                 }
             }).start();
             isInit = true;
-            Logs.i(TAG,"初始化 - UI工具类 - 完成");
+            Logs.i(TAG, "初始化 - UI工具类 - 完成");
         }
     }
 
 
     public static void uninit() {
-        if (isInit){
-            Logs.i(TAG,"注销 - UI 工具类");
+        if (isInit) {
+            Logs.i(TAG, "注销 - UI 工具类");
             ScheduleReader.getReader().unInit();//关闭排期读取
             UiDataFilter.getUiDataFilter().unInit();
             isInit = false;
@@ -76,7 +78,7 @@ public class UiTools {
      * @return
      */
     public static String TanslateColor(String colorValue) {
-        if (colorValue==null || "".equals(colorValue)) return "#000000";
+        if (colorValue == null || "".equals(colorValue)) return "#000000";
         String color = null;
         try {
             if (colorValue.startsWith("#") && colorValue.length() == 7) {
@@ -96,7 +98,7 @@ public class UiTools {
 
     //获取Uri的文件名
     public static String getUrlTanslationFilename(String url) {
-        if (url==null) return null;
+        if (url == null) return null;
         //      ftp://ftp:FTPmedia@172.16.0.17:21/content/1476427174433.jpg
         System.out.println("转换 - url -> 本地文件路径 - " + url);
         String var = "".equals(url.substring(url.lastIndexOf("/") + 1)) ? null : basepath + url.substring(url.lastIndexOf("/") + 1);
@@ -149,6 +151,7 @@ public class UiTools {
         SdCardTools.writeJsonToSdcard(contentDir.getAbsolutePath() + "/", MD5Util.getStringMD5(filename), content);
         return true;
     }
+
     /**
      * 天气图片 解压缩  源目录 - assets - weathericon.zip -> 根目录下的 appicon->weathericon.zip ->解压缩->删除zip
      */
@@ -161,7 +164,7 @@ public class UiTools {
         if (AppsTools.ReadAssectsDataToSdCard(context, dirpath, "weathericon.zip")) {
 
             try {
-                unZipFiles(dirpath + "weathericon.zip",dirpath,true); //.substring(0, dirpath.lastIndexOf("/"))
+                unZipFiles(dirpath + "weathericon.zip", dirpath, true); //.substring(0, dirpath.lastIndexOf("/"))
                 weatherIconPath = dirpath + "weathericon/";
                 return true;
             } catch (Exception e) {
@@ -198,7 +201,7 @@ public class UiTools {
 
     /**
      * 解压  默认 资源 ->
-     *      图片 -> def_image.png    视频 def_video.mp4
+     * 图片 -> def_image.png    视频 def_video.mp4
      *
      * @param context
      * @param basepath
@@ -209,7 +212,7 @@ public class UiTools {
         final String outputdir = basepath;
         if (fileDirIsExt(outputdir + "defSource/")) {
             //判断文件是否存在
-            if (fileIsExt(outputdir + "defSource/def_image.png") && fileIsExt(outputdir + "defSource/def_video.mp4")){
+            if (fileIsExt(outputdir + "defSource/def_image.png") && fileIsExt(outputdir + "defSource/def_video.mp4")) {
                 def_source_dir = outputdir + "defSource/";
                 //存在
                 return;
@@ -221,7 +224,7 @@ public class UiTools {
         if (AppsTools.ReadAssectsDataToSdCard(context, outputdir, "defSource.zip")) {
             //执行解压缩
             try {
-                unZipFiles(outputdir + "defSource.zip",outputdir,true); //unzipFilePath.substring(0, unzipFilePath.lastIndexOf("/"))
+                unZipFiles(outputdir + "defSource.zip", outputdir, true); //unzipFilePath.substring(0, unzipFilePath.lastIndexOf("/"))
                 def_source_dir = outputdir + "defSource/";
             } catch (Exception e) {
                 e.printStackTrace();
@@ -240,23 +243,36 @@ public class UiTools {
     }
 
     //获取电子报路径
-    public static String getEpapers(){
+    public static String getEpapers() {
         return epaper_path_dir;
     }
 
     //解压缩文件
-    public static String unZipFiles(String unzipFilePath,String outputDir,boolean isDelete){
+    public static String unZipFiles(String unzipFilePath, String outputDir, boolean isDelete) {
 
         //执行解压缩
-        Logs.i("解压缩",unzipFilePath + " -> " + outputDir + (isDelete?" 删除zip包":" 不删除zip包"));
+        Logs.i("解压缩", unzipFilePath + " -> " + outputDir + (isDelete ? " 删除zip包" : " 不删除zip包"));
         try {
             AppsTools.UnZip(unzipFilePath, outputDir);
-            if (isDelete)  SdCardTools.DeleteFiles(unzipFilePath);   //删除 .zip文件
+            if (isDelete) SdCardTools.DeleteFiles(unzipFilePath);   //删除 .zip文件
             return outputDir;
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * 删除指定位置的list
+     */
+    public static void delete(List list, int index) {
+        Object object = list.get(index);
+        Iterator it = list.iterator();
+        Object o;
+        while (it.hasNext()) {
+            o = it.next();
+            if (o.equals(object)) it.remove();
+        }
     }
 
 }

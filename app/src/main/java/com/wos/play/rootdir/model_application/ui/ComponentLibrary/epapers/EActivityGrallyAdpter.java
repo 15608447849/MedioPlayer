@@ -125,5 +125,8 @@ public class EActivityGrallyAdpter extends BaseAdapter {
         TextView thumb_text_view;
     }
 
+    public List<File> getList() {
+        return list;
+    }
 
 }
