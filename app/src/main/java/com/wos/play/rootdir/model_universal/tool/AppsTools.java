@@ -55,13 +55,12 @@ import static android.support.v7.widget.StaggeredGridLayoutManager.TAG;
 public class AppsTools {
 
 
-
     //随机数
-    public static int randomNum(int min,int max){
-        return (int)(min+Math.random()*max);
+    public static int randomNum(int min, int max) {
+        return (int) (min + Math.random() * max);
     }
 
-    private static String callCmd(String cmd,String filter) {
+    private static String callCmd(String cmd, String filter) {
         String result = null;
 
         try {
@@ -72,56 +71,50 @@ public class AppsTools {
 
             String line = null;
             //执行命令cmd，只取结果中含有filter的这一行
-            while ((line = br.readLine ()) != null && !line.contains(filter)) {
+            while ((line = br.readLine()) != null && !line.contains(filter)) {
                 //result += line;
             }
             result = line;
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return result;
     }
 
     // 获取 mac 地址
-    public static String getMacAddress(Context context){
+    public static String getMacAddress(Context context) {
 
         String mac = getLocalMacAddressFromWifiInfo(context);
-        if (mac==null || "".equals(mac));
+        if (mac == null || "".equals(mac))
             mac = getMacAddress();
 
         return mac;
     }
 
     //本地以太网mac地址文件
-    private static String getMacAddress()
-    {
+    private static String getMacAddress() {
         String strMacAddr = "";
         byte[] b;
-        try
-        {
+        try {
             NetworkInterface NIC = NetworkInterface.getByName("eth0");
             b = NIC.getHardwareAddress();
             StringBuffer buffer = new StringBuffer();
-            for (int i = 0; i < b.length; i++)
-            {
-                if (i != 0 || i!=b.length-1)
-                {
+            for (int i = 0; i < b.length; i++) {
+                if (i != 0 || i != b.length - 1) {
                     buffer.append('-');
                 }
                 String str = Integer.toHexString(b[i] & 0xFF);
                 buffer.append(str.length() == 1 ? 0 + str : str);
             }
             strMacAddr = buffer.toString().toUpperCase();
-        }
-        catch (SocketException e)
-        {
+        } catch (SocketException e) {
             e.printStackTrace();
         }
         return strMacAddr;
     }
+
     //根据Wifi信息获取本地Mac
-    public static String getLocalMacAddressFromWifiInfo(Context context){
+    public static String getLocalMacAddressFromWifiInfo(Context context) {
         WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         WifiInfo info = wifi.getConnectionInfo();
         return info.getMacAddress();
@@ -130,25 +123,26 @@ public class AppsTools {
 
     /**
      * ip
+     *
      * @return
      */
     public static String getLocalIpAddress() {
         try {
             for (Enumeration<NetworkInterface> en = NetworkInterface
-                    .getNetworkInterfaces(); en.hasMoreElements();) {
+                    .getNetworkInterfaces(); en.hasMoreElements(); ) {
                 NetworkInterface intf = en.nextElement();
                 for (Enumeration<InetAddress> enumIpAddr = intf
-                        .getInetAddresses(); enumIpAddr.hasMoreElements();) {
+                        .getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
                     InetAddress inetAddress = enumIpAddr.nextElement();
                     if (!inetAddress.isLoopbackAddress()
                             && (inetAddress instanceof Inet4Address)) {
-                        Logs.i("getLocalIpAddress() _ local IP : "+ inetAddress.getHostAddress().toString());
+                        Logs.i("getLocalIpAddress() _ local IP : " + inetAddress.getHostAddress().toString());
                         return inetAddress.getHostAddress().toString();
                     }
                 }
             }
         } catch (SocketException ex) {
-            Logs.e("","WifiPreference IpAddress :"+ex.toString());
+            Logs.e("", "WifiPreference IpAddress :" + ex.toString());
         }
         return "";
     }
@@ -175,17 +169,17 @@ public class AppsTools {
     /**
      * 获取屏幕宽,高
      */
-    public static int[] getScreenSize(Context context){
+    public static int[] getScreenSize(Context context) {
         int arr[] = null;
-        WindowManager manager =(WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
+        WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         DisplayMetrics outMetrics = new DisplayMetrics();
         manager.getDefaultDisplay().getMetrics(outMetrics);
         int width = outMetrics.widthPixels;
         int height = outMetrics.heightPixels;
 
-        if (width > 0 && height >0){
-            Logs.d("screen ["+width+","+height+"]");
-            arr = new int[]{width,height};
+        if (width > 0 && height > 0) {
+            Logs.d("screen [" + width + "," + height + "]");
+            arr = new int[]{width, height};
         }
         return arr;
     }
@@ -194,7 +188,7 @@ public class AppsTools {
     /**
      * map -> uri
      */
-    public static String mapTanslationUri(String ip,String port,Map<String,String> map){
+    public static String mapTanslationUri(String ip, String port, Map<String, String> map) {
 
         StringBuffer sb = new StringBuffer("http://");
         sb.append(ip).append(":").append(port).append("/").append("terminal/apply").append("?");
@@ -204,59 +198,61 @@ public class AppsTools {
             Object val = entry.getValue();
             sb.append(key.toString()).append("=").append(val.toString()).append("&");
         }
-        return sb.toString().substring(0,sb.toString().lastIndexOf("&"));
+        return sb.toString().substring(0, sb.toString().lastIndexOf("&"));
     }
 
-        //将Json数据解析成相应的映射对象
-         public static <T> T parseJsonWithGson(String jsonData, Class<T> type) {
-                 Gson gson = new Gson();
-                 T result = gson.fromJson(jsonData, type);
-                 return result;
-         }
+    //将Json数据解析成相应的映射对象
+    public static <T> T parseJsonWithGson(String jsonData, Class<T> type) {
+        Gson gson = new Gson();
+        T result = gson.fromJson(jsonData, type);
+        return result;
+    }
 
-        //json -> list<T>
-        public static <T> List<T> parseJonToList(String json, Class<T[]> clazz)
-        {
-            Gson gson = new Gson();
-            T[] array = gson.fromJson(json, clazz);
-            return Arrays.asList(array);
-        }
+    //json -> list<T>
+    public static <T> List<T> parseJonToList(String json, Class<T[]> clazz) {
+        Gson gson = new Gson();
+        T[] array = gson.fromJson(json, clazz);
+        return Arrays.asList(array);
+    }
 
     /**
      * 判断是否时base64 加密
      * 去除baseUri
-     *
      */
-    public static String justUriIsBase64GetUrl(String url){
-        if (url.trim().lastIndexOf("=Base64")!=-1){
-            url=url.trim().substring(0,url.lastIndexOf("=Base64"));
-            Logs.e(TAG," delete Base64 -> url  "+url);
+    public static String justUriIsBase64GetUrl(String url) {
+        if (url.trim().lastIndexOf("=Base64") != -1) {
+            url = url.trim().substring(0, url.lastIndexOf("=Base64"));
+            Logs.e(TAG, " delete Base64 -> url  " + url);
         }
         return url.trim();
-    };
+    }
+
+    ;
+
     /**
-     *  内容 base64 解密
+     * 内容 base64 解密
      */
-    public static String justResultIsBase64decode(String result){
+    public static String justResultIsBase64decode(String result) {
 
         try {
-            byte[] byteIcon = Base64.decode(result,Base64.DEFAULT);
-            return new String(byteIcon,"UTF-8");
+            byte[] byteIcon = Base64.decode(result, Base64.DEFAULT);
+            return new String(byteIcon, "UTF-8");
 
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
-    public static void urlFileUpload(String uploadUrl,String filepath){
-        if (!FileUtils.isFileExist(filepath)){
+
+    public static void urlFileUpload(String uploadUrl, String filepath) {
+        if (!FileUtils.isFileExist(filepath)) {
             return;
         }
         FileInputStream inputStream = null;
         OutputStream outStream = null;
         try {
-            URL url =new URL(uploadUrl);
-            HttpURLConnection con=(HttpURLConnection)url.openConnection();
+            URL url = new URL(uploadUrl);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
             /* 允许Input、Output，不使用Cache */
             con.setDoInput(true);
             con.setDoOutput(true);
@@ -268,7 +264,7 @@ public class AppsTools {
             con.setConnectTimeout(30000);
             con.setReadTimeout(60000);
             con.setRequestProperty("Connection", "keep-alive");  //设置连接的状态
-            con.setRequestProperty("Content-Type","application/octet-stream");
+            con.setRequestProperty("Content-Type", "application/octet-stream");
             // 头字段
 //            con.setRequestProperty("Accept", "*/*");
 //            con.setRequestProperty("Accept-Charset", "UTF-8,*;q=0.5");
@@ -278,35 +274,35 @@ public class AppsTools {
 
             inputStream = new FileInputStream(filepath);
             outStream = con.getOutputStream();
-            byte [] cache = new byte[1024];
-            int len ;
-            while( (len = inputStream.read(cache))!=-1){
-                outStream.write(cache,0,len);
+            byte[] cache = new byte[1024];
+            int len;
+            while ((len = inputStream.read(cache)) != -1) {
+                outStream.write(cache, 0, len);
             }
             outStream.flush();
             if ((len = con.getResponseCode()) == 200) {
-                System.out.println("文件上传成功 - ["+filepath+"]");
-            }else{
-                System.err.println("文件上传失败 - 错误码 :["+len+"]");
+                System.out.println("文件上传成功 - [" + filepath + "]");
+            } else {
+                System.err.println("文件上传失败 - 错误码 :[" + len + "]");
             }
 
             //断开连接
             con.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
-        }finally{
-                if (inputStream != null){
-                    try {
-                        inputStream.close();
-                    } catch (IOException e) {
-                    }
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
                 }
-                if (outStream!=null){
-                    try {
+            }
+            if (outStream != null) {
+                try {
                     outStream.close();
                 } catch (IOException e) {
                 }
-                }
+            }
         }
     }
 
@@ -316,7 +312,7 @@ public class AppsTools {
      * @param urlString
      * @return the xml data or "" if catch Exception
      */
-    public static String uriTransionString(String urlString,Map<String,String> header,Map<String,String> ParamMap) {
+    public static String uriTransionString(String urlString, Map<String, String> header, Map<String, String> ParamMap) {
         if (urlString == null) return null;
 
         URL url;
@@ -324,7 +320,7 @@ public class AppsTools {
         try {
             url = new URL(urlString);
         } catch (MalformedURLException e1) {
-            System.out.println("URL connect failt :"+urlString);
+            System.out.println("URL connect failt :" + urlString);
             System.err.println(e1.getMessage());
             return result;
         }
@@ -335,72 +331,71 @@ public class AppsTools {
         try {
             httpUrlConnection = (HttpURLConnection) url.openConnection();
 
-            if (header!=null){
+            if (header != null) {
                 Iterator iter = header.entrySet().iterator();
                 String key;
                 String val;
-                while (iter.hasNext())
-                {
-                    Map.Entry<String,String> entry = (Map.Entry) iter.next();
+                while (iter.hasNext()) {
+                    Map.Entry<String, String> entry = (Map.Entry) iter.next();
                     key = entry.getKey();
                     val = entry.getValue();
-                    System.out.println(key+" = "+val);
-                    httpUrlConnection.setRequestProperty(key,val);
+                    System.out.println(key + " = " + val);
+                    httpUrlConnection.setRequestProperty(key, val);
                 }
             }
 
             // HttpURLConnection是基于HTTP协议的，其底层通过socket通信实现。如果不设置超时（timeout），在网络异常的情况下，可能会导致程序僵死而不继续往下执行。可以通过以下两个语句来设置相应的超时：
-           // System.setProperty("sun.net.client.defaultConnectTimeout", "30000");
-           //System.setProperty("sun.net.client.defaultReadTimeout", "30000");
-           httpUrlConnection.setConnectTimeout(30000);
-           httpUrlConnection.setReadTimeout(60000);
+            // System.setProperty("sun.net.client.defaultConnectTimeout", "30000");
+            //System.setProperty("sun.net.client.defaultReadTimeout", "30000");
+            httpUrlConnection.setConnectTimeout(30000);
+            httpUrlConnection.setReadTimeout(60000);
             httpUrlConnection.setRequestProperty("Accept-Charset", "GBK");  //设置编码语言
             httpUrlConnection.setRequestProperty("Connection", "keep-alive");  //设置连接的状态
-        // 设置是否从httpUrlConnection读入，默认情况下是true;
+            // 设置是否从httpUrlConnection读入，默认情况下是true;
             httpUrlConnection.setDoInput(true);
-        // 设定传送的内容类型是可序列化的java对象
-        // (如果不设此项,在传送序列化对象时,当WEB服务默认的不是这种类型时可能抛java.io.EOFException)
-       // httpUrlConnection.setRequestProperty("Content-type", "application/x-java-serialized-object");
+            // 设定传送的内容类型是可序列化的java对象
+            // (如果不设此项,在传送序列化对象时,当WEB服务默认的不是这种类型时可能抛java.io.EOFException)
+            // httpUrlConnection.setRequestProperty("Content-type", "application/x-java-serialized-object");
             httpUrlConnection.setRequestProperty("Content-type", "text/html");
-        //设置主体参数
-        if (ParamMap!=null){
-            //获取map 生成json
-            String json = mapToJson(ParamMap);
-            // 设置是否向httpUrlConnection输出，因为这个是post请求，参数要放在
-            // http正文内，因此需要设为true, 默认情况下是false;
-            httpUrlConnection.setDoOutput(true);
-            // 设定请求的方法为"POST"，默认是GET
-            httpUrlConnection.setRequestMethod("POST");// 可以根据需要 提交 GET、POST、DELETE、PUT等http提供的功能
-            // Post 请求不能使用缓存
-            httpUrlConnection.setUseCaches(false);
+            //设置主体参数
+            if (ParamMap != null) {
+                //获取map 生成json
+                String json = mapToJson(ParamMap);
+                // 设置是否向httpUrlConnection输出，因为这个是post请求，参数要放在
+                // http正文内，因此需要设为true, 默认情况下是false;
+                httpUrlConnection.setDoOutput(true);
+                // 设定请求的方法为"POST"，默认是GET
+                httpUrlConnection.setRequestMethod("POST");// 可以根据需要 提交 GET、POST、DELETE、PUT等http提供的功能
+                // Post 请求不能使用缓存
+                httpUrlConnection.setUseCaches(false);
 
-            httpUrlConnection.setRequestProperty("X-Auth-Token", "token");  //设置请求的token
-            httpUrlConnection.setRequestProperty("Transfer-Encoding", "chunked");//设置传输编码
-            httpUrlConnection.setRequestProperty("Content-Length", String.valueOf(json.getBytes().length));//设置文件请求的长度
-            //对connection对象的一切配置（那一堆set函数）
-            //都必须要在connect()函数执行之前完成。而对outputStream的写操作，又必须要在inputStream的读操作之前。
-            // 此处getOutputStream会隐含的进行connect(即：如同调用上面的connect()方法，
-            //所以在开发中不调用上述的connect()也可以)。
-            httpUrlConnection.connect();//只是建立了一个与服务器的tcp连接没有实际发送http请求。
-            //写数据
-            out = httpUrlConnection.getOutputStream();
-            out.write(json.getBytes());
-            out.flush();
-        }else{
-            httpUrlConnection.connect();//只是建立了一个与服务器的tcp连接没有实际发送http请求。
-        }
+                httpUrlConnection.setRequestProperty("X-Auth-Token", "token");  //设置请求的token
+                httpUrlConnection.setRequestProperty("Transfer-Encoding", "chunked");//设置传输编码
+                httpUrlConnection.setRequestProperty("Content-Length", String.valueOf(json.getBytes().length));//设置文件请求的长度
+                //对connection对象的一切配置（那一堆set函数）
+                //都必须要在connect()函数执行之前完成。而对outputStream的写操作，又必须要在inputStream的读操作之前。
+                // 此处getOutputStream会隐含的进行connect(即：如同调用上面的connect()方法，
+                //所以在开发中不调用上述的connect()也可以)。
+                httpUrlConnection.connect();//只是建立了一个与服务器的tcp连接没有实际发送http请求。
+                //写数据
+                out = httpUrlConnection.getOutputStream();
+                out.write(json.getBytes());
+                out.flush();
+            } else {
+                httpUrlConnection.connect();//只是建立了一个与服务器的tcp连接没有实际发送http请求。
+            }
 //            System.out.println("httpUrlConnection connect()");
             //连接
-            if (httpUrlConnection.getResponseCode()==200){
-            br = new BufferedReader( new InputStreamReader(httpUrlConnection.getInputStream(),"UTF-8"));//<===注意，实际发送请求的代码段就在这里
-            StringBuilder sb = new StringBuilder();
-            String temp;
-            while ((temp = br.readLine()) != null){
-                sb.append(temp);
-            }
-              result = sb.toString();
-            }else{
-                System.err.println("请求失败 - "+httpUrlConnection.getResponseCode());
+            if (httpUrlConnection.getResponseCode() == 200) {
+                br = new BufferedReader(new InputStreamReader(httpUrlConnection.getInputStream(), "UTF-8"));//<===注意，实际发送请求的代码段就在这里
+                StringBuilder sb = new StringBuilder();
+                String temp;
+                while ((temp = br.readLine()) != null) {
+                    sb.append(temp);
+                }
+                result = sb.toString();
+            } else {
+                System.err.println("请求失败 - " + httpUrlConnection.getResponseCode());
             }
             //断开连接
             httpUrlConnection.disconnect();
@@ -432,31 +427,34 @@ public class AppsTools {
         String jsonStr = gson.toJson(map);
         return jsonStr;
     }
+
     /**
-     *
      * 函数名称: parseData
      * 函数描述: 将json字符串转换为map
+     *
      * @param data
      * @return
      */
-    public static HashMap<String, String> jsonTxtToMap(String data){
+    public static HashMap<String, String> jsonTxtToMap(String data) {
         GsonBuilder gb = new GsonBuilder();
         Gson g = gb.create();
-        HashMap<String, String> map = g.fromJson(data, new TypeToken<HashMap<String, String>>() {}.getType());
+        HashMap<String, String> map = g.fromJson(data, new TypeToken<HashMap<String, String>>() {
+        }.getType());
         return map;
     }
 
     //检查是不是ui线程
-    public static boolean checkUiThread(){
+    public static boolean checkUiThread() {
         if (Looper.myLooper() == Looper.getMainLooper()) { // UI主线程
-                return true;
+            return true;
         } else { // 非UI主线程
-                return false;
+            return false;
         }
     }
 
     /**
      * 判断指定类型 是不是 数组中的某个类型
+     *
      * @param contentType
      * @param allowTypes
      * @return
@@ -476,61 +474,63 @@ public class AppsTools {
     /**
      * 判断后缀是不是md5
      */
-    public static boolean isMD5Suffix(String url){
-        return isValidSuffix(url,".md5");
+    public static boolean isMD5Suffix(String url) {
+        return isValidSuffix(url, ".md5");
     }
+
     /**
      * 判断后缀是否是 mp4
      */
-    public static boolean isMp4Suffix(String url){
-        return isValidSuffix(url,".mp4");
+    public static boolean isMp4Suffix(String url) {
+        return isValidSuffix(url, ".mp4");
     }
+
     /**
      * mp4 后缀->png后缀
      */
-    public static String tanslationMp4ToPng(String url){
-        return url.substring(0,url.lastIndexOf(".mp4"))+".png";
+    public static String tanslationMp4ToPng(String url) {
+        return url.substring(0, url.lastIndexOf(".mp4")) + ".png";
     }
 
 
     /**
-     *SDCard/ xxx / xx.txt
-     *
+     * SDCard/ xxx / xx.txt
+     * <p>
      * 读取 acesst路径下的文件 -> 保存到sd卡中
      */
 
-    public static boolean ReadAssectsDataToSdCard(Context c,String dirPath,String fileName) {
+    public static boolean ReadAssectsDataToSdCard(Context c, String dirPath, String fileName) {
         InputStream inputStream = null;
         FileOutputStream fileOutputStream = null;
         try {
             // 得到资源中的assets数据流
             inputStream = c.getResources().getAssets().open(fileName);
             int length = inputStream.available();
-            if (length==0){
+            if (length == 0) {
                 return false;
             }
-            if(SdCardTools.MkDir(dirPath)){
+            if (SdCardTools.MkDir(dirPath)) {
                 //目录创建 或者 存在
-                fileOutputStream = new FileOutputStream(dirPath+fileName);
+                fileOutputStream = new FileOutputStream(dirPath + fileName);
                 byte[] buffer = new byte[1024];
                 length = 0;
-                while((length = inputStream.read(buffer)) > 0){
-                    fileOutputStream.write(buffer, 0 ,length);
+                while ((length = inputStream.read(buffer)) > 0) {
+                    fileOutputStream.write(buffer, 0, length);
                 }
                 fileOutputStream.flush();
                 return true;
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }finally {
-            if (inputStream!=null){
+        } finally {
+            if (inputStream != null) {
                 try {
                     inputStream.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-            if (fileOutputStream!=null){
+            if (fileOutputStream != null) {
                 try {
                     fileOutputStream.close();
                 } catch (IOException e) {
@@ -625,29 +625,28 @@ public class AppsTools {
     }
 
 
-
-    public static String mUrlEncode(String param){
-        if (justParamIsURLEncode(param)){
+    public static String mUrlEncode(String param) {
+        if (justParamIsURLEncode(param)) {
             try {
-                param = URLEncoder.encode(param,"UTF-8");
+                param = URLEncoder.encode(param, "UTF-8");
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
         }
         return param;
     }
+
     //判断参数 是否 encode
-    public static boolean justParamIsURLEncode(String param){
+    public static boolean justParamIsURLEncode(String param) {
         try {
-            if (param.contains("+")){ //需要编码
+            if (param.contains("+")) { //需要编码
                 return true;
             }
-            String var1 = URLDecoder.decode(param,"UTF-8");
+            String var1 = URLDecoder.decode(param, "UTF-8");
 
-            if (var1.equals(param)){
+            if (var1.equals(param)) {
                 return true;  //需要encode
-            }
-             else {
+            } else {
                 return false;//不需要
             }
         } catch (UnsupportedEncodingException e) {
@@ -659,13 +658,12 @@ public class AppsTools {
 
     //生成->城市url
     public static String generWeateherContentUrl(String city) {
-        System.out.println("-当前城市 ["+city+"]");
+        System.out.println("-当前城市 [" + city + "]");
         city = mUrlEncode(city);
 //        return "http://apis.baidu.com/apistore/weatherservice/recentweathers?cityname="+city;
-        return "http://wthrcdn.etouch.cn/weather_mini?city="+city;
+        return "http://wthrcdn.etouch.cn/weather_mini?city=" + city;
 
     }
-
 
 
     //unicode 解码
@@ -674,24 +672,23 @@ public class AppsTools {
     }
 
 
-
     //url encode
-    public static String urlEncodeParam(String url){
+    public static String urlEncodeParam(String url) {
         //http://172.16.0.216:9000/epaper/dyannews/page?stairId=3&categoryId=-1&sortBy=allSorts asc,upDate desc&filter=Base64
         //先截取?
         //在截取&
         //再截取=
-        String var1 ;
+        String var1;
         try {
-            var1 = url.substring(0,url.indexOf("?")+1);
-            String var3[] = url.substring(url.indexOf("?")+1).split("&");
-            if (var3!=null && var3.length>0){
-                for (int i=0;i<var3.length;i++){
-                    if (var3[i].contains("=")){
-                        var1= var1 + var3[i].substring(0,var3[i].indexOf("=")+1) + mUrlEncode(var3[i].substring(var3[i].indexOf("=")+1));
+            var1 = url.substring(0, url.indexOf("?") + 1);
+            String var3[] = url.substring(url.indexOf("?") + 1).split("&");
+            if (var3 != null && var3.length > 0) {
+                for (int i = 0; i < var3.length; i++) {
+                    if (var3[i].contains("=")) {
+                        var1 = var1 + var3[i].substring(0, var3[i].indexOf("=") + 1) + mUrlEncode(var3[i].substring(var3[i].indexOf("=") + 1));
                     }
-                    if (i!=var3.length-1){
-                        var1+="&";
+                    if (i != var3.length - 1) {
+                        var1 += "&";
                     }
                 }
             }
@@ -703,41 +700,33 @@ public class AppsTools {
     }
 
 
-    public static String  printTimes(long millisecond){
-     StringBuffer sb =new StringBuffer();
+    public static String printTimes(long millisecond) {
+        StringBuffer sb = new StringBuffer();
 
         sb.append("时间差约等-:");
 
-        String val = "" ;
-      
-        if (millisecond<1000){
-            val =" 毫秒";
-        }
-        else
-        if ( (millisecond=millisecond/1000) > 0 && millisecond<60){
+        String val = "";
+
+        if (millisecond < 1000) {
+            val = " 毫秒";
+        } else if ((millisecond = millisecond / 1000) > 0 && millisecond < 60) {
             //毫秒 -> 秒
             val = " 秒";
-        }
-        else
-        if ((millisecond=millisecond/60)>0 && millisecond<60){
+        } else if ((millisecond = millisecond / 60) > 0 && millisecond < 60) {
             val = " 分钟";
-        }
-        else
-        if ((millisecond=millisecond/60)>0 && millisecond<12){
+        } else if ((millisecond = millisecond / 60) > 0 && millisecond < 12) {
             val = " 小时";
-        }
-        else
-        if ((millisecond=millisecond/24)>0){
+        } else if ((millisecond = millisecond / 24) > 0) {
             val = " 天";
         }
-       sb.append(millisecond).append(val);
+        sb.append(millisecond).append(val);
         return sb.toString();
     }
 
 
-
     /**
      * 判断是否有网络连接
+     *
      * @param context
      * @return
      */
@@ -757,6 +746,7 @@ public class AppsTools {
     private static int getShort(byte[] data) {
         return (int) ((data[0] << 8) | data[1] & 0xFF);
     }
+
     //天气api结果解析
     public static String getJsonStringFromGZIP(String content) {
         String jsonString = null;
@@ -795,20 +785,19 @@ public class AppsTools {
     //获取域名
     public static String getDomian(String url) {
 
-        if (url==null) return null;
-        if (url.contains("http://") || url.contains("https://")){
-            url = url.substring(url.indexOf("/")+2);
+        if (url == null) return null;
+        if (url.contains("http://") || url.contains("https://")) {
+            url = url.substring(url.indexOf("/") + 2);
         }
-        if (url.contains("/")){
-            url =  url.substring(0,url.indexOf("/"));
+        if (url.contains("/")) {
+            url = url.substring(0, url.indexOf("/"));
         }
-        if (url.contains("www.")){
-            url =  url.substring(4);
+        if (url.contains("www.")) {
+            url = url.substring(4);
         }
 
         return url;
     }
-
 
 
 }

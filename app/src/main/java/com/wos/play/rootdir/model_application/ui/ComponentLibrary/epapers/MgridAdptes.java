@@ -15,6 +15,8 @@ import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 
 /**
  * Created by user on 2017/1/4.
@@ -100,9 +102,16 @@ public class MgridAdptes extends BaseAdapter {
         String filePath = UiTools.getDefImagePath();//取默认图片地址
         if (fileList != null && position < fileList.size() && position >= 0) {
             File[] files = fileList.get(position).listFiles();
+
             if (files != null && files.length > 0) {
-                filePath = UiTools.getImagePath(files[0],true);//取第一张图片地址
-                if(filePath.endsWith("def_image.png")){
+                Arrays.sort(files, new Comparator<File>() {
+                    @Override
+                    public int compare(File lhs, File rhs) {
+                        return lhs.getName().compareTo(rhs.getName());
+                    }
+                });
+                filePath = UiTools.getImagePath(files[0], true);//取第一张图片地址
+                if (filePath.endsWith("def_image.png")) {
                     filePath = UiTools.getImagePath(files[0]);//取第一张图片地址
                 }
             }

@@ -16,6 +16,8 @@ import com.wos.play.rootdir.model_universal.tool.Logs;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import cn.trinea.android.common.util.FileUtils;
 
@@ -89,6 +91,12 @@ public class EpaperActivity extends BaseActivity implements View.OnClickListener
                 sourceList.add(UiTools.getImagePath(sFile));
             }
         }
+        Collections.sort(sourceList, new Comparator<String>() {
+            @Override
+            public int compare(String lhs, String rhs) {
+                return lhs.compareTo(rhs);
+            }
+        });
     }
 
     // 返回键
