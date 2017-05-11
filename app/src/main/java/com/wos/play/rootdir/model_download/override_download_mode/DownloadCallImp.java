@@ -7,6 +7,8 @@ import android.os.Bundle;
 import com.wos.play.rootdir.model_communication.CommuniReceiverMsgBroadCasd;
 import com.wos.play.rootdir.model_universal.tool.AppsTools;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -125,7 +127,12 @@ public class DownloadCallImp {
      * 生成状态
      */
     public void notifyProgress(String terminalNo, String filename, String process, String speed) {
-        addMsgToSend("PRGS:" + terminalNo + "," + filename + "," + process + "," + speed);
+        String message="PRGS:" + terminalNo + "," + filename + "," + process + "," + speed;
+        try {
+            addMsgToSend(URLEncoder.encode(message, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
     // 指定类型 不匹配
