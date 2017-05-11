@@ -22,6 +22,6 @@ public class ICommand_REBO implements iCommand {
     //重启
     private void reBoot() {
         Logs.e("重启","========= 重启终端 ===========");
-        ShellUtils.execCommand("reboot -p",true,false);
+        ShellUtils.execCommand("reboot",true,false);
     }
 }
