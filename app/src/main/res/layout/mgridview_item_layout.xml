@@ -3,12 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
+    <com.wos.play.rootdir.model_application.ui.ComponentLibrary.image.SquareImageView
         android:id="@+id/epaper_item_image"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:scaleType="fitXY"
-        android:contentDescription="@null" />
+        android:contentDescription="@null"/>
 
     <TextView
         android:id="@+id/mgrid_grid_item_text"

@@ -36,8 +36,8 @@
 
         <!-- 基础activity //Android:theme="@android:style/Theme.NoTitleBar" @android:style/Theme.NoTitleBar.Fullscreen -->
         <!--<activity-->
-            <!--android:name=".model_application.baselayer.BaseActivity"-->
-            <!--android:launchMode="singleTask" />-->
+        <!--android:name=".model_application.baselayer.BaseActivity"-->
+        <!--android:launchMode="singleTask" />-->
 
         <!-- 配置服务器信息 activity -->
         <activity android:name=".model_application.viewlayer.ToolsActivity">
@@ -56,7 +56,7 @@
         <!-- 电子报显示 -->
         <activity
             android:name=".model_application.viewlayer.EpaperActivity"
-            android:theme="@style/Theme.AppCompat.Light.Dialog" />
+            android:theme="@style/Theme.AppCompat.DayNight" />
         <!-- 通讯服务 -->
         <service
             android:name=".model_communication.CommunicationServer"
