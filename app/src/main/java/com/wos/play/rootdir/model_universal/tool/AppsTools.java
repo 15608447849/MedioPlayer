@@ -783,19 +783,22 @@ public class AppsTools {
     }
 
     //获取域名
-    public static String getDomian(String url) {
+    public static String getDomain(String url) {
 
         if (url == null) return null;
-        if (url.contains("http://") || url.contains("https://")) {
+        if (url.startsWith("http://") || url.startsWith("https://")) {
             url = url.substring(url.indexOf("/") + 2);
         }
         if (url.contains("/")) {
             url = url.substring(0, url.indexOf("/"));
         }
-        if (url.contains("www.")) {
-            url = url.substring(4);
+        int length = url.split("\\.").length;
+        if(url.endsWith("com.cn")  ||url.endsWith("org.cn")
+                || url.endsWith("net.cn")  ||url.endsWith("gov.cn")){
+            if(length==4) url = url.substring(url.indexOf(".")+1);
+        }else {
+            if(length==3) url = url.substring(url.indexOf(".")+1);
         }
-
         return url;
     }
 

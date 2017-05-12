@@ -41,7 +41,7 @@ public class IWebView extends WebView implements IComponentUpdate {
     private String backgroundColor;
     private  String bgImageUrl;
     private Bitmap bgimage;
-    private  String domian;
+    private  String domian1,domian2;
     public IWebView(Context context, AbsoluteLayout layout, ComponentsBean component) {
         super(context);
         this.context = context;
@@ -69,12 +69,14 @@ public class IWebView extends WebView implements IComponentUpdate {
                     this.url=cb.getContents().get(0).getUrl();
                     this.url  = url.startsWith("http")?url:"http://" + url;
                     isLink = cb.getContents().get(0).isOutsideChain();
-                    domian = AppsTools.getDomian(url);
+                    domian1 = AppsTools.getDomain(url);
                     this.setWebViewClient(new WebViewClient(){
                         @Override
                         public boolean shouldOverrideUrlLoading(WebView view, String url) {
                             Log.i(TAG,"链接:"+url);
-                            if (!isLink && !url.contains(domian)) {
+                            if(preUrl==null) domian2 = AppsTools.getDomain(url);
+                            Log.i(TAG,"链接:"+domian1+"-->"+domian2);
+                            if (!isLink && !url.contains(domian1) && !url.contains(domian2)) {
                                 loadUrl(preUrl);
                                 return true;
                             }

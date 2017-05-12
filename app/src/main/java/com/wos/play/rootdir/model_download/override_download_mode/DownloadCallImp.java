@@ -33,7 +33,7 @@ public class DownloadCallImp {
             if (msgSendingList == null) {
                 msgSendingList = Collections.synchronizedList(new LinkedList<String>()); //消息待发送队列
             }
-            msgSendingList.add(msg);
+            msgSendingList.add(URLEncoder.encode(msg, "UTF-8"));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -127,12 +127,7 @@ public class DownloadCallImp {
      * 生成状态
      */
     public void notifyProgress(String terminalNo, String filename, String process, String speed) {
-        String message="PRGS:" + terminalNo + "," + filename + "," + process + "," + speed;
-        try {
-            addMsgToSend(URLEncoder.encode(message, "UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        addMsgToSend("PRGS:" + terminalNo + "," + filename + "," + process + "," + speed);
     }
 
     // 指定类型 不匹配
