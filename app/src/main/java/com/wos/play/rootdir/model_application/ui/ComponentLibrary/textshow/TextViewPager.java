@@ -18,6 +18,8 @@ import com.wos.play.rootdir.model_application.ui.Uitools.ImageUtils;
 import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
+import com.wos.play.rootdir.model_universal.tool.Logs;
+
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
 
@@ -93,6 +95,8 @@ public class TextViewPager extends ViewPager implements IComponentUpdate {
                 if (bgImageUrl==null){
                     backgroundColor = cb.getBackgroundColor();
                 }
+            } else {
+                backgroundColor = cb.getBackgroundColor();
             }
 
             if (cb.getContents()!=null && cb.getContents().size()>0){
@@ -112,6 +116,7 @@ public class TextViewPager extends ViewPager implements IComponentUpdate {
     public void setAttrbute() {
         this.setLayoutParams(layoutParams);
         this.setAlpha(backgroundAlpha);
+        Logs.e(TAG,"backgroundColor:->111111" + backgroundColor);
         if (bgImageUrl==null){
             //设置背景颜色
             this.setBackgroundColor(Color.parseColor(UiTools.TanslateColor(backgroundColor)));
