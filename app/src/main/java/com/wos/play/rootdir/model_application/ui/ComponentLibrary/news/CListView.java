@@ -12,18 +12,18 @@ import android.widget.ListView;
 
 public class CListView extends ListView{
 
-    private BaseAdapter adpter;
+    private BaseAdapter adapter;
     private boolean isInit = false;
     public CListView(Context context) {
         super(context);
     }
     //初始化
-    public void init(ViewGroup layout,BaseAdapter adpter,AdapterView.OnItemClickListener itemClickEvent) {
+    public void init(ViewGroup layout,BaseAdapter adapter,AdapterView.OnItemClickListener itemClickEvent) {
         if (!isInit){
             this.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             layout.addView(this);
-            this.adpter = adpter;
-            this.setAdapter(adpter);
+            this.adapter = adapter;
+            this.setAdapter(this.adapter);
             this.setOnItemClickListener(itemClickEvent);
             isInit = true;
         }

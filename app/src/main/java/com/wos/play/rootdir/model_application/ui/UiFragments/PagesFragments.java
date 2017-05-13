@@ -79,7 +79,7 @@ public class PagesFragments extends Fragment{
         super.onViewCreated(view, savedInstanceState);
 //        Logs.i(TAG,"碎片 - -onViewCreated()");
         if (layout!=null){
-                    createConponent();
+            createConponent();
         }
     }
 

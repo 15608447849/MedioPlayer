@@ -19,53 +19,51 @@ import java.util.List;
  * Created by user on 2016/12/1.
  */
 
-public class ListViewAdpter extends BaseAdapter{
+public class ListViewAdapter extends BaseAdapter{
 
     private LayoutInflater inflater;
 
-    public ListViewAdpter(Context context) {
+    public ListViewAdapter(Context context) {
         this.inflater = LayoutInflater.from(context);
     }
 
     //可使用 数据源
-    private List<NewsDataBeans> useDatas ;
+    private List<NewsDataBeans> useDataBeans ;
     //不可使用 数据源
-    private List<NewsDataBeans> notDatas ;
+    private List<NewsDataBeans> notDataBeans ;
 
     //添加数据源
-    public void addUdataBean(NewsDataBeans data){
-        if (useDatas==null){
-            useDatas = new ArrayList<>();
+    public void addUDataBean(NewsDataBeans data){
+        if (useDataBeans==null){
+            useDataBeans = new ArrayList<>();
         }
-        for (NewsDataBeans bean : useDatas){
+        for (NewsDataBeans bean : useDataBeans){
             if (bean.getFilePath().equals(data.getFilePath())){
                 return;
             }
         }
-        useDatas.add(data);
+        useDataBeans.add(data);
         notifyDataSetChanged();
     }
     //添加无效数据源
-    public void addNdataBean(NewsDataBeans data){
-        if (notDatas==null){
-            notDatas = new ArrayList<>();
+    public void addNDataBean(NewsDataBeans data){
+        if (notDataBeans==null){
+            notDataBeans = new ArrayList<>();
         }
-       notDatas.add(data);
+        notDataBeans.add(data);
     }
 
     //index - 获取 数据源
-    public NewsDataBeans getUdata(int position){
-        if (useDatas==null){
+    public NewsDataBeans getUData(int position){
+        if (useDataBeans==null){
             return null;
         }
-        return useDatas.get(position);
+        return useDataBeans.get(position);
     }
     //index - 获取 无效数据源
     public NewsDataBeans getNta(String key){
-            if (notDatas==null){
-                return null;
-            }
-        Iterator<NewsDataBeans> it = notDatas.iterator();
+        if (notDataBeans==null)return null;
+        Iterator<NewsDataBeans> it = notDataBeans.iterator();
         NewsDataBeans beans = null;
         while (it.hasNext()){
             beans = it.next();
@@ -87,10 +85,10 @@ public class ListViewAdpter extends BaseAdapter{
 
     @Override
     public int getCount() {
-        if (useDatas ==null || useDatas.size()==0){
+        if (useDataBeans ==null || useDataBeans.size()==0){
             return 0;
         }else {
-            return useDatas.size();
+            return useDataBeans.size();
         }
     }
 
@@ -106,8 +104,7 @@ public class ListViewAdpter extends BaseAdapter{
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
-        ViewHolder holder = null;
+        ViewHolder holder;
         if (convertView==null){
             holder = new ViewHolder();
             convertView = inflater.inflate(R.layout.news_item,null);
@@ -121,7 +118,7 @@ public class ListViewAdpter extends BaseAdapter{
 
 
         //设置数据
-        NewsDataBeans dataBeans = useDatas.get(position);
+        NewsDataBeans dataBeans = useDataBeans.get(position);
         holder.getImageview().setImageBitmap(ImageUtils.getBitmap(dataBeans.getFilePath()));
         holder.getTitle().setText(dataBeans.getTitle());
         holder.getDate().setText(dataBeans.getDateStr());

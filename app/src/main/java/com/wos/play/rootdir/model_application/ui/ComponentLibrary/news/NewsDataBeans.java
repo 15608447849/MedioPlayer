@@ -73,7 +73,7 @@ public class NewsDataBeans {
 
 
     //生成一个 数据源
-    public static NewsDataBeans generteDataSource(String fileType,String title,String editer,String createDate,String filePath,String [] moreFileList){
+    public static NewsDataBeans generateDataSource(String fileType,String title,String editer,String createDate,String filePath,String [] moreFileList){
 
         NewsDataBeans newsDataBeans = new NewsDataBeans();
         newsDataBeans.setFileType(fileType);

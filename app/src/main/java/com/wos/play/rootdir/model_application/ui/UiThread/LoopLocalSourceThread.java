@@ -1,5 +1,7 @@
 package com.wos.play.rootdir.model_application.ui.UiThread;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -12,6 +14,7 @@ import com.wos.play.rootdir.model_universal.tool.AppsTools;
  */
 
 public class LoopLocalSourceThread extends Thread{
+    private static final String TAG = LoopLocalSourceThread.class.getSimpleName();
     private boolean isStart = false;
     public void startLoop(){
         isStart = true;
@@ -33,14 +36,14 @@ public class LoopLocalSourceThread extends Thread{
             fileList = new ArrayList<>();
         }
         fileList.add(sourceName);
-        System.out.println("loop - add item : "+sourceName);
+        Log.i(TAG, "loop - add item : "+sourceName);
     }
 
 
 
     private LoopSuccessInterfaces binder;
 
-    private void relase() {
+    private void release() {
         if (binder!=null){
             binder = null;
         }
@@ -59,22 +62,18 @@ public class LoopLocalSourceThread extends Thread{
                 e.printStackTrace();
             }
         }
-        relase();
+        release();
     }
 
     private synchronized void looping() {
         if (fileList!=null && fileList.size()>0){
-
-            Iterator<String> fileIter = fileList.iterator();
-
-            while (fileIter.hasNext()) {
-                String filePath = fileIter.next();
+            Iterator<String> iterator = fileList.iterator();
+            while (iterator.hasNext()) {
+                String filePath = iterator.next();
+                Log.i(TAG, "loop - item : "+ filePath);
                 if (FileUtils.isFileExist(filePath)){
-                    //已存在
-                    //通知绑定的接口
-                    binder.SourceExist(filePath);
-                    //删除
-                    fileIter.remove();
+                    binder.sourceExist(filePath);//已存在,通知绑定的接口
+                    iterator.remove();  //删除
                 }
             }
         }

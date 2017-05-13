@@ -1,11 +1,13 @@
 package com.wos.play.rootdir.model_application.ui.ComponentLibrary.news;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -22,20 +24,20 @@ import static android.view.View.VISIBLE;
  * Created by user on 2016/12/1.
  * 使用 布局文件 加载布局
  */
-public class CshowLayout {
-
+public class CShowLayout {
+    public static final String TAG = CShowLayout.class.getSimpleName();
     private Context context;
     private ViewGroup layout;
     private FrameLayout news_show;
-    private Button back;
+    private ImageButton back;
     private TextView title;
     private TextView subtitle;
     private FrameLayout video_show;
     private MyVideoView video;
     private ListView imageList;
-    private PDFShowListAdpter adpter;
+    private PDFShowListAdapter adapter;
 
-    public CshowLayout(Context context, ViewGroup layout, View.OnClickListener buttonEvent) {
+    public CShowLayout(Context context, ViewGroup layout, View.OnClickListener buttonEvent) {
         this.context = context;
         this.layout = layout;
         initView(buttonEvent);
@@ -44,15 +46,15 @@ public class CshowLayout {
     //初始化 视图 层
     private void initView(View.OnClickListener buttonEvent) {
         news_show = (FrameLayout) LayoutInflater.from(context).inflate(R.layout.news_show_layout, null);
-        back = (Button) news_show.findViewById(R.id.news_show_backbtn);
+        back = (ImageButton) news_show.findViewById(R.id.news_show_back_btn);
         back.setOnClickListener(buttonEvent);
         title = (TextView) news_show.findViewById(R.id.news_show_title);
         subtitle = (TextView) news_show.findViewById(R.id.news_show_subtitle);
         video_show = (FrameLayout) news_show.findViewById(R.id.news_show_video);
         video = new MyVideoView(context);
         imageList = (ListView) news_show.findViewById(R.id.news_show_image);
-        adpter = new PDFShowListAdpter(context);
-        imageList.setAdapter(adpter);
+        adapter = new PDFShowListAdapter(context);
+        imageList.setAdapter(adapter);
         layout.addView(news_show);
     }
 
@@ -85,9 +87,9 @@ public class CshowLayout {
             imageList.setVisibility(View.VISIBLE);
             video_show.setVisibility(View.GONE);
            if (data.getFileType().equals(NewsDataBeans.FileType.IMAGE)){
-               adpter.addData(data.getFilePath(),true);
+               adapter.addData(data.getFilePath(),true);
            }else{
-               adpter.addData(data.getMoreFileList());
+               adapter.addData(data.getMoreFileList());
            }
         }
 

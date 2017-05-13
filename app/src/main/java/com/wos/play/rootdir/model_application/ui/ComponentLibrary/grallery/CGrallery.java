@@ -330,9 +330,7 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
 
     //轮询到资源存在了
     @Override
-    public void SourceExist(Object data) {
-        final String filePath = (String) data;
-        //资源存在
+    public void sourceExist(String filePath) {  //资源存在
         sendGralleryAdapter(filePath);
     }
 

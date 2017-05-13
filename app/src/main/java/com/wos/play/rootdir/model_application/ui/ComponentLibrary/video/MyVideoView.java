@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -52,6 +53,8 @@ public class MyVideoView extends SurfaceView implements MediaController.MediaPla
      * 是不是销毁了
      */
     private boolean isDestroy = false;
+
+
     /**
      *  setMyLayout 设置布局
      *  loadRouce 设置文件路径
@@ -609,6 +612,7 @@ public class MyVideoView extends SurfaceView implements MediaController.MediaPla
         //创建时候
         public void surfaceCreated(SurfaceHolder holder) {
             Logs.d(TAG,"surfaceCreated() - "+holder);
+            isDestroy = false;
             mSurfaceHolder = holder; //设置 表层视图持有者
             openVideo(); //打开播放器
         }

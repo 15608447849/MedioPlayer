@@ -20,10 +20,10 @@ import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
  * Created by user on 2016/12/2.
  */
 
-public class PDFShowListAdpter extends BaseAdapter{
+public class PDFShowListAdapter extends BaseAdapter{
     private Context context;
 
-    public PDFShowListAdpter(Context context) {
+    public PDFShowListAdapter(Context context) {
         this.context = context;
     }
 

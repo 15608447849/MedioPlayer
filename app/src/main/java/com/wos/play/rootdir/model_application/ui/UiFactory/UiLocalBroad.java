@@ -6,6 +6,8 @@ import android.content.Intent;
 
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.IAdvancedComponent;
 
+import io.vov.vitamio.utils.Log;
+
 /**
  * Created by user on 2016/11/19.
  * 局部刷新控件可用
@@ -13,18 +15,19 @@ import com.wos.play.rootdir.model_application.ui.UiInterfaces.IAdvancedComponent
 
 public class UiLocalBroad extends BroadcastReceiver{
     private String action = null;
-    private IAdvancedComponent loaclComponent;
+    private IAdvancedComponent localComponent;
+    private static final String TAG = UiLocalBroad.class.getSimpleName();
 
-
-    public UiLocalBroad(String action, IAdvancedComponent loaclComponent) {
+    public UiLocalBroad(String action, IAdvancedComponent localComponent) {
         this.action = action;
-        this.loaclComponent = loaclComponent;
+        this.localComponent = localComponent;
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (loaclComponent!=null){
-            loaclComponent.broadCall();
+        Log.d(TAG,action);
+        if (localComponent != null){
+            localComponent.broadCall();
         }
     }
 }

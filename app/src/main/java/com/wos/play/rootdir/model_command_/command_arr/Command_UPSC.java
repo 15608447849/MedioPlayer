@@ -333,7 +333,7 @@ public class Command_UPSC implements iCommand {
 
     // 解析内容url - 返回值
     private void parseResult(String res, String type) {
-        if (type.equals(CONTENT_TYPE.gallary)) {
+        if (type.equals(CONTENT_TYPE.gallary) || type.equals(CONTENT_TYPE.news)) {
             GallaryBean gallaryBean = AppsTools.parseJsonWithGson(res, GallaryBean.class);
             if (gallaryBean != null) {
                 parseContentGallarys(gallaryBean);

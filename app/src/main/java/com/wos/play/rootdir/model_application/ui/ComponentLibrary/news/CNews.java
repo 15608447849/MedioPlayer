@@ -25,6 +25,9 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
+
 /**
  * Created by user on 2016/12/1.
  * 资讯 维护一个 listview
@@ -50,12 +53,12 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
     private boolean isLayout;
     private boolean isRegestBroad = false; //是否注册广播
     //资源轮询线程
-    private LoopLocalSourceThread loopSoureceThread;
+    private LoopLocalSourceThread loopSourceThread;
 
 
     private CListView listView;
-    private ListViewAdpter adpter;
-    private CshowLayout showLayout;
+    private ListViewAdapter adapter;
+    private CShowLayout showLayout;
 
     public CNews(Context context, AbsoluteLayout layout, ComponentsBean component) {
         super(context);
@@ -124,7 +127,7 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
         String key = UiTools.getUrlTanslationFilename(data.getUrl());
         if (UiTools.fileIsExt(key)) {
             //资源存在 - 生成dataBean对象
-            sendListAdapter(NewsDataBeans.generteDataSource(
+            sendListAdapter(NewsDataBeans.generateDataSource(
                     data.getFormat(),
                     data.getTitle(),
                     data.getCreatedBy(),
@@ -133,7 +136,7 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
                     data.getUrls() == null ? null : data.getUrls().split(",")));
         } else {
             //资源不存在 1 存资源 2 开始轮询线程
-            sendListAdapter(NewsDataBeans.generteDataSource(
+            sendLoopThread(NewsDataBeans.generateDataSource(
                     data.getFormat(),
                     data.getTitle(),
                     data.getCreatedBy(),
@@ -145,26 +148,32 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
 
     //有效数据源加入 适配器
     private void sendListAdapter(NewsDataBeans newsDataBeans) {
-        if (adpter == null) {
+        if (adapter == null) {
             return;
         }
-        adpter.addUdataBean(newsDataBeans);
+        adapter.addUDataBean(newsDataBeans);
     }
 
     //无效数据源-送入轮询机制
     private void sendLoopThread(NewsDataBeans newsDataBeans) {
-        if (adpter == null) {
+        if (adapter == null) {
             return;
         }
-        adpter.addNdataBean(newsDataBeans);
+        adapter.addNDataBean(newsDataBeans);
         //开轮询线程
-//      ... 未实现
+        if (loopSourceThread == null) {
+            //开启轮询线程 访问本地资源 添加到图集
+            loopSourceThread = new LoopLocalSourceThread(this);
+            loopSourceThread.startLoop();
+            loopSourceThread.start();
+        }
+        loopSourceThread.addLoopSource(newsDataBeans.getFilePath());
     }
 
     //初始化 组件
     @Override
     public void initSubComponet() {
-        showLayout = new CshowLayout(context, this, new OnClickListener() {
+        showLayout = new CShowLayout(context, this, new OnClickListener() {
             @Override
             public void onClick(View v) {
                 //结束图层上面的内容
@@ -173,9 +182,9 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
                 listView.setVisibility(View.VISIBLE);
             }
         });
-        adpter = new ListViewAdpter(context);
+        adapter = new ListViewAdapter(context);
         listView = new CListView(context);
-        listView.init(this, adpter, new AdapterView.OnItemClickListener() {
+        listView.init(this, adapter, new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //点击list 子项
@@ -190,7 +199,7 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
 
     //弹出 放大的 视图层
     private boolean showShowLayout(int position) {
-        NewsDataBeans data = adpter.getUdata(position);
+        NewsDataBeans data = adapter.getUData(position);
         if (data==null) return false;
         if (showLayout.getRootView().getVisibility() == View.GONE) {
             showLayout.getRootView().setVisibility(View.VISIBLE);
@@ -202,7 +211,6 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
     //隐藏放大的视图层
     private void hindShowLayout() {
         if (showLayout.getRootView().getVisibility() == View.VISIBLE) {
-//            showLayout.destoryData();
             showLayout.getRootView().setVisibility(View.GONE);
         }
     }
@@ -255,11 +263,10 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
             cancelBroad();//取消广播
             unLayouted();
             unLoadContent();
-//            if (loopSoureceThread != null) {
-//                loopSoureceThread.stopLoop();
-//                loopSoureceThread = null;
-//            }
-
+            if (loopSourceThread != null) {
+                loopSourceThread.stopLoop();
+                loopSourceThread = null;
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -267,13 +274,18 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
 
     //循环线程资源存在回传
     @Override
-    public void SourceExist(Object data) {
-        //未实现
+    public void sourceExist(final String filePath) {
+        AndroidSchedulers.mainThread().createWorker().schedule(new Action0() {
+            @Override
+            public void call() {
+                NewsDataBeans newsDataBeans = adapter.getNta(filePath);
+                if(newsDataBeans!=null){
+                    sendListAdapter(newsDataBeans);
+                }
+            }
+        });
+
     }
-
-
-
-
 
     //创建广播
     @Override
