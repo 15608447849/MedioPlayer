@@ -60,7 +60,6 @@ public class ICommand_TimeParse {
     }
 
     public Timer parse(String param, TimerTask task) {
-
          long times = parse(param);
             if (task!=null && times!=-1){
                 return getTimes(task,times);
@@ -75,7 +74,8 @@ public class ICommand_TimeParse {
         if (timeparam!=null){
             HashMap<String,String> map = new HashMap<>();
 
-          String date =  timeparam[timeparam.length-1];
+            String date =  timeparam[timeparam.length-1]; //6-15:02:00
+            String date1 = date.substring(date.indexOf("-")+1);//15:02:00
             if (date.contains("&")){
                 String arr[] = date.split("&");
                 map.put(TKEY.WEEK_6,splics_time(arr[0]));
@@ -83,7 +83,7 @@ public class ICommand_TimeParse {
                 map.put(TKEY.DATE_START,arr[0]);
                 map.put(TKEY.DATE_END,arr[1]);
             }else{
-                map.put(TKEY.WEEK_6,date);
+                map.put(TKEY.WEEK_6,date1);
             }
             for (int i = 0;i<timeparam.length-1;i++){
                 map.put(TKEY.WEEK+i,splics_time(timeparam[i]));
@@ -145,6 +145,8 @@ public class ICommand_TimeParse {
         }
         else{
             //计算到明天的差值
+            String a = TimeOperator.getTodayGotoDays(1);
+            String b = TKEY.WEEK+((++todays )>=7?(0):todays);
             str = TimeOperator.getTodayGotoDays(1)+" "+map.get(TKEY.WEEK+( (++todays )>=7?(0):todays ));
         }
         time = TimeOperator.getMillis(todayStr,str);
@@ -159,6 +161,7 @@ public class ICommand_TimeParse {
         Logs.d("定时器","时间 - "+times);
         Timer timer = new Timer();
         timer.schedule(task,times);
+        Logs.d("定时器","时间 - "+timer);
       return timer;
     }
 

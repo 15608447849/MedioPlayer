@@ -1,9 +1,16 @@
 package com.wos.play.rootdir.model_command_.command_arr;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 
+import com.wos.play.rootdir.model_application.baselayer.AppMessageBroad;
 import com.wos.play.rootdir.model_application.baselayer.SystemInfos;
 import com.wos.play.rootdir.model_application.schedule.TimeOperator;
 import com.wos.play.rootdir.model_command_.kernel.iCommand;
@@ -11,6 +18,7 @@ import com.wos.play.rootdir.model_communication.CommuniReceiverMsgBroadCasd;
 import com.wos.play.rootdir.model_download.entity.TaskFactory;
 import com.wos.play.rootdir.model_download.kernel.DownloadBroad;
 import com.wos.play.rootdir.model_download.override_download_mode.Task;
+import com.wos.play.rootdir.model_universal.tool.CMD_INFO;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 
 import java.io.File;
@@ -18,6 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Handler;
 
 import cn.trinea.android.common.util.FileUtils;
 import cn.trinea.android.common.util.ShellUtils;
@@ -35,6 +44,7 @@ public class Command_SCRN implements iCommand,Command_SCRN_RtThread.RtThreadActi
     private Context context;
     private Timer timer = null ;
     private TimerTask timerTask = null;
+    private final Object mScreenshotLock = new Object();
     //定时截屏任务
     private TimerTask getTask(){
         return new TimerTask() {
@@ -88,6 +98,8 @@ public class Command_SCRN implements iCommand,Command_SCRN_RtThread.RtThreadActi
 
         if (param.contains("-") && param.contains(":")){ //定时截屏
             setScheduleTask(param);
+        } else if("false".equals(param)){//param=false时不做处理
+            return ;
         }else{
             //实时截屏 SCRN:0 - 结束 SCRN:6 每6秒 发送一张截屏
             //开启实时截屏线程
@@ -152,7 +164,24 @@ public class Command_SCRN implements iCommand,Command_SCRN_RtThread.RtThreadActi
         } catch (Exception e) {
             e.printStackTrace();
         }
+//        try {
+//
+//            Logs.d(TAG,"发送截屏指令");
+//            Intent i = new Intent();
+//            i.setAction(AppMessageBroad.ACTION);
+//            i.putExtra(AppMessageBroad.TYPE, AppMessageBroad.TYPE_SCRN);
+//            i.putExtra(AppMessageBroad.PARAM1, CMD_INFO.SCRN);
+//            i.putExtra(AppMessageBroad.PARAM2, savePath);
+//            context.sendBroadcast(i);
+//        } catch (Exception e) {
+//            Logs.e("截屏指令","========= 截屏指令 ===========");
+//            e.printStackTrace();
+//        }
+
     }
+
+
+
 
     //上传ftp服务器
     private void uploadFTP(String LocalFilePath,String remoteFilePath) {

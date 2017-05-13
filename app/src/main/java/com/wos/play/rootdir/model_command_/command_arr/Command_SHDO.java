@@ -21,7 +21,7 @@ public class Command_SHDO implements iCommand {
         return new TimerTask() {
             @Override
             public void run() {
-                closeTermail();
+                shutDown();
             }
         };
     }
@@ -29,7 +29,6 @@ public class Command_SHDO implements iCommand {
 
     @Override
     public void Execute(String param) {
-        
         if (param==null || param.equals("")){
             shutDown();
             return;
@@ -59,7 +58,7 @@ public class Command_SHDO implements iCommand {
         ShellUtils.execCommand("reboot -p",true,false);
     }
 
-    private void closeTermail() {
+   /* private void closeTermail() {
         //# echo  mem>/sys/power/state    使系统进行睡眠
         //# echo  on>/sys/power/state     使系统从睡眠中唤醒过来
         //休眠多久后关机
@@ -67,7 +66,8 @@ public class Command_SHDO implements iCommand {
 //        String commands =  "sleep "+time+" && echo mem>/sys/power/state";
 
         Logs.e("关机","========= 自动关闭 ===========");
-        String commands ="echo mem>/sys/power/state";
+//        String commands ="echo mem>/sys/power/state";
+        String commands ="reboot -p";
         ShellUtils.execCommand(commands,true,false);
-    }
+    }*/
 }
