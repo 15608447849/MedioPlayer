@@ -2,6 +2,9 @@ package com.wos.play.rootdir.model_application.ui.ComponentLibrary.epapers;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.view.View;
 import android.widget.AbsoluteLayout;
@@ -10,6 +13,7 @@ import android.widget.FrameLayout;
 
 import com.wos.play.rootdir.model_application.schedule.TimeOperator;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.IComponent;
+import com.wos.play.rootdir.model_application.ui.Uitools.ImageUtils;
 import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
 import com.wos.play.rootdir.model_application.viewlayer.EpaperActivity;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
@@ -41,6 +45,11 @@ public class CEpapersMain extends FrameLayout implements IComponent{
     private boolean isInitData = false;
     private boolean isLayout = false;
 
+    private int backgroundAlpha;
+    private String backgroundColor;
+    private  String bgImageUrl;
+    private Bitmap bgimage;
+
     public CEpapersMain(Context context, AbsoluteLayout layout, ComponentsBean component) {
         super(context);
         this.context = context;
@@ -60,6 +69,18 @@ public class CEpapersMain extends FrameLayout implements IComponent{
             this.x = (int)cb.getCoordX();
             this.y = (int)cb.getCoordY();
             layoutParams = new AbsoluteLayout.LayoutParams(width,height,x,y);
+
+            //--------背景-----------
+            this.backgroundAlpha = cb.getBackgroundAlpha();
+            if (cb.getBackgroundPic()!=null && !cb.getBackgroundPic().equals("")){
+                this.bgImageUrl = UiTools.getUrlTanslationFilename(cb.getBackgroundPic());
+                if (bgImageUrl==null){
+                    backgroundColor = cb.getBackgroundColor();
+                }
+            } else {
+                backgroundColor = cb.getBackgroundColor();
+            }
+
             if (cb.getContents()!=null && cb.getContents().size()>0){
                 createContent(cb.getContents().get(0));
             }
@@ -68,6 +89,18 @@ public class CEpapersMain extends FrameLayout implements IComponent{
             e.printStackTrace();
         }
     }
+
+    //加载背景
+    public void loadBg() {
+        if (UiTools.fileIsExt(bgImageUrl)){
+            //文件存在
+            bgimage = ImageUtils.getBitmap(bgImageUrl);
+        }
+        if (bgimage!=null){
+            this.setBackgroundDrawable(new BitmapDrawable(bgimage));
+        }
+    }
+
     //创建content
     @Override
     public void createContent(Object object) {
@@ -123,6 +156,14 @@ public class CEpapersMain extends FrameLayout implements IComponent{
     @Override
     public void setAttrbute() {
         this.setLayoutParams(layoutParams);
+
+        this.setAlpha(backgroundAlpha);
+        if (bgImageUrl==null){
+            //设置背景颜色
+            this.setBackgroundColor(Color.parseColor(UiTools.TanslateColor(backgroundColor)));
+        } else {
+            loadBg();
+        }
     }
     //设置布局
     @Override
