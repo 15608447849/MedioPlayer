@@ -45,6 +45,7 @@ public class DataObjsBean {
     private String selectType;
     private int typeId;
     private String updtimeStr;
+    private String imageUrl;
 
     public String getUrls() {
         return urls;
@@ -197,5 +198,13 @@ public class DataObjsBean {
 
     public void setUpdtimeStr(String updtimeStr) {
         this.updtimeStr = updtimeStr;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

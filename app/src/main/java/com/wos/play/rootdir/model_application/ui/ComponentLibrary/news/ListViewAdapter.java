@@ -76,13 +76,6 @@ public class ListViewAdapter extends BaseAdapter{
         return beans;
     }
 
-
-
-
-
-
-
-
     @Override
     public int getCount() {
         if (useDataBeans ==null || useDataBeans.size()==0){
@@ -119,7 +112,11 @@ public class ListViewAdapter extends BaseAdapter{
 
         //设置数据
         NewsDataBeans dataBeans = useDataBeans.get(position);
-        holder.getImageview().setImageBitmap(ImageUtils.getBitmap(dataBeans.getFilePath()));
+        //如果后台有给有缩略图
+        if (dataBeans.getThumPath() != null && !"".equals(dataBeans.getThumPath()))
+            holder.getImageview().setImageBitmap(ImageUtils.getBitmap(dataBeans.getThumPath()));
+        else
+            holder.getImageview().setImageBitmap(ImageUtils.getBitmap(dataBeans.getFilePath()));
         holder.getTitle().setText(dataBeans.getTitle());
         holder.getDate().setText(dataBeans.getDateStr());
         return convertView;

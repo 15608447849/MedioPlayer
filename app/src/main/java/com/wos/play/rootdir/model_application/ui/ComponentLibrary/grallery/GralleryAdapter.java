@@ -13,8 +13,12 @@ import android.widget.ImageView;
 import com.wos.play.rootdir.model_application.ui.ComponentLibrary.image.MeImageView;
 import com.wos.play.rootdir.model_application.ui.Uitools.ImageAsyLoad;
 import com.wos.play.rootdir.model_application.ui.Uitools.ImageUtils;
+import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
+import com.wos.play.rootdir.model_universal.jsonBeanArray.content_gallary.DataObjsBean;
+import com.wos.play.rootdir.model_universal.tool.Logs;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by user on 2016/11/18.
@@ -25,6 +29,9 @@ public class GralleryAdapter extends BaseAdapter {
 
     //文件名 下标
     private ArrayList<String> imageNameList = null;
+
+    //保存图集列表信息
+    private List<DataObjsBean> list = null;
     /**
      * bitmap list
      */
@@ -103,15 +110,24 @@ public class GralleryAdapter extends BaseAdapter {
             iv.setAdjustViewBounds(true);
             Gallery.LayoutParams params = new Gallery.LayoutParams(150, 150);
             iv.setLayoutParams(params);
-            iv. setScaleType(ImageView.ScaleType.FIT_XY);
+            iv.setScaleType(ImageView.ScaleType.FIT_XY);
             iv.setPadding(2,2,2,2);
             convertView = iv;
         }else{
             iv = (MeImageView) convertView;
         }
 
-        iv.setImageBitmap(ImageUtils.getBitmap(imageNameList.get(position)));
-        ImageAsyLoad.loadBitmap(imageNameList.get(position),iv);
+        //---------图集缩略图修改----------
+        String fileName = UiTools.getUrlTanslationFilename(list.get(position).getUrl());//图集文件
+        String thunName = UiTools.getUrlTanslationFilename(list.get(position).getImageUrl());//缩略图文件
+        iv.setImageBitmap(ImageUtils.getBitmap(fileName));
+        if (thunName != null && !"".equals(thunName))
+            ImageAsyLoad.loadBitmap(thunName,iv);
+        else
+            ImageAsyLoad.loadBitmap(fileName,iv);
+
+        /*iv.setImageBitmap(ImageUtils.getBitmap(imageNameList.get(position)));
+        ImageAsyLoad.loadBitmap(imageNameList.get(position),iv);*/
         if(selectItem==position){
             iv.setBackgroundColor(Color.BLACK);
         }
@@ -119,5 +135,13 @@ public class GralleryAdapter extends BaseAdapter {
             iv.setBackgroundColor(Color.WHITE);
         }
         return convertView;
+    }
+
+    /**
+     * 获取图集列表信息
+     * @param dataObjs
+     */
+    public void getDataObjsBean(List<DataObjsBean> dataObjs) {
+        list = dataObjs;
     }
 }

@@ -2,6 +2,9 @@ package com.wos.play.rootdir.model_application.ui.ComponentLibrary.news;
 
 import android.content.Context;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.view.View;
 import android.widget.AbsoluteLayout;
 import android.widget.AdapterView;
@@ -12,6 +15,7 @@ import com.wos.play.rootdir.model_application.ui.UiHttp.UiHttpProxy;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.IAdvancedComponent;
 import com.wos.play.rootdir.model_application.ui.UiThread.LoopLocalSourceThread;
 import com.wos.play.rootdir.model_application.ui.UiThread.LoopSuccessInterfaces;
+import com.wos.play.rootdir.model_application.ui.Uitools.ImageUtils;
 import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
@@ -60,6 +64,11 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
     private ListViewAdapter adapter;
     private CShowLayout showLayout;
 
+    private int backgroundAlpha;
+    private String backgroundColor;
+    private  String bgImageUrl;
+    private Bitmap bgimage;
+
     public CNews(Context context, AbsoluteLayout layout, ComponentsBean component) {
         super(context);
         this.context = context;
@@ -79,11 +88,42 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
         this.x = (int) cb.getCoordX();
         this.y = (int) cb.getCoordY();
         layoutParams = new AbsoluteLayout.LayoutParams(width, height, x, y);
+        this.backgroundAlpha = cb.getBackgroundAlpha();
+
+        //---------------背景-----------------
+        Logs.e(TAG, "BackgroundPic: --->>>" + cb.getBackgroundPic());
+        if (cb.getBackgroundPic()!=null && !cb.getBackgroundPic().equals("")){
+            this.bgImageUrl = UiTools.getUrlTanslationFilename(cb.getBackgroundPic());
+            if (bgImageUrl==null){
+                backgroundColor = cb.getBackgroundColor();
+            }
+        } else {
+            backgroundColor = cb.getBackgroundColor();
+        }
         initSubComponet();//初始化组件
         if (cb.getContents() != null && cb.getContents().size() == 1) {
             createContent(cb.getContents().get(0));
         }
         this.isInitData = true;
+    }
+
+    //加载背景
+    public void loadBg() {
+        if (UiTools.fileIsExt(bgImageUrl)){
+            //文件存在
+            bgimage = ImageUtils.getBitmap(bgImageUrl);
+        }
+        if (bgimage!=null){
+            this.setBackgroundDrawable(new BitmapDrawable(bgimage));
+        }
+    }
+
+    //不加载背景
+    public void unloadBg() {
+        if (bgimage!=null){
+            bgimage.recycle();
+            bgimage = null;
+        }
     }
 
     //创建内容
@@ -125,6 +165,7 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
     //分发数据
     private void handerData(DataObjsBean data) {
         String key = UiTools.getUrlTanslationFilename(data.getUrl());
+        String key1 = UiTools.getUrlTanslationFilename(data.getImageUrl());
         if (UiTools.fileIsExt(key)) {
             //资源存在 - 生成dataBean对象
             sendListAdapter(NewsDataBeans.generateDataSource(
@@ -133,6 +174,7 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
                     data.getCreatedBy(),
                     data.getUpdtimeStr(),
                     key,
+                    key1,
                     data.getUrls() == null ? null : data.getUrls().split(",")));
         } else {
             //资源不存在 1 存资源 2 开始轮询线程
@@ -142,6 +184,7 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
                     data.getCreatedBy(),
                     data.getUpdtimeStr(),
                     key,
+                    key1,
                     data.getUrls() == null ? null : data.getUrls().split(",")));
         }
     }
@@ -200,6 +243,7 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
     //弹出 放大的 视图层
     private boolean showShowLayout(int position) {
         NewsDataBeans data = adapter.getUData(position);
+        Logs.e(TAG, "CNews data:::::::::::" + showLayout.getRootView().getVisibility());
         if (data==null) return false;
         if (showLayout.getRootView().getVisibility() == View.GONE) {
             showLayout.getRootView().setVisibility(View.VISIBLE);
@@ -210,6 +254,7 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
 
     //隐藏放大的视图层
     private void hindShowLayout() {
+        Logs.e(TAG, "CNews:::::::::::" + showLayout.getRootView().getVisibility());
         if (showLayout.getRootView().getVisibility() == View.VISIBLE) {
             showLayout.getRootView().setVisibility(View.GONE);
         }
@@ -219,6 +264,14 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
     @Override
     public void setAttrbute() {
         this.setLayoutParams(layoutParams);
+
+        this.setAlpha(backgroundAlpha);
+        if (bgImageUrl==null){
+            //设置背景颜色
+            this.setBackgroundColor(Color.parseColor(UiTools.TanslateColor(backgroundColor)));
+        } else {
+            loadBg();
+        }
     }
 
     //加载布局

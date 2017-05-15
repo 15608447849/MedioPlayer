@@ -17,6 +17,8 @@ public class NewsDataBeans {
     private String editer;
     private String dateStr;
     private String filePath;
+    private String thumPath;//新增缩略图
+
 
     private String fileType;
     private String [] moreFileList;
@@ -70,10 +72,16 @@ public class NewsDataBeans {
         this.filePath = filePath;
     }
 
+    public String getThumPath() {
+        return thumPath;
+    }
 
+    public void setThumPath(String thumPath) {
+        this.thumPath = thumPath;
+    }
 
     //生成一个 数据源
-    public static NewsDataBeans generateDataSource(String fileType,String title,String editer,String createDate,String filePath,String [] moreFileList){
+    public static NewsDataBeans generateDataSource(String fileType,String title,String editer,String createDate,String filePath, String thumPath, String [] moreFileList){
 
         NewsDataBeans newsDataBeans = new NewsDataBeans();
         newsDataBeans.setFileType(fileType);
@@ -81,6 +89,8 @@ public class NewsDataBeans {
         newsDataBeans.setEditer(editer);
         newsDataBeans.setDateStr(createDate);
         newsDataBeans.setFilePath(filePath);
+        //新增缩略图
+        newsDataBeans.setThumPath(thumPath);
         if (newsDataBeans.getFileType().equals(FileType.PDF) || newsDataBeans.getFileType().equals(FileType.WORD)){
             if (moreFileList!=null){
                     for (int i=0;i<moreFileList.length;i++){

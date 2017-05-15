@@ -2,6 +2,9 @@ package com.wos.play.rootdir.model_application.ui.ComponentLibrary.grallery;
 
 import android.content.Context;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.AnimationUtils;
@@ -19,6 +22,7 @@ import com.wos.play.rootdir.model_application.ui.UiInterfaces.IAdvancedComponent
 import com.wos.play.rootdir.model_application.ui.UiThread.LoopLocalSourceThread;
 import com.wos.play.rootdir.model_application.ui.UiThread.LoopSuccessInterfaces;
 import com.wos.play.rootdir.model_application.ui.Uitools.ImageAsyLoad;
+import com.wos.play.rootdir.model_application.ui.Uitools.ImageUtils;
 import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
@@ -67,6 +71,11 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
     private ImagerSwitchFactory factory;//图片工厂 (停止使用请调用 stop)
     private GralleryAdapter adapter;
 
+    //private int backgroundAlpha;
+    private String backgroundColor;
+    private  String bgImageUrl;
+    private Bitmap bgimage;
+
 
     public CGrallery(Context context, AbsoluteLayout layout, ComponentsBean component) {
         super(context);
@@ -86,12 +95,36 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
         this.x = (int) cb.getCoordX();
         this.y = (int) cb.getCoordY();
         layoutParams = new AbsoluteLayout.LayoutParams(width, height, x, y);
+
+        //---------------背景-----------------
+        Logs.e(TAG, "BackgroundPic: --->>>" + cb.getBackgroundPic());
+        if (cb.getBackgroundPic()!=null && !cb.getBackgroundPic().equals("")){
+            this.bgImageUrl = UiTools.getUrlTanslationFilename(cb.getBackgroundPic());
+            if (bgImageUrl==null){
+                backgroundColor = cb.getBackgroundColor();
+            }
+        } else {
+            backgroundColor = cb.getBackgroundColor();
+        }
+
         initSubComponet();
         if (cb.getContents() != null && cb.getContents().size() == 1) {
             createContent(cb.getContents().get(0));
         }
         this.isInitData = true;
     }
+
+    //加载背景
+    public void loadBg() {
+        if (UiTools.fileIsExt(bgImageUrl)){
+            //文件存在
+            bgimage = ImageUtils.getBitmap(bgImageUrl);
+        }
+        if (bgimage!=null){
+            gallery.setBackgroundDrawable(new BitmapDrawable(bgimage));
+        }
+    }
+
     //创建内容
     @Override
     public void createContent(Object object) {
@@ -178,6 +211,15 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
         //设置适配器
         adapter = new GralleryAdapter(context);
         gallery.setAdapter(adapter);
+
+        //---------设置图集背景----------
+        if (bgImageUrl==null){
+            //设置背景颜色
+            gallery.setBackgroundColor(Color.parseColor(UiTools.TanslateColor(backgroundColor)));
+        } else {
+            loadBg();
+        }
+
         gallery.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -282,6 +324,9 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
                 GallaryBean gallaryBean = AppsTools.parseJsonWithGson(jsonContent, GallaryBean.class);
                 if (gallaryBean != null && gallaryBean.getDataObjs() != null && gallaryBean.getDataObjs().size() > 0) {
                     getImageFilename(gallaryBean.getDataObjs());
+
+                    //发送图集信息列表到适配器
+                    adapter.getDataObjsBean(gallaryBean.getDataObjs());
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -309,12 +354,12 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
 
     //发送资源到适配器
     private void sendGralleryAdapter(final String name) {
-            AndroidSchedulers.mainThread().createWorker().schedule(new Action0() {
-                @Override
-                public void call() {
-                    adapter.addBitmaps(name);
-                }
-            });
+        AndroidSchedulers.mainThread().createWorker().schedule(new Action0() {
+            @Override
+            public void call() {
+                adapter.addBitmaps(name);
+            }
+        });
     }
 
     //资源不存在发送给轮询线程

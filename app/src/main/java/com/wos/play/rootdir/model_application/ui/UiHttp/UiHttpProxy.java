@@ -154,6 +154,11 @@ public class UiHttpProxy{
             if (dataObjList!=null && dataObjList.size()>0) {
                 UrlList listObj = new UrlList();
                 for (DataObjsBean datas : dataObjList) {
+
+                    //------------图集资讯添加下载缩略图--------
+                    if (datas.getImageUrl() != null && !"".equals(datas.getImageUrl()))
+                        listObj.addTaskOnList(datas.getImageUrl());
+
                     listObj.addTaskOnList(datas.getUrl());
                     if (datas.getUrls() != null && !datas.getUrls().equals("")) {
                         //切割字符串
