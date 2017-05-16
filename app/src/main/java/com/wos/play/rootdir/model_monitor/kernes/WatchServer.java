@@ -55,7 +55,7 @@ public class WatchServer extends Service {
         startWatch();
         return START_NOT_STICKY;
     }
-    private static List<String> activityList = null;
+    public static List<String> activityList = null;
     static {
         activityList = new ArrayList<>();
         activityList.add("com.wos.play.rootdir.model_application.viewlayer.MainActivity");

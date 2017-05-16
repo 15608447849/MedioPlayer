@@ -26,9 +26,11 @@ import com.wos.play.rootdir.model_universal.tool.AppsTools;
 import com.wos.play.rootdir.model_universal.tool.CMD_INFO;
 import com.wos.play.rootdir.model_universal.tool.CONTENT_TYPE;
 import com.wos.play.rootdir.model_universal.tool.Logs;
+import com.wos.play.rootdir.model_universal.tool.MD5Util;
 import com.wos.play.rootdir.model_universal.tool.SdCardTools;
 import com.wos.play.rootdir.model_universal.tool.UnImpl;
 
+import java.io.File;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -48,12 +50,14 @@ public class Command_UPSC implements iCommand {
     private Intent intent;
     private Bundle bundle;
     private UrlList taskStore;
+    private String fileDirPath;
     public Command_UPSC(Context context) {
         this.context = context;
         bundle = new Bundle();
         intent = new Intent();
         basePath = SystemInfos.get().getBasepath();
         storageLimits = SystemInfos.get().getStorageLimits();
+        fileDirPath = SystemInfos.get().getJsonStore();
         taskStore = new UrlList();
     }
 
@@ -75,6 +79,10 @@ public class Command_UPSC implements iCommand {
             res = null;
             res = uriTransionString(param, null, null);
             if (res != null && !res.equals("") && !res.equals("[]")) {
+                if(check(res)) {
+                    Logs.i(TAG, "排期数据相同");
+                    return;
+                }
                 //保存json数据
                 ICommand_SORE_JsonDataStore.getInstent(context).clearJsonMap();
                 ICommand_SORE_JsonDataStore.getInstent(context).addEntity("main", param, false); //main 保存主文件的 文件名
@@ -92,6 +100,20 @@ public class Command_UPSC implements iCommand {
             lock.unlock();
         }
     }
+
+    private boolean check(String res) {
+        String entrance = SdCardTools.readerJsonToMemory(fileDirPath + "main");
+        if(entrance==null) return false;
+        entrance = MD5Util.getStringMD5(entrance);
+        String[] filenames = new File(fileDirPath).list();
+        for (String filename : filenames) {
+            if (filename.equals(entrance)) { //找到了 ->变成对
+                return res.equalsIgnoreCase(SdCardTools.readerJsonToMemory(fileDirPath, filename));
+            }
+        }
+        return false;
+    }
+
     //执行处
     private void mExcuteMother(List<ScheduleBean> list) {
 

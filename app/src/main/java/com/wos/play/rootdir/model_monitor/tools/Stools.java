@@ -4,6 +4,7 @@ import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.os.Environment;
+import android.util.Log;
 
 import com.wos.play.rootdir.model_universal.tool.Logs;
 
@@ -43,6 +44,7 @@ public class Stools {
 
     public static boolean isRunningForeground(Context c,List<String> activityList) {
         try {
+            long time = System.currentTimeMillis();
             ActivityManager am = (ActivityManager) c
                     .getSystemService(Context.ACTIVITY_SERVICE);
             ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
@@ -50,9 +52,11 @@ public class Stools {
             for (String activityClassName : activityList){
                 Logs.i("监听服务"," 获取 " +activityClassName +" - 当前 "+currentPackageName);
                 if (activityClassName.equals(currentPackageName)){
+                    Logs.e("活动层"+(System.currentTimeMillis() - time));
                     return true;
                 }
             }
+            Logs.e("活动层"+(System.currentTimeMillis() - time));
         } catch (SecurityException e) {
             e.printStackTrace();
         }

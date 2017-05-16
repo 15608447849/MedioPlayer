@@ -39,7 +39,7 @@ public class CommunicationServer extends Service {
     public void onCreate() {
         super.onCreate();
         Logs.e(TAG, "----------------------------------------onCreate() pid: " + android.os.Process.myPid());
-        registBroad();
+        registerBroad();
     }
 
 
@@ -66,7 +66,7 @@ public class CommunicationServer extends Service {
         super.onDestroy();
         Logs.e(TAG, "----------------------------------------onDestroy()");
         stopHeartbeat();
-        unregistBroad();
+        unregisterBroad();
     }
 
     /**
@@ -74,14 +74,14 @@ public class CommunicationServer extends Service {
      * 如果已经配置了服务器信息
      * 发送上线指令
      */
-    private void initparam() {//String otherPackage
-        boolean isconfig = SystemInfos.get().isConfig();
-        Logs.e(TAG, " 服务器信息 配置完成 -> " + isconfig);
-        if (isconfig) {
+    private void initParam() {//String otherPackage
+        boolean isConfig = SystemInfos.get().isConfig();
+        Logs.e(TAG, " 服务器信息 配置完成 -> " + isConfig);
+        if (isConfig) {
             // 已设置过服务器信息
-                initData();
-                sendONLI(makeOnlineUri());//上线 -> 延时上线
-//              startLoopHeartbeat();//开始心跳 -> 改变开始位置 在收到上线信息之后 发送心跳
+            initData();
+            sendONLI(makeOnlineUri());//上线 -> 延时上线
+            //startLoopHeartbeat();//开始心跳 -> 改变开始位置 在收到上线信息之后 发送心跳
         }
     }
 
@@ -105,7 +105,7 @@ public class CommunicationServer extends Service {
     /**
      * 停止广播 destory call
      */
-    private void unregistBroad() {
+    private void unregisterBroad() {
         if (appReceive != null) {
             try {
                 getApplicationContext().unregisterReceiver(appReceive);
@@ -119,8 +119,8 @@ public class CommunicationServer extends Service {
     /**
      * 注册广播  create call
      */
-    private void registBroad() {
-        unregistBroad();
+    private void registerBroad() {
+        unregisterBroad();
         appReceive = new CommuniReceiverMsgBroadCasd(this);
         IntentFilter filter = new IntentFilter();
         filter.addAction(CommuniReceiverMsgBroadCasd.ACTION);
@@ -207,7 +207,7 @@ public class CommunicationServer extends Service {
     /**
      * 终端可以上线
      */
-    private void sendTerminaOnline() {
+    private void sendTerminalOnline() {
         if (layeThread!=null){
             layeThread = null;
         }
@@ -220,7 +220,7 @@ public class CommunicationServer extends Service {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                initparam();
+                initParam();
                 layeThread = null;
             }
         });

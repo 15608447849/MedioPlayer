@@ -98,14 +98,14 @@ public class PagesFragments extends Fragment{
     @Override
     public void onResume() {
         super.onResume();
-//        Logs.i(TAG,"碎片 - -onResume()");
+        Logs.i(TAG,"碎片 - -onResume()");
         exeComponents(); //执行组件
     }
 
     @Override
     public void onPause() {
         super.onPause();
-//        Logs.i(TAG,"碎片 - -onPause()");
+        Logs.i(TAG,"碎片 - -onPause()");
         unexeComponents(); // 结束执行组件
     }
 

@@ -74,7 +74,7 @@ public class CommandPostServer extends Service implements iCommand{
             //开启终端
             commandList.put(CMD_INFO.OPEN, new Command_OPEN());
             //重启终端
-            commandList.put(CMD_INFO.REBO, new ICommand_REBO());
+            commandList.put(CMD_INFO.REBO, new ICommand_REBO(getApplicationContext()));
             //截屏 - 定时和实时
             commandList.put(CMD_INFO.SCRN,new Command_SCRN(getApplicationContext()));
             //更新apk

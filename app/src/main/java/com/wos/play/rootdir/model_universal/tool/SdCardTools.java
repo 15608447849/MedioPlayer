@@ -539,7 +539,6 @@ public class SdCardTools {
                } catch (IOException e) {
                    e.printStackTrace();
                }
-               inStream = null;
            }
        }
        return content;

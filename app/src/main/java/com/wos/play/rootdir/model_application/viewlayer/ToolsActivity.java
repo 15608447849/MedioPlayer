@@ -84,7 +84,7 @@ public class ToolsActivity extends BaseActivity {
             ButterKnife.bind(this);
             //初始化控件信息
             initViewValue();
-            registBroad(1);//注册服务消息广播
+            registerBroad(1);//注册服务消息广播
             isBind = true;
         }
     }
@@ -94,7 +94,7 @@ public class ToolsActivity extends BaseActivity {
         super.onDestroy();
         if (isBind){
             ButterKnife.unbind(this);
-            unregistBroad();
+            unregisterBroad();
         }
     }
 
@@ -288,7 +288,7 @@ public class ToolsActivity extends BaseActivity {
         if (SystemInfos.get().isConfig()){
             // 已设置过服务器信息
             //发送上线指令
-//          sendMsgCommServer("sendTerminaOnline", null);
+//          sendMsgCommServer("sendTerminalOnline", null);
             startMain(true);
             this.stopActivityOnArr(this);
             return false;

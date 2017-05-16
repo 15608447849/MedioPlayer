@@ -166,7 +166,7 @@ public class BaseActivity extends Activity {
     /**
      * 停止广播 destory call
      */
-    protected void unregistBroad() {
+    protected void unregisterBroad() {
         if (appReceive != null) {
             try {
                 getApplicationContext().unregisterReceiver(appReceive);
@@ -182,8 +182,8 @@ public class BaseActivity extends Activity {
     /**
      * @param type 1 msg  2schedule
      */
-    protected void registBroad(int type) {
-        unregistBroad();
+    protected void registerBroad(int type) {
+        unregisterBroad();
         if (type == 1) {
             appReceive = new AppMessageBroad(this);
             IntentFilter filter = new IntentFilter();
@@ -196,13 +196,17 @@ public class BaseActivity extends Activity {
 
     /**发送消息 到通讯服务 (如果要接受消息 -请打开 接受消息通知 -回调方法 :receiveService)*/
     protected void sendMsgCommServer(String methodsName, String methodsParam) {
-        Intent intent = new Intent();
-        Bundle bundle = new Bundle();
-        intent.setAction(CommuniReceiverMsgBroadCasd.ACTION);
-        bundle.putString(CommuniReceiverMsgBroadCasd.PARAM1, methodsName);
-        bundle.putString(CommuniReceiverMsgBroadCasd.PARAM2, methodsParam);
-        intent.putExtras(bundle);
-        getApplication().sendBroadcast(intent);
+        try{
+            Intent intent = new Intent();
+            Bundle bundle = new Bundle();
+            intent.setAction(CommuniReceiverMsgBroadCasd.ACTION);
+            bundle.putString(CommuniReceiverMsgBroadCasd.PARAM1, methodsName);
+            bundle.putString(CommuniReceiverMsgBroadCasd.PARAM2, methodsParam);
+            intent.putExtras(bundle);
+            getApplication().sendBroadcast(intent);
+        }catch (Exception e){
+
+        }
 //        Logs.d(TAG,"-" + methodsName+" - "+methodsParam);
     }
 

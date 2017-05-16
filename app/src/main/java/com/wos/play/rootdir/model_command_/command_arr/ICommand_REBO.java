@@ -1,9 +1,19 @@
 package com.wos.play.rootdir.model_command_.command_arr;
 
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+
+import com.wos.play.rootdir.model_application.baselayer.SystemInfos;
+import com.wos.play.rootdir.model_application.viewlayer.MainActivity;
 import com.wos.play.rootdir.model_command_.kernel.iCommand;
+import com.wos.play.rootdir.model_communication.CommuniReceiverMsgBroadCasd;
+import com.wos.play.rootdir.model_communication.CommunicationServer;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 
 import cn.trinea.android.common.util.ShellUtils;
+
+import static com.wos.play.rootdir.model_universal.tool.AppsTools.uriTransionString;
 
 /**
  * Created by user on2017/1/10.
@@ -11,6 +21,11 @@ import cn.trinea.android.common.util.ShellUtils;
  */
 
 public class ICommand_REBO implements iCommand {
+    private Context context;
+
+    public ICommand_REBO(Context context) {
+        this.context = context;
+    }
 
     @Override
     public void Execute(String param) {
@@ -21,7 +36,18 @@ public class ICommand_REBO implements iCommand {
 
     //重启
     private void reBoot() {
-        Logs.e("重启","========= 重启终端 ===========");
-        ShellUtils.execCommand("reboot",true,false);
+        Logs.i("重启","========= 重启终端 ===========");
+        try{ // 发送下线指令  "http://" + ip + ":" + port + "/terminal/heartBeat?cmd=" + param;
+            StringBuilder url = new StringBuilder();
+            url.append("http://").append(SystemInfos.get().getServerip()).append(":")
+            .append(SystemInfos.get().getServerport()).append("/terminal/heartBeat?cmd=")
+            .append("OFLI:").append(SystemInfos.get().getTerminalNo());
+            uriTransionString(new String(url), null, null);
+        }catch (Exception e){
+            Logs.e("重启","========= 发送下线指令异常 ===========");
+        }finally {
+            ShellUtils.execCommand("reboot",true,false);
+        }
+
     }
 }
