@@ -167,6 +167,23 @@ public class AppsTools {
     }
 
     /**
+     * 获取软件版本号
+     *
+     * @return
+     */
+    public static String getLocalVersionName(Context context) {
+        String versionCode = "1.0.0";
+        try {
+            // 获取软件版本号
+            versionCode = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return versionCode;
+    }
+
+
+    /**
      * 获取屏幕宽,高
      */
     public static int[] getScreenSize(Context context) {

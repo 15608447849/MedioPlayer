@@ -130,6 +130,7 @@ public class UpdateServer extends IntentService {
     public String getDates() {
         Map<String, String> map = new HashMap<>();
         map.put("downId", DOWN_ID);
+        map.put("code", AppsTools.getLocalVersionName(getApplicationContext()));
         map.put("version", String.valueOf(AppsTools.getLocalVersionCode(getApplicationContext())));
         map.put("number", SystemInfos.get().getTerminalNo());
         Logs.e("map:" + map.toString());
