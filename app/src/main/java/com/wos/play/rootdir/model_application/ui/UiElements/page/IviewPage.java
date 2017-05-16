@@ -129,10 +129,10 @@ public class IviewPage extends FrameLayout implements Iview {
     /**
      * 创建 fragment
      */
-    private void creatFragment(boolean isBgColor){
+    private void createFragment(boolean isBgColor){
 
         if (mFragment == null){
-            Logs.i(TAG,"creatFragment()");
+            Logs.i(TAG,"createFragment()");
             mFragment = new PagesFragments(width,height,x,y,
                     isBgColor,isBgColor?backGroundColor:backGroundImage,  //是否是背景颜色
                     page.getComponents());
@@ -143,9 +143,9 @@ public class IviewPage extends FrameLayout implements Iview {
         if (page.getComponents()!=null && page.getComponents().size()>0){
             Logs.i(TAG,"loadFragment()");
             //创建 fragments
-            creatFragment(true);
+            createFragment(true);
             // 用 activity fragment 管理器  替换 view -> fragment
-            activity.repleaceViewToFragment(this,mFragment);
+            activity.replaceViewToFragment(this,mFragment);
         }
     }
 

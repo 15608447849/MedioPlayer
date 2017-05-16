@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.wos.play.rootdir.R;
+import com.wos.play.rootdir.model_application.ui.Uitools.BaseHolder;
 import com.wos.play.rootdir.model_application.ui.Uitools.ImageUtils;
 import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
 
@@ -22,11 +23,11 @@ import java.util.Comparator;
  * Created by user on 2017/1/4.
  * 网格布局适配器
  */
-public class MgridAdptes extends BaseAdapter {
+public class MGridAdapter extends BaseAdapter {
 
     private Context context;
 
-    public MgridAdptes(Context context) {
+    public MGridAdapter(Context context) {
         this.context = context;
     }
 
@@ -80,18 +81,14 @@ public class MgridAdptes extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder = null;
         if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.mgridview_item_layout, null);
-            holder = new ViewHolder();
-            holder.content = (TextView) convertView.findViewById(R.id.mgrid_grid_item_text);
-            holder.epaper_item_image = (ImageView) convertView.findViewById(R.id.epaper_item_image);
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
+            convertView = LayoutInflater.from(context).inflate(
+                    R.layout.mgridview_item_layout, parent, false);
         }
-        holder.content.setText(getItemFileName(position));
-        holder.epaper_item_image.setImageBitmap(getBitmapByPosition(position));
+        TextView tv = BaseHolder.get(convertView, R.id.mgrid_grid_item_text);
+        ImageView iv = BaseHolder.get(convertView, R.id.epaper_item_image);
+        tv.setText(getItemFileName(position));
+        iv.setImageBitmap(getBitmapByPosition(position));
         return convertView;
     }
 
@@ -117,11 +114,5 @@ public class MgridAdptes extends BaseAdapter {
             }
         }
         return ImageUtils.getBitmap(filePath);
-    }
-
-    //视图持有者
-    private class ViewHolder {
-        ImageView epaper_item_image;//第一张缩略图
-        TextView content; //内容 - 文件的文件名
     }
 }

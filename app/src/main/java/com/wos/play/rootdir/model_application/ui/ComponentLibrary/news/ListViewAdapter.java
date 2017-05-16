@@ -113,8 +113,8 @@ public class ListViewAdapter extends BaseAdapter{
         //设置数据
         NewsDataBeans dataBeans = useDataBeans.get(position);
         //如果后台有给有缩略图
-        if (dataBeans.getThumPath() != null && !"".equals(dataBeans.getThumPath()))
-            holder.getImageview().setImageBitmap(ImageUtils.getBitmap(dataBeans.getThumPath()));
+        if (dataBeans.getThumbPath() != null && !"".equals(dataBeans.getThumbPath()))
+            holder.getImageview().setImageBitmap(ImageUtils.getBitmap(dataBeans.getThumbPath()));
         else
             holder.getImageview().setImageBitmap(ImageUtils.getBitmap(dataBeans.getFilePath()));
         holder.getTitle().setText(dataBeans.getTitle());

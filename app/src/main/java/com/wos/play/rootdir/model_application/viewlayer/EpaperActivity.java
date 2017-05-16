@@ -33,15 +33,9 @@ public class EpaperActivity extends BaseActivity implements View.OnClickListener
     private ArrayList<String> sourceList;
     private ArrayList<String> sourceNameList;
     private SubsamplingScaleImageView imageView;
-
-    private ImageButton epaper_imageButton_back;//返回
-    private ImageButton epaper_imageButton_previous;//上一页
-    private ImageButton epaper_imageButton_next;//下一页
     private static int index = 0;//第几页
     private boolean isLoading = true;//本次加载是否完成
     private boolean lastClickTypeIsRight = true;//最近一次点击方向(上一次，下一次,默认是下一次(右))
-
-    private ImageButton epaper_imageButton_pages;//显示页数
     private ListView epaper_page_listView;//页数
     private boolean showPage = true;
 
@@ -151,22 +145,22 @@ public class EpaperActivity extends BaseActivity implements View.OnClickListener
         imageView = (SubsamplingScaleImageView) findViewById(R.id.imageView);
         imageState();
 
-        epaper_imageButton_pages = (ImageButton) findViewById(R.id.epaper_image_button_pages);
-        epaper_imageButton_back = (ImageButton) findViewById(R.id.epaper_imageButton_back);
-        epaper_imageButton_previous = (ImageButton) findViewById(R.id.epaper_imageButton_previous);
-        epaper_imageButton_next = (ImageButton) findViewById(R.id.epaper_imageButton_next);
+        ImageButton btnPage = (ImageButton) findViewById(R.id.epaper_image_button_pages);
+        ImageButton btnBack = (ImageButton) findViewById(R.id.epaper_imageButton_back);
+        ImageButton btnPrev = (ImageButton) findViewById(R.id.epaper_imageButton_previous);
+        ImageButton btnNext = (ImageButton) findViewById(R.id.epaper_imageButton_next);
 
         //设置透明度
-        epaper_imageButton_back.setBackgroundColor(Color.TRANSPARENT);
-        epaper_imageButton_previous.setBackgroundColor(Color.TRANSPARENT);
-        epaper_imageButton_next.setBackgroundColor(Color.TRANSPARENT);
-        epaper_imageButton_pages.setBackgroundColor(Color.TRANSPARENT);
+        btnPage.setBackgroundColor(Color.TRANSPARENT);
+        btnBack.setBackgroundColor(Color.TRANSPARENT);
+        btnPrev.setBackgroundColor(Color.TRANSPARENT);
+        btnNext.setBackgroundColor(Color.TRANSPARENT);
 
         //设置监听器
-        epaper_imageButton_next.setOnClickListener(this);
-        epaper_imageButton_back.setOnClickListener(this);
-        epaper_imageButton_previous.setOnClickListener(this);
-        epaper_imageButton_pages.setOnClickListener(this);
+        btnPage.setOnClickListener(this);
+        btnBack.setOnClickListener(this);
+        btnPrev.setOnClickListener(this);
+        btnNext.setOnClickListener(this);
     }
 
     /**

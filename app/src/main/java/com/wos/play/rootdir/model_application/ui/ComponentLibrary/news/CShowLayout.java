@@ -73,7 +73,7 @@ public class CShowLayout {
         }
         //设置标题
         title.setText(data.getTitle());
-        subtitle.setText("作者 : " + data.getEditer() + "  日期 : " + data.getDateStr());
+        subtitle.setText("作者 : " + data.getEditor() + "  日期 : " + data.getDateStr());
         if (AppsTools.isMp4Suffix(data.getFilePath())) {
             //shi mp4
             imageList.setVisibility(GONE);

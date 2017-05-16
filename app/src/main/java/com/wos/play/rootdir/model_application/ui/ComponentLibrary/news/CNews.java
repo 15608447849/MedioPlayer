@@ -9,11 +9,10 @@ import android.view.View;
 import android.widget.AbsoluteLayout;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
-
 import com.wos.play.rootdir.model_application.ui.UiFactory.UiLocalBroad;
 import com.wos.play.rootdir.model_application.ui.UiHttp.UiHttpProxy;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.IAdvancedComponent;
-import com.wos.play.rootdir.model_application.ui.UiThread.LoopLocalSourceThread;
+import com.wos.play.rootdir.model_application.ui.UiThread.LoopMonitorFiles;
 import com.wos.play.rootdir.model_application.ui.UiThread.LoopSuccessInterfaces;
 import com.wos.play.rootdir.model_application.ui.Uitools.ImageUtils;
 import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
@@ -56,9 +55,6 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
     private boolean isInitData;
     private boolean isLayout;
     private boolean isRegestBroad = false; //是否注册广播
-    //资源轮询线程
-    private LoopLocalSourceThread loopSourceThread;
-
 
     private CListView listView;
     private ListViewAdapter adapter;
@@ -156,17 +152,18 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
     }
 
     //添加数据源
-    private void addDataSource(List<DataObjsBean> dataObjs) {
-        for (DataObjsBean data : dataObjs) {
-            handerData(data);
+    private void addDataSource(List<DataObjsBean> list) {
+        for (DataObjsBean data : list) {
+            handlerData(data);
         }
     }
 
     //分发数据
-    private void handerData(DataObjsBean data) {
+    private void handlerData(DataObjsBean data) {
         String key = UiTools.getUrlTanslationFilename(data.getUrl());
         String key1 = UiTools.getUrlTanslationFilename(data.getImageUrl());
-        if (UiTools.fileIsExt(key)) {
+        // 没有缩略图 或有缩略图且存在文件
+        if (UiTools.fileIsExt(key) &&  (key1!= null == UiTools.fileIsExt(key1))) {
             //资源存在 - 生成dataBean对象
             sendListAdapter(NewsDataBeans.generateDataSource(
                     data.getFormat(),
@@ -204,13 +201,14 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
         }
         adapter.addNDataBean(newsDataBeans);
         //开轮询线程
-        if (loopSourceThread == null) {
-            //开启轮询线程 访问本地资源 添加到图集
-            loopSourceThread = new LoopLocalSourceThread(this);
-            loopSourceThread.startLoop();
-            loopSourceThread.start();
+        String filePath = newsDataBeans.getFilePath();
+       if (filePath!=null && !UiTools.fileIsExt(filePath)){
+            LoopMonitorFiles.getInstance().addMonitorFile(this,filePath);
         }
-        loopSourceThread.addLoopSource(newsDataBeans.getFilePath());
+        String thumbPath = newsDataBeans.getThumbPath();
+        if (thumbPath!=null && !UiTools.fileIsExt(thumbPath)){
+            LoopMonitorFiles.getInstance().addMonitorFile(this,thumbPath);
+        }
     }
 
     //初始化 组件
@@ -316,10 +314,7 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
             cancelBroad();//取消广播
             unLayouted();
             unLoadContent();
-            if (loopSourceThread != null) {
-                loopSourceThread.stopLoop();
-                loopSourceThread = null;
-            }
+            LoopMonitorFiles.getInstance().clearMonitor(this);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -327,7 +322,7 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
 
     //循环线程资源存在回传
     @Override
-    public void sourceExist(final String filePath) {
+    public void sourceExist(final String filePath, boolean isFile) {
         AndroidSchedulers.mainThread().createWorker().schedule(new Action0() {
             @Override
             public void call() {

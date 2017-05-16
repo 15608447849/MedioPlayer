@@ -19,7 +19,7 @@ import com.wos.play.rootdir.model_application.ui.ComponentLibrary.video.MyVideoV
 import com.wos.play.rootdir.model_application.ui.UiFactory.UiLocalBroad;
 import com.wos.play.rootdir.model_application.ui.UiHttp.UiHttpProxy;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.IAdvancedComponent;
-import com.wos.play.rootdir.model_application.ui.UiThread.LoopLocalSourceThread;
+import com.wos.play.rootdir.model_application.ui.UiThread.LoopMonitorFiles;
 import com.wos.play.rootdir.model_application.ui.UiThread.LoopSuccessInterfaces;
 import com.wos.play.rootdir.model_application.ui.Uitools.ImageAsyLoad;
 import com.wos.play.rootdir.model_application.ui.Uitools.ImageUtils;
@@ -61,8 +61,6 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
     private boolean isInitData;
     private boolean isLayout;
     private boolean isRegestBroad = false; //是否注册广播
-    //资源轮询线程
-    private LoopLocalSourceThread loopSoureceThread;
 
     private MImageSwitcher ishow;
     private Gallery gallery;
@@ -303,10 +301,7 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
             cancelBroad();//取消广播
             unLayouted();
             unLoadContent();
-            if (loopSoureceThread != null) {
-                loopSoureceThread.stopLoop();
-                loopSoureceThread = null;
-            }
+            LoopMonitorFiles.getInstance().clearMonitor(this);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -364,18 +359,12 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
 
     //资源不存在发送给轮询线程
     private void sendLoopThread(String name) {
-        if (loopSoureceThread == null) {
-            //开启轮询线程 访问本地资源 添加到图集
-            loopSoureceThread = new LoopLocalSourceThread(this);
-            loopSoureceThread.startLoop();
-            loopSoureceThread.start();
-        }
-        loopSoureceThread.addLoopSource(name);
+        LoopMonitorFiles.getInstance().addMonitorFile(this,name);
     }
 
     //轮询到资源存在了
     @Override
-    public void sourceExist(String filePath) {  //资源存在
+    public void sourceExist(String filePath, boolean isFile) {  //资源存在
         sendGralleryAdapter(filePath);
     }
 

@@ -245,7 +245,7 @@ public class BaseActivity extends Activity {
     /**
      * 替换 一个 view -> fragment
      */
-    public void repleaceViewToFragment(ViewGroup view, Fragment fragment) {
+    public void replaceViewToFragment(ViewGroup view, Fragment fragment) {
         Logs.i(TAG, "- 替换 View To Fragment -  view id:[ " + view.getId() + " ] - fragment:[ " + fragment + " ]");
 
         fragmentTransaction = getFragmentTransaction();

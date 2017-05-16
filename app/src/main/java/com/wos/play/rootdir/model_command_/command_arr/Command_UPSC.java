@@ -378,15 +378,17 @@ public class Command_UPSC implements iCommand {
     /**
      * 内容下的url获取的数据集合
      *
-     * @param dataobj
+     * @param dataObj
      */
-    private void parseContentUrlData(DataObjsBean dataobj) {
-
-        taskStore.addTaskOnList(dataobj.getUrl());
-
-        if (dataobj.getUrls() != null && !dataobj.getUrls().equals("")) {
+    private void parseContentUrlData(DataObjsBean dataObj) {
+        taskStore.addTaskOnList(dataObj.getUrl());
+        // 添加缩略图下载
+        if(dataObj.getImageUrl()!=null && !dataObj.getImageUrl().equals("")){
+            taskStore.addTaskOnList(dataObj.getImageUrl());
+        }
+        if (dataObj.getUrls() != null && !dataObj.getUrls().equals("")) {
             //切割字符串
-            parseContentsUrisContent(dataobj.getUrls());
+            parseContentsUrisContent(dataObj.getUrls());
         }
     }
 

@@ -5,5 +5,5 @@ package com.wos.play.rootdir.model_application.ui.UiThread;
  */
 
 public interface LoopSuccessInterfaces {
-    void sourceExist(String data);
+    void sourceExist(String data, boolean isFile);
 }

@@ -14,12 +14,10 @@ public class NewsDataBeans {
         String WORD = "word";
     }
     private String title;
-    private String editer;
+    private String editor;
     private String dateStr;
     private String filePath;
-    private String thumPath;//新增缩略图
-
-
+    private String thumbPath;//新增缩略图
     private String fileType;
     private String [] moreFileList;
 
@@ -48,12 +46,12 @@ public class NewsDataBeans {
         this.title = title;
     }
 
-    public String getEditer() {
-        return editer;
+    public String getEditor() {
+        return editor;
     }
 
-    public void setEditer(String editer) {
-        this.editer = editer;
+    public void setEditor(String editor) {
+        this.editor = editor;
     }
 
     public String getDateStr() {
@@ -72,25 +70,25 @@ public class NewsDataBeans {
         this.filePath = filePath;
     }
 
-    public String getThumPath() {
-        return thumPath;
+    public String getThumbPath() {
+        return thumbPath;
     }
 
-    public void setThumPath(String thumPath) {
-        this.thumPath = thumPath;
+    public void setThumbPath(String thumbPath) {
+        this.thumbPath = thumbPath;
     }
 
     //生成一个 数据源
-    public static NewsDataBeans generateDataSource(String fileType,String title,String editer,String createDate,String filePath, String thumPath, String [] moreFileList){
+    public static NewsDataBeans generateDataSource(String fileType,String title,String editor,String createDate,String filePath, String thumbPath, String [] moreFileList){
 
         NewsDataBeans newsDataBeans = new NewsDataBeans();
         newsDataBeans.setFileType(fileType);
         newsDataBeans.setTitle(title);
-        newsDataBeans.setEditer(editer);
+        newsDataBeans.setEditor(editor);
         newsDataBeans.setDateStr(createDate);
         newsDataBeans.setFilePath(filePath);
         //新增缩略图
-        newsDataBeans.setThumPath(thumPath);
+        newsDataBeans.setThumbPath(thumbPath);
         if (newsDataBeans.getFileType().equals(FileType.PDF) || newsDataBeans.getFileType().equals(FileType.WORD)){
             if (moreFileList!=null){
                     for (int i=0;i<moreFileList.length;i++){
