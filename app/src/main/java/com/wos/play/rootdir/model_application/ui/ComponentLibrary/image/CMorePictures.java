@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.IComponent;
-import com.wos.play.rootdir.model_application.ui.UiInterfaces.Iview;
-import com.wos.play.rootdir.model_application.ui.UiInterfaces.MedioInterface;
+import com.wos.play.rootdir.model_application.ui.UiInterfaces.IView;
+import com.wos.play.rootdir.model_application.ui.UiInterfaces.MediaInterface;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
 
@@ -19,7 +19,7 @@ import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
  * 播放图片的组件 - 多图片播放
  *
  */
-public class CMorePictures extends FrameLayout implements IComponent,MedioInterface{
+public class CMorePictures extends FrameLayout implements IComponent,MediaInterface {
     private static final java.lang.String TAG = "CMorePictures";
     private int componentId;
     private int width;
@@ -56,14 +56,14 @@ public class CMorePictures extends FrameLayout implements IComponent,MedioInterf
         }
     }
     @Override
-    public void setAttrbute() {
+    public void setAttribute() {
 //        Logs.i(TAG,"- -setAttrbute()- -");
 //        this.setBackgroundColor(Color.BLUE);
         this.setLayoutParams(layoutParams);
         currentIndex=0;//当前下标
     }
     @Override
-    public void layouted() {
+    public void onLayouts() {
 //        Logs.i(TAG,"- -layouted()- - "+isLayout);
 //        Logs.i(TAG,"- --------------- - "+layout+"\n"+this);
         if (!isLayout){
@@ -72,7 +72,7 @@ public class CMorePictures extends FrameLayout implements IComponent,MedioInterf
         }
     }
     @Override
-    public void unLayouted() {
+    public void unLayouts() {
 //        Logs.i(TAG,"- -unLayouted()- - "+isLayout);
         if (isLayout){
             layout.removeView(this);
@@ -86,8 +86,8 @@ public class CMorePictures extends FrameLayout implements IComponent,MedioInterf
             if (!isInitData){
                 return;
             }
-            setAttrbute();
-            layouted();
+            setAttribute();
+            onLayouts();
             loadContent();
         } catch (Exception e) {
             e.printStackTrace();
@@ -99,7 +99,7 @@ public class CMorePictures extends FrameLayout implements IComponent,MedioInterf
 //        Logs.i(TAG,"stopWork()");
         try {
             unLoadContent();
-            unLayouted(); //移除布局
+            unLayouts(); //移除布局
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -107,11 +107,11 @@ public class CMorePictures extends FrameLayout implements IComponent,MedioInterf
 //--------------------图片 自定义控件 数组------------------------------//
     private ArrayList<CImageView> imageArr = null;
     //添加 图片组件
-    private void addImages(CImageView imageview){
+    private void addImages(CImageView imageView){
         if (imageArr==null){
             imageArr = new ArrayList<>();
         }
-        imageArr.add(imageview);
+        imageArr.add(imageView);
     }
     //创建 内容
     @Override
@@ -122,7 +122,7 @@ public class CMorePictures extends FrameLayout implements IComponent,MedioInterf
             //只有图片内容
             for (ContentsBean content : contents){
                 imageview = new CImageView(context,this,content);
-                imageview.setMedioInterface(this);
+                imageview.setMediaInterface(this);
                 addImages(imageview);
             }
             playNumber = imageArr.size();
@@ -134,7 +134,7 @@ public class CMorePictures extends FrameLayout implements IComponent,MedioInterf
     private int playNumber = 0;
     private int currentIndex = 0;//当前循环的下标
     private CImageView currentImageView= null; //当前播放的图片
-    private Handler hander = null;
+    private Handler handler = null;
     private final Runnable mTask = new Runnable() {
 
         @Override
@@ -146,14 +146,14 @@ public class CMorePictures extends FrameLayout implements IComponent,MedioInterf
     public void loadContent() {
 
         if (imageArr!=null && imageArr.size()>0){
-            if (hander==null){
-                hander = new Handler();
+            if (handler==null){
+                handler = new Handler();
             }
             unLoadContent();
             currentImageView =  imageArr.get(currentIndex);
             currentImageView.startWork();
 
-            hander.postDelayed(mTask, imageArr.get(currentIndex).getLength() * 1000);
+            handler.postDelayed(mTask, imageArr.get(currentIndex).getLength() * 1000);
             currentIndex++;
             if (currentIndex==imageArr.size()){
                 currentIndex = 0;
@@ -164,8 +164,8 @@ public class CMorePictures extends FrameLayout implements IComponent,MedioInterf
     @Override
     public void unLoadContent() {
 
-        if (hander!=null){
-            hander.removeCallbacks(mTask);
+        if (handler!=null){
+            handler.removeCallbacks(mTask);
         }
         if (currentImageView!=null){
             currentImageView.stopWork();
@@ -175,7 +175,7 @@ public class CMorePictures extends FrameLayout implements IComponent,MedioInterf
 
 
     @Override
-    public void playOver(Iview playView) {
+    public void playOver(IView playView) {
         //子组件 资源不存在 或者 子组件err -> 播放一个内容
         playNumber--;
         if (playNumber>0){

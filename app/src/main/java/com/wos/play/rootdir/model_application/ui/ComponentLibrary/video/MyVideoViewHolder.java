@@ -5,7 +5,7 @@ import android.media.MediaPlayer;
 import android.widget.FrameLayout;
 
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.IContentView;
-import com.wos.play.rootdir.model_application.ui.UiInterfaces.MedioInterface;
+import com.wos.play.rootdir.model_application.ui.UiInterfaces.MediaInterface;
 import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
@@ -26,15 +26,15 @@ public class MyVideoViewHolder implements IContentView{
     }
 
     @Override
-    public void setMedioInterface(MedioInterface bridge) {
-        this.medioEr = bridge;
+    public void setMediaInterface(MediaInterface bridge) {
+        this.mediaInterface = bridge;
     }
 
     private boolean isInitData;
     private boolean isLayout ;
 
     //多媒体控件播放
-    private MedioInterface medioEr = null;
+    private MediaInterface mediaInterface = null;
 
 
     //构造
@@ -70,8 +70,8 @@ public class MyVideoViewHolder implements IContentView{
                 @Override
                 public boolean onError(MediaPlayer mp, int what, int extra) {
                     Logs.e(TAG,"播放错误");
-                    if (medioEr!=null){
-                        medioEr.playOver(MyVideoViewHolder.this);
+                    if (mediaInterface!=null){
+                        mediaInterface.playOver(MyVideoViewHolder.this);
                     }
                     return false;
                 }
@@ -83,17 +83,17 @@ public class MyVideoViewHolder implements IContentView{
     }
 
     @Override
-    public void setAttrbute() {
+    public void setAttribute() {
         //
     }
 
     @Override
-    public void layouted() {
+    public void onLayouts() {
         //
     }
 
     @Override
-    public void unLayouted() {
+    public void unLayouts() {
         //
     }
 
@@ -104,8 +104,8 @@ public class MyVideoViewHolder implements IContentView{
             video.start(layout,videoPath,false);
         }else{
             video.start(layout,UiTools.getDefVideoPath(),false);
-            if (medioEr!=null){
-                medioEr.playOver(this);
+            if (mediaInterface!=null){
+                mediaInterface.playOver(this);
             }
         }
 

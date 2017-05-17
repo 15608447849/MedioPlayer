@@ -5,7 +5,7 @@ import android.widget.FrameLayout;
 
 import com.wos.play.rootdir.model_application.baselayer.BaseActivity;
 import com.wos.play.rootdir.model_application.ui.UiFragments.PagesFragments;
-import com.wos.play.rootdir.model_application.ui.UiInterfaces.Iview;
+import com.wos.play.rootdir.model_application.ui.UiInterfaces.IView;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.PagesBean;
 import com.wos.play.rootdir.model_universal.tool.AppsTools;
 import com.wos.play.rootdir.model_universal.tool.Logs;
@@ -17,8 +17,8 @@ import java.util.Map;
  * Created by user on 2016/11/10.
  */
 
-public class IviewPage extends FrameLayout implements Iview {
-    protected static final String TAG = "IviewPage";
+public class IViewPage extends FrameLayout implements IView {
+    protected static final String TAG = "IViewPage";
     protected BaseActivity activity;
     protected AbsoluteLayout layout;//父布局 - activity上面的
 
@@ -41,7 +41,7 @@ public class IviewPage extends FrameLayout implements Iview {
     private String backGroundImage ;//背景图片
     private String backGroundColor;//背景颜色
 
-    public IviewPage(BaseActivity activity,PagesBean page) {
+    public IViewPage(BaseActivity activity, PagesBean page) {
         super(activity);
         this.activity = activity;
         this.layout = (AbsoluteLayout) activity.getActivityLayout();
@@ -69,12 +69,12 @@ public class IviewPage extends FrameLayout implements Iview {
         }
     }
     @Override
-    public void setAttrbute() {
+    public void setAttribute() {
         //设置大小
         this.setLayoutParams(layoutParams);
     }
     @Override
-    public void layouted() {
+    public void onLayouts() {
         if (!isLayout){
             try {
                 layout.addView(this);
@@ -85,7 +85,7 @@ public class IviewPage extends FrameLayout implements Iview {
         }
     }
     @Override
-    public void unLayouted() {
+    public void unLayouts() {
         if (isLayout){
             try {
                 removeFragment();
@@ -105,8 +105,8 @@ public class IviewPage extends FrameLayout implements Iview {
             if (!isInit){
                 return;
             }
-            setAttrbute();//设置属性
-            layouted();//设置布局
+            setAttribute();//设置属性
+            onLayouts();//设置布局
             if (isLayout){
                 loadFragment();
             }
@@ -117,7 +117,7 @@ public class IviewPage extends FrameLayout implements Iview {
     @Override
     public void stopWork() {
         try {
-            unLayouted();
+            unLayouts();
         } catch (Exception e) {
             e.printStackTrace();
         }

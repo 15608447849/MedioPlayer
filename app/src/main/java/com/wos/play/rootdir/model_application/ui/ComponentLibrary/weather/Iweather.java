@@ -37,10 +37,10 @@ public class Iweather extends FrameLayout implements IAdvancedComponent {
     private String url_style;//样式xml
     private String url_content;//天气内容xml
     private String mBroadAction; //组件 id+hashcode+mad5
-    private int uptimes;//
+    private int upTimes;//
     //创建广播
     private UiLocalBroad broad = null;
-    private boolean isRegestBroad = false; //是否注册广播
+    private boolean isRegisterBroad = false; //是否注册广播
     private LEDView led;    //创建 时间 天气 显示器
     private boolean isShowTimer = false;//是否显示时间
 
@@ -64,7 +64,7 @@ public class Iweather extends FrameLayout implements IAdvancedComponent {
             this.y = (int) cb.getCoordY();
             layoutParams = new AbsoluteLayout.LayoutParams(width, height, x, y);
             if (cb.getContents() != null ) {//&& cb.getContents().size() == 1
-                uptimes = cb.getContents().get(0).getUpdateFreq();
+                upTimes = cb.getContents().get(0).getUpdateFreq();
                 url_style = cb.getContents().get(0).getContentSource();
                 url_content = AppsTools.generWeateherContentUrl(cb.getContents().get(0).getCity());
             }
@@ -86,13 +86,13 @@ public class Iweather extends FrameLayout implements IAdvancedComponent {
     private boolean isFlag_ones = true;
 
     @Override
-    public void setAttrbute() {
+    public void setAttribute() {
         this.setLayoutParams(layoutParams);
-        initSubComponet();
+        initSubComponent();
     }
 
     @Override
-    public void layouted() {
+    public void onLayouts() {
         if (!isLayout) {
             layout.addView(this);
             isLayout = true;
@@ -106,7 +106,7 @@ public class Iweather extends FrameLayout implements IAdvancedComponent {
     }
 
     @Override
-    public void unLayouted() {
+    public void unLayouts() {
         if (isLayout) {
             if (led != null) {
                 led.stop();
@@ -123,8 +123,8 @@ public class Iweather extends FrameLayout implements IAdvancedComponent {
             if (!isInitData) {
                 return;
             }
-            setAttrbute();
-            layouted();
+            setAttribute();
+            onLayouts();
             createBroad();
             loadContent();
         } catch (Exception e) {
@@ -137,7 +137,7 @@ public class Iweather extends FrameLayout implements IAdvancedComponent {
         try {
             unLoadContent();
             cancelBroad();
-            unLayouted(); //移除布局
+            unLayouts(); //移除布局
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -145,7 +145,7 @@ public class Iweather extends FrameLayout implements IAdvancedComponent {
 
 
     @Override
-    public void initSubComponet() {
+    public void initSubComponent() {
         //
         if (led == null) {
             led = new LEDView(context, this);
@@ -161,7 +161,7 @@ public class Iweather extends FrameLayout implements IAdvancedComponent {
             startBaiDuApi();
         }
         isFlag_ones = false;
-        startTimer(uptimes * 1000);//uptimes
+        startTimer(upTimes * 1000);//uptimes
     }
 
     @Override
@@ -181,18 +181,18 @@ public class Iweather extends FrameLayout implements IAdvancedComponent {
 
     @Override
     public void createBroad() {
-        if (!isRegestBroad) {
+        if (!isRegisterBroad) {
             broad = new UiLocalBroad(mBroadAction, this);
             IntentFilter filter = new IntentFilter();
             filter.addAction(mBroadAction);
             context.registerReceiver(broad, filter); //只需要注册一次
-            this.isRegestBroad = true;
+            this.isRegisterBroad = true;
         }
     }
 
     @Override
     public void cancelBroad() {
-        if (isRegestBroad) {
+        if (isRegisterBroad) {
             //取消注册
             if (broad != null) {
                 try {

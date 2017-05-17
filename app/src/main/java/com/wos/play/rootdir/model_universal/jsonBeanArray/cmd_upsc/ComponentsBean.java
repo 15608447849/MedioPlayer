@@ -26,6 +26,7 @@ public class ComponentsBean extends PublicAttibute{
      * contents : [{"id":0,"componentId":756,"contentType":"news","materialType":"","checkState":"2","checked":true,"contentSource":"http://172.16.0.17:9000/epaper/dyannews/page?stairId=103&categoryId=-1&sortBy=allSorts+asc,upDate+desc&filter=Base64","categoryId":"103","subcategoryId":"","updateFreq":"600"}]
      * titleShowType : 1
      * hasContent : true
+     * transition : upDown
      */
     private String label;
     private double coordX;
@@ -50,6 +51,8 @@ public class ComponentsBean extends PublicAttibute{
 
     private List<ContentsBean> contents;
 
+    private String transition;      //组件切换属性:"leftRight"表示左右切换, updown表示上下切换
+
     public int getLinkId() {
         return linkId;
     }
@@ -57,8 +60,6 @@ public class ComponentsBean extends PublicAttibute{
     public void setLinkId(int linkId) {
         this.linkId = linkId;
     }
-
-
 
     public List<ContentsBean> getContents() {
         return contents;
@@ -108,8 +109,6 @@ public class ComponentsBean extends PublicAttibute{
         this.height = height;
     }
 
-
-
     public String getComponentTypeCode() {
         return componentTypeCode;
     }
@@ -117,10 +116,6 @@ public class ComponentsBean extends PublicAttibute{
     public void setComponentTypeCode(String componentTypeCode) {
         this.componentTypeCode = componentTypeCode;
     }
-
-
-
-
 
     public String getBackgroundColor() {
         return backgroundColor;
@@ -139,9 +134,6 @@ public class ComponentsBean extends PublicAttibute{
     }
 
 
-
-
-
     public boolean isHasContent() {
         return hasContent;
     }
@@ -156,5 +148,13 @@ public class ComponentsBean extends PublicAttibute{
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getTransition() {
+        return transition;
+    }
+
+    public void setTransition(String transition) {
+        this.transition = transition;
     }
 }

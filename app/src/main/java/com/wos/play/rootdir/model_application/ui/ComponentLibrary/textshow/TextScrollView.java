@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.wos.play.rootdir.R;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.IContentView;
-import com.wos.play.rootdir.model_application.ui.UiInterfaces.MedioInterface;
+import com.wos.play.rootdir.model_application.ui.UiInterfaces.MediaInterface;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
 
 /**
@@ -31,7 +31,7 @@ public class TextScrollView extends ScrollView implements IContentView{
     }
 
     @Override
-    public void setMedioInterface(MedioInterface bridge) {
+    public void setMediaInterface(MediaInterface bridge) {
 
     }
 
@@ -46,7 +46,7 @@ public class TextScrollView extends ScrollView implements IContentView{
             title.setText(contents.getContentName());
             content.setText(contents.getContents());
             this.addView(root);
-            setAttrbute();
+            setAttribute();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -54,7 +54,7 @@ public class TextScrollView extends ScrollView implements IContentView{
 
     private ViewGroup.LayoutParams layoutParams;
     @Override
-    public void setAttrbute() {
+    public void setAttribute() {
         if (layoutParams==null){
             layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         }
@@ -62,11 +62,12 @@ public class TextScrollView extends ScrollView implements IContentView{
     }
 
     @Override
-    public void layouted() {
+    public void onLayouts() {
+
     }
 
     @Override
-    public void unLayouted() {
+    public void unLayouts() {
     }
 
     @Override

@@ -8,8 +8,8 @@ import android.widget.FrameLayout;
 import com.wos.play.rootdir.model_application.ui.ComponentLibrary.image.CImageView;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.IComponent;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.IContentView;
-import com.wos.play.rootdir.model_application.ui.UiInterfaces.Iview;
-import com.wos.play.rootdir.model_application.ui.UiInterfaces.MedioInterface;
+import com.wos.play.rootdir.model_application.ui.UiInterfaces.IView;
+import com.wos.play.rootdir.model_application.ui.UiInterfaces.MediaInterface;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
 import com.wos.play.rootdir.model_universal.tool.CONTENT_TYPE;
@@ -22,7 +22,7 @@ import java.util.List;
  * 多媒体 播放组件
  */
 
-public class CMedio extends FrameLayout implements IComponent,MedioInterface{
+public class CMedio extends FrameLayout implements IComponent,MediaInterface {
     private static final java.lang.String TAG = "CMorePictures";
     private int componentId;
     private int width,height;
@@ -88,7 +88,7 @@ public class CMedio extends FrameLayout implements IComponent,MedioInterface{
                 }
                 if (imp!=null){
                     addContentImp(imp);
-                    imp.setMedioInterface(this);
+                    imp.setMediaInterface(this);
                     imp = null;
                 }
             }
@@ -100,13 +100,13 @@ public class CMedio extends FrameLayout implements IComponent,MedioInterface{
 
     //设置属性
     @Override
-    public void setAttrbute() {
+    public void setAttribute() {
         this.setLayoutParams(layoutParams);
     }
 
     //布局
     @Override
-    public void layouted() {
+    public void onLayouts() {
         if (!isLayout){
             layout.addView(this);
             isLayout = true;
@@ -116,7 +116,7 @@ public class CMedio extends FrameLayout implements IComponent,MedioInterface{
 
     //取消布局
     @Override
-    public void unLayouted() {
+    public void unLayouts() {
         if (isLayout){
             layout.removeView(this);
             isLayout = false;
@@ -130,8 +130,8 @@ public class CMedio extends FrameLayout implements IComponent,MedioInterface{
             if (!isInitData){
                 return;
             }
-            setAttrbute();
-            layouted();
+            setAttribute();
+            onLayouts();
             loadContent();
         } catch (Exception e) {
             e.printStackTrace();
@@ -143,7 +143,7 @@ public class CMedio extends FrameLayout implements IComponent,MedioInterface{
 //        Logs.i(TAG,"stopWork()");
         try {
             unLoadContent();
-            unLayouted(); //移除布局
+            unLayouts(); //移除布局
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -152,7 +152,7 @@ public class CMedio extends FrameLayout implements IComponent,MedioInterface{
 
     private int currentIndex = 0;//当前循环的下标
     private IContentView currentIView= null; //当前播放的图片
-    private Handler hander = null;
+    private Handler handler = null;
     private final Runnable mTask = new Runnable() {
 
         @Override
@@ -166,13 +166,13 @@ public class CMedio extends FrameLayout implements IComponent,MedioInterface{
     public void loadContent() {
 
         if (contentArr!=null && contentArr.size()>0){
-            if (hander==null){
-                hander = new Handler();
+            if (handler==null){
+                handler = new Handler();
             }
             unLoadContent();
             currentIView =  contentArr.get(currentIndex);
             currentIView.startWork();
-            hander.postDelayed(mTask, contentArr.get(currentIndex).getLength() * 1000);
+            handler.postDelayed(mTask, contentArr.get(currentIndex).getLength() * 1000);
             currentIndex++;
             if (currentIndex==contentArr.size()){
                 currentIndex = 0;
@@ -182,8 +182,8 @@ public class CMedio extends FrameLayout implements IComponent,MedioInterface{
 
     @Override
     public void unLoadContent() {
-        if (hander!=null){
-            hander.removeCallbacks(mTask);
+        if (handler!=null){
+            handler.removeCallbacks(mTask);
         }
         if (currentIView!=null){
             currentIView.stopWork();
@@ -194,7 +194,7 @@ public class CMedio extends FrameLayout implements IComponent,MedioInterface{
     private int playNumber = 0;
     //和 视频控件 图片控件 通讯
     @Override
-    public void playOver(Iview playView) {
+    public void playOver(IView playView) {
         playNumber--;
         if (playNumber>0){
             loadContent();

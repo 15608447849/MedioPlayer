@@ -82,7 +82,7 @@
             android:process="play.watch" />
         <!-- 更新app -->
         <service
-            android:name=".model_updateapp.UpdateServer"
+            android:name=".model_update.UpdateServer"
             android:process="play.update" />
         <!-- 开机广播 -->
         <receiver android:name=".model_monitor.soexcute.SystemBroads">

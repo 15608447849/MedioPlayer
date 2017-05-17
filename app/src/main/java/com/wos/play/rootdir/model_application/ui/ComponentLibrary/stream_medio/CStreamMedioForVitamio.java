@@ -56,12 +56,12 @@ public class CStreamMedioForVitamio extends FrameLayout implements IComponent{
     }
 
     @Override
-    public void setAttrbute() {
+    public void setAttribute() {
         this.setLayoutParams(layoutParams);
     }
 
     @Override
-    public void layouted() {
+    public void onLayouts() {
         if (!isLayout){
             layout.addView(this);
             isLayout = true;
@@ -69,7 +69,7 @@ public class CStreamMedioForVitamio extends FrameLayout implements IComponent{
     }
 
     @Override
-    public void unLayouted() {
+    public void unLayouts() {
         if (isLayout){
             layout.removeView(this);
             isLayout = false;
@@ -82,8 +82,8 @@ public class CStreamMedioForVitamio extends FrameLayout implements IComponent{
             if (!isInitData){
                 return;
             }
-            setAttrbute();
-            layouted();
+            setAttribute();
+            onLayouts();
             loadContent();
         } catch (Exception e) {
             e.printStackTrace();
@@ -94,7 +94,7 @@ public class CStreamMedioForVitamio extends FrameLayout implements IComponent{
     public void stopWork() {
         try {
             unLoadContent();
-            unLayouted(); //移除布局
+            unLayouts(); //移除布局
         } catch (Exception e) {
             e.printStackTrace();
         }

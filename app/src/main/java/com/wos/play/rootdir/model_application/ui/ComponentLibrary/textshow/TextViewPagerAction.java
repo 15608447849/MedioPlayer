@@ -30,7 +30,7 @@ public class TextViewPagerAction implements ViewPager.OnPageChangeListener {
      */
     @Override
     public void onPageSelected(int position) {
-        mViewPager.setCurretnIndex(position);
+        mViewPager.setCurrIndex(position);
     }
     /**
      * 滑动状态监听

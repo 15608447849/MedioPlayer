@@ -2,7 +2,7 @@ package com.wos.play.rootdir.model_application.ui.UiStore;
 
 import java.util.LinkedHashMap;
 
-import com.wos.play.rootdir.model_application.ui.UiElements.page.IviewPage;
+import com.wos.play.rootdir.model_application.ui.UiElements.page.IViewPage;
 
 /**
  * Created by user on 2016/11/10.
@@ -29,7 +29,7 @@ public class PagerStore {
 
 
     //页面存储
-    private LinkedHashMap<Integer,IviewPage> pagesMap = null;
+    private LinkedHashMap<Integer, IViewPage> pagesMap = null;
 
     //初始化 页面存储
    public void initPagesStore(){
@@ -42,7 +42,7 @@ public class PagerStore {
    }
 
     //添加 一个 页面
-    public  void  addPage(int key,IviewPage page){
+    public  void  addPage(int key, IViewPage page){
 //        Log.i("","id - "+key + "page - "+page);
         try{
             pagesMap.put(key,page);
@@ -52,7 +52,7 @@ public class PagerStore {
     }
 
     //获取 一个 页面
-    public IviewPage getPage(int key){
+    public IViewPage getPage(int key){
         if (pagesMap==null){
             return null;
         }

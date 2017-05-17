@@ -56,7 +56,7 @@ public class CEpapersMain extends FrameLayout implements IComponent, LoopSuccess
     private int backgroundAlpha;
     private String backgroundColor;
     private  String bgImageUrl;
-    private Bitmap bgimage;
+    private Bitmap bgImage;
 
     public CEpapersMain(Context context, AbsoluteLayout layout, ComponentsBean component) {
         super(context);
@@ -102,10 +102,10 @@ public class CEpapersMain extends FrameLayout implements IComponent, LoopSuccess
     public void loadBg() {
         if (UiTools.fileIsExt(bgImageUrl)){
             //文件存在
-            bgimage = ImageUtils.getBitmap(bgImageUrl);
+            bgImage = ImageUtils.getBitmap(bgImageUrl);
         }
-        if (bgimage!=null){
-            this.setBackgroundDrawable(new BitmapDrawable(bgimage));
+        if (bgImage!=null){
+            this.setBackgroundDrawable(new BitmapDrawable(bgImage));
         }
     }
 
@@ -165,7 +165,7 @@ public class CEpapersMain extends FrameLayout implements IComponent, LoopSuccess
 
     //设置属性
     @Override
-    public void setAttrbute() {
+    public void setAttribute() {
         this.setLayoutParams(layoutParams);
 
         this.setAlpha(backgroundAlpha);
@@ -178,7 +178,7 @@ public class CEpapersMain extends FrameLayout implements IComponent, LoopSuccess
     }
     //设置布局
     @Override
-    public void layouted() {
+    public void onLayouts() {
         if (!isLayout){
             layout.addView(this);
             isLayout = true;
@@ -190,7 +190,7 @@ public class CEpapersMain extends FrameLayout implements IComponent, LoopSuccess
     }
     //取消布局
     @Override
-    public void unLayouted() {
+    public void unLayouts() {
         if (isLayout){
             layout.removeView(this);
             isLayout = false;
@@ -225,8 +225,8 @@ public class CEpapersMain extends FrameLayout implements IComponent, LoopSuccess
             if (!isInitData){
                 return;
             }
-            setAttrbute();
-            layouted();
+            setAttribute();
+            onLayouts();
             loadContent();
         } catch (Exception e) {
             e.printStackTrace();
@@ -237,7 +237,7 @@ public class CEpapersMain extends FrameLayout implements IComponent, LoopSuccess
     public void stopWork() {
         try {
             unLoadContent();
-            unLayouted(); //移除布局
+            unLayouts(); //移除布局
             LoopMonitorFiles.getInstance().clearMonitor(this);
         } catch (Exception e) {
             e.printStackTrace();

@@ -54,7 +54,7 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
     private UiLocalBroad broad = null;
     private boolean isInitData;
     private boolean isLayout;
-    private boolean isRegestBroad = false; //是否注册广播
+    private boolean isRegisterBroad = false; //是否注册广播
 
     private CListView listView;
     private ListViewAdapter adapter;
@@ -63,7 +63,7 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
     private int backgroundAlpha;
     private String backgroundColor;
     private  String bgImageUrl;
-    private Bitmap bgimage;
+    private Bitmap bgImage;
 
     public CNews(Context context, AbsoluteLayout layout, ComponentsBean component) {
         super(context);
@@ -96,7 +96,7 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
         } else {
             backgroundColor = cb.getBackgroundColor();
         }
-        initSubComponet();//初始化组件
+        initSubComponent();//初始化组件
         if (cb.getContents() != null && cb.getContents().size() == 1) {
             createContent(cb.getContents().get(0));
         }
@@ -107,18 +107,18 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
     public void loadBg() {
         if (UiTools.fileIsExt(bgImageUrl)){
             //文件存在
-            bgimage = ImageUtils.getBitmap(bgImageUrl);
+            bgImage = ImageUtils.getBitmap(bgImageUrl);
         }
-        if (bgimage!=null){
-            this.setBackgroundDrawable(new BitmapDrawable(bgimage));
+        if (bgImage!=null){
+            this.setBackgroundDrawable(new BitmapDrawable(bgImage));
         }
     }
 
     //不加载背景
     public void unloadBg() {
-        if (bgimage!=null){
-            bgimage.recycle();
-            bgimage = null;
+        if (bgImage!=null){
+            bgImage.recycle();
+            bgImage = null;
         }
     }
 
@@ -213,7 +213,7 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
 
     //初始化 组件
     @Override
-    public void initSubComponet() {
+    public void initSubComponent() {
         showLayout = new CShowLayout(context, this, new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -260,7 +260,7 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
 
     //设置属性
     @Override
-    public void setAttrbute() {
+    public void setAttribute() {
         this.setLayoutParams(layoutParams);
 
         this.setAlpha(backgroundAlpha);
@@ -274,7 +274,7 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
 
     //加载布局
     @Override
-    public void layouted() {
+    public void onLayouts() {
         if (isLayout) {
             return;
         }
@@ -284,7 +284,7 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
 
     //取消加载布局
     @Override
-    public void unLayouted() {
+    public void unLayouts() {
         if (isLayout) {
             layout.removeView(this);
             isLayout = false;
@@ -298,8 +298,8 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
             if (!isInitData) {
                 return;
             }
-            setAttrbute();
-            layouted();
+            setAttribute();
+            onLayouts();
             createBroad();//创建广播
             loadContent();
         } catch (Exception e) {
@@ -312,7 +312,7 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
     public void stopWork() {
         try {
             cancelBroad();//取消广播
-            unLayouted();
+            unLayouts();
             unLoadContent();
             LoopMonitorFiles.getInstance().clearMonitor(this);
         } catch (Exception e) {
@@ -338,19 +338,19 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
     //创建广播
     @Override
     public void createBroad() {
-        if (!isRegestBroad) {
+        if (!isRegisterBroad) {
             broad = new UiLocalBroad(mBroadAction, this);
             IntentFilter filter = new IntentFilter();
             filter.addAction(mBroadAction);
             context.registerReceiver(broad, filter); //只需要注册一次
-            this.isRegestBroad = true;
+            this.isRegisterBroad = true;
         }
     }
 
     //取消广播
     @Override
     public void cancelBroad() {
-        if (isRegestBroad) {
+        if (isRegisterBroad) {
             //取消注册
             if (broad != null) {
                 try {

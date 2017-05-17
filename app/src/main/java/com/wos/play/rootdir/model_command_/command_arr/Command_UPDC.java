@@ -1,12 +1,9 @@
 package com.wos.play.rootdir.model_command_.command_arr;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
 import android.util.Log;
 
 import com.wos.play.rootdir.model_command_.kernel.iCommand;
-import com.wos.play.rootdir.model_updateapp.UpdateServer;
 
 /**
  * Created by Administrator on 2017/4/28.

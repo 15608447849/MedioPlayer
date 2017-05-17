@@ -1,4 +1,4 @@
-package com.wos.play.rootdir.model_application.ui.ComponentLibrary.scrolltextview;
+package com.wos.play.rootdir.model_application.ui.ComponentLibrary.scrolltext;
 
 import android.support.v4.view.PagerAdapter;
 import android.view.View;

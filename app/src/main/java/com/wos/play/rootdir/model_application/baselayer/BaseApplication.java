@@ -9,7 +9,7 @@ import com.wos.play.rootdir.model_communication.CommunicationServer;
 import com.wos.play.rootdir.model_download.kernel.DownloadServer;
 import com.wos.play.rootdir.model_monitor.kernes.WatchServer;
 import com.wos.play.rootdir.model_universal.tool.Logs;
-import com.wos.play.rootdir.model_updateapp.UpdateServer;
+import com.wos.play.rootdir.model_update.UpdateServer;
 
 /**
  * Created by user on 2016/10/26.

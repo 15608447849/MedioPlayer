@@ -1,4 +1,4 @@
-package com.wos.play.rootdir.model_application.ui.ComponentLibrary.scrolltextview;
+package com.wos.play.rootdir.model_application.ui.ComponentLibrary.scrolltext;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -105,18 +105,18 @@ public class CMarquee extends ViewPager implements IComponent{
         }
     }
     @Override
-    public void setAttrbute() {
+    public void setAttribute() {
         this.setLayoutParams(layoutParams);
     }
     @Override
-    public void layouted() {
+    public void onLayouts() {
         if (!isLayout){
             layout.addView(this);
             isLayout = true;
         }
     }
     @Override
-    public void unLayouted() {
+    public void unLayouts() {
         if (isLayout){
             layout.removeView(this);
             isLayout = false;
@@ -134,8 +134,8 @@ public class CMarquee extends ViewPager implements IComponent{
             if (!isInitData){
                 return;
             }
-            setAttrbute();
-            layouted();
+            setAttribute();
+            onLayouts();
             loadContent();
         } catch (Exception e) {
             e.printStackTrace();
@@ -145,7 +145,7 @@ public class CMarquee extends ViewPager implements IComponent{
     public void stopWork() {
         try {
             unLoadContent();
-            unLayouted(); //移除布局
+            unLayouts(); //移除布局
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -5,7 +5,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.IContentView;
-import com.wos.play.rootdir.model_application.ui.UiInterfaces.MedioInterface;
+import com.wos.play.rootdir.model_application.ui.UiInterfaces.MediaInterface;
 import com.wos.play.rootdir.model_application.ui.Uitools.ImageUtils;
 import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
@@ -26,10 +26,10 @@ public class CImageView extends MeImageView implements IContentView{
     private FrameLayout.LayoutParams layoutParams;
     private boolean isInitData;
     private boolean isLayout;
-    private MedioInterface bridge;//与 上级 通讯 的桥梁
+    private MediaInterface bridge;//与 上级 通讯 的桥梁
 
     //设置 上级组件
-    public void setMedioInterface(MedioInterface bridge) {
+    public void setMediaInterface(MediaInterface bridge) {
         this.bridge = bridge;
     }
 
@@ -57,7 +57,7 @@ public class CImageView extends MeImageView implements IContentView{
     }
 
     @Override
-    public void setAttrbute() {
+    public void setAttribute() {
         if (layoutParams==null){
             layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,FrameLayout.LayoutParams.MATCH_PARENT);
         }
@@ -74,7 +74,7 @@ public class CImageView extends MeImageView implements IContentView{
     }
 
     @Override
-    public void layouted() {
+    public void onLayouts() {
         if (isLayout){
             return;
         }
@@ -83,7 +83,7 @@ public class CImageView extends MeImageView implements IContentView{
     }
 
     @Override
-    public void unLayouted() {
+    public void unLayouts() {
         if (isLayout){
             layout.removeView(this);
             isLayout = false;
@@ -97,8 +97,8 @@ public class CImageView extends MeImageView implements IContentView{
                 if (!isInitData){
                     return;
                 }
-            setAttrbute();
-            layouted();
+            setAttribute();
+            onLayouts();
              } catch (Exception e) {
             e.printStackTrace();
         }
@@ -107,7 +107,7 @@ public class CImageView extends MeImageView implements IContentView{
     @Override
     public void stopWork() {
         try {
-            unLayouted();
+            unLayouts();
         } catch (Exception e) {
             e.printStackTrace();
         }

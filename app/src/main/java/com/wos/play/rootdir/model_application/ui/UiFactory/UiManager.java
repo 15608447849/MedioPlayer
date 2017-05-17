@@ -1,6 +1,6 @@
 package com.wos.play.rootdir.model_application.ui.UiFactory;
 
-import com.wos.play.rootdir.model_application.ui.UiElements.page.IviewPage;
+import com.wos.play.rootdir.model_application.ui.UiElements.page.IViewPage;
 import com.wos.play.rootdir.model_application.ui.UiStore.PagerStore;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 
@@ -131,8 +131,8 @@ public class UiManager {
     }
     //真 一样大
     private boolean justSizeOnHome(int id) {
-        IviewPage page = PagerStore.getInstant().getPage(id);
-        IviewPage home = PagerStore.getInstant().getPage(currentHomeId);
+        IViewPage page = PagerStore.getInstant().getPage(id);
+        IViewPage home = PagerStore.getInstant().getPage(currentHomeId);
         if (page!=null){
             Map<String,Integer> map1 = page.getPageSize();
             Map<String,Integer> map2 = home.getPageSize();

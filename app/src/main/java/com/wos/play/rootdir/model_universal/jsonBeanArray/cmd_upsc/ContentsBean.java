@@ -69,10 +69,10 @@ public class ContentsBean extends PublicAttibute{
     private String contentName;//标题 //跑马灯标题
     private String contents;//内容
 
-//    跑马灯次数 速度
-   private int rollingTimes;
-   private int rollingSpeed;
-   private String backgroundColor;//跑马灯背景颜色
+    // 跑马灯次数 速度
+    private int rollingTimes;
+    private int rollingSpeed;
+    private String backgroundColor;//跑马灯背景颜色
     private int backgroundAlpha;//跑马灯背景透明图
     private String fontColor;//跑马灯前景颜色-字体颜色
 

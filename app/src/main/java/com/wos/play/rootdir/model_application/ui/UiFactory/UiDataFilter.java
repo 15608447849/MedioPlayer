@@ -4,7 +4,7 @@ import android.os.Handler;
 
 import com.wos.play.rootdir.model_application.baselayer.BaseActivity;
 import com.wos.play.rootdir.model_application.schedule.LocalScheduleObject;
-import com.wos.play.rootdir.model_application.ui.UiElements.page.IviewPage;
+import com.wos.play.rootdir.model_application.ui.UiElements.page.IViewPage;
 
 import com.wos.play.rootdir.model_application.ui.UiHttp.UiHttpProxy;
 import com.wos.play.rootdir.model_application.ui.UiStore.ImageStore;
@@ -124,11 +124,11 @@ public class UiDataFilter {
     //循环遍历所有页面存储
     private void repeatPageStore(List<PagesBean> pages) {
         int key;
-        IviewPage pageView;
+        IViewPage pageView;
         for (PagesBean page : pages){
             key = page.getId();
             //创建
-            pageView = new IviewPage(activity,page);
+            pageView = new IViewPage(activity,page);
 
             if (pageView.isHome()){
                 homeKey = key;

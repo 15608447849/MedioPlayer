@@ -22,6 +22,7 @@ public class IClock extends AbsoluteLayout implements IComponent {
     private AbsoluteLayout.LayoutParams layoutParams;
     private boolean isInitData;
     private boolean isLayout;
+
     public IClock(Context context, AbsoluteLayout layout, ComponentsBean component) {
         super(context);
         this.context = context;
@@ -45,18 +46,18 @@ public class IClock extends AbsoluteLayout implements IComponent {
         }
     }
     @Override
-    public void setAttrbute() {
+    public void setAttribute() {
         this.setLayoutParams(layoutParams);
     }
     @Override
-    public void layouted() {
+    public void onLayouts() {
         if (!isLayout){
             layout.addView(this);
             isLayout = true;
         }
     }
     @Override
-    public void unLayouted() {
+    public void unLayouts() {
         if (isLayout){
             layout.removeView(this);
             isLayout = false;
@@ -68,8 +69,8 @@ public class IClock extends AbsoluteLayout implements IComponent {
             if (!isInitData){
                 return;
             }
-            setAttrbute();
-            layouted();
+            setAttribute();
+            onLayouts();
             loadContent();
         } catch (Exception e) {
             e.printStackTrace();
@@ -79,7 +80,7 @@ public class IClock extends AbsoluteLayout implements IComponent {
     public void stopWork() {
         try {
             unLoadContent();
-            unLayouted(); //移除布局
+            unLayouts(); //移除布局
 
         } catch (Exception e) {
             e.printStackTrace();

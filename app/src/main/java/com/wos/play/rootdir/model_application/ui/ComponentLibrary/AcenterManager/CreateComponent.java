@@ -1,14 +1,12 @@
 package com.wos.play.rootdir.model_application.ui.ComponentLibrary.AcenterManager;
-
 import android.content.Context;
 import android.util.LruCache;
 import android.widget.AbsoluteLayout;
 
-import com.wos.play.rootdir.model_application.ui.UiInterfaces.Iview;
+import com.wos.play.rootdir.model_application.ui.UiInterfaces.IView;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import com.wos.play.rootdir.model_universal.tool.CONTENT_TYPE;
 import com.wos.play.rootdir.model_universal.tool.Logs;
-
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,32 +30,32 @@ public class CreateComponent {
         referenceViewMap.put(CONTENT_TYPE.media,packageName+"stream_medio.CStreamMedioForVitamio");
         referenceViewMap.put(CONTENT_TYPE.clock,packageName+"clock.IClock");
         referenceViewMap.put(CONTENT_TYPE.weather,packageName+"weather.Iweather");
-        referenceViewMap.put(CONTENT_TYPE.marquee,packageName+"scrolltextview.CMarquee");
+        referenceViewMap.put(CONTENT_TYPE.marquee,packageName+"scrolltext.CScrollTextView");
         referenceViewMap.put(CONTENT_TYPE.news,packageName+"news.CNews");
 
     }
 
 
     //存储一部分视图
-    private static LruCache<Integer,Iview> mLruCache =  new LruCache<Integer,Iview>((int) (Runtime.getRuntime().maxMemory() / 8));//最大内存的1/3;
+    private static LruCache<Integer,IView> mLruCache =  new LruCache<Integer,IView>((int) (Runtime.getRuntime().maxMemory() / 8));//最大内存的1/3;
 
-    private static void putIviewToCache(Integer key,Iview value){
+    private static void putIviewToCache(Integer key,IView value){
         mLruCache.put(key,value);
     }
 
-    private static Iview getIplayerToCache(Integer key){
+    private static IView getIplayerToCache(Integer key){
         return  mLruCache.get(key);
     }
 
-   public static Iview create(ComponentsBean component, AbsoluteLayout layout, Context context){
-        Iview iplay = null;
+   public static IView create(ComponentsBean component, AbsoluteLayout layout, Context context){
+       IView iPlay = null;
        try {
            //查看缓存是否存在
            int key = component.getId()+layout.hashCode();
 
-           iplay = getIplayerToCache(key);
+           iPlay = getIplayerToCache(key);
 
-           if (iplay == null) {
+           if (iPlay == null) {
                //创建
                //先获取 type
                String type = component.getComponentTypeCode();
@@ -69,15 +67,15 @@ public class CreateComponent {
                Class cls = Class.forName(className);//得到类
                Constructor constructor = cls.getConstructor(Context.class, //得到构造
                        AbsoluteLayout.class,ComponentsBean.class);
-               iplay = (Iview) constructor.newInstance(context,layout,component); //得到具体实例
+               iPlay = (IView) constructor.newInstance(context,layout,component); //得到具体实例
                //添加到 缓存中
-               putIviewToCache(key,iplay);
+               putIviewToCache(key,iPlay);
            }
 
        } catch (Exception e) {
 //           e.printStackTrace();
            Logs.e("创建组件错误",e.getMessage());
        }
-       return iplay;
+       return iPlay;
     }
 }

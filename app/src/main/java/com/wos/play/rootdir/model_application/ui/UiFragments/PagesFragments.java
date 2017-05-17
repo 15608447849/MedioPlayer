@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.AbsoluteLayout;
 
 import com.wos.play.rootdir.model_application.ui.ComponentLibrary.AcenterManager.CreateComponent;
-import com.wos.play.rootdir.model_application.ui.UiInterfaces.Iview;
+import com.wos.play.rootdir.model_application.ui.UiInterfaces.IView;
 import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import com.wos.play.rootdir.model_universal.tool.Logs;
@@ -28,30 +28,30 @@ public class PagesFragments extends Fragment{
 
     private int x,y,w,h;//原点,坐标
     private boolean isBgColor = true; //是否是背景颜色
-    private String backgroud;//背景(图片或者颜色)
+    private String background;//背景(图片或者颜色)
     private AbsoluteLayout layout;
 
-    private List<ComponentsBean> componetsDataArr = null;//组件内容数据列表
-    public ArrayList<Iview> componetViewArr = null; //组件元素
+    private List<ComponentsBean> componentsDataArr = null;//组件内容数据列表
+    public ArrayList<IView> componentViewArr = null; //组件元素
 
     //添加组件的 key
-    public void addConpone(Iview iview){
-        if (componetViewArr==null){
-            componetViewArr = new ArrayList<>();
+    public void addComponent(IView iview){
+        if (componentViewArr==null){
+            componentViewArr = new ArrayList<>();
         }
-        componetViewArr.add(iview);
+        componentViewArr.add(iview);
     }
     public PagesFragments(){}
 
-    public PagesFragments( int w, int h,int x, int y, boolean isBgColor, String backgroud,List<ComponentsBean> list) {
+    public PagesFragments( int w, int h,int x, int y, boolean isBgColor, String background,List<ComponentsBean> list) {
         this.x = x;
         this.y = y;
         this.w = w;
         this.h = h;
         this.isBgColor = isBgColor;
-        this.backgroud = backgroud;
+        this.background = background;
         if (list!=null){
-            this.componetsDataArr = list;
+            this.componentsDataArr = list;
         }
     }
 
@@ -65,9 +65,9 @@ public class PagesFragments extends Fragment{
 
             if (isBgColor){
                 try {
-                    layout.setBackgroundColor(Color.parseColor(UiTools.TanslateColor(backgroud)));
+                    layout.setBackgroundColor(Color.parseColor(UiTools.TanslateColor(background)));
                 } catch (Exception e) {
-                    Logs.e(TAG,"设置背景参数错误 - [backgroud:"+backgroud+"]" +e.getMessage());
+                    Logs.e(TAG,"设置背景参数错误 - [background:"+background+"]" +e.getMessage());
                 }
             }
         }
@@ -79,7 +79,7 @@ public class PagesFragments extends Fragment{
         super.onViewCreated(view, savedInstanceState);
 //        Logs.i(TAG,"碎片 - -onViewCreated()");
         if (layout!=null){
-            createConponent();
+            createComponent();
         }
     }
 
@@ -110,15 +110,15 @@ public class PagesFragments extends Fragment{
     }
 
     //创建组件
-    private void createConponent() {
+    private void createComponent() {
         Logs.i(TAG,"组件 创建中");
-        if (componetsDataArr!=null && componetsDataArr.size()>0){
-            Iview iv = null;
-            for (ComponentsBean component:componetsDataArr){
+        if (componentsDataArr!=null && componentsDataArr.size()>0){
+            IView iv;
+            for (ComponentsBean component:componentsDataArr){
                 //反射创建匹配组件
                 iv = CreateComponent.create(component,layout,getActivity());
                 if (iv != null){
-                    addConpone(iv);
+                    addComponent(iv);
                 }
             }
         }
@@ -130,9 +130,9 @@ public class PagesFragments extends Fragment{
      */
     protected void exeComponents() {
 
-        if (componetViewArr!=null && componetViewArr.size()>0){
+        if (componentViewArr!=null && componentViewArr.size()>0){
             Logs.i(TAG,"组件 开始工作中");
-            for (Iview iv : componetViewArr){
+            for (IView iv : componentViewArr){
                 iv.startWork();
             }
         }
@@ -143,9 +143,9 @@ public class PagesFragments extends Fragment{
      */
     protected void unexeComponents() {
 
-        if (componetViewArr!=null && componetViewArr.size()>0){
+        if (componentViewArr!=null && componentViewArr.size()>0){
             Logs.i(TAG,"组件 结束工作中");
-            for (Iview iv : componetViewArr){
+            for (IView iv : componentViewArr){
                 iv.stopWork();
             }
         }

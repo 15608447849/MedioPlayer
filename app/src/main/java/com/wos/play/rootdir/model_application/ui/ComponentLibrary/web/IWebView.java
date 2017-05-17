@@ -40,8 +40,8 @@ public class IWebView extends WebView implements IComponentUpdate {
     private String preUrl;
     private String backgroundColor;
     private  String bgImageUrl;
-    private Bitmap bgimage;
-    private  String domian1,domian2;
+    private Bitmap bgImage;
+    private  String domain1,domain2;
     public IWebView(Context context, AbsoluteLayout layout, ComponentsBean component) {
         super(context);
         this.context = context;
@@ -69,14 +69,14 @@ public class IWebView extends WebView implements IComponentUpdate {
                     this.url=cb.getContents().get(0).getUrl();
                     this.url  = url.startsWith("http")?url:"http://" + url;
                     isLink = cb.getContents().get(0).isOutsideChain();
-                    domian1 = AppsTools.getDomain(url);
+                    domain1 = AppsTools.getDomain(url);
                     this.setWebViewClient(new WebViewClient(){
                         @Override
                         public boolean shouldOverrideUrlLoading(WebView view, String url) {
                             Log.i(TAG,"链接:"+url);
-                            if(preUrl==null) domian2 = AppsTools.getDomain(url);
-                            Log.i(TAG,"链接:"+domian1+"-->"+domian2);
-                            if (!isLink && !url.contains(domian1) && !url.contains(domian2)) {
+                            if(preUrl==null) domain2 = AppsTools.getDomain(url);
+                            Log.i(TAG,"链接:"+domain1+"-->"+domain2);
+                            if (!isLink && !url.contains(domain1) && !url.contains(domain2)) {
                                 loadUrl(preUrl);
                                 return true;
                             }
@@ -135,7 +135,7 @@ public class IWebView extends WebView implements IComponentUpdate {
 
 
     @Override
-    public void setAttrbute() {
+    public void setAttribute() {
         try {
             this.setLayoutParams(layoutParams);
             if (bgImageUrl==null){
@@ -152,7 +152,7 @@ public class IWebView extends WebView implements IComponentUpdate {
     }
 
     @Override
-    public void layouted() {
+    public void onLayouts() {
         if (!isLayout){
             layout.addView(this);
             isLayout = true;
@@ -160,7 +160,7 @@ public class IWebView extends WebView implements IComponentUpdate {
     }
 
     @Override
-    public void unLayouted() {
+    public void unLayouts() {
         if (isLayout){
             layout.removeView(this);
             isLayout = false;
@@ -174,8 +174,8 @@ public class IWebView extends WebView implements IComponentUpdate {
             if (!isInitData){
                 return;
             }
-            setAttrbute();
-            layouted();
+            setAttribute();
+            onLayouts();
             loadContent();
         } catch (Exception e) {
             e.printStackTrace();
@@ -187,7 +187,7 @@ public class IWebView extends WebView implements IComponentUpdate {
         try {
 //            this.destroy();
             unLoadContent();
-            unLayouted(); //移除布局
+            unLayouts(); //移除布局
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -198,18 +198,18 @@ public class IWebView extends WebView implements IComponentUpdate {
     public void loadBg() {
         if (UiTools.fileIsExt(bgImageUrl)){
             //文件存在
-            bgimage = ImageUtils.getBitmap(bgImageUrl);
+            bgImage = ImageUtils.getBitmap(bgImageUrl);
         }
-        if (bgimage!=null){
-            this.setBackgroundDrawable(new BitmapDrawable(bgimage));
+        if (bgImage!=null){
+            this.setBackgroundDrawable(new BitmapDrawable(bgImage));
         }
     }
 
     @Override
     public void unloadBg() {
-        if (bgimage!=null){
+        if (bgImage!=null){
 //            bgimage.recycle();
-            bgimage = null;
+            bgImage = null;
         }
     }
 

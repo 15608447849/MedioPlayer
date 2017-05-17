@@ -1,4 +1,4 @@
-package com.wos.play.rootdir.model_application.ui.ComponentLibrary.scrolltextview;
+package com.wos.play.rootdir.model_application.ui.ComponentLibrary.scrolltext;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -12,7 +12,6 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.RunTextInterface;
-import com.wos.play.rootdir.model_universal.tool.Logs;
 
 
 /**

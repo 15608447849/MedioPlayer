@@ -9,7 +9,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.wos.play.rootdir.model_application.ui.UiFactory.UiManager;
-import com.wos.play.rootdir.model_application.ui.UiInterfaces.Iview;
+import com.wos.play.rootdir.model_application.ui.UiInterfaces.IView;
 import com.wos.play.rootdir.model_application.ui.Uitools.ImageUtils;
 import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
@@ -18,7 +18,7 @@ import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ComponentsBea
  * Created by user on 2016/11/12.
  * 按钮 点击
  */
-public class CButton extends MeImageButton implements View.OnClickListener,View.OnTouchListener,Iview{
+public class CButton extends MeImageButton implements View.OnClickListener,View.OnTouchListener,IView{
     private static final String TAG = "_CButton";
     private Context context;
     private AbsoluteLayout layout;
@@ -64,7 +64,7 @@ public class CButton extends MeImageButton implements View.OnClickListener,View.
     }
     //设置属性
     @Override
-    public void setAttrbute() {
+    public void setAttribute() {
         this.setLayoutParams(layoutParams);
         this.setScaleType(ImageView.ScaleType.FIT_XY);
         if (upImagePath!=null && UiTools.fileIsExt(upImagePath)){
@@ -82,7 +82,7 @@ public class CButton extends MeImageButton implements View.OnClickListener,View.
 
     //布局
     @Override
-    public void layouted() {
+    public void onLayouts() {
         if (!isLayout){
             layout.addView(this);
             isLayout = true;
@@ -90,7 +90,7 @@ public class CButton extends MeImageButton implements View.OnClickListener,View.
     }
     //未布局
     @Override
-    public void unLayouted() {
+    public void unLayouts() {
         if (isLayout){
             layout.removeView(this);
             isLayout = false;
@@ -104,9 +104,9 @@ public class CButton extends MeImageButton implements View.OnClickListener,View.
             if (!isInitData){
                 return;
             }
-            setAttrbute();
+            setAttribute();
             loadBitmap();
-            layouted();
+            onLayouts();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -119,7 +119,7 @@ public class CButton extends MeImageButton implements View.OnClickListener,View.
     public void stopWork() {
 //        Logs.i(TAG,"button - startWork()");
         try {
-            unLayouted(); //移除布局
+            unLayouts(); //移除布局
         } catch (Exception e) {
             e.printStackTrace();
         }

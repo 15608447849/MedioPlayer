@@ -60,9 +60,9 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
     private UiLocalBroad broad = null;
     private boolean isInitData;
     private boolean isLayout;
-    private boolean isRegestBroad = false; //是否注册广播
+    private boolean isRegesterBroad = false; //是否注册广播
 
-    private MImageSwitcher ishow;
+    private MImageSwitcher iShow;
     private Gallery gallery;
     private AbsoluteLayout absLayout;
     private MyVideoView video;
@@ -105,7 +105,7 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
             backgroundColor = cb.getBackgroundColor();
         }
 
-        initSubComponet();
+        initSubComponent();
         if (cb.getContents() != null && cb.getContents().size() == 1) {
             createContent(cb.getContents().get(0));
         }
@@ -140,12 +140,12 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
 
     //初始化 子组件
     @Override
-    public void initSubComponet() {
+    public void initSubComponent() {
         try {
             View root = LayoutInflater.from(context).inflate(R.layout.imageswitcherpage, null);
             absLayout = (AbsoluteLayout) root.findViewById(R.id.frame_abslayout);
             video = new MyVideoView(context);//视频播放器
-            ishow = (MImageSwitcher) root.findViewById(R.id.switcher);
+            iShow = (MImageSwitcher) root.findViewById(R.id.switcher);
             initImageSwitcher();
             gallery = (Gallery) root.findViewById(R.id.gallery);
             initGallery();
@@ -165,18 +165,18 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
 
     @Override
     public void createBroad() {
-        if (!isRegestBroad) {
+        if (!isRegesterBroad) {
             broad = new UiLocalBroad(mBroadAction, this);
             IntentFilter filter = new IntentFilter();
             filter.addAction(mBroadAction);
             context.registerReceiver(broad, filter); //只需要注册一次
-            this.isRegestBroad = true;
+            this.isRegesterBroad = true;
         }
     }
 
     @Override
     public void cancelBroad() {
-        if (isRegestBroad) {
+        if (isRegesterBroad) {
             //取消注册
             if (broad != null) {
                 try {
@@ -193,14 +193,14 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
     private void initImageSwitcher() {
         try {
             factory = new ImagerSwitchFactory(context);
-            ishow.setFactory(factory);
+            iShow.setFactory(factory);
         } catch (Exception e) {
             e.printStackTrace();
         }
         //动画
-        ishow.setInAnimation(AnimationUtils.loadAnimation(context,
+        iShow.setInAnimation(AnimationUtils.loadAnimation(context,
                 android.R.anim.fade_in));
-        ishow.setOutAnimation(AnimationUtils.loadAnimation(context,
+        iShow.setOutAnimation(AnimationUtils.loadAnimation(context,
                 android.R.anim.fade_out));
     }
 
@@ -248,7 +248,7 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
                 }
             } else {
 //                ishow.setImageDrawable(adapter.getDrawable(position));
-                ImageAsyLoad.loadBitmap(adapter.getBitmapString(position), (MeImageView) ishow.getCurrentImageView());
+                ImageAsyLoad.loadBitmap(adapter.getBitmapString(position), (MeImageView) iShow.getCurrentImageView());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -258,13 +258,13 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
 
     //设置属性
     @Override
-    public void setAttrbute() {
+    public void setAttribute() {
         this.setLayoutParams(layoutParams);
         flag_ones = true;
     }
 
     @Override
-    public void layouted() {
+    public void onLayouts() {
         if (isLayout) {
             return;
         }
@@ -273,7 +273,7 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
     }
 
     @Override
-    public void unLayouted() {
+    public void unLayouts() {
         if (isLayout) {
             layout.removeView(this);
             isLayout = false;
@@ -286,8 +286,8 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
             if (!isInitData) {
                 return;
             }
-            setAttrbute();
-            layouted();
+            setAttribute();
+            onLayouts();
             createBroad();//创建广播
             loadContent();
         } catch (Exception e) {
@@ -299,7 +299,7 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
     public void stopWork() {
         try {
             cancelBroad();//取消广播
-            unLayouted();
+            unLayouts();
             unLoadContent();
             LoopMonitorFiles.getInstance().clearMonitor(this);
         } catch (Exception e) {
