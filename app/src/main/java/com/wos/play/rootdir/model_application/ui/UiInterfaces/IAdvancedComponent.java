@@ -5,7 +5,7 @@ package com.wos.play.rootdir.model_application.ui.UiInterfaces;
  */
 
 public interface IAdvancedComponent extends IComponent{
-    void initSubComponet();
+    void initSubComponent();
     void broadCall();
     void createBroad();
     void cancelBroad();
