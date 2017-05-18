@@ -1,7 +1,10 @@
 package com.wos.play.rootdir.model_application.ui.ComponentLibrary.image;
 
 import android.content.Context;
+import android.gesture.GestureUtils;
 import android.os.Handler;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.AbsoluteLayout;
 import android.widget.FrameLayout;
 
@@ -11,25 +14,26 @@ import java.util.List;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.IComponent;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.IView;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.MediaInterface;
+import com.wos.play.rootdir.model_application.ui.Uitools.GestureHelper;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
+import com.wos.play.rootdir.model_universal.tool.Logs;
 
 /**
  * Created by user on 2016/11/11.
  * 播放图片的组件 - 多图片播放
  *
  */
-public class CMorePictures extends FrameLayout implements IComponent,MediaInterface {
-    private static final java.lang.String TAG = "CMorePictures";
-    private int componentId;
-    private int width;
-    private int height;
-    private int x,y;
+public class CMorePictures extends FrameLayout implements IComponent,MediaInterface
+        ,GestureHelper.OnSlidingListener {
+    private static final java.lang.String TAG = CMorePictures.class.getSimpleName();
+    private int componentId, width, height, x, y;
     private Context context;
     private AbsoluteLayout layout;
     private AbsoluteLayout.LayoutParams layoutParams;
-    private boolean isInitData;
-    private boolean isLayout;
+    private boolean isInitData, isLayout;
+    private GestureHelper mGestureHelper;
+
     public CMorePictures(Context context, AbsoluteLayout layout, ComponentsBean component) {
         super(context);
         this.context = context;
@@ -38,9 +42,16 @@ public class CMorePictures extends FrameLayout implements IComponent,MediaInterf
     }
 
     @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        mGestureHelper.onTouchEvent(event);
+        return super.onTouchEvent(event);
+    }
+
+    @Override
     public void initData(Object object) {
         try {
             ComponentsBean cb = ((ComponentsBean)object);
+            mGestureHelper = new GestureHelper(cb.getTransition(),this);
             this.componentId = cb.getId();
             this.width = (int)cb.getWidth();
             this.height = (int)cb.getHeight();
@@ -57,15 +68,11 @@ public class CMorePictures extends FrameLayout implements IComponent,MediaInterf
     }
     @Override
     public void setAttribute() {
-//        Logs.i(TAG,"- -setAttrbute()- -");
-//        this.setBackgroundColor(Color.BLUE);
         this.setLayoutParams(layoutParams);
         currentIndex=0;//当前下标
     }
     @Override
     public void onLayouts() {
-//        Logs.i(TAG,"- -layouted()- - "+isLayout);
-//        Logs.i(TAG,"- --------------- - "+layout+"\n"+this);
         if (!isLayout){
             layout.addView(this);
             isLayout = true;
@@ -73,7 +80,6 @@ public class CMorePictures extends FrameLayout implements IComponent,MediaInterf
     }
     @Override
     public void unLayouts() {
-//        Logs.i(TAG,"- -unLayouted()- - "+isLayout);
         if (isLayout){
             layout.removeView(this);
             isLayout = false;
@@ -81,7 +87,6 @@ public class CMorePictures extends FrameLayout implements IComponent,MediaInterf
     }
     @Override
     public void startWork() {
-//        Logs.i(TAG,"- -startWork()- -");
         try {
             if (!isInitData){
                 return;
@@ -96,7 +101,6 @@ public class CMorePictures extends FrameLayout implements IComponent,MediaInterf
 
     @Override
     public void stopWork() {
-//        Logs.i(TAG,"stopWork()");
         try {
             unLoadContent();
             unLayouts(); //移除布局
@@ -118,12 +122,12 @@ public class CMorePictures extends FrameLayout implements IComponent,MediaInterf
     public void createContent(Object object) {
         try {
             List<ContentsBean> contents = (List<ContentsBean>)object;
-            CImageView imageview = null;
+            CImageView imageView ;
             //只有图片内容
             for (ContentsBean content : contents){
-                imageview = new CImageView(context,this,content);
-                imageview.setMediaInterface(this);
-                addImages(imageview);
+                imageView = new CImageView(context,this,content);
+                imageView.setMediaInterface(this);
+                addImages(imageView);
             }
             playNumber = imageArr.size();
         } catch (Exception e) {
@@ -136,15 +140,14 @@ public class CMorePictures extends FrameLayout implements IComponent,MediaInterf
     private CImageView currentImageView= null; //当前播放的图片
     private Handler handler = null;
     private final Runnable mTask = new Runnable() {
-
         @Override
         public void run() {
             loadContent();
         }
     };
+
     @Override
     public void loadContent() {
-
         if (imageArr!=null && imageArr.size()>0){
             if (handler==null){
                 handler = new Handler();
@@ -163,7 +166,6 @@ public class CMorePictures extends FrameLayout implements IComponent,MediaInterf
     // 取消加载内容
     @Override
     public void unLoadContent() {
-
         if (handler!=null){
             handler.removeCallbacks(mTask);
         }
@@ -173,7 +175,6 @@ public class CMorePictures extends FrameLayout implements IComponent,MediaInterf
         }
     }
 
-
     @Override
     public void playOver(IView playView) {
         //子组件 资源不存在 或者 子组件err -> 播放一个内容
@@ -181,52 +182,24 @@ public class CMorePictures extends FrameLayout implements IComponent,MediaInterf
         if (playNumber>0){
             loadContent();
         }
+    }
 
+    @Override
+    public void onUpOrLeft() {
+        Logs.i(TAG,"向上或向左滑动");
+        if (playNumber< 2) return;
+        currentIndex -= 2;
+        if( currentIndex< 0) { //  当-1的时候减1;-2的时候减2
+            currentIndex += imageArr.size();
+        }
+        loadContent();
+
+    }
+
+    @Override
+    public void onDownOrRight() {
+        Logs.i(TAG,"向下或向右滑动");
+        if (playNumber< 2) return;
+        loadContent();
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-//计时器
-   /*
-               //创建计时器
-//            startTimer(imageArr.get(currentIndex).getLength() * 1000);
-    //        stopTimer();//停止计时间 停止当前内容
-    private TimerTask timerTask= null;
-    private Timer timer = null;
-
-    private void stopTimer(){
-        if (timerTask!=null){
-            timerTask.cancel();
-            timerTask = null;
-        }
-        if (timer!=null){
-            timer.cancel();
-            timer = null;
-        }
-    }
-    private void startTimer(long millisecond){
-        timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                AndroidSchedulers.mainThread().createWorker().schedule(new Action0() {
-                    @Override
-                    public void call() {
-                        loadContent();
-                    }
-                });
-
-            }
-        };
-        timer = new Timer();
-        timer.schedule(timerTask,millisecond);
-    }*/

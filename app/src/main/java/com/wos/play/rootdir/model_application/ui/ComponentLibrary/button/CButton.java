@@ -148,7 +148,7 @@ public class CButton extends MeImageButton implements View.OnClickListener,View.
 //                Logs.i(TAG,"按下");
                 if (downImagePath!=null && UiTools.fileIsExt(downImagePath)){
                     ((ImageButton)v).setImageBitmap(ImageUtils.getBitmap(downImagePath));
-                    if (group.equals("1")) upImagePath = downImagePath;
+                    if ("1".equals(group)) upImagePath = downImagePath;
                 }
             }else if(event.getAction() == MotionEvent.ACTION_UP){
 //                Logs.i(TAG,"抬起");

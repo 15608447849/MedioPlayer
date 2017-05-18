@@ -2,6 +2,7 @@ package com.wos.play.rootdir.model_application.ui.ComponentLibrary.video;
 
 import android.content.Context;
 import android.os.Handler;
+import android.view.MotionEvent;
 import android.widget.AbsoluteLayout;
 import android.widget.FrameLayout;
 
@@ -10,9 +11,11 @@ import com.wos.play.rootdir.model_application.ui.UiInterfaces.IComponent;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.IContentView;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.IView;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.MediaInterface;
+import com.wos.play.rootdir.model_application.ui.Uitools.GestureHelper;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
 import com.wos.play.rootdir.model_universal.tool.CONTENT_TYPE;
+import com.wos.play.rootdir.model_universal.tool.Logs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +25,8 @@ import java.util.List;
  * 多媒体 播放组件
  */
 
-public class CMedio extends FrameLayout implements IComponent,MediaInterface {
+public class CMedio extends FrameLayout implements IComponent,MediaInterface
+        ,GestureHelper.OnSlidingListener{
     private static final java.lang.String TAG = "CMorePictures";
     private int componentId;
     private int width,height;
@@ -30,8 +34,8 @@ public class CMedio extends FrameLayout implements IComponent,MediaInterface {
     private Context context;
     private AbsoluteLayout layout;
     private AbsoluteLayout.LayoutParams layoutParams;
-    private boolean isInitData;
-    private boolean isLayout;
+    private boolean isInitData, isLayout;
+    private GestureHelper mGestureHelper;
     public CMedio(Context context,AbsoluteLayout layout, ComponentsBean component) {
         super(context);
         this.context = context;
@@ -44,6 +48,7 @@ public class CMedio extends FrameLayout implements IComponent,MediaInterface {
     public void initData(Object object) {
         try {
             ComponentsBean cb = ((ComponentsBean)object);
+            mGestureHelper = new GestureHelper(cb.getTransition(),this);
             this.componentId = cb.getId();
             this.width = (int)cb.getWidth();
             this.height = (int)cb.getHeight();
@@ -58,6 +63,13 @@ public class CMedio extends FrameLayout implements IComponent,MediaInterface {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        mGestureHelper.onTouchEvent(event);
+        return super.onTouchEvent(event);
+    }
+
     private ArrayList<IContentView> contentArr = null;
     //添加 图片组件-视频组件
     private void addContentImp(IContentView content){
@@ -125,11 +137,8 @@ public class CMedio extends FrameLayout implements IComponent,MediaInterface {
     //开始
     @Override
     public void startWork() {
-//        Logs.i(TAG,"- -startWork()- -");
         try {
-            if (!isInitData){
-                return;
-            }
+            if (!isInitData)return;
             setAttribute();
             onLayouts();
             loadContent();
@@ -140,7 +149,6 @@ public class CMedio extends FrameLayout implements IComponent,MediaInterface {
     //停止
     @Override
     public void stopWork() {
-//        Logs.i(TAG,"stopWork()");
         try {
             unLoadContent();
             unLayouts(); //移除布局
@@ -154,7 +162,6 @@ public class CMedio extends FrameLayout implements IComponent,MediaInterface {
     private IContentView currentIView= null; //当前播放的图片
     private Handler handler = null;
     private final Runnable mTask = new Runnable() {
-
         @Override
         public void run() {
             loadContent();
@@ -164,7 +171,6 @@ public class CMedio extends FrameLayout implements IComponent,MediaInterface {
     //加载内容
     @Override
     public void loadContent() {
-
         if (contentArr!=null && contentArr.size()>0){
             if (handler==null){
                 handler = new Handler();
@@ -201,6 +207,21 @@ public class CMedio extends FrameLayout implements IComponent,MediaInterface {
         }
     }
 
+    @Override
+    public void onUpOrLeft() {
+        Logs.i(TAG,"向上或向左滑动");
+        if (playNumber< 2) return;
+        currentIndex -= 2;
+        if( currentIndex< 0) { //  当-1的时候减1;-2的时候减2
+            currentIndex += contentArr.size();
+        }
+        loadContent();
+    }
 
-
+    @Override
+    public void onDownOrRight() {
+        Logs.i(TAG,"向下或向右滑动");
+        if (playNumber< 2) return;
+        loadContent();
+    }
 }

@@ -92,14 +92,11 @@ public class CImageView extends MeImageView implements IContentView{
 
     @Override
     public void startWork() {
-//        Logs.i(TAG,"image - startWork()");
         try {
-                if (!isInitData){
-                    return;
-                }
+            if (!isInitData) return;
             setAttribute();
             onLayouts();
-             } catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
