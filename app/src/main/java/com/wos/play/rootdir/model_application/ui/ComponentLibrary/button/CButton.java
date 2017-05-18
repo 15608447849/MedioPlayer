@@ -31,6 +31,7 @@ public class CButton extends MeImageButton implements View.OnClickListener,View.
     private boolean isInitData;
     private boolean isLayout;
     private AbsoluteLayout.LayoutParams layoutParams;
+    private String group;
     public CButton(Context context, AbsoluteLayout layout, ComponentsBean component) {
         super(context);
         this.context = context;
@@ -52,6 +53,7 @@ public class CButton extends MeImageButton implements View.OnClickListener,View.
             layoutParams = new AbsoluteLayout.LayoutParams(width,height,x,y);
             this.linkId = cb.getLinkId();
             this.isInitData = true;
+            this.group = cb.getContents().get(0).getGroup();
             if (cb.getContents()!=null && cb.getContents().size()==1){
                 upImagePath = UiTools.getUrlTanslationFilename(cb.getContents().get(0).getSourceUp());
                 downImagePath = UiTools.getUrlTanslationFilename(cb.getContents().get(0).getSourceDown());
@@ -146,6 +148,7 @@ public class CButton extends MeImageButton implements View.OnClickListener,View.
 //                Logs.i(TAG,"按下");
                 if (downImagePath!=null && UiTools.fileIsExt(downImagePath)){
                     ((ImageButton)v).setImageBitmap(ImageUtils.getBitmap(downImagePath));
+                    if (group.equals("1")) upImagePath = downImagePath;
                 }
             }else if(event.getAction() == MotionEvent.ACTION_UP){
 //                Logs.i(TAG,"抬起");

@@ -49,6 +49,8 @@ public class ContentsBean extends PublicAttibute{
     //天气 城市
     private String city;
 
+    private String group;
+
     public String getCity() {
         return city;
     }
@@ -245,5 +247,13 @@ public class ContentsBean extends PublicAttibute{
 
     public void setOutsideChain(boolean outsideChain) {
         this.outsideChain = outsideChain;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
     }
 }

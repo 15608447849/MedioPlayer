@@ -75,6 +75,7 @@ public class ScheduleReader implements ListeningScheduleEventThread.OnScheduleEv
         initNotToTimeSchuduleMap();
         createLooper();
         isInit = true;
+        startWork();
     }
 
     public void unInit() {
