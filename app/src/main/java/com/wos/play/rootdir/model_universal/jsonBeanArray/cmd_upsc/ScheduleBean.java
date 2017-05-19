@@ -5,7 +5,7 @@ package com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc;
  * lzp
  *  一个排期下面只有一个节目
  */
-public class ScheduleBean extends PublicAttibute{
+public class ScheduleBean extends PublicAttribute{
     /**
      * id : 267
      * cretime:0

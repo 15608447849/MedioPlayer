@@ -151,7 +151,7 @@ public class LoopMonitorFiles {
                 filePath = iterator.next();
                 isFile = FileUtils.isFileExist(filePath);
                 isFolder = FileUtils.isFolderExist(filePath);
-                Log.i(TAG,"filePath:"+filePath +" isFile:"+isFile +" isFolder:"+isFolder);
+                //Log.i(TAG,"filePath:"+filePath +" isFile:"+isFile +" isFolder:"+isFolder);
                 if (isFile || isFolder){
                     synchronized (mLock){
                         fileList.remove(filePath);

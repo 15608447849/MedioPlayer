@@ -243,23 +243,22 @@ public class Task implements Parcelable {
 
         StringBuffer sb = new StringBuffer();
         if (type == Type.HTTP){
-            sb.append("当前类型 - http , ")
-                    .append("当前url - "+url);
+            sb.append("当前类型 - http , 当前url - ").append(url);
 
         }
         if (type == Type.FILE){
             sb.append("当前类型 - file , ");
-            sb.append("当前url - "+url);
+            sb.append("当前url - ").append(url);
         }
 
         if (type==Type.FTP){
             sb.append("当前类型 - ftp [");
-            sb.append(ftpAddress +" ; ");
-            sb.append(ftpPort +" ; ");
-            sb.append(ftpUser +" ; ");
-            sb.append(ftpPass +"]");
-            sb.append("资源远程路径 - ["+ remotePath+fileName+"]");
-            sb.append("资源本地路径 - ["+ savePath+fileName+"]");
+            sb.append(ftpAddress ).append(" ; ");
+            sb.append(ftpPort).append(" ; ");
+            sb.append(ftpUser).append(" ; ");
+            sb.append(ftpPass).append("]");
+            sb.append("资源远程路径 - [").append( remotePath).append(fileName).append("]");
+            sb.append("资源本地路径 - [").append( savePath).append(fileName).append("]");
         }
         return sb.toString()+" - hashcode ["+this.hashCode()+"]";
     }

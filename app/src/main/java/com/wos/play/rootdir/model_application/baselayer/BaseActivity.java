@@ -7,18 +7,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
-
 import com.wos.play.rootdir.R;
+import com.wos.play.rootdir.model_application.ui.UiFactory.UiManager;
 import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
 import com.wos.play.rootdir.model_communication.CommuniReceiverMsgBroadCasd;
 import com.wos.play.rootdir.model_monitor.kernes.WatchServer;
 import com.wos.play.rootdir.model_universal.tool.Logs;
-
 import java.util.ArrayList;
 
 /**
@@ -26,18 +27,19 @@ import java.util.ArrayList;
  */
 public class BaseActivity extends Activity {
     private static final String TAG = "_BaseActivity";
-    public static ArrayList<Activity> atyArr = new ArrayList<Activity>();
+    public static ArrayList<Activity> atyArr = new ArrayList<>();
+    private Handler mHandler =  new Handler();
+    private int adViewId, waitTime; // 无人值守页面ID以及无人值守触发时间，单位S
 
     //添加 create 添加
     public void addActivityOnArr(Activity a) {
-
         //是否存在, 存在删除 ;添加到队列末尾
         removeActivityOnArr(a);
         atyArr.add(a);
         Logs.i("添加 activity [ " + a.toString() + " ]");
     }
 
-    //删除 destory調用
+    //删除 destroy調用
     public boolean removeActivityOnArr(Activity a) {
         boolean f = false;
         if (atyArr.contains(a)) {
@@ -50,7 +52,6 @@ public class BaseActivity extends Activity {
 
     //finish 一個activity stop調用
     public void stopActivityOnArr(Activity a) {
-
         if (atyArr.contains(a)) {
             a.finish();
             Logs.i("停用 activity [ " + a.toString() + " ]");
@@ -70,20 +71,26 @@ public class BaseActivity extends Activity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        startAdDutyTiming();
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
     }
 
-    private boolean isStopOnDestory = true;
+    private boolean isStopOnDestroy = true;
 
-    public void setStopOnDestory(boolean stopOnDestory) {
-        isStopOnDestory = stopOnDestory;
+    public void setStopOnDestroy(boolean stopOnDestroy) {
+        isStopOnDestroy = stopOnDestroy;
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (isStopOnDestory){
+        if (isStopOnDestroy){
             stopActivityOnArr(this);
         }
     }
@@ -99,7 +106,6 @@ public class BaseActivity extends Activity {
      * 初始化全部的服务
      */
     public void initAllServer(String serverName) {
-
         ((BaseApplication) getApplication()).initStartServer(serverName);
         Logs.d(TAG, "=============== 初始化服务完成 ===============");
     }
@@ -115,7 +121,6 @@ public class BaseActivity extends Activity {
     private void sendBroadToWatchServer() {
         this.startService(new Intent(this, WatchServer.class));
     }
-
 
     /**
      * true为设置全屏
@@ -164,7 +169,7 @@ public class BaseActivity extends Activity {
     protected AppMessageBroad appReceive;
 
     /**
-     * 停止广播 destory call
+     * 停止广播 destroy call
      */
     protected void unregisterBroad() {
         if (appReceive != null) {
@@ -205,9 +210,8 @@ public class BaseActivity extends Activity {
             intent.putExtras(bundle);
             getApplication().sendBroadcast(intent);
         }catch (Exception e){
-
+            e.printStackTrace();
         }
-//        Logs.d(TAG,"-" + methodsName+" - "+methodsParam);
     }
 
     //通讯服务发来的消息 接收处
@@ -268,5 +272,43 @@ public class BaseActivity extends Activity {
     //返回全局context
     public Context getAppContext() {
         return this.getApplicationContext();
+    }
+
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if(MotionEvent.ACTION_UP == ev.getAction()){
+            startAdDutyTiming();
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    /**
+     * 开始无人值守计时
+     */
+    private void startAdDutyTiming() {
+        if(adViewId > 0 && waitTime >0){
+            mHandler.removeCallbacks(jumpAdDutyPage);
+            UiManager.getInstance().deletePage(adViewId);
+            mHandler.postDelayed(jumpAdDutyPage, waitTime*1000);
+        }
+    }
+
+    /**
+     * 跳转无人值守广告
+     */
+    private Runnable jumpAdDutyPage = new Runnable() {
+        @Override
+        public void run() {
+            UiManager.getInstance().exeAdTask(adViewId);
+        }
+    };
+    /**
+     * 无人值守广告 布局ID
+     */
+    public void onHasAdDuty(int adViewId, int waitTime) {
+        this.adViewId = adViewId;
+        this.waitTime = waitTime;
+        startAdDutyTiming();
     }
 }

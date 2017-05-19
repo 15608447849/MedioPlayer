@@ -6,6 +6,7 @@ import android.widget.FrameLayout;
 import com.wos.play.rootdir.model_application.baselayer.BaseActivity;
 import com.wos.play.rootdir.model_application.ui.UiFragments.PagesFragments;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.IView;
+import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.AdBean;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.PagesBean;
 import com.wos.play.rootdir.model_universal.tool.AppsTools;
 import com.wos.play.rootdir.model_universal.tool.Logs;
@@ -21,11 +22,21 @@ public class IViewPage extends FrameLayout implements IView {
     protected static final String TAG = "IViewPage";
     protected BaseActivity activity;
     protected AbsoluteLayout layout;//父布局 - activity上面的
-
+    protected boolean isAd = false;
     protected boolean isHome = false;
+
+    public boolean isAd() {
+        return isAd;
+    }
+
+    public void setAd(boolean ad) {
+        isAd = ad;
+    }
+
     public boolean isHome() {
         return isHome;
     }
+
     public void setHome(boolean home) {
         isHome = home;
     }
@@ -61,8 +72,10 @@ public class IViewPage extends FrameLayout implements IView {
             this.backGroundColor = page.getBackgroundColor();
             this.backGroundImage = page.getBackground();//请截取 uri 暂时未做 确定bg颜色还是图片
             this.isHome = page.isHome();
-            //设置视图id
-            this.setId(id+ AppsTools.randomNum(10,500));//view_id
+            if(object instanceof AdBean){
+                isAd = ((AdBean)object).isAdEnabled();
+            }
+            this.setId(id+ AppsTools.randomNum(10,500));// //设置视图id view_id
             isInit = true;
         }catch (Exception e){
             e.printStackTrace();

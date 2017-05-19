@@ -134,8 +134,7 @@ public class CButton extends MeImageButton implements View.OnClickListener,View.
     @Override
     public void onClick(View v) {
         try {
-//            ((BaseActivity)context).showToast("按钮 -"+componentId +" linkId - "+linkId);
-            UiManager.getInstans().exeTask(linkId);
+            UiManager.getInstance().exeTask(linkId);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -145,13 +144,11 @@ public class CButton extends MeImageButton implements View.OnClickListener,View.
     public boolean onTouch(View v, MotionEvent event) {
         try {
             if(event.getAction() == MotionEvent.ACTION_DOWN){
-//                Logs.i(TAG,"按下");
                 if (downImagePath!=null && UiTools.fileIsExt(downImagePath)){
                     ((ImageButton)v).setImageBitmap(ImageUtils.getBitmap(downImagePath));
                     if ("1".equals(group)) upImagePath = downImagePath;
                 }
             }else if(event.getAction() == MotionEvent.ACTION_UP){
-//                Logs.i(TAG,"抬起");
                 if (upImagePath!=null && UiTools.fileIsExt(upImagePath)){
                     this.setImageBitmap(ImageUtils.getBitmap(upImagePath));
                 }else{

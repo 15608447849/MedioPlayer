@@ -7,7 +7,7 @@ import java.util.List;
  * lzp
  * 页面合集
  */
-public class PagesBean extends AdBean{
+public class PagesBean extends PublicAttribute{
     /**
      * id : 366
      * home : true
@@ -24,6 +24,17 @@ public class PagesBean extends AdBean{
      * pages : [{"id":367,"home":false,"order":0,"tweenEnabled":true,"label":"新建页面2","coordX":0,"coordY":0,"width":1600,"height":1080,"background":"ftp://ftp:FTPmedia@172.16.0.17:21/content/1476945295097.jpeg","backgroundColor":"#FFFFFF","components":[{"id":761,"label":"新建跑马灯17","coordX":0,"coordY":0,"width":1600,"height":161,"componentTypeId":12,"componentTypeCode":"marquee","interactEnabled":true,"order":0,"contents":[{"id":49,"contentName":"很干净","componentId":761,"contentType":"marquee","checkState":"2","checked":true,"rollingTimes":20,"rollingSpeed":100,"backgroundColor":"#000000","backgroundAlpha":20,"fontColor":"#FFFFFF","contentSource":"和规范用工荒已更换空间好久工程开户空间和规范名 不及格一个估计环境规划基本","timeLength":0,"static":false}],"hasContent":true},{"id":762,"label":"新建电子报19","coordX":0,"coordY":161,"width":843,"height":919,"componentTypeId":7,"componentTypeCode":"epaper","interactEnabled":true,"order":1,"backgroundAlpha":"20","backgroundColor":"","backgroundPic":"ftp://ftp:FTPmedia@172.16.0.17:21/content/1476427173091.jpg","backgroundPicName":"书.jpg","contents":[{"id":36,"contentName":"四川科技报new","componentId":762,"contentType":"epaper","checkState":"2","checked":true,"contentSource":"epaper/36/","daysKeep":30,"saveDays":0,"renewalPaperTime":"00:00:00"}],"hasContent":true},{"id":763,"label":"新建网页21","coordX":843,"coordY":161,"width":758,"height":919,"componentTypeId":15,"componentTypeCode":"html","interactEnabled":true,"order":2,"backgroundAlpha":"22","backgroundColor":"","backgroundPic":"ftp://ftp:FTPmedia@172.16.0.17:21/content/1476788942962.jpg","backgroundPicName":"盆栽.jpg","contents":[{"id":116,"contentName":"聚美优品11","componentId":763,"contentType":"html","materialType":"","checkState":"2","checked":true,"contentSource":"http://gz.jumei.com/?referer=duomai__191197044","backgroundAlpha":"22","url":"http://gz.jumei.com/?referer=duomai__191197044","type":1,"updtime":"1477473006624"}],"hasContent":true}],"pages":[]}]
      */
     private boolean home;
+
+    private double coordX;
+    private double coordY;
+    private double width;
+    private double height;
+    private String backgroundColor;
+    private String background;
+
+    private String label;
+    private List<ComponentsBean> components;
+
     private List<PagesBean> pages;
     public boolean isHome() {
         return home;
@@ -39,5 +50,69 @@ public class PagesBean extends AdBean{
 
     public void setPages(List<PagesBean> pages) {
         this.pages = pages;
+    }
+
+    public String getBackground() {
+        return background;
+    }
+
+    public void setBackground(String background) {
+        this.background = background;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public double getCoordX() {
+        return coordX;
+    }
+
+    public void setCoordX(double coordX) {
+        this.coordX = coordX;
+    }
+
+    public double getCoordY() {
+        return coordY;
+    }
+
+    public void setCoordY(double coordY) {
+        this.coordY = coordY;
+    }
+
+    public double getHeight() {
+        return height>0?height:-1;
+    }
+
+    public void setHeight(double height) {
+        this.height = height;
+    }
+
+    public double getWidth() {
+        return width>0?width:-1;
+    }
+
+    public void setWidth(double width) {
+        this.width = width;
+    }
+
+    public String getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public void setBackgroundColor(String backgroundColor) {
+        this.backgroundColor = backgroundColor;
+    }
+
+    public List<ComponentsBean> getComponents() {
+        return components;
+    }
+
+    public void setComponents(List<ComponentsBean> components) {
+        this.components = components;
     }
 }

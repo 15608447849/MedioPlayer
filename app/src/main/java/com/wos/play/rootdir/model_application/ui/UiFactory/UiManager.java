@@ -14,13 +14,14 @@ import static android.R.attr.id;
  * Created by user on 2016/11/10.
  */
 public class UiManager {
-    private static final String TAG ="UiMagener";
+    private static final String TAG = UiManager.class.getSimpleName();
     private static UiManager instants = null;
     private boolean isInit = false;
+    private int currentAdId = -1, currentHomeId = -1;    //当前持有的 广告ID/主页ID
     private UiManager() {
 
     }
-    public static UiManager getInstans(){
+    public static UiManager getInstance(){
         if (instants == null){
             instants = new UiManager();
         }
@@ -45,21 +46,54 @@ public class UiManager {
         }
     }
 
+
+    /**
+     * 执行指定任务
+     */
+    public void exeTask(int id) {
+        if (isInit){
+            func(id);
+        }
+    }
+
+    /**
+     * 执行广告任务
+     */
+    public void exeAdTask(int adId) {
+        if (isInit){
+            currentAdId = adId;
+            if(PagerStore.getInstant().getPage(currentAdId)!=null){
+                addPage(currentAdId);
+                PagerStore.getInstant().getPage(currentAdId).startWork();
+            }
+        }
+    }
     /**
      * 执行主线任务
      */
     public void exeMainTask(int homeId) {
         if (isInit){
-                currentHomeId = homeId;
-                if(PagerStore.getInstant().getPage(currentHomeId)!=null){
+            currentHomeId = homeId;
+            if(PagerStore.getInstant().getPage(currentHomeId)!=null){
                 addPage(currentHomeId);
                 PagerStore.getInstant().getPage(currentHomeId).startWork();
             }
         }
     }
+
+
+
     /**
-     * 执行一个任务
-     * 1. 是否存于 栈中
+     * 停止任务
+     */
+    public void stopTask() {
+        if (isInit){ //清除 栈内所有 page
+            deleteAllPage();
+        }
+    }
+
+    /**
+     * 执行一个任务 1. 是否存于 栈中
      * 存在 ->
      *       是不是主页面?  是, 删除上面的所有 页面
      *       不是 创建
@@ -69,65 +103,24 @@ public class UiManager {
      *
      *
      */
-    public void exeTask(int id) {
-        if (isInit){
-//            func1(id);
-            func2(id);
-        }
-    }
-
-    private void func2(int id) {
-
-
-
-        if (loadedPageArray.contains(id)){
-            //栈中
-            if (id == currentHomeId){
-                //主页
+    private void func(int id) {
+        if (loadedPageArray.contains(id)){ //栈中
+            if (id == currentHomeId){//主页
                 keepHomePage();
-            }else{
-                //不是 创建 执行
+            }else{//不是 创建 执行
                 if(PagerStore.getInstant().getPage(id)!=null){
-                    addPage(id);
                     PagerStore.getInstant().getPage(id).startWork();
                 }
-
             }
-
-        }
-
-        //不在栈中
-        else{
-        //判断页面大小
-            if (justSizeOnHome(id)){
-                    //一样大  删除主页面
+        }else{//不在栈中,判断页面大小
+            if (justSizeOnHome(id)){ //一样大  删除主页面
                 stopTask();
             }
-            //直接创建
-            if(PagerStore.getInstant().getPage(id)!=null){
+            if(PagerStore.getInstant().getPage(id)!=null){ //直接创建
                 addPage(id);
                 PagerStore.getInstant().getPage(id).startWork();
             }
-
-
-
-
-
-
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
     //真 一样大
     private boolean justSizeOnHome(int id) {
@@ -151,77 +144,28 @@ public class UiManager {
         return false;
     }
 
-    private void func1(int id) {
-        if (id == currentHomeId){
-            Logs.i(TAG,"当前目标ID 是主页,移除 栈上所有页面");
-            //停止 除去 homeid 之外的所有page
-            keepHomePage();
-        }else{
-            //查看是否存在于栈中
-            if (loadedPageArray.contains(id)){
-                Logs.i(TAG,"当前目标ID 存在于栈中 ,删除这个页面上的所有page");
-                // 1 已存在的 -> 删除这个页面上面的 所有页面
-                deleteTagerTop(id);
-            }else{
-                Logs.i(TAG,"当前目标ID 不存在栈中,添加...");
-//                    2 不存在 添加到栈顶
-                if(PagerStore.getInstant().getPage(id)!=null){
-                    addPage(id);
-                    PagerStore.getInstant().getPage(id).startWork();
-                }
-
-            }
-        }
-    }
-
-    /**
-     * 停止任务
-     */
-    public void stopTask() {
-        if (isInit){
-            //清楚 栈内所有 page
-            deleteAllPage();
-        }
-    }
-
-
     /**
      * Ui属性
      */
-    private void init(){
-        //初始化 栈
+    private void init(){ //初始化 栈
         loadedPageArray = new ArrayList<>();
     }
 
-    //当前持有的 主页面 id
-    private int currentHomeId = -1;
-
-    public int getCurrentHomeId() {
-        return currentHomeId;
-    }
-
-    public void setCurrentHomeId(int currentHomeId) {
-        this.currentHomeId = currentHomeId;
-    }
 
     //当前已加载的页面ID -
     private ArrayList<Integer> loadedPageArray = null;
 
     //添加一个页面
-    public void addPage(int id){
-       /* if (loadedPageArray.contains(id)){
-            loadedPageArray.remove(loadedPageArray.indexOf(id));
-        }*/
-        loadedPageArray.add(id);
+    private void addPage(int id){
+        if(!loadedPageArray.contains(id)){
+            loadedPageArray.add(id);
+        }
     }
     //停止 页面
     private void stopPage(int id){
         if(PagerStore.getInstant().getPage(id)!=null){
             PagerStore.getInstant().getPage(id).stopWork();
         }
-        /*else if (ViewStore.getInstant().getPageCache(id)!=null){
-            ViewStore.getInstant().getPageCache(id).stopWork();
-        }*/
     }
 
     //删除一个页面
@@ -234,7 +178,7 @@ public class UiManager {
 
 
     //删除所有页面
-    public void deleteAllPage(){
+    private void deleteAllPage(){
         for (Integer id:loadedPageArray){
             stopPage(id);
         }
@@ -242,7 +186,7 @@ public class UiManager {
     }
 
     //删除 除去主页之外的所有页面
-    public void keepHomePage(){
+    private void keepHomePage(){
         List<Integer> deleteList = new ArrayList<>();
         for (Integer id:loadedPageArray){
             if (id==currentHomeId){
@@ -256,11 +200,9 @@ public class UiManager {
         }
     }
 
-
-
     //删除 - 指定页面 之上的所有页面
-    public void deleteTagerTop(int keepid){
-        int index = loadedPageArray.indexOf(keepid);//这个页面 的下标
+    public void deleteTargetTop(int keepId){
+        int index = loadedPageArray.indexOf(keepId);//这个页面 的下标
         if (index++ == loadedPageArray.size()){
             return;
         }
@@ -273,8 +215,5 @@ public class UiManager {
             loadedPageArray.remove(loadedPageArray.indexOf(deleteId));
         }
     }
-
-
-
 
 }

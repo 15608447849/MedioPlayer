@@ -10,6 +10,7 @@ import com.wos.play.rootdir.model_application.ui.UiHttp.UiHttpProxy;
 import com.wos.play.rootdir.model_application.ui.UiStore.ImageStore;
 import com.wos.play.rootdir.model_application.ui.UiStore.PagerStore;
 import com.wos.play.rootdir.model_application.ui.Uitools.ImageAsyLoad;
+import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.AdBean;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.PagesBean;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ProgramBean;
 import com.wos.play.rootdir.model_universal.tool.AppsTools;
@@ -23,42 +24,34 @@ import java.util.List;
  * Ui 数据过滤
  */
 public class UiDataFilter {
-    private static final String TAG = "_uidataFilete";
+    private static final String TAG = UiDataFilter.class.getSimpleName();
 
     private  boolean isInit = false;
-
     public  BaseActivity activity = null;
-
     private int homeKey = -1;
-
     private Handler handler ;
-
-    private static UiDataFilter uidf;
+    private static UiDataFilter uiDataFilter;
 
 
     private UiDataFilter() {
     }
-    public static UiDataFilter getUiDataFilter(){
-        if (uidf==null){
-            uidf = new UiDataFilter();
-        }
-        return uidf;
 
+    public static UiDataFilter getUiDataFilter(){
+        if (uiDataFilter==null){
+            uiDataFilter = new UiDataFilter();
+        }
+        return uiDataFilter;
     }
 
-
-
     public void init(BaseActivity activity){
-
        if (!AppsTools.checkUiThread()){
             Logs.e(TAG,"不在UI主线程 - 不可执行 ");
             return;
         }
         if (!isInit){
-
             this.activity = activity;
             handler = new Handler();
-            UiManager.getInstans().initData();
+            UiManager.getInstance().initData();
             UiHttpProxy.getPeoxy().init(activity);
             isInit = true;
             Logs.i(TAG,"初始化 - UI数据过滤类 - 完成");
@@ -69,7 +62,7 @@ public class UiDataFilter {
     public void unInit(){
         if (isInit) {
             Logs.i(TAG, "注销 - UI 数据过滤类");
-            UiManager.getInstans().unInitData();
+            UiManager.getInstance().unInitData();
             UiHttpProxy.getPeoxy().unInit();//ui下载关闭();
             ImageStore.getInstants().clearCache();
             ImageAsyLoad.clear();
@@ -83,7 +76,6 @@ public class UiDataFilter {
 
 
     public void  filter(final LocalScheduleObject current){
-
         if (!isInit){
             Logs.e(TAG," 未初始化 activity - 不可执行 ");
             return;
@@ -110,14 +102,26 @@ public class UiDataFilter {
 
     // 创建 布局层
     private void createLayout(ProgramBean program) {
-        UiManager.getInstans().stopTask();
+        UiManager.getInstance().stopTask();
         homeKey =-1;
-       // ViewStore.getInstant().pageTanslationCache();//页面 转存
         //循环创建所有页面
         PagerStore.getInstant().initPagesStore(); // 初始化
+        repeatAdStore(program.getLayout().getAd());
         repeatPageStore(program.getLayout().getPages());
         if (homeKey!=-1){
-            UiManager.getInstans().exeMainTask(homeKey);
+            UiManager.getInstance().exeMainTask(homeKey);
+        }
+    }
+
+    private void repeatAdStore(List<AdBean> ads) {
+        IViewPage pageView;
+        for (AdBean ad : ads){
+            pageView = new IViewPage(activity, ad);
+            PagerStore.getInstant().addPage(ad.getId(),pageView); //添加页面
+            if(ad.isAdEnabled() && activity!=null){
+                activity.onHasAdDuty(ad.getId(), ad.getWaitTime());
+            }
+
         }
     }
 
@@ -126,10 +130,8 @@ public class UiDataFilter {
         int key;
         IViewPage pageView;
         for (PagesBean page : pages){
-            key = page.getId();
-            //创建
+            key = page.getId();//创建
             pageView = new IViewPage(activity,page);
-
             if (pageView.isHome()){
                 homeKey = key;
             }

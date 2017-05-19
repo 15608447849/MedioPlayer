@@ -7,7 +7,7 @@ import java.util.List;
  * lzp
  * 组件
  */
-public class ComponentsBean extends PublicAttibute{
+public class ComponentsBean extends PublicAttribute{
     /**
      * id : 756
      * label : 新建资讯7

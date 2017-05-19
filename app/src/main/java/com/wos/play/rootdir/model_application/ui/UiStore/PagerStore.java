@@ -26,8 +26,6 @@ public class PagerStore {
         return instant;
     }
 
-
-
     //页面存储
     private LinkedHashMap<Integer, IViewPage> pagesMap = null;
 
@@ -42,8 +40,7 @@ public class PagerStore {
    }
 
     //添加 一个 页面
-    public  void  addPage(int key, IViewPage page){
-//        Log.i("","id - "+key + "page - "+page);
+    public void addPage(int key, IViewPage page){
         try{
             pagesMap.put(key,page);
         }catch (Exception e){

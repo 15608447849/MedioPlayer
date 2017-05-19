@@ -1,11 +1,11 @@
 package com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc;
 
-import java.util.List;
 
 /**
  * Created by user on 2016/10/27.
+ * 广告页面
  */
-public class AdBean extends PublicAttibute{
+public class AdBean extends PagesBean{
 
     /**
      * id : 365
@@ -18,80 +18,22 @@ public class AdBean extends PublicAttibute{
      * adEnabled : false
      * waitTime : 0
      */
-    private double coordX;
-    private double coordY;
-    private double width;
-    private double height;
-    private String backgroundColor;
-    private String background;
+    private int waitTime;
+    private boolean adEnabled;
 
-    public String getBackground() {
-        return background;
+    public int getWaitTime() {
+        return waitTime;
     }
 
-    public void setBackground(String background) {
-        this.background = background;
+    public void setWaitTime(int waitTime) {
+        this.waitTime = waitTime;
     }
 
-    public String getLabel() {
-        return label;
+    public boolean isAdEnabled() {
+        return adEnabled;
     }
 
-    public void setLabel(String label) {
-        this.label = label;
+    public void setAdEnabled(boolean adEnabled) {
+        this.adEnabled = adEnabled;
     }
-
-    private String label;
-    private List<ComponentsBean> components;
-
-    public double getCoordX() {
-        return coordX;
-    }
-
-    public void setCoordX(double coordX) {
-        this.coordX = coordX;
-    }
-
-    public double getCoordY() {
-        return coordY;
-    }
-
-    public void setCoordY(double coordY) {
-        this.coordY = coordY;
-    }
-
-    public double getHeight() {
-        return height>0?height:-1;
-    }
-
-    public void setHeight(double height) {
-        this.height = height;
-    }
-
-    public double getWidth() {
-        return width>0?width:-1;
-    }
-
-    public void setWidth(double width) {
-        this.width = width;
-    }
-
-    public String getBackgroundColor() {
-        return backgroundColor;
-    }
-
-    public void setBackgroundColor(String backgroundColor) {
-        this.backgroundColor = backgroundColor;
-    }
-
-
-    public List<ComponentsBean> getComponents() {
-        return components;
-    }
-
-    public void setComponents(List<ComponentsBean> components) {
-        this.components = components;
-    }
-
-
 }

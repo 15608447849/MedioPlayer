@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by user on 2016/10/27.
  */
-public class LayoutBean extends PublicAttibute{
+public class LayoutBean extends PublicAttribute{
     /**
      * id : 123
      * ad : [{"id":365,"coordX":0,"coordY":0,"width":0,"height":0,"backgroundColor":"#FFFFFF","components":[],"adEnabled":false,"waitTime":0}]

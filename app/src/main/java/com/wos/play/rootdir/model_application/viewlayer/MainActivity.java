@@ -18,16 +18,15 @@ import static com.wos.play.rootdir.R.id.main_layout;
  * Created by user on 2016/10/26.
  */
 public class MainActivity extends BaseActivity {
-    private boolean isSend = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Logs.e("MainActivity","活动层-------------onCreate----------------------");
         setContentView(R.layout.activity_main);
         setIsOnBack(false);
-        setStopOnDestory(false);
+        setStopOnDestroy(false);
         registerBroad(1);
-
         //发送上线指令 ONLI
         sendMsgCommServer("sendTerminalOnline", null);
     }
@@ -46,10 +45,10 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onStart() {
-
         super.onStart();
         Logs.e("MainActivity","活动层-------------onStart----------------------");
     }
+
     @Override
     protected void onResume() {
         super.onResume();

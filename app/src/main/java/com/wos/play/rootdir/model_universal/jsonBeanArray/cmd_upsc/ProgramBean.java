@@ -5,7 +5,7 @@ package com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc;
  * lzp
  * 一个节目下面有多个布局
  */
-public class ProgramBean extends PublicAttibute{
+public class ProgramBean extends PublicAttribute{
     /**
      * id : 368
      * title : 1026最新节目

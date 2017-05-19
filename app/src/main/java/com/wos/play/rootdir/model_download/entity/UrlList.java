@@ -70,21 +70,20 @@ public class UrlList {
      * @param task
      */
     public synchronized void addTaskOnList(Task task) {
-//        Logs.d(TAG, "添加任务 task - " + task.getFileName());
         if (taskLists == null ) {
             return;
         }
         if (task.getType() == Task.Type.FTP || task.getType() == Task.Type.HTTP || task.getType() == Task.Type.FILE){
            if(FileUtils.isFileExist(task.getSavePath()+task.getFileName())){
-               Logs.d(TAG, "添加任务 task - " + task.printInfo() +" - local exits.");
-            return;
+                //Logs.d(TAG, "添加任务 task - " + task.printInfo() +" - local exits.");
+                return;
            }
         }
         if (!taskLists.contains(task)){
             taskLists.add(task);
-            Logs.d(TAG, "添加任务 task - " + task.printInfo() +" - success");
+            //Logs.d(TAG, "添加任务 task - " + task.printInfo() +" - success");
         }else {
-            Logs.d(TAG, "添加任务 task - " + task.printInfo() +" - list exits.");
+            //Logs.d(TAG, "添加任务 task - " + task.printInfo() +" - list exits.");
         }
 
         if (AppsTools.isMp4Suffix(task.getFileName())) {
