@@ -79,7 +79,7 @@ public class CEpapersMain extends FrameLayout implements IComponent, LoopSuccess
             layoutParams = new AbsoluteLayout.LayoutParams(width,height,x,y);
 
             //--------背景-----------
-            this.backgroundAlpha = cb.getBackgroundAlpha();
+            this.backgroundAlpha = getAlpha(cb.getBackgroundAlpha());
             if (cb.getBackgroundPic()!=null && !cb.getBackgroundPic().equals("")){
                 this.bgImageUrl = UiTools.getUrlTanslationFilename(cb.getBackgroundPic());
                 if (bgImageUrl==null){
@@ -97,6 +97,32 @@ public class CEpapersMain extends FrameLayout implements IComponent, LoopSuccess
             e.printStackTrace();
         }
     }
+
+
+    /**
+     * 百分比转换透明度（0-255）
+     */
+    private int getAlpha(int cent) {
+        if(cent< 0)   cent=0;
+        if(cent> 100) cent=100;
+        return Math.round(cent * 255 / 100);
+    }
+
+    /**
+     * 获取颜色值（包括透明度）
+     */
+    private int getColor(String colorString) {
+        if (colorString!=null && colorString.charAt(0) == '#') {
+            long color = Long.parseLong(colorString.substring(1), 16);
+            if (colorString.length() == 7) {
+                color |= ( backgroundAlpha << 24 ); //color |=  0x0000000000000000;
+                return (int) color;
+            }
+            return (int) color;
+        }
+        return Color.TRANSPARENT;
+    }
+
 
     //加载背景
     public void loadBg() {
@@ -168,13 +194,14 @@ public class CEpapersMain extends FrameLayout implements IComponent, LoopSuccess
     public void setAttribute() {
         this.setLayoutParams(layoutParams);
 
-        this.setAlpha(backgroundAlpha);
         if (bgImageUrl==null){
             //设置背景颜色
-            this.setBackgroundColor(Color.parseColor(UiTools.TanslateColor(backgroundColor)));
+            this.setBackgroundColor(getColor(backgroundColor));
+            //this.setBackgroundColor(Color.parseColor(UiTools.TanslateColor(backgroundColor)));
         } else {
             loadBg();
         }
+        this.setAlpha(backgroundAlpha);
     }
     //设置布局
     @Override

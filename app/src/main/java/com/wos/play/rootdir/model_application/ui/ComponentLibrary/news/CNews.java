@@ -62,7 +62,7 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
 
     private int backgroundAlpha;
     private String backgroundColor;
-    private  String bgImageUrl;
+    private String bgImageUrl;
     private Bitmap bgImage;
 
     public CNews(Context context, AbsoluteLayout layout, ComponentsBean component) {
@@ -84,23 +84,45 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
         this.x = (int) cb.getCoordX();
         this.y = (int) cb.getCoordY();
         layoutParams = new AbsoluteLayout.LayoutParams(width, height, x, y);
-        this.backgroundAlpha = cb.getBackgroundAlpha();
+        this.backgroundAlpha = getAlpha(cb.getBackgroundAlpha());
 
-        //---------------背景-----------------
-        Logs.e(TAG, "BackgroundPic: --->>>" + cb.getBackgroundPic());
+        //---------------背景----------------
         if (cb.getBackgroundPic()!=null && !cb.getBackgroundPic().equals("")){
             this.bgImageUrl = UiTools.getUrlTanslationFilename(cb.getBackgroundPic());
             if (bgImageUrl==null){
-                backgroundColor = cb.getBackgroundColor();
+                this.backgroundColor = cb.getBackgroundColor();
             }
         } else {
-            backgroundColor = cb.getBackgroundColor();
+            this.backgroundColor = cb.getBackgroundColor();
         }
         initSubComponent();//初始化组件
         if (cb.getContents() != null && cb.getContents().size() == 1) {
             createContent(cb.getContents().get(0));
         }
         this.isInitData = true;
+    }
+
+    /**
+     * 百分比转换透明度（0-255）
+     */
+    private int getAlpha(int cent) {
+        if(cent< 0)   cent=0;
+        if(cent> 100) cent=100;
+        return Math.round(cent * 255 / 100);
+    }
+    /**
+     * 获取颜色值（包括透明度）
+     */
+    private int getColor(String colorString) {
+        if (colorString!=null && colorString.charAt(0) == '#') {
+            long color = Long.parseLong(colorString.substring(1), 16);
+            if (colorString.length() == 7) {
+                color |= ( backgroundAlpha << 24 ); //color |=  0x0000000000000000;
+                return (int) color;
+            }
+            return (int) color;
+        }
+        return Color.TRANSPARENT;
     }
 
     //加载背景
@@ -241,7 +263,6 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
     //弹出 放大的 视图层
     private boolean showShowLayout(int position) {
         NewsDataBeans data = adapter.getUData(position);
-        Logs.e(TAG, "CNews data:::::::::::" + showLayout.getRootView().getVisibility());
         if (data==null) return false;
         if (showLayout.getRootView().getVisibility() == View.GONE) {
             showLayout.getRootView().setVisibility(View.VISIBLE);
@@ -252,7 +273,6 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
 
     //隐藏放大的视图层
     private void hindShowLayout() {
-        Logs.e(TAG, "CNews:::::::::::" + showLayout.getRootView().getVisibility());
         if (showLayout.getRootView().getVisibility() == View.VISIBLE) {
             showLayout.getRootView().setVisibility(View.GONE);
         }
@@ -263,13 +283,14 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
     public void setAttribute() {
         this.setLayoutParams(layoutParams);
 
-        this.setAlpha(backgroundAlpha);
         if (bgImageUrl==null){
             //设置背景颜色
-            this.setBackgroundColor(Color.parseColor(UiTools.TanslateColor(backgroundColor)));
+            this.setBackgroundColor(getColor(backgroundColor));
+            //this.setBackgroundColor(Color.parseColor(UiTools.TanslateColor(backgroundColor)));
         } else {
             loadBg();
         }
+        this.setAlpha(backgroundAlpha);
     }
 
     //加载布局

@@ -69,7 +69,7 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
     private ImagerSwitchFactory factory;//图片工厂 (停止使用请调用 stop)
     private GralleryAdapter adapter;
 
-    //private int backgroundAlpha;
+    private int backgroundAlpha;
     private String backgroundColor;
     private  String bgImageUrl;
     private Bitmap bgimage;
@@ -96,6 +96,7 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
 
         //---------------背景-----------------
         Logs.e(TAG, "BackgroundPic: --->>>" + cb.getBackgroundPic());
+        this.backgroundAlpha = getAlpha(cb.getBackgroundAlpha());
         if (cb.getBackgroundPic()!=null && !cb.getBackgroundPic().equals("")){
             this.bgImageUrl = UiTools.getUrlTanslationFilename(cb.getBackgroundPic());
             if (bgImageUrl==null){
@@ -110,6 +111,30 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
             createContent(cb.getContents().get(0));
         }
         this.isInitData = true;
+    }
+
+    /**
+     * 百分比转换透明度（0-255）
+     */
+    private int getAlpha(int cent) {
+        if(cent< 0)   cent=0;
+        if(cent> 100) cent=100;
+        return Math.round(cent * 255 / 100);
+    }
+
+    /**
+     * 获取颜色值（包括透明度）
+     */
+    private int getColor(String colorString) {
+        if (colorString!=null && colorString.charAt(0) == '#') {
+            long color = Long.parseLong(colorString.substring(1), 16);
+            if (colorString.length() == 7) {
+                color |= ( backgroundAlpha << 24 ); //color |=  0x0000000000000000;
+                return (int) color;
+            }
+            return (int) color;
+        }
+        return Color.TRANSPARENT;
     }
 
     //加载背景
@@ -211,9 +236,11 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
         gallery.setAdapter(adapter);
 
         //---------设置图集背景----------
+        this.setAlpha(backgroundAlpha);
         if (bgImageUrl==null){
             //设置背景颜色
-            gallery.setBackgroundColor(Color.parseColor(UiTools.TanslateColor(backgroundColor)));
+            gallery.setBackgroundColor(getColor(backgroundColor));
+            //gallery.setBackgroundColor(Color.parseColor(UiTools.TanslateColor(backgroundColor)));
         } else {
             loadBg();
         }
