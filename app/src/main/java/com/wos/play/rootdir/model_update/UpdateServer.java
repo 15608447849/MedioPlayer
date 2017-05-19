@@ -44,7 +44,7 @@ public class UpdateServer extends IntentService {
     public static final String UPDATE_URI = "/setting/version/upgrade";
     public static final String LOCAL_PATH = "/mnt/sdcard/wosplayer/savepath/";
     private static String DOWN_ID = "0";
-    private final String FILE_PATH = LOCAL_PATH + "/update.txt";
+    private final String FILE_PATH = "/mnt/sdcard/wosplayer/update.txt";
     private Gson gson = new Gson();
 
     public UpdateServer(){
@@ -59,12 +59,12 @@ public class UpdateServer extends IntentService {
             String result = postJson(getUpdateUrl(), getDates());
             if (result == null) return;
             Logs.e("result:" + result);
+            saveUpdateInfo(result);
             JsonObject object = new JsonParser().parse(result).getAsJsonObject();
             if ("success".equals(object.get("result").getAsString()) && object.get("dataObj") != null) {
                 JsonObject dataObj = object.get("dataObj").getAsJsonObject();
                 ftpUrl = dataObj.get("fpath").getAsString();
                 fileName = dataObj.get("nname").getAsString();
-                saveUpdateInfo(result);
                 downloadApk(ftpUrl, fileName);
             }
         } catch (JsonSyntaxException e) {
@@ -109,7 +109,7 @@ public class UpdateServer extends IntentService {
         if (info ==null || "".equals(info)) return "0";
         int localVersion = AppsTools.getLocalVersionCode(getApplicationContext());
         JsonObject upInfo = new JsonParser().parse(info).getAsJsonObject();
-        if (upInfo == null) return DOWN_ID;
+        if (upInfo == null || upInfo.get("dataObj") == null) return DOWN_ID;
         JsonObject dataObj = upInfo.get("dataObj").getAsJsonObject();
         if (localVersion == Integer.parseInt(dataObj.get("version").getAsString())) {
             DOWN_ID = upInfo.get("downId").getAsString();
@@ -137,6 +137,18 @@ public class UpdateServer extends IntentService {
         return gson.toJson(map);
     }
 
+    private void delLocalApk() {
+        File file = new File(LOCAL_PATH);
+        File[] files = file.listFiles();
+        if (files != null) {
+            for (File subFile : files) {
+                if (subFile.exists() && subFile.isFile())
+                    subFile.delete();
+            }
+        }
+    }
+
+
     /**
      * 下载更新包
      * @param url
@@ -144,6 +156,7 @@ public class UpdateServer extends IntentService {
     private void downloadApk(String url, String name) {
         HashMap<String,String> map = parseFtpUrl(url);
         FtpHelper ftpHelper = new FtpHelper(map.get("host"), Integer.parseInt(map.get("port")), map.get("user"),map.get("pass"));
+        delLocalApk();
         ftpHelper.downloadSingleFile(map.get("remotePath"), LOCAL_PATH, name, 3, new OnFtpListener() {
             @Override
             public void ftpConnectState(int stateCode, String ftpHost, int port, String userName, String ftpPassword, String fileName) {
