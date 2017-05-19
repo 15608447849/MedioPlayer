@@ -171,22 +171,17 @@ public class TextViewPager extends ViewPager implements IComponentUpdate {
     //加载背景
     @Override
     public void loadBg() {
-        if (UiTools.fileIsExt(bgImageUrl)){
-            //文件存在
-            bgImage = ImageUtils.getBitmap(bgImageUrl);
-        }
-        if (bgImage!=null){
-            this.setBackgroundDrawable(new BitmapDrawable(bgImage));
-        }
+        Bitmap bitmap = ImageUtils.getBitmap(bgImageUrl);
+        if(bitmap!=null) this.setBackgroundDrawable(new BitmapDrawable(bitmap));
     }
+
     //不加载背景
     @Override
     public void unloadBg() {
-        if (bgImage!=null){
-            bgImage.recycle();
-            bgImage = null;
-        }
+        ImageUtils.removeCache(bgImageUrl);
+        this.setBackgroundDrawable(null);
     }
+
     @Override
     public void startWork() {
         try {

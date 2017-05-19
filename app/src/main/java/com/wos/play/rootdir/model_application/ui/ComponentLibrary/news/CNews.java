@@ -12,6 +12,7 @@ import android.widget.FrameLayout;
 import com.wos.play.rootdir.model_application.ui.UiFactory.UiLocalBroad;
 import com.wos.play.rootdir.model_application.ui.UiHttp.UiHttpProxy;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.IAdvancedComponent;
+import com.wos.play.rootdir.model_application.ui.UiInterfaces.IComponentUpdate;
 import com.wos.play.rootdir.model_application.ui.UiThread.LoopMonitorFiles;
 import com.wos.play.rootdir.model_application.ui.UiThread.LoopSuccessInterfaces;
 import com.wos.play.rootdir.model_application.ui.Uitools.ImageUtils;
@@ -36,7 +37,7 @@ import rx.functions.Action0;
  * 资讯 维护一个 listview
  */
 
-public class CNews extends FrameLayout implements IAdvancedComponent, LoopSuccessInterfaces {
+public class CNews extends FrameLayout implements IAdvancedComponent, IComponentUpdate, LoopSuccessInterfaces {
 
     private static final java.lang.String TAG = "CNews";
     private int componentId;
@@ -63,7 +64,6 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
     private int backgroundAlpha;
     private String backgroundColor;
     private String bgImageUrl;
-    private Bitmap bgImage;
 
     public CNews(Context context, AbsoluteLayout layout, ComponentsBean component) {
         super(context);
@@ -126,22 +126,19 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
     }
 
     //加载背景
+    @Override
     public void loadBg() {
-        if (UiTools.fileIsExt(bgImageUrl)){
-            //文件存在
-            bgImage = ImageUtils.getBitmap(bgImageUrl);
-        }
-        if (bgImage!=null){
-            this.setBackgroundDrawable(new BitmapDrawable(bgImage));
-        }
+        Bitmap bitmap = ImageUtils.getBitmap(bgImageUrl);
+        if(bitmap!=null) this.setBackgroundDrawable(new BitmapDrawable(bitmap));
+        this.setAlpha(backgroundAlpha/100f);
+
     }
 
     //不加载背景
+    @Override
     public void unloadBg() {
-        if (bgImage!=null){
-            bgImage.recycle();
-            bgImage = null;
-        }
+        ImageUtils.removeCache(bgImageUrl);
+        this.setBackgroundDrawable(null);
     }
 
     //创建内容
@@ -310,6 +307,7 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
             layout.removeView(this);
             isLayout = false;
         }
+        unloadBg();
     }
 
     //开始执行
@@ -333,8 +331,8 @@ public class CNews extends FrameLayout implements IAdvancedComponent, LoopSucces
     public void stopWork() {
         try {
             cancelBroad();//取消广播
-            unLayouts();
             unLoadContent();
+            unLayouts();
             LoopMonitorFiles.getInstance().clearMonitor(this);
         } catch (Exception e) {
             e.printStackTrace();

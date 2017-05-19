@@ -15,6 +15,7 @@ import android.widget.ProgressBar;
 
 import com.wos.play.rootdir.model_application.schedule.TimeOperator;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.IComponent;
+import com.wos.play.rootdir.model_application.ui.UiInterfaces.IComponentUpdate;
 import com.wos.play.rootdir.model_application.ui.UiThread.LoopMonitorFiles;
 import com.wos.play.rootdir.model_application.ui.UiThread.LoopSuccessInterfaces;
 import com.wos.play.rootdir.model_application.ui.Uitools.ImageUtils;
@@ -37,7 +38,7 @@ import cn.trinea.android.common.util.FileUtils;
  * Created by user on 2017/1/4.
  */
 
-public class CEpapersMain extends FrameLayout implements IComponent, LoopSuccessInterfaces{
+public class CEpapersMain extends FrameLayout implements IComponentUpdate, LoopSuccessInterfaces{
     private static final String TAG = "_epapersMain";
     private Context context;
     private Handler handler ;
@@ -125,14 +126,18 @@ public class CEpapersMain extends FrameLayout implements IComponent, LoopSuccess
 
 
     //加载背景
+    @Override
     public void loadBg() {
-        if (UiTools.fileIsExt(bgImageUrl)){
-            //文件存在
-            bgImage = ImageUtils.getBitmap(bgImageUrl);
-        }
-        if (bgImage!=null){
-            this.setBackgroundDrawable(new BitmapDrawable(bgImage));
-        }
+        Bitmap bitmap = ImageUtils.getBitmap(bgImageUrl);
+        if(bitmap!=null) this.setBackgroundDrawable(new BitmapDrawable(bitmap));
+
+    }
+
+    //不加载背景
+    @Override
+    public void unloadBg() {
+        ImageUtils.removeCache(bgImageUrl);
+        this.setBackgroundDrawable(null);
     }
 
     //创建content
@@ -222,6 +227,7 @@ public class CEpapersMain extends FrameLayout implements IComponent, LoopSuccess
             layout.removeView(this);
             isLayout = false;
         }
+        unloadBg();
     }
     //加载内容
     @Override

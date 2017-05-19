@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.wos.play.rootdir.model_application.ui.ComponentLibrary.image.DoubleScaleImageView;
@@ -26,6 +27,11 @@ import java.io.IOException;
 public class ImageUtils {
 
     private static final int SCALE = 1200*800;
+
+    public static void removeCache(String filepath) {
+        ImageStore.getInstants().removeImageCache(filepath);
+    }
+
     public static Bitmap getBitmap(String filepath) {
         Bitmap bitmap = ImageStore.getInstants().getBitmapCache(filepath);
         if (bitmap==null || bitmap.isRecycled()){
@@ -62,9 +68,12 @@ public class ImageUtils {
                 }
             }
         }
-
         return bitmap;
     }
+
+
+
+
     private static Bitmap createImageThumbnail(FileInputStream is){
         Bitmap bitmap = null;
         try {
@@ -148,6 +157,7 @@ public class ImageUtils {
         }
         if (bitmap != null && !bitmap.isRecycled()) {
             bitmap.recycle();
+            bitmap = null;
         }
         imageView.setBackgroundResource(0);
         imageView.setImageDrawable(null);
@@ -164,8 +174,6 @@ public class ImageUtils {
         if (type == 3) return new DragImageView(context);
         return new MeImageView(context);
     }
-
-
 
 
 }

@@ -19,6 +19,7 @@ import com.wos.play.rootdir.model_application.ui.ComponentLibrary.video.MyVideoV
 import com.wos.play.rootdir.model_application.ui.UiFactory.UiLocalBroad;
 import com.wos.play.rootdir.model_application.ui.UiHttp.UiHttpProxy;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.IAdvancedComponent;
+import com.wos.play.rootdir.model_application.ui.UiInterfaces.IComponentUpdate;
 import com.wos.play.rootdir.model_application.ui.UiThread.LoopMonitorFiles;
 import com.wos.play.rootdir.model_application.ui.UiThread.LoopSuccessInterfaces;
 import com.wos.play.rootdir.model_application.ui.Uitools.ImageAsyLoad;
@@ -43,7 +44,7 @@ import rx.functions.Action0;
  * Created by user on 2016/11/17.
  */
 
-public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSuccessInterfaces {
+public class CGrallery extends FrameLayout implements IAdvancedComponent, IComponentUpdate, LoopSuccessInterfaces {
     private static final java.lang.String TAG = "CGrallery";
     private int componentId;
     private int width;
@@ -72,7 +73,7 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
     private int backgroundAlpha;
     private String backgroundColor;
     private  String bgImageUrl;
-    private Bitmap bgimage;
+    private Bitmap bgImage;
 
 
     public CGrallery(Context context, AbsoluteLayout layout, ComponentsBean component) {
@@ -137,15 +138,42 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
         return Color.TRANSPARENT;
     }
 
-    //加载背景
+   /* //加载背景
+    @Override
     public void loadBg() {
         if (UiTools.fileIsExt(bgImageUrl)){
             //文件存在
-            bgimage = ImageUtils.getBitmap(bgImageUrl);
+            bgImage = ImageUtils.getBitmap(bgImageUrl);
+            Logs.e(TAG, "是否回收：  " + bgImage.isRecycled());
         }
-        if (bgimage!=null){
-            gallery.setBackgroundDrawable(new BitmapDrawable(bgimage));
+        if (bgImage!=null  && !bgImage.isRecycled()){
+            gallery.setBackgroundDrawable(new BitmapDrawable(bgImage));
         }
+    }
+
+    //不加载背景
+    @Override
+    public void unloadBg() {
+        if (bgImage!=null && !bgImage.isRecycled()){
+            bgImage.recycle();
+            bgImage = null;
+        }
+        gallery.setBackgroundDrawable(null);
+    }*/
+
+    //加载背景
+    @Override
+    public void loadBg() {
+        Bitmap bitmap = ImageUtils.getBitmap(bgImageUrl);
+        if(bitmap!=null) gallery.setBackgroundDrawable(new BitmapDrawable(bitmap));
+
+    }
+
+    //不加载背景
+    @Override
+    public void unloadBg() {
+        ImageUtils.removeCache(bgImageUrl);
+        gallery.setBackgroundDrawable(null);
     }
 
     //创建内容
@@ -236,7 +264,6 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
         gallery.setAdapter(adapter);
 
         //---------设置图集背景----------
-        this.setAlpha(backgroundAlpha);
         if (bgImageUrl==null){
             //设置背景颜色
             gallery.setBackgroundColor(getColor(backgroundColor));
@@ -305,6 +332,7 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
             layout.removeView(this);
             isLayout = false;
         }
+        unloadBg();
     }
 
     @Override
@@ -326,8 +354,8 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, LoopSu
     public void stopWork() {
         try {
             cancelBroad();//取消广播
-            unLayouts();
             unLoadContent();
+            unLayouts();
             LoopMonitorFiles.getInstance().clearMonitor(this);
         } catch (Exception e) {
             e.printStackTrace();
