@@ -73,7 +73,7 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, ICompo
     private int backgroundAlpha;
     private String backgroundColor;
     private  String bgImageUrl;
-    private Bitmap bgImage;
+    //private Bitmap bgImage;
 
 
     public CGrallery(Context context, AbsoluteLayout layout, ComponentsBean component) {
@@ -165,6 +165,7 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, ICompo
     @Override
     public void loadBg() {
         Bitmap bitmap = ImageUtils.getBitmap(bgImageUrl);
+        bitmap = ImageUtils.getTransparentBitmap(bitmap, backgroundAlpha);
         if(bitmap!=null) gallery.setBackgroundDrawable(new BitmapDrawable(bitmap));
 
     }

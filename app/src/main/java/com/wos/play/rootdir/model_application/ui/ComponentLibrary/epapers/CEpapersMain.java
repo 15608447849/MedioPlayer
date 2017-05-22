@@ -129,8 +129,8 @@ public class CEpapersMain extends FrameLayout implements IComponentUpdate, LoopS
     @Override
     public void loadBg() {
         Bitmap bitmap = ImageUtils.getBitmap(bgImageUrl);
+        bitmap = ImageUtils.getTransparentBitmap(bitmap, backgroundAlpha);
         if(bitmap!=null) this.setBackgroundDrawable(new BitmapDrawable(bitmap));
-
     }
 
     //不加载背景
@@ -197,8 +197,6 @@ public class CEpapersMain extends FrameLayout implements IComponentUpdate, LoopS
     //设置属性
     @Override
     public void setAttribute() {
-        this.setLayoutParams(layoutParams);
-
         if (bgImageUrl==null){
             //设置背景颜色
             this.setBackgroundColor(getColor(backgroundColor));
@@ -206,7 +204,8 @@ public class CEpapersMain extends FrameLayout implements IComponentUpdate, LoopS
         } else {
             loadBg();
         }
-        this.setAlpha(backgroundAlpha);
+        //this.setAlpha(backgroundAlpha);
+        this.setLayoutParams(layoutParams);
     }
     //设置布局
     @Override

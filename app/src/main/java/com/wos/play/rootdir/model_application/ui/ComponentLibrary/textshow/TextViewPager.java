@@ -139,8 +139,7 @@ public class TextViewPager extends ViewPager implements IComponentUpdate {
     private AbsoluteLayout.LayoutParams layoutParams;
     @Override
     public void setAttribute() {
-        this.setLayoutParams(layoutParams);
-        this.setAlpha(backgroundAlpha);
+        //this.setAlpha(backgroundAlpha);
         if (bgImageUrl==null){
             //设置背景颜色
             this.setBackgroundColor(getColor(backgroundColor));
@@ -148,6 +147,7 @@ public class TextViewPager extends ViewPager implements IComponentUpdate {
            }else{
             loadBg();
         }
+        this.setLayoutParams(layoutParams);
     }
 
     @Override
@@ -172,6 +172,7 @@ public class TextViewPager extends ViewPager implements IComponentUpdate {
     @Override
     public void loadBg() {
         Bitmap bitmap = ImageUtils.getBitmap(bgImageUrl);
+        bitmap = ImageUtils.getTransparentBitmap(bitmap, backgroundAlpha);
         if(bitmap!=null) this.setBackgroundDrawable(new BitmapDrawable(bitmap));
     }
 

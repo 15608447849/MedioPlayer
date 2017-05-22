@@ -129,9 +129,8 @@ public class CNews extends FrameLayout implements IAdvancedComponent, IComponent
     @Override
     public void loadBg() {
         Bitmap bitmap = ImageUtils.getBitmap(bgImageUrl);
+        bitmap = ImageUtils.getTransparentBitmap(bitmap, backgroundAlpha);
         if(bitmap!=null) this.setBackgroundDrawable(new BitmapDrawable(bitmap));
-        this.setAlpha(backgroundAlpha/100f);
-
     }
 
     //不加载背景
@@ -278,8 +277,6 @@ public class CNews extends FrameLayout implements IAdvancedComponent, IComponent
     //设置属性
     @Override
     public void setAttribute() {
-        this.setLayoutParams(layoutParams);
-
         if (bgImageUrl==null){
             //设置背景颜色
             this.setBackgroundColor(getColor(backgroundColor));
@@ -287,7 +284,8 @@ public class CNews extends FrameLayout implements IAdvancedComponent, IComponent
         } else {
             loadBg();
         }
-        this.setAlpha(backgroundAlpha);
+        //this.setAlpha(backgroundAlpha);
+        this.setLayoutParams(layoutParams);
     }
 
     //加载布局
