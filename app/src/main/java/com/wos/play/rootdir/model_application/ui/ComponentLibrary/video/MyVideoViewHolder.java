@@ -54,9 +54,11 @@ public class MyVideoViewHolder implements IContentView{
             video.setOnPreparedListener_(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
-                    Logs.i(TAG,"当前设置时长 - "+length +"获取到视频真实时长 - "+video.getDuration()/1000);
-                    if (length!=video.getDuration()/1000){
-                        length = video.getDuration()/1000;
+                    int duration = video.getDuration()/1000;
+                    Logs.i(TAG,"当前设置时长 - "+length +"获取到视频真实时长 - "+duration);
+                    // 当后台给的时长无效或大于视频真实时长，改为视频真实时长
+                    if (length <=0 || length > duration){
+                        length = duration;
                     }
                 }
             });
