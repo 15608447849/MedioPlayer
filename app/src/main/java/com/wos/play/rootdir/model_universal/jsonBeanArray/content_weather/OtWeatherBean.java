@@ -6,7 +6,7 @@ import java.util.List;
  * Created by user on 2017/5/3.
  */
 
-public class OtweatherBean {
+public class OtWeatherBean {
 
     /**
      * desc : OK

@@ -10,7 +10,7 @@ import com.wos.play.rootdir.model_application.ui.UiHttp.UiHttpProxy;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.IAdvancedComponent;
 import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
-import com.wos.play.rootdir.model_universal.jsonBeanArray.content_weather.OtweatherBean;
+import com.wos.play.rootdir.model_universal.jsonBeanArray.content_weather.OtWeatherBean;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.content_weather.WeathersBean;
 import com.wos.play.rootdir.model_universal.tool.AppsTools;
 import com.wos.play.rootdir.model_universal.tool.Logs;
@@ -278,7 +278,7 @@ public class Iweather extends FrameLayout implements IAdvancedComponent {
 
         if (jsonContent != null) {
             try {
-                OtweatherBean obj = AppsTools.parseJsonWithGson(jsonContent, OtweatherBean.class);
+                OtWeatherBean obj = AppsTools.parseJsonWithGson(jsonContent, OtWeatherBean.class);
                 if (obj != null && obj.getStatus() == 1000 && obj.getDesc().equals("OK")) {
                     //存在数据
 //                    解析
@@ -294,7 +294,7 @@ public class Iweather extends FrameLayout implements IAdvancedComponent {
     }
 
     //解析百度api 数据
-    private void parseBaiduData(OtweatherBean api) {
+    private void parseBaiduData(OtWeatherBean api) {
         //解析数据
         String[] arr = new String[4];
         arr[0] = api.getData().getCity();//城市

@@ -14,8 +14,7 @@ import com.wos.play.rootdir.model_application.ui.ComponentLibrary.image.MeImageV
 import com.wos.play.rootdir.model_application.ui.Uitools.ImageAsyLoad;
 import com.wos.play.rootdir.model_application.ui.Uitools.ImageUtils;
 import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
-import com.wos.play.rootdir.model_universal.jsonBeanArray.content_gallary.DataObjsBean;
-import com.wos.play.rootdir.model_universal.tool.Logs;
+import com.wos.play.rootdir.model_universal.jsonBeanArray.content_gallery.DataObjsBean;
 
 import java.util.ArrayList;
 import java.util.List;

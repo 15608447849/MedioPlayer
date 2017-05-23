@@ -19,8 +19,8 @@ import com.wos.play.rootdir.model_application.ui.Uitools.ImageUtils;
 import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
-import com.wos.play.rootdir.model_universal.jsonBeanArray.content_gallary.DataObjsBean;
-import com.wos.play.rootdir.model_universal.jsonBeanArray.content_gallary.GallaryBean;
+import com.wos.play.rootdir.model_universal.jsonBeanArray.content_gallery.DataObjsBean;
+import com.wos.play.rootdir.model_universal.jsonBeanArray.content_gallery.GalleryBean;
 import com.wos.play.rootdir.model_universal.tool.AppsTools;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 import com.wos.play.rootdir.model_universal.tool.MD5Util;
@@ -148,20 +148,21 @@ public class CNews extends FrameLayout implements IAdvancedComponent, IComponent
             updateTime = content.getUpdateFreq();//更新频率
             if (content.getContentSource() != null) {
                 this.url = content.getContentSource();
-                tanslationUrl(url);
+                translationUrl(url);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void tanslationUrl(String contentSource) {
+    private void translationUrl(String contentSource) {
         String jsonContent = UiTools.urlTanslationJsonText(contentSource);
         if (jsonContent != null) {
             try {
-                GallaryBean gallaryBean = AppsTools.parseJsonWithGson(jsonContent, GallaryBean.class);
-                if (gallaryBean != null && gallaryBean.getDataObjs() != null && gallaryBean.getDataObjs().size() > 0) {
-                    addDataSource(gallaryBean.getDataObjs());
+                GalleryBean galleryBean = AppsTools.parseJsonWithGson(jsonContent, GalleryBean.class);
+                if (galleryBean != null && galleryBean.getDataObjs() != null
+                        && galleryBean.getDataObjs().size() > 0) {
+                    addDataSource(galleryBean.getDataObjs());
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -235,10 +236,9 @@ public class CNews extends FrameLayout implements IAdvancedComponent, IComponent
         showLayout = new CShowLayout(context, this, new OnClickListener() {
             @Override
             public void onClick(View v) {
-                //结束图层上面的内容
-                //隐藏图层
-                hindShowLayout();
-                listView.setVisibility(View.VISIBLE);
+                closeVideoShow();  //结束可能播放的视频
+                hindShowLayout();  //结束图层上面的内容
+                listView.setVisibility(View.VISIBLE);   //隐藏图层
             }
         });
         adapter = new ListViewAdapter(context);
@@ -253,6 +253,13 @@ public class CNews extends FrameLayout implements IAdvancedComponent, IComponent
             }
         });
 
+    }
+
+    /**
+     * 关闭存在的视频播放
+     */
+    private void closeVideoShow() {
+        showLayout.closeVideoShow();
     }
 
 
@@ -383,9 +390,9 @@ public class CNews extends FrameLayout implements IAdvancedComponent, IComponent
     //广播回调
     @Override
     public void broadCall() {
-        Logs.i(TAG, " 资讯 - 广播 -  " + mBroadAction + " - 收到,执行!");
+        Logs.i(TAG, " ==资讯 - 广播 -  " + mBroadAction + " - 收到,执行!");
         //更新资源文件名
-        tanslationUrl(url);
+        translationUrl(url);
     }
 
     private boolean flag_ones = true;
@@ -415,10 +422,12 @@ public class CNews extends FrameLayout implements IAdvancedComponent, IComponent
     @Override
     public void loadContent() {
         //开始计时器
+        Logs.i("===loadContent1");
         unLoadContent();
         if (!flag_ones) {
             UiHttpProxy.getPeoxy().update(url, mBroadAction,UiHttpProxy.NEWS_TYPE);
         }
+        Logs.i("===loadContent2");
         flag_ones = false;
         startTimer(updateTime * 1000);
     }

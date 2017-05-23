@@ -27,8 +27,8 @@ import com.wos.play.rootdir.model_application.ui.Uitools.ImageUtils;
 import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
-import com.wos.play.rootdir.model_universal.jsonBeanArray.content_gallary.DataObjsBean;
-import com.wos.play.rootdir.model_universal.jsonBeanArray.content_gallary.GallaryBean;
+import com.wos.play.rootdir.model_universal.jsonBeanArray.content_gallery.DataObjsBean;
+import com.wos.play.rootdir.model_universal.jsonBeanArray.content_gallery.GalleryBean;
 import com.wos.play.rootdir.model_universal.tool.AppsTools;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 import com.wos.play.rootdir.model_universal.tool.MD5Util;
@@ -185,7 +185,7 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, ICompo
             updateTime = content.getUpdateFreq();//更新频率
             if (content.getContentSource() != null) {
                 this.url = content.getContentSource();
-                tanslationUrl(url);
+                translationUrl(url);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -214,7 +214,7 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, ICompo
     public void broadCall() {
         Logs.i(TAG, "图集 广播 - " + mBroadAction + " - 收到,执行!");
         //更新资源文件名
-        tanslationUrl(url);
+        translationUrl(url);
     }
 
     @Override
@@ -368,16 +368,16 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, ICompo
     2 获取文件内容
     3 变成图集对象
     4 获取所有文件名*/
-    private void tanslationUrl(String contentSource) {
+    private void translationUrl(String contentSource) {
         String jsonContent = UiTools.urlTanslationJsonText(contentSource);
         if (jsonContent != null) {
             try {
-                GallaryBean gallaryBean = AppsTools.parseJsonWithGson(jsonContent, GallaryBean.class);
-                if (gallaryBean != null && gallaryBean.getDataObjs() != null && gallaryBean.getDataObjs().size() > 0) {
-                    getImageFilename(gallaryBean.getDataObjs());
-
+                GalleryBean galleryBean = AppsTools.parseJsonWithGson(jsonContent, GalleryBean.class);
+                if (galleryBean != null && galleryBean.getDataObjs() != null
+                        && galleryBean.getDataObjs().size() > 0) {
+                    getImageFilename(galleryBean.getDataObjs());
                     //发送图集信息列表到适配器
-                    adapter.getDataObjsBean(gallaryBean.getDataObjs());
+                    adapter.getDataObjsBean(galleryBean.getDataObjs());
                 }
             } catch (Exception e) {
                 e.printStackTrace();

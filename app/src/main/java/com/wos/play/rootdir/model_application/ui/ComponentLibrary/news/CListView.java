@@ -6,6 +6,8 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 
+import com.wos.play.rootdir.model_universal.tool.Logs;
+
 /**
  * Created by user on 2016/12/1.
  */
@@ -19,6 +21,7 @@ public class CListView extends ListView{
     }
     //初始化
     public void init(ViewGroup layout,BaseAdapter adapter,AdapterView.OnItemClickListener itemClickEvent) {
+        Logs.i("============init=="+isInit);
         if (!isInit){
             this.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             layout.addView(this);

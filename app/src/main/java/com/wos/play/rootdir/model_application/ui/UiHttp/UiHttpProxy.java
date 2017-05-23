@@ -9,9 +9,9 @@ import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
 import com.wos.play.rootdir.model_command_.kernel.CommandPostBroad;
 import com.wos.play.rootdir.model_download.entity.UrlList;
 import com.wos.play.rootdir.model_download.override_download_mode.Task;
-import com.wos.play.rootdir.model_universal.jsonBeanArray.content_gallary.DataObjsBean;
-import com.wos.play.rootdir.model_universal.jsonBeanArray.content_gallary.GallaryBean;
-import com.wos.play.rootdir.model_universal.jsonBeanArray.content_weather.OtweatherBean;
+import com.wos.play.rootdir.model_universal.jsonBeanArray.content_gallery.DataObjsBean;
+import com.wos.play.rootdir.model_universal.jsonBeanArray.content_gallery.GalleryBean;
+import com.wos.play.rootdir.model_universal.jsonBeanArray.content_weather.OtWeatherBean;
 import com.wos.play.rootdir.model_universal.tool.AppsTools;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 
@@ -89,7 +89,7 @@ public class UiHttpProxy{
     private Bundle bundle;
     private ReentrantLock lock = new ReentrantLock();
     //发送指定广播
-    private void sendUiComponet(String uiAction) {
+    private void sendUiComponent(String uiAction) {
         if (context!=null){
             intent.setAction(uiAction);
             context.sendBroadcast(intent);
@@ -140,32 +140,27 @@ public class UiHttpProxy{
     }
 
     private void func1(String url, String action) {
-
         try {
             String result = uriTransionString(AppsTools.urlEncodeParam(url), null, null);//访问URL;
             if (result==null) return;
             result = AppsTools.justResultIsBase64decode(result);//base64 解密
             if (result==null) return;
             UiTools.storeContentToDirFile(url, result);//数据存储
-
-            GallaryBean gallaryBean = AppsTools.parseJsonWithGson(result, GallaryBean.class);
-            if (gallaryBean==null) return;
-            List<DataObjsBean> dataObjList = gallaryBean.getDataObjs();
+            GalleryBean galleryBean = AppsTools.parseJsonWithGson(result, GalleryBean.class);
+            if (galleryBean==null) return;
+            List<DataObjsBean> dataObjList = galleryBean.getDataObjs();
             if (dataObjList!=null && dataObjList.size()>0) {
                 UrlList listObj = new UrlList();
-                for (DataObjsBean datas : dataObjList) {
-
+                for (DataObjsBean data : dataObjList) {
                     //------------图集资讯添加下载缩略图--------
-                    if (datas.getImageUrl() != null && !"".equals(datas.getImageUrl()))
-                        listObj.addTaskOnList(datas.getImageUrl());
-
-                    listObj.addTaskOnList(datas.getUrl());
-                    if (datas.getUrls() != null && !datas.getUrls().equals("")) {
+                    if (data.getImageUrl() != null && !"".equals(data.getImageUrl()))
+                        listObj.addTaskOnList(data.getImageUrl());
+                    listObj.addTaskOnList(data.getUrl());
+                    if (data.getUrls() != null && !data.getUrls().equals("")) {
                         //切割字符串
-                        String[] urlarr = datas.getUrls().split(",");
-
-                        for (int i = 0; i < urlarr.length; i++) {
-                            listObj.addTaskOnList(urlarr[i]);
+                        String[] urlArr = data.getUrls().split(",");
+                        for (int i = 0; i < urlArr.length; i++) {
+                            listObj.addTaskOnList(urlArr[i]);
                         }
                     }
                 }
@@ -184,7 +179,7 @@ public class UiHttpProxy{
                 @Override
                 public void run() {
                     //发送广播 - 通知组件
-                    sendUiComponet(action);
+                    sendUiComponent(action);
                 }
             });
         } finally {
@@ -199,7 +194,7 @@ public class UiHttpProxy{
             String result = uriTransionString(url, null, null);
             if (result==null) return;
             result = AppsTools.getJsonStringFromGZIP(result);
-            OtweatherBean obj = AppsTools.parseJsonWithGson(result, OtweatherBean.class);
+            OtWeatherBean obj = AppsTools.parseJsonWithGson(result, OtWeatherBean.class);
             if (obj != null && obj.getStatus() == 1000 && obj.getDesc().equals("OK")) {
                 UiTools.storeContentToDirFile(url, result);
                 //发送广播 刷新ui

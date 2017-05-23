@@ -18,9 +18,9 @@ import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.LayoutBean;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.PagesBean;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ProgramBean;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ScheduleBean;
-import com.wos.play.rootdir.model_universal.jsonBeanArray.content_gallary.DataObjsBean;
-import com.wos.play.rootdir.model_universal.jsonBeanArray.content_gallary.GallaryBean;
-import com.wos.play.rootdir.model_universal.jsonBeanArray.content_weather.OtweatherBean;
+import com.wos.play.rootdir.model_universal.jsonBeanArray.content_gallery.DataObjsBean;
+import com.wos.play.rootdir.model_universal.jsonBeanArray.content_gallery.GalleryBean;
+import com.wos.play.rootdir.model_universal.jsonBeanArray.content_weather.OtWeatherBean;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.content_weather.WeathersBean;
 import com.wos.play.rootdir.model_universal.tool.AppsTools;
 import com.wos.play.rootdir.model_universal.tool.CMD_INFO;
@@ -351,9 +351,9 @@ public class Command_UPSC implements iCommand {
     // 解析内容url - 返回值
     private void parseResult(String res, String type) {
         if (type.equals(CONTENT_TYPE.gallary) || type.equals(CONTENT_TYPE.news)) {
-            GallaryBean gallaryBean = AppsTools.parseJsonWithGson(res, GallaryBean.class);
-            if (gallaryBean != null) {
-                parseContentGallarys(gallaryBean);
+            GalleryBean galleryBean = AppsTools.parseJsonWithGson(res, GalleryBean.class);
+            if (galleryBean != null) {
+                parseContentGallery(galleryBean);
             }
         }
 
@@ -373,7 +373,7 @@ public class Command_UPSC implements iCommand {
         res = AppsTools.uriTransionString(baiduApiUrl,null, null);
         if (res != null) {
             res = AppsTools.getJsonStringFromGZIP(res);
-            OtweatherBean obj = AppsTools.parseJsonWithGson(res, OtweatherBean.class);
+            OtWeatherBean obj = AppsTools.parseJsonWithGson(res, OtWeatherBean.class);
             if (obj != null && obj.getStatus() == 1000 && obj.getDesc().equals("OK")) {
                 ICommand_SORE_JsonDataStore.getInstent(context).addEntity(baiduApiUrl, res, true);//文件名,文件内容 - 保存数据
             }
@@ -384,10 +384,10 @@ public class Command_UPSC implements iCommand {
     /**
      * 解析内容下面的图集
      */
-    private void parseContentGallarys(GallaryBean gallaryBean) {
-        if (gallaryBean.getDataObjs() != null && gallaryBean.getDataObjs().size() > 0) {
-            for (DataObjsBean dataobj : gallaryBean.getDataObjs()) {
-                parseContentUrlData(dataobj);
+    private void parseContentGallery(GalleryBean galleryBean) {
+        if (galleryBean.getDataObjs() != null && galleryBean.getDataObjs().size() > 0) {
+            for (DataObjsBean infoBean : galleryBean.getDataObjs()) {
+                parseContentUrlData(infoBean);
             }
         }
     }

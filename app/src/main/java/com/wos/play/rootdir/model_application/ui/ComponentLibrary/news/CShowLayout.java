@@ -64,6 +64,15 @@ public class CShowLayout {
 
     }
 
+
+    /**
+     * 关闭存在的视频播放
+     */
+    public void closeVideoShow(){
+        if(video!=null && video.isPlaying()){
+            video.stopMyPlayer();
+        }
+    }
     /**
      * 视图层 赋值
      */
@@ -74,6 +83,7 @@ public class CShowLayout {
         //设置标题
         title.setText(data.getTitle());
         subtitle.setText("作者 : " + data.getEditor() + "  日期 : " + data.getDateStr());
+        closeVideoShow();  // 若之前存在视频播放先停止
         if (AppsTools.isMp4Suffix(data.getFilePath())) {
             //shi mp4
             imageList.setVisibility(GONE);

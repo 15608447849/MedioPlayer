@@ -1,11 +1,11 @@
-package com.wos.play.rootdir.model_universal.jsonBeanArray.content_gallary;
+package com.wos.play.rootdir.model_universal.jsonBeanArray.content_gallery;
 
 import java.util.List;
 
 /**
  * Created by user on 2016/10/28.
  */
-public class GallaryBean {
+public class GalleryBean {
 
     /**
      * totalItems : 18

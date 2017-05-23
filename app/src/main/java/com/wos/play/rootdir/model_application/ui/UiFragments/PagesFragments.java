@@ -10,13 +10,17 @@ import android.view.ViewGroup;
 import android.widget.AbsoluteLayout;
 
 import com.wos.play.rootdir.model_application.ui.ComponentLibrary.AcenterManager.CreateComponent;
+import com.wos.play.rootdir.model_application.ui.ComponentLibrary.news.CNews;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.IView;
 import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by user on 2016/11/11.
@@ -32,14 +36,16 @@ public class PagesFragments extends Fragment{
     private AbsoluteLayout layout;
 
     private List<ComponentsBean> componentsDataArr = null;//组件内容数据列表
-    public ArrayList<IView> componentViewArr = null; //组件元素
+    private LinkedHashSet<IView> componentViewArr = null; //组件元素
 
     //添加组件的 key
-    public void addComponent(IView iview){
+    public void addComponent(IView iView){
         if (componentViewArr==null){
-            componentViewArr = new ArrayList<>();
+            componentViewArr = new LinkedHashSet<>();
+        }else if(componentViewArr.contains(iView)){
+            componentViewArr.remove(iView);
         }
-        componentViewArr.add(iview);
+        componentViewArr.add(iView);
     }
     public PagesFragments(){}
 
