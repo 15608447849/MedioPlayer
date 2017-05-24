@@ -1,9 +1,7 @@
 package com.wos.play.rootdir.model_command_.command_arr;
 
-import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 
 import com.wos.play.rootdir.model_application.baselayer.AppMessageBroad;
 import com.wos.play.rootdir.model_application.viewlayer.ToolsActivity;
@@ -37,6 +35,7 @@ public class Command_UIRE implements iCommand {
             Intent i = new Intent();
             i.setAction(AppMessageBroad.ACTION);
             i.putExtra(AppMessageBroad.PARAM1, CMD_INFO.UIRE);
+            i.putExtra(AppMessageBroad.PARAM2, "");
             context.sendBroadcast(i);
         } catch (Exception e) {
             Logs.e("重启播放器","========= 广播异常 ===========");

@@ -215,7 +215,7 @@ public class BaseActivity extends Activity {
     }
 
     //通讯服务发来的消息 接收处
-    protected void receiveService(final String result) {
+    protected void receiveService(final String result, final String result1) {
 
     }
 

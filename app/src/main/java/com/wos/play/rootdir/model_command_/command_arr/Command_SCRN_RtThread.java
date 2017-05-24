@@ -12,7 +12,7 @@ public class Command_SCRN_RtThread extends Thread {
      */
     public interface RtThreadAction {
         void action();
-        void destorys();
+        void destroys();
     }
 
     private static String TAG = "实时截屏线程";
@@ -62,7 +62,7 @@ public class Command_SCRN_RtThread extends Thread {
     }
     private void close() {
         if (rta!=null){
-            rta.destorys();
+            rta.destroys();
         }
     }
 }

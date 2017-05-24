@@ -303,7 +303,7 @@ public class ToolsActivity extends BaseActivity {
 
     //收到服务器的返回值
     @Override
-    public void receiveService(final String result) {
+    public void receiveService(final String result, final String result1) {
 
         AndroidSchedulers.mainThread().createWorker().schedule(new Action0() {
             @Override

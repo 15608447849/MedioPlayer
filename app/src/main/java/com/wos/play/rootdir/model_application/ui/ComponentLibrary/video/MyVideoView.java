@@ -2,7 +2,9 @@ package com.wos.play.rootdir.model_application.ui.ComponentLibrary.video;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.media.AudioManager;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.util.Log;
@@ -645,6 +647,36 @@ public class MyVideoView extends SurfaceView implements MediaController.MediaPla
             }
         }
     };
+
+    /**
+     * 获取当前帧
+     * @return
+     */
+    public Bitmap getCurrentFrame(){
+        Bitmap bitmap = null;
+        MediaMetadataRetriever mmr = null;
+        try {
+            if (mMediaPlayer!=null && mMediaPlayer.isPlaying() &&  null != filename && !"".equals(filename)){
+                mmr = new MediaMetadataRetriever();
+                mmr.setDataSource(filename);
+                long pos = mMediaPlayer.getCurrentPosition();
+                bitmap = mmr.getFrameAtTime(pos * 1000,MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+//              Logs.e(TAG,"截图 视频 大小 ( "+mMediaPlayer.getVideoWidth()+" , "+mMediaPlayer.getVideoHeight()+" )");
+//              Logs.e(TAG,"截图 视频 大小 ( "+bitmap.getWidth()+" , "+bitmap.getHeight()+" )");
+//              Logs.e(TAG,"截图 视频 大小 ( "+this.getWidth()+" , "+this.getHeight()+" )");
+                bitmap = Bitmap.createScaledBitmap(bitmap, this.getWidth(),
+                        this.getHeight(), true);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                mmr.release();
+            } catch (Exception e) {
+            }
+        }
+        return bitmap;
+    }
 
 
 }

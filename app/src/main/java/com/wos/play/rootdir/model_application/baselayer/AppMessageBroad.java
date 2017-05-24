@@ -13,6 +13,7 @@ public class AppMessageBroad extends BroadcastReceiver{
     public static final String ACTION = "com.wos.ui.message";
 
     public static final String PARAM1 = "param1";
+    public static final String PARAM2 = "param2";
     private BaseActivity activity;
 
     public AppMessageBroad(BaseActivity activity) {
@@ -22,7 +23,7 @@ public class AppMessageBroad extends BroadcastReceiver{
     @Override
     public void onReceive(Context context, Intent intent) {
         if (activity!=null){
-            activity.receiveService(intent.getExtras().getString(PARAM1));
+            activity.receiveService(intent.getExtras().getString(PARAM1), intent.getExtras().getString(PARAM2));
         }
     }
 }
