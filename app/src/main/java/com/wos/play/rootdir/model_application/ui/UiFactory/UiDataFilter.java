@@ -117,9 +117,10 @@ public class UiDataFilter {
         IViewPage pageView;
         for (AdBean ad : ads){
             pageView = new IViewPage(activity, ad);
-            PagerStore.getInstant().addPage(ad.getId(),pageView); //添加页面
             if(pageView.isAd() && activity!=null){
+                PagerStore.getInstant().addPage(ad.getId(),pageView); //添加页面
                 activity.onHasAdDuty(ad.getId(), ad.getWaitTime());
+                break;
             }
         }
     }

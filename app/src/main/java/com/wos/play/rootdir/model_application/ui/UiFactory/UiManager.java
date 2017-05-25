@@ -181,6 +181,7 @@ public class UiManager {
             stopPage(id);
         }
         loadedPageArray.clear();
+        stopPage(currentAdId);  // 同时停止无人值守页面
     }
 
     //删除 除去主页之外的所有页面

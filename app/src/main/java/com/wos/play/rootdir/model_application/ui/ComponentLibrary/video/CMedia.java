@@ -224,6 +224,7 @@ public class CMedia extends FrameLayout implements IComponent,MediaInterface
         if (handler!=null){
             handler.removeCallbacks(mTask);
         }
+        if(mVideoView!=null) mVideoView.pause();
         mVideoView.setVisibility(View.GONE);
         mImageView.setVisibility(View.GONE);
     }

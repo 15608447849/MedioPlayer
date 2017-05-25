@@ -111,7 +111,7 @@ public class PagesFragments extends Fragment{
     public void onPause() {
         super.onPause();
         Logs.i(TAG,"碎片 - -onPause()");
-        unexeComponents(); // 结束执行组件
+        unExeComponents(); // 结束执行组件
     }
 
     //创建组件
@@ -148,7 +148,7 @@ public class PagesFragments extends Fragment{
     /**
      * 取消执行组件
      */
-    protected void unexeComponents() {
+    protected void unExeComponents() {
 
         if (componentViewArr!=null && componentViewArr.size()>0){
             Logs.i(TAG,"组件 结束工作中");
