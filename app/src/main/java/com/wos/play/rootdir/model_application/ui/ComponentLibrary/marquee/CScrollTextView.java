@@ -1,14 +1,12 @@
-package com.wos.play.rootdir.model_application.ui.ComponentLibrary.scrolltext;
+package com.wos.play.rootdir.model_application.ui.ComponentLibrary.marquee;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.support.v7.widget.AppCompatTextView;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.AbsoluteLayout;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.IComponent;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
@@ -16,7 +14,6 @@ import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by leolaurel.e.l on 2017/5/16.

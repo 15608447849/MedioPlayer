@@ -1,4 +1,4 @@
-package com.wos.play.rootdir.model_application.ui.ComponentLibrary.grallery;
+package com.wos.play.rootdir.model_application.ui.ComponentLibrary.gallery;
 
 import android.content.Context;
 import android.content.IntentFilter;
@@ -15,7 +15,7 @@ import android.widget.Gallery;
 
 import com.wos.play.rootdir.R;
 import com.wos.play.rootdir.model_application.ui.ComponentLibrary.image.MeImageView;
-import com.wos.play.rootdir.model_application.ui.ComponentLibrary.video.MyVideoView;
+import com.wos.play.rootdir.model_application.ui.ComponentLibrary.video.CVideoView;
 import com.wos.play.rootdir.model_application.ui.UiFactory.UiLocalBroad;
 import com.wos.play.rootdir.model_application.ui.UiHttp.UiHttpProxy;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.IAdvancedComponent;
@@ -44,8 +44,8 @@ import rx.functions.Action0;
  * Created by user on 2016/11/17.
  */
 
-public class CGrallery extends FrameLayout implements IAdvancedComponent, IComponentUpdate, LoopSuccessInterfaces {
-    private static final java.lang.String TAG = "CGrallery";
+public class CGallery extends FrameLayout implements IAdvancedComponent, IComponentUpdate, LoopSuccessInterfaces {
+    private static final java.lang.String TAG = "CGallery";
     private int componentId;
     private int width;
     private int height;
@@ -61,14 +61,14 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, ICompo
     private UiLocalBroad broad = null;
     private boolean isInitData;
     private boolean isLayout;
-    private boolean isRegesterBroad = false; //是否注册广播
+    private boolean isRegisterBroad = false; //是否注册广播
 
     private MImageSwitcher iShow;
     private Gallery gallery;
-    private AbsoluteLayout absLayout;
-    private MyVideoView video;
-    private ImagerSwitchFactory factory;//图片工厂 (停止使用请调用 stop)
-    private GralleryAdapter adapter;
+    private FrameLayout frameLayout;
+    private CVideoView cVideoView;
+    private ImageSwitchFactory factory;//图片工厂 (停止使用请调用 stop)
+    private GalleryAdapter adapter;
 
     private int backgroundAlpha;
     private String backgroundColor;
@@ -76,7 +76,7 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, ICompo
     //private Bitmap bgImage;
 
 
-    public CGrallery(Context context, AbsoluteLayout layout, ComponentsBean component) {
+    public CGallery(Context context, AbsoluteLayout layout, ComponentsBean component) {
         super(context);
         this.context = context;
         this.layout = layout;
@@ -196,9 +196,10 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, ICompo
     @Override
     public void initSubComponent() {
         try {
-            View root = LayoutInflater.from(context).inflate(R.layout.imageswitcherpage, null);
-            absLayout = (AbsoluteLayout) root.findViewById(R.id.frame_abslayout);
-            video = new MyVideoView(context);//视频播放器
+            View root = LayoutInflater.from(context).inflate(R.layout.image_switcher_page, null);
+            frameLayout = (FrameLayout) root.findViewById(R.id.frame_video);
+            cVideoView = new CVideoView(context);//视频播放器
+            cVideoView.setLayout(frameLayout);
             iShow = (MImageSwitcher) root.findViewById(R.id.switcher);
             initImageSwitcher();
             gallery = (Gallery) root.findViewById(R.id.gallery);
@@ -219,18 +220,18 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, ICompo
 
     @Override
     public void createBroad() {
-        if (!isRegesterBroad) {
+        if (!isRegisterBroad) {
             broad = new UiLocalBroad(mBroadAction, this);
             IntentFilter filter = new IntentFilter();
             filter.addAction(mBroadAction);
             context.registerReceiver(broad, filter); //只需要注册一次
-            this.isRegesterBroad = true;
+            this.isRegisterBroad = true;
         }
     }
 
     @Override
     public void cancelBroad() {
-        if (isRegesterBroad) {
+        if (isRegisterBroad) {
             //取消注册
             if (broad != null) {
                 try {
@@ -246,7 +247,7 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, ICompo
     //初始化 图片选择器
     private void initImageSwitcher() {
         try {
-            factory = new ImagerSwitchFactory(context);
+            factory = new ImageSwitchFactory(context);
             iShow.setFactory(factory);
         } catch (Exception e) {
             e.printStackTrace();
@@ -261,7 +262,7 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, ICompo
     //初始化 画廊
     private void initGallery() {
         //设置适配器
-        adapter = new GralleryAdapter(context);
+        adapter = new GalleryAdapter(context);
         gallery.setAdapter(adapter);
 
         //---------设置图集背景----------
@@ -289,25 +290,22 @@ public class CGrallery extends FrameLayout implements IAdvancedComponent, ICompo
     //判断是视频素材还是图片素材
     private void justVideos(int position) {
 
-        if (absLayout.getVisibility() == View.VISIBLE) {
+        if (frameLayout.getVisibility() == View.VISIBLE) {
             //有视频显示中
-            video.stopMyPlayer();
-            absLayout.setVisibility(View.GONE);
+            cVideoView.pause();
+            frameLayout.setVisibility(View.GONE);
         }
         try {
             if (AppsTools.isMp4Suffix(adapter.getImageName(position))) {
-                if (absLayout.getVisibility() == View.GONE) {
-                    absLayout.setVisibility(View.VISIBLE);
-                    //视频显示
-                    video.start(absLayout, adapter.getImageName(position), true);
+                if (frameLayout.getVisibility() == View.GONE) {
+                    frameLayout.setVisibility(View.VISIBLE); //视频显示
+                    cVideoView.setVideoPath(adapter.getImageName(position), true);
                 }
             } else {
-//                ishow.setImageDrawable(adapter.getDrawable(position));
                 ImageAsyLoad.loadBitmap(adapter.getBitmapString(position), (MeImageView) iShow.getCurrentImageView());
             }
         } catch (Exception e) {
             e.printStackTrace();
-//            ishow.setImageDrawable(adapter.getDrawable(position));
         }
     }
 

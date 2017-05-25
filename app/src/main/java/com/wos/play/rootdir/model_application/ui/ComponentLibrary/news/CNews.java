@@ -422,12 +422,10 @@ public class CNews extends FrameLayout implements IAdvancedComponent, IComponent
     @Override
     public void loadContent() {
         //开始计时器
-        Logs.i("===loadContent1");
         unLoadContent();
         if (!flag_ones) {
             UiHttpProxy.getPeoxy().update(url, mBroadAction,UiHttpProxy.NEWS_TYPE);
         }
-        Logs.i("===loadContent2");
         flag_ones = false;
         startTimer(updateTime * 1000);
     }

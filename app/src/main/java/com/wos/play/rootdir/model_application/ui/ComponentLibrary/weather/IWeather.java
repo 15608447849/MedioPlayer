@@ -23,7 +23,7 @@ import java.util.TimerTask;
  * Created by user on 2016/11/22.
  */
 
-public class Iweather extends FrameLayout implements IAdvancedComponent {
+public class IWeather extends FrameLayout implements IAdvancedComponent {
     private static final java.lang.String TAG = "IClock";
     private int componentId;
     private int width;
@@ -44,7 +44,7 @@ public class Iweather extends FrameLayout implements IAdvancedComponent {
     private LEDView led;    //创建 时间 天气 显示器
     private boolean isShowTimer = false;//是否显示时间
 
-    public Iweather(Context context, AbsoluteLayout layout, ComponentsBean component) {
+    public IWeather(Context context, AbsoluteLayout layout, ComponentsBean component) {
         super(context);
         this.context = context;
         this.layout = layout;

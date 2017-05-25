@@ -1,4 +1,4 @@
-package com.wos.play.rootdir.model_application.ui.ComponentLibrary.scrolltext;
+package com.wos.play.rootdir.model_application.ui.ComponentLibrary.marquee;
 
 import android.content.Context;
 import android.graphics.Typeface;

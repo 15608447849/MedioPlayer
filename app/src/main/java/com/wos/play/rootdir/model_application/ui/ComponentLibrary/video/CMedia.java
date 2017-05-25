@@ -2,30 +2,36 @@ package com.wos.play.rootdir.model_application.ui.ComponentLibrary.video;
 
 import android.content.Context;
 import android.os.Handler;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.SurfaceView;
+import android.view.View;
 import android.widget.AbsoluteLayout;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 
-import com.wos.play.rootdir.model_application.ui.ComponentLibrary.image.CImageView;
+import com.wos.play.rootdir.R;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.IComponent;
-import com.wos.play.rootdir.model_application.ui.UiInterfaces.IContentView;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.IView;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.MediaInterface;
 import com.wos.play.rootdir.model_application.ui.Uitools.GestureHelper;
+import com.wos.play.rootdir.model_application.ui.Uitools.ImageUtils;
+import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
-import com.wos.play.rootdir.model_universal.tool.CONTENT_TYPE;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import cn.trinea.android.common.util.FileUtils;
 
 /**
  * Created by user on 2016/11/14.
  * 多媒体 播放组件
  */
 
-public class CMedio extends FrameLayout implements IComponent,MediaInterface
+public class CMedia extends FrameLayout implements IComponent,MediaInterface
         ,GestureHelper.OnSlidingListener{
     private static final java.lang.String TAG = "CMorePictures";
     private int componentId;
@@ -36,7 +42,14 @@ public class CMedio extends FrameLayout implements IComponent,MediaInterface
     private AbsoluteLayout.LayoutParams layoutParams;
     private boolean isInitData, isLayout;
     private GestureHelper mGestureHelper;
-    public CMedio(Context context,AbsoluteLayout layout, ComponentsBean component) {
+    private FrameLayout root;
+    private ImageView mImageView;
+    private CVideoView  mVideoView;
+    private int length;
+    private String fileName;
+    private boolean isShowTopLayer;
+
+    public CMedia(Context context, AbsoluteLayout layout, ComponentsBean component) {
         super(context);
         this.context = context;
         this.layout = layout;
@@ -55,6 +68,7 @@ public class CMedio extends FrameLayout implements IComponent,MediaInterface
             this.x = (int)cb.getCoordX();
             this.y = (int)cb.getCoordY();
             layoutParams = new AbsoluteLayout.LayoutParams(width,height,x,y);
+            initSubComponent();
             if (cb.getContents()!=null && cb.getContents().size()>0) {
                 createContent(cb.getContents());
             }
@@ -64,15 +78,22 @@ public class CMedio extends FrameLayout implements IComponent,MediaInterface
         }
     }
 
+    private void initSubComponent() {
+        root = (FrameLayout) LayoutInflater.from(context).inflate(R.layout.media_layout_base,null);
+        mImageView = (ImageView) root.findViewById(R.id.media_image);
+        mVideoView = (CVideoView) root.findViewById(R.id.media_video);
+        this.addView(root);
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         mGestureHelper.onTouchEvent(event);
         return super.onTouchEvent(event);
     }
 
-    private ArrayList<IContentView> contentArr = null;
+    private ArrayList<ContentsBean> contentArr = null;
     //添加 图片组件-视频组件
-    private void addContentImp(IContentView content){
+    private void addContentImp(ContentsBean content){
         if (contentArr==null){
             contentArr = new ArrayList<>();
         }
@@ -83,26 +104,10 @@ public class CMedio extends FrameLayout implements IComponent,MediaInterface
     @Override
     public void createContent(Object object) {
         try {
-            String type = null;
             List<ContentsBean> contents = (List<ContentsBean>)object;
-            IContentView imp = null;
             //只有图片 或者 视频内容
             for (ContentsBean content : contents){
-                type=content.getMaterialType() ==null?content.getContentType():content.getMaterialType();
-                if(content.getContentName().endsWith(".png") || content.getContentName().endsWith(".jpg")){
-                    type = CONTENT_TYPE.image;
-                }
-                if (type.equals(CONTENT_TYPE.image)){
-                     imp = new CImageView(context,this,content);
-                }
-                if (type.equals(CONTENT_TYPE.video)){
-                    imp = new MyVideoViewHolder(context,this,content);
-                }
-                if (imp!=null){
-                    addContentImp(imp);
-                    imp.setMediaInterface(this);
-                    imp = null;
-                }
+                addContentImp(content);
             }
             playNumber = contentArr.size();
         } catch (Exception e) {
@@ -115,6 +120,7 @@ public class CMedio extends FrameLayout implements IComponent,MediaInterface
     public void setAttribute() {
         this.setLayoutParams(layoutParams);
     }
+
 
     //布局
     @Override
@@ -159,7 +165,6 @@ public class CMedio extends FrameLayout implements IComponent,MediaInterface
 
 
     private int currentIndex = 0;//当前循环的下标
-    private IContentView currentIView= null; //当前播放的图片
     private Handler handler = null;
     private final Runnable mTask = new Runnable() {
         @Override
@@ -176,9 +181,31 @@ public class CMedio extends FrameLayout implements IComponent,MediaInterface
                 handler = new Handler();
             }
             unLoadContent();
-            currentIView =  contentArr.get(currentIndex);
-            currentIView.startWork();
-            handler.postDelayed(mTask, contentArr.get(currentIndex).getLength() * 1000);
+
+            ContentsBean content = contentArr.get(currentIndex);
+            length = content.getTimeLength();
+            fileName = UiTools.getUrlTanslationFilename(content.getContentSource());
+            if(isImage(content)){
+                mImageView.setVisibility(View.VISIBLE);
+                if (UiTools.fileIsExt(fileName)){
+                    mImageView.setImageBitmap(ImageUtils.getBitmap(fileName));
+                }else {
+                    mImageView.setImageBitmap(ImageUtils.getBitmap(UiTools.getDefImagePath()));
+                    playOver(this);
+                }
+            }else{
+                mVideoView.setVisibility(View.VISIBLE);
+                mVideoView.setZOrderOnTop(isShowTopLayer);
+                if (FileUtils.isFileExist(fileName)) {
+                    mVideoView.setVideoPath(fileName);
+                } else {
+                    this.playOver(this);
+                    mVideoView.setVideoPath(UiTools.getDefVideoPath());
+                }
+                if(mVideoView.getDuration() >0 ) length = mVideoView.getDuration();
+            }
+
+            handler.postDelayed(mTask, length * 1000);
             currentIndex++;
             if (currentIndex==contentArr.size()){
                 currentIndex = 0;
@@ -186,15 +213,19 @@ public class CMedio extends FrameLayout implements IComponent,MediaInterface
         }
     }
 
+    private boolean isImage(ContentsBean content) {
+        //if(content==null || content.getContentName() ==null) return false;
+        String fileName = content.getContentName();
+        return fileName.endsWith(".png") || fileName.endsWith(".jpg");
+    }
+
     @Override
     public void unLoadContent() {
         if (handler!=null){
             handler.removeCallbacks(mTask);
         }
-        if (currentIView!=null){
-            currentIView.stopWork();
-            currentIView = null;
-        }
+        mVideoView.setVisibility(View.GONE);
+        mImageView.setVisibility(View.GONE);
     }
 
     private int playNumber = 0;
@@ -223,5 +254,9 @@ public class CMedio extends FrameLayout implements IComponent,MediaInterface
         Logs.i(TAG,"向下或向右滑动");
         if (playNumber< 2) return;
         loadContent();
+    }
+
+    public void setShowTopLayer(boolean isShowTopLayer) {
+        this.isShowTopLayer = isShowTopLayer;
     }
 }

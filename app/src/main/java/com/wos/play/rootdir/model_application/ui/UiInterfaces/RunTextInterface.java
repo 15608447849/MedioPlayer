@@ -1,6 +1,6 @@
 package com.wos.play.rootdir.model_application.ui.UiInterfaces;
 
-import com.wos.play.rootdir.model_application.ui.ComponentLibrary.scrolltext.RunTextView;
+import com.wos.play.rootdir.model_application.ui.ComponentLibrary.marquee.RunTextView;
 
 /**
  * Created by user on 2016/11/24.

@@ -1,4 +1,4 @@
-package com.wos.play.rootdir.model_application.ui.ComponentLibrary.stream_medio;
+package com.wos.play.rootdir.model_application.ui.ComponentLibrary.stream_media;
 
 import android.content.Context;
 import android.net.Uri;

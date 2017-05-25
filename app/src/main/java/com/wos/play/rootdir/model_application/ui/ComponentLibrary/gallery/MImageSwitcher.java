@@ -1,4 +1,4 @@
-package com.wos.play.rootdir.model_application.ui.ComponentLibrary.grallery;
+package com.wos.play.rootdir.model_application.ui.ComponentLibrary.gallery;
 
 import android.content.Context;
 import android.graphics.Bitmap;

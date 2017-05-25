@@ -7,7 +7,6 @@ import android.media.AudioManager;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -21,7 +20,7 @@ import com.wos.play.rootdir.model_universal.tool.Logs;
 /**
  * Created by user on 2016/7/6.
  */
-public class MyVideoView extends SurfaceView implements MediaController.MediaPlayerControl{
+public class MyVideoViewBak extends SurfaceView implements MediaController.MediaPlayerControl{
     public static final String TAG = "MyVideoView";
     private Context mContext;//上下文
     private ViewGroup layout;//父布局
@@ -62,7 +61,7 @@ public class MyVideoView extends SurfaceView implements MediaController.MediaPla
      *  loadRouce 设置文件路径
      * @param context
      */
-    public MyVideoView(Context context) {
+    public MyVideoViewBak(Context context) {
         super(context);
         mContext = context;
         Logs.d(TAG," my videoview create");

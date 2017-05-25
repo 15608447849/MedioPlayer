@@ -1,4 +1,4 @@
-package com.wos.play.rootdir.model_application.ui.ComponentLibrary.grallery;
+package com.wos.play.rootdir.model_application.ui.ComponentLibrary.gallery;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -23,7 +23,7 @@ import java.util.List;
  * Created by user on 2016/11/18.
  */
 
-public class GralleryAdapter extends BaseAdapter {
+public class GalleryAdapter extends BaseAdapter {
 
 
     //文件名 下标
@@ -37,7 +37,7 @@ public class GralleryAdapter extends BaseAdapter {
     private Context context ;
     private int selectItem;
     //构造
-    GralleryAdapter(Context context){
+    GalleryAdapter(Context context){
         this.context = context;
     }
 

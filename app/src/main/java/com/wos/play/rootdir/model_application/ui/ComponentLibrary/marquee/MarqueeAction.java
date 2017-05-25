@@ -1,17 +1,14 @@
-package com.wos.play.rootdir.model_application.ui.ComponentLibrary.textshow;
+package com.wos.play.rootdir.model_application.ui.ComponentLibrary.marquee;
 
 import android.support.v4.view.ViewPager;
 
 /**
- * Created by user on 2016/11/15.
+ * Created by user on 2016/11/24.
  */
 
-public class TextViewPagerAction implements ViewPager.OnPageChangeListener {
+public class MarqueeAction implements ViewPager.OnPageChangeListener{
+    public MarqueeAction() {
 
-    private TextViewPager mViewPager;
-
-    public TextViewPagerAction(TextViewPager mViewPager) {
-        this.mViewPager = mViewPager;
     }
 
     /**
@@ -30,7 +27,7 @@ public class TextViewPagerAction implements ViewPager.OnPageChangeListener {
      */
     @Override
     public void onPageSelected(int position) {
-        mViewPager.setCurrIndex(position);
+
     }
     /**
      * 滑动状态监听

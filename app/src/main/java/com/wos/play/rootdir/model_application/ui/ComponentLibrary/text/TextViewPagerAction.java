@@ -1,14 +1,17 @@
-package com.wos.play.rootdir.model_application.ui.ComponentLibrary.scrolltext;
+package com.wos.play.rootdir.model_application.ui.ComponentLibrary.text;
 
 import android.support.v4.view.ViewPager;
 
 /**
- * Created by user on 2016/11/24.
+ * Created by user on 2016/11/15.
  */
 
-public class MarqueeAction implements ViewPager.OnPageChangeListener{
-    public MarqueeAction() {
+public class TextViewPagerAction implements ViewPager.OnPageChangeListener {
 
+    private TextViewPager mViewPager;
+
+    public TextViewPagerAction(TextViewPager mViewPager) {
+        this.mViewPager = mViewPager;
     }
 
     /**
@@ -27,7 +30,7 @@ public class MarqueeAction implements ViewPager.OnPageChangeListener{
      */
     @Override
     public void onPageSelected(int position) {
-
+        mViewPager.setCurrIndex(position);
     }
     /**
      * 滑动状态监听

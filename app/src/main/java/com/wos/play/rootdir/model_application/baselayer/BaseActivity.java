@@ -289,7 +289,7 @@ public class BaseActivity extends Activity {
     private void startAdDutyTiming() {
         if(adViewId > 0 && waitTime >0){
             mHandler.removeCallbacks(jumpAdDutyPage);
-            UiManager.getInstance().deletePage(adViewId);
+            UiManager.getInstance().exeAdTask(0);
             mHandler.postDelayed(jumpAdDutyPage, waitTime*1000);
         }
     }

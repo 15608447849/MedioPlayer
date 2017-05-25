@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static android.R.attr.id;
 
 /**
  * Created by user on 2016/11/10.
@@ -17,7 +16,7 @@ public class UiManager {
     private static final String TAG = UiManager.class.getSimpleName();
     private static UiManager instants = null;
     private boolean isInit = false;
-    private int currentAdId = -1, currentHomeId = -1;    //当前持有的 广告ID/主页ID
+    private int currentAdId = -1, currentHomeId = -1, lastViewId = -1;    //当前持有的 广告ID/主页ID
     private UiManager() {
 
     }
@@ -46,13 +45,12 @@ public class UiManager {
         }
     }
 
-
     /**
      * 执行指定任务
      */
     public void exeTask(int id) {
         if (isInit){
-            func(id);
+            func(lastViewId = id);
         }
     }
 
@@ -61,11 +59,19 @@ public class UiManager {
      */
     public void exeAdTask(int adId) {
         if (isInit){
-            currentAdId = adId;
-            if(PagerStore.getInstant().getPage(currentAdId)!=null){
-                addPage(currentAdId);
-                PagerStore.getInstant().getPage(currentAdId).startWork();
+            if(adId > 0){
+                currentAdId = adId;
+                if(justSizeOnHome(adId)){
+                    stopTask();
+                }
+                if(PagerStore.getInstant().getPage(currentAdId)!=null){
+                    PagerStore.getInstant().getPage(currentAdId).startWork();
+                }
+            }else{
+                stopPage(currentAdId);
+                exeTask(lastViewId);
             }
+
         }
     }
     /**
@@ -73,7 +79,7 @@ public class UiManager {
      */
     public void exeMainTask(int homeId) {
         if (isInit){
-            currentHomeId = homeId;
+            lastViewId = currentHomeId = homeId;
             if(PagerStore.getInstant().getPage(currentHomeId)!=null){
                 addPage(currentHomeId);
                 PagerStore.getInstant().getPage(currentHomeId).startWork();
@@ -168,14 +174,6 @@ public class UiManager {
         }
     }
 
-    //删除一个页面
-    public void deletePage(int id){
-        if (loadedPageArray.contains(id)){
-            loadedPageArray.remove(loadedPageArray.indexOf(id));
-            stopPage(id);
-        }
-    }
-
 
     //删除所有页面
     private void deleteAllPage(){
@@ -192,22 +190,6 @@ public class UiManager {
             if (id==currentHomeId){
                 continue;
             }
-            stopPage(id);
-            deleteList.add(id);
-        }
-        for (Integer deleteId :deleteList){
-            loadedPageArray.remove(loadedPageArray.indexOf(deleteId));
-        }
-    }
-
-    //删除 - 指定页面 之上的所有页面
-    public void deleteTargetTop(int keepId){
-        int index = loadedPageArray.indexOf(keepId);//这个页面 的下标
-        if (index++ == loadedPageArray.size()){
-            return;
-        }
-        List<Integer> deleteList = new ArrayList<>();
-        for (int i=index;i<loadedPageArray.size();i++){
             stopPage(id);
             deleteList.add(id);
         }

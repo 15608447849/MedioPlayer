@@ -29,17 +29,10 @@ public class IViewPage extends FrameLayout implements IView {
         return isAd;
     }
 
-    public void setAd(boolean ad) {
-        isAd = ad;
-    }
-
     public boolean isHome() {
         return isHome;
     }
 
-    public void setHome(boolean home) {
-        isHome = home;
-    }
 
     protected boolean isInit = false;//是否初始化
     protected  boolean isLayout = false;//是否布局
@@ -73,7 +66,7 @@ public class IViewPage extends FrameLayout implements IView {
             this.backGroundImage = page.getBackground();//请截取 uri 暂时未做 确定bg颜色还是图片
             this.isHome = page.isHome();
             if(object instanceof AdBean){
-                isAd = ((AdBean)object).isAdEnabled();
+                this.isAd = ((AdBean)object).isAdEnabled();
             }
             this.setId(id+ AppsTools.randomNum(10,500));// //设置视图id view_id
             isInit = true;
@@ -149,6 +142,7 @@ public class IViewPage extends FrameLayout implements IView {
             mFragment = new PagesFragments(width,height,x,y,
                     isBgColor,isBgColor?backGroundColor:backGroundImage,  //是否是背景颜色
                     page.getComponents());
+            if(isAd) mFragment.showTopLayer();
         }
     }
 

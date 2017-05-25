@@ -11,6 +11,8 @@ import android.widget.AbsoluteLayout;
 
 import com.wos.play.rootdir.model_application.ui.ComponentLibrary.AcenterManager.CreateComponent;
 import com.wos.play.rootdir.model_application.ui.ComponentLibrary.news.CNews;
+import com.wos.play.rootdir.model_application.ui.ComponentLibrary.video.CMedia;
+import com.wos.play.rootdir.model_application.ui.ComponentLibrary.video.CVideoView;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.IView;
 import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
@@ -34,9 +36,10 @@ public class PagesFragments extends Fragment{
     private boolean isBgColor = true; //是否是背景颜色
     private String background;//背景(图片或者颜色)
     private AbsoluteLayout layout;
-
+    private boolean isShowTopLayer = false;      // 是否设置顶层显示
     private List<ComponentsBean> componentsDataArr = null;//组件内容数据列表
     private LinkedHashSet<IView> componentViewArr = null; //组件元素
+
 
     //添加组件的 key
     public void addComponent(IView iView){
@@ -49,26 +52,25 @@ public class PagesFragments extends Fragment{
     }
     public PagesFragments(){}
 
-    public PagesFragments( int w, int h,int x, int y, boolean isBgColor, String background,List<ComponentsBean> list) {
+    public PagesFragments( int w, int h,int x, int y, boolean isBgColor
+            , String background,List<ComponentsBean> list) {
         this.x = x;
         this.y = y;
         this.w = w;
         this.h = h;
         this.isBgColor = isBgColor;
         this.background = background;
-        if (list!=null){
-            this.componentsDataArr = list;
-        }
+        if (list!=null){ this.componentsDataArr = list; }
     }
-
+    public void showTopLayer(){
+        isShowTopLayer = true;
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-//        Logs.i(TAG,"碎片 - -onCreateView() ");
         if (layout == null){
             //创建绝对布局
             layout  = new AbsoluteLayout(getActivity());
             layout.setLayoutParams(new AbsoluteLayout.LayoutParams(w, h,x,y));
-
             if (isBgColor){
                 try {
                     layout.setBackgroundColor(Color.parseColor(UiTools.TanslateColor(background)));
@@ -83,10 +85,7 @@ public class PagesFragments extends Fragment{
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-//        Logs.i(TAG,"碎片 - -onViewCreated()");
-        if (layout!=null){
-            createComponent();
-        }
+        if (layout!=null) createComponent();
     }
 
     @Override
@@ -120,12 +119,10 @@ public class PagesFragments extends Fragment{
         Logs.i(TAG,"组件 创建中");
         if (componentsDataArr!=null && componentsDataArr.size()>0){
             IView iv;
-            for (ComponentsBean component:componentsDataArr){
-                //反射创建匹配组件
+            for (ComponentsBean component:componentsDataArr){ //反射创建匹配组件
                 iv = CreateComponent.create(component,layout,getActivity());
-                if (iv != null){
-                    addComponent(iv);
-                }
+                if (iv != null)addComponent(iv);
+
             }
         }
 
@@ -139,6 +136,10 @@ public class PagesFragments extends Fragment{
         if (componentViewArr!=null && componentViewArr.size()>0){
             Logs.i(TAG,"组件 开始工作中");
             for (IView iv : componentViewArr){
+                if(isShowTopLayer && iv instanceof CMedia){
+                    Logs.i(TAG,"组件 无人值守视频组件置顶");
+                    ((CMedia)iv).setShowTopLayer(true);
+                }
                 iv.startWork();
             }
         }

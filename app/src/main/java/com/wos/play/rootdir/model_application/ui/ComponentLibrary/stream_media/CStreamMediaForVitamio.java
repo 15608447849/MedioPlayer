@@ -1,4 +1,4 @@
-package com.wos.play.rootdir.model_application.ui.ComponentLibrary.stream_medio;
+package com.wos.play.rootdir.model_application.ui.ComponentLibrary.stream_media;
 
 import android.content.Context;
 import android.widget.AbsoluteLayout;
@@ -13,10 +13,10 @@ import com.wos.play.rootdir.model_universal.tool.Logs;
  * Created by user on 2016/11/21.
  */
 
-public class CStreamMedioForVitamio extends FrameLayout implements IComponent{
+public class CStreamMediaForVitamio extends FrameLayout implements IComponent{
 
 
-    private static final java.lang.String TAG = "CMorePictures";
+    private static final java.lang.String TAG = "CStreamMediaForVitamio";
     private int componentId;
     private int width;
     private int height;
@@ -29,7 +29,7 @@ public class CStreamMedioForVitamio extends FrameLayout implements IComponent{
 
     private boolean isInitData;
     private boolean isLayout;
-    public CStreamMedioForVitamio(Context context, AbsoluteLayout layout, ComponentsBean component) {
+    public CStreamMediaForVitamio(Context context, AbsoluteLayout layout, ComponentsBean component) {
         super(context);
         this.context = context;
         this.layout = layout;

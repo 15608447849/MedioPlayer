@@ -1,4 +1,4 @@
-package com.wos.play.rootdir.model_application.ui.ComponentLibrary.grallery;
+package com.wos.play.rootdir.model_application.ui.ComponentLibrary.gallery;
 
 import android.content.Context;
 import android.view.View;
@@ -14,11 +14,11 @@ import com.wos.play.rootdir.model_application.ui.Uitools.ImageUtils;
  * Created by user on 2016/11/18.
  */
 
-public class ImagerSwitchFactory implements ViewSwitcher.ViewFactory{
+public class ImageSwitchFactory implements ViewSwitcher.ViewFactory{
     private MeImageView imager1;
     private MeImageView imager2;
     private int current = 0;
-    public ImagerSwitchFactory(Context context){
+    public ImageSwitchFactory(Context context){
         imager1 = ImageUtils.createImageView(context,2);
         initAttr(imager1,0);
         imager2 = ImageUtils.createImageView(context,2);

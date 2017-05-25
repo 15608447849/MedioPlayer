@@ -15,7 +15,7 @@ import com.wos.play.rootdir.R;
 import com.wos.play.rootdir.model_application.baselayer.BaseActivity;
 import com.wos.play.rootdir.model_application.baselayer.SystemInfos;
 import com.wos.play.rootdir.model_application.schedule.TimeOperator;
-import com.wos.play.rootdir.model_application.ui.ComponentLibrary.video.MyVideoView;
+import com.wos.play.rootdir.model_application.ui.ComponentLibrary.video.CVideoView;
 import com.wos.play.rootdir.model_communication.CommuniReceiverMsgBroadCasd;
 import com.wos.play.rootdir.model_download.entity.TaskFactory;
 import com.wos.play.rootdir.model_download.kernel.DownloadBroad;
@@ -129,8 +129,8 @@ public class MainActivity extends BaseActivity {
             Bitmap videoImage;
             //视频截图
             for (View z : vList) {
-                if (z instanceof MyVideoView) {
-                    MyVideoView cvv = (MyVideoView) z;
+                if (z instanceof CVideoView) {
+                    CVideoView cvv = (CVideoView) z;
                     videoImage =  cvv.getCurrentFrame();
                     if (videoImage != null) {
                         Rect rect = new Rect();

@@ -104,7 +104,9 @@ public class Command_UPSC implements iCommand {
         String[] filenames = new File(fileDirPath).list();
         for (String filename : filenames) {
             if (filename.equals(entrance)) { //找到了 ->变成对
-                return res.equalsIgnoreCase(SdCardTools.readerJsonToMemory(fileDirPath, filename));
+                String old = SdCardTools.readerJsonToMemory(fileDirPath, filename);
+                Logs.i(TAG,res.equals(old)+"=="+res.equalsIgnoreCase(old));
+                return res.equalsIgnoreCase(old);
             }
         }
         return false;
