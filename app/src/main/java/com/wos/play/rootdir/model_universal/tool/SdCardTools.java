@@ -522,20 +522,20 @@ public class SdCardTools {
     }
    public static String readerJsonToMemory(String fullPath){
        String content = null;
+       InputStreamReader inputStreamReader= null;
        FileInputStream inStream = null;
        try {
            File f = new File(fullPath);
            if (f.exists()){
                //读取数据
                inStream = new FileInputStream(f);
-               InputStreamReader inputStreamReader = new InputStreamReader(inStream, "UTF-8");
+               inputStreamReader = new InputStreamReader(inStream, "UTF-8");
                BufferedReader read = new BufferedReader(inputStreamReader);
                String lineTxt;
                StringBuffer sb = new StringBuffer();
                while ((lineTxt = read.readLine()) != null) {
                    sb.append(lineTxt);
                }
-               read.close();
 //               byte[] bytes = new byte[1024];
 //               int len = 0;
 //               while((len=inStream.read(bytes))!=-1){
@@ -548,7 +548,7 @@ public class SdCardTools {
        }finally {
            if (inStream != null) {
                try {
-                   inStream.close();
+                   inputStreamReader.close();
                } catch (IOException e) {
                    e.printStackTrace();
                }
