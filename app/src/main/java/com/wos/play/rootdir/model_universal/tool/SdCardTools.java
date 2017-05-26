@@ -532,7 +532,7 @@ public class SdCardTools {
                inputStreamReader = new InputStreamReader(inStream, "UTF-8");
                BufferedReader read = new BufferedReader(inputStreamReader);
                String lineTxt;
-               StringBuffer sb = new StringBuffer();
+               StringBuilder sb = new StringBuilder();
                while ((lineTxt = read.readLine()) != null) {
                    sb.append(lineTxt);
                }
@@ -548,7 +548,7 @@ public class SdCardTools {
        }finally {
            if (inStream != null) {
                try {
-                   inputStreamReader.close();
+                   if (inputStreamReader != null) inputStreamReader.close();
                } catch (IOException e) {
                    e.printStackTrace();
                }
