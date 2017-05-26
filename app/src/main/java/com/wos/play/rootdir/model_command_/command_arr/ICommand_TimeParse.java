@@ -112,9 +112,9 @@ public class ICommand_TimeParse {
             //- 查看是不是这个时间范围内
             String today = TimeOperator.getToday();
             int result = TimeOperator.compareTime_clearTime(map.get(TKEY.DATE_START),today);
-            if (result<0){
+            if (result<=0){
                 result = TimeOperator.compareTime_clearTime(today,map.get(TKEY.DATE_END));
-                if (result<0){
+                if (result<=0){
                     //在当前时间内
                     iTime = checkTodays(map);
                 }else{
