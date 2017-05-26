@@ -11,13 +11,19 @@ import android.os.StatFs;
 import android.os.storage.StorageManager;
 import android.util.Log;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import org.apache.commons.io.FileUtils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -522,12 +528,19 @@ public class SdCardTools {
            if (f.exists()){
                //读取数据
                inStream = new FileInputStream(f);
+               InputStreamReader inputStreamReader = new InputStreamReader(inStream, "UTF-8");
+               BufferedReader read = new BufferedReader(inputStreamReader);
+               String lineTxt;
                StringBuffer sb = new StringBuffer();
-               byte[] bytes = new byte[1024];
-               int len = 0;
-               while((len=inStream.read(bytes))!=-1){
-                   sb.append(new String(bytes,0,len,"UTF-8"));
+               while ((lineTxt = read.readLine()) != null) {
+                   sb.append(lineTxt);
                }
+               read.close();
+//               byte[] bytes = new byte[1024];
+//               int len = 0;
+//               while((len=inStream.read(bytes))!=-1){
+//                   sb.append(new String(bytes,0,len,"UTF-8"));
+//               }
                content = sb.toString();
            }
        } catch (Exception e) {
