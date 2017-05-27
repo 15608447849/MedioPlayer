@@ -78,8 +78,6 @@ public class TextViewPager extends ViewPager implements IComponentUpdate {
 
     @Override
     public void initData(Object object) {
-
-
         try {
             ComponentsBean cb = ((ComponentsBean)object);
             this.width = (int)cb.getWidth();

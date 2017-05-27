@@ -17,6 +17,7 @@ import com.wos.play.rootdir.model_application.ui.UiInterfaces.MediaInterface;
 import com.wos.play.rootdir.model_application.ui.Uitools.GestureHelper;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
+import com.wos.play.rootdir.model_universal.tool.CONTENT_TYPE;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 
 /**
@@ -127,6 +128,12 @@ public class CMorePictures extends FrameLayout implements IComponent,MediaInterf
             for (ContentsBean content : contents){
                 imageView = new CImageView(context,this,content);
                 imageView.setMediaInterface(this);
+                if (CONTENT_TYPE.qrCode.equals(content.getContentType())) {
+                    int newX = this.x + this.width/2 - this.height/2;
+                    Logs.e(TAG, "newX:->  " + newX);
+                    this.width = this.height;
+                    layoutParams = new AbsoluteLayout.LayoutParams(width,height,newX,y);
+                }
                 addImages(imageView);
             }
             playNumber = imageArr.size();
