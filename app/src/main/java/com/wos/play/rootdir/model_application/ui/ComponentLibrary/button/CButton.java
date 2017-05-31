@@ -70,7 +70,7 @@ public class CButton extends MeImageButton implements View.OnClickListener,View.
         this.setLayoutParams(layoutParams);
         this.setScaleType(ImageView.ScaleType.FIT_XY);
         if (upImagePath!=null && UiTools.fileIsExt(upImagePath)){
-                this.setImageBitmap(ImageUtils.getBitmap(upImagePath));
+            this.setImageBitmap(ImageUtils.getBitmap(upImagePath));
         }else{
             this.setBackgroundColor(Color.TRANSPARENT);
         }

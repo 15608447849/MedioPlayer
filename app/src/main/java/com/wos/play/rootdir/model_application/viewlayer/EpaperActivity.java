@@ -61,6 +61,8 @@ public class EpaperActivity extends BaseActivity implements View.OnClickListener
         Collections.sort(sourceNameList, new Comparator<String>() {
             @Override
             public int compare(String lhs, String rhs) {
+                if (lhs.length() > rhs.length()) return 1;
+                else if (lhs.length() < rhs.length()) return -1;
                 return lhs.compareTo(rhs);
             }
         });
