@@ -86,7 +86,7 @@ public class IViewPage extends FrameLayout implements IView {
     @Override
     public void setAttribute() {
         if (backGroundImage == null) {
-            this.setBackgroundColor(Color.parseColor(UiTools.TanslateColor(backGroundColor)));
+            this.setBackgroundColor(Color.parseColor(UiTools.translateColor(backGroundColor)));
         } else {
             loadBg();
         }

@@ -141,7 +141,7 @@ public class IWebView extends WebView implements IComponentUpdate {
             if (bgImageUrl==null){
                 //设置背景颜色
                 if (backgroundColor!=null){
-                    this.setBackgroundColor(Color.parseColor(UiTools.TanslateColor(backgroundColor)));
+                    this.setBackgroundColor(Color.parseColor(UiTools.translateColor(backgroundColor)));
                 }
             }else{
                 loadBg();

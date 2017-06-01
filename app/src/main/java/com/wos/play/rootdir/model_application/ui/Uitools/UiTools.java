@@ -77,21 +77,17 @@ public class UiTools {
      * @param colorValue
      * @return
      */
-    public static String TanslateColor(String colorValue) {
-        if (colorValue == null || "".equals(colorValue)) return "#000000";
-        String color = null;
+    public static String translateColor(String colorValue) {
+        String color = "#FFFFFF";
+        if (colorValue == null || "".equals(colorValue)) return color;
         try {
             if (colorValue.startsWith("#") && colorValue.length() == 7) {
                 color = colorValue;
-            } else {
-                if (colorValue.contains("0x")) {
-                    color = "#" + colorValue.substring(2);
-                }
+            } else if (colorValue.contains("0x")&& colorValue.length() == 8) {
+                color = "#" + colorValue.substring(2);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
-            color = "#FFFFFF";
         }
         return color;
     }

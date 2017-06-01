@@ -73,7 +73,7 @@ public class PagesFragments extends Fragment{
             layout.setLayoutParams(new AbsoluteLayout.LayoutParams(w, h,x,y));
             if (isBgColor){
                 try {
-                    layout.setBackgroundColor(Color.parseColor(UiTools.TanslateColor(background)));
+                    layout.setBackgroundColor(Color.parseColor(UiTools.translateColor(background)));
                 } catch (Exception e) {
                     Logs.e(TAG,"设置背景参数错误 - [background:"+background+"]" +e.getMessage());
                 }
