@@ -69,7 +69,7 @@ public class IViewPage extends FrameLayout implements IView {
             layoutParams = new AbsoluteLayout.LayoutParams(width,height,x,y);
             /*this.backGroundColor = page.getBackgroundColor();
             this.backGroundImage = page.getBackground();//请截取 uri 暂时未做 确定bg颜色还是图片*/
-            if (page.getBackground() != null)
+            if (page.getBackground() != null && !"".equals(page.getBackground()))
                 this.backGroundImage = UiTools.getUrlTanslationFilename(page.getBackground());
             else
                 this.backGroundColor = page.getBackgroundColor();

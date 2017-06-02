@@ -194,6 +194,7 @@ public class Command_UPSC implements iCommand {
      * @param ad
      */
     private void parseAd(AdBean ad) {
+        taskStore.addTaskOnList(ad.getBackground());
         if (ad.getComponents() != null && ad.getComponents().size() > 0) {
             for (ComponentsBean component : ad.getComponents()) {
                 parseComponent(component);

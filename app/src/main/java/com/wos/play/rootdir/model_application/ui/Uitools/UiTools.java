@@ -78,16 +78,21 @@ public class UiTools {
      * @return
      */
     public static String translateColor(String colorValue) {
-        String color = "#FFFFFF";
-        if (colorValue == null || "".equals(colorValue)) return color;
+        if (colorValue == null || "".equals(colorValue)) return "#000000";
+        String color = null;
         try {
             if (colorValue.startsWith("#") && colorValue.length() == 7) {
                 color = colorValue;
-            } else if (colorValue.contains("0x")&& colorValue.length() == 8) {
-                color = "#" + colorValue.substring(2);
+            } else {
+                if (colorValue.contains("0x")) {
+                    color = colorValue.substring(2);
+                    color = "#" + String.format("%6s", color).replace(" ", "0");
+//                    color = "#" + colorValue.substring(2);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
+            color = "#FFFFFF";
         }
         return color;
     }
