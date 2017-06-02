@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MedioPlayer</string>
+    <string name="app_name">安卓播放器</string>
     <string name="title_activity_base">BaseActivity</string>
     <string name="title_activity_vitamio">VitamioActivity</string>
     <string name="title_activity_image">ImageActivity</string>

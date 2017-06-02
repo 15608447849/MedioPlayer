@@ -35,7 +35,7 @@
         android:layout_toLeftOf="@+id/epaper_imageButton_previous"
         android:layout_toStartOf="@+id/epaper_imageButton_previous"
         android:padding="16dp"
-        android:src="@android:drawable/ic_menu_revert" />
+        android:src="@mipmap/epaper_return"/>
 
     <ImageButton
         android:id="@+id/epaper_imageButton_previous"
@@ -45,8 +45,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:padding="16dp"
-        android:rotation="180"
-        android:src="@android:drawable/ic_menu_send" />
+        android:src="@mipmap/left" />
 
     <ImageButton
         android:id="@+id/epaper_imageButton_next"
@@ -57,7 +56,7 @@
         android:layout_toEndOf="@+id/epaper_imageButton_previous"
         android:layout_toRightOf="@+id/epaper_imageButton_previous"
         android:padding="16dp"
-        android:src="@android:drawable/ic_menu_send" />
+        android:src="@mipmap/right" />
 
     <ImageButton
         android:id="@+id/epaper_image_button_pages"
@@ -68,7 +67,7 @@
         android:layout_toEndOf="@+id/epaper_imageButton_next"
         android:layout_toRightOf="@+id/epaper_imageButton_next"
         android:padding="16dp"
-        android:src="@android:drawable/ic_menu_add" />
+        android:src="@mipmap/more" />
 
     <ProgressBar
         android:id="@+id/tasksCompletedView"
