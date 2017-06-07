@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
 
+import com.wos.play.rootdir.model_command_.command_arr.Command_REEP;
 import com.wos.play.rootdir.model_command_.command_arr.Command_UIRE;
 import com.wos.play.rootdir.model_command_.command_arr.Command_UPDC;
 import com.wos.play.rootdir.model_command_.command_arr.Command_OPEN;
@@ -68,7 +69,7 @@ public class CommandPostServer extends Service implements iCommand{
         }
         if (isRoot){
             //syncTime时间同步
-            commandList.put(CMD_INFO.SYTI,new Command_SYTI(getApplicationContext()));
+            commandList.put(CMD_INFO.SYTI, new Command_SYTI(getApplicationContext()));
             //关闭终端
             commandList.put(CMD_INFO.SHDO, new Command_SHDO());
             //开启终端
@@ -76,11 +77,13 @@ public class CommandPostServer extends Service implements iCommand{
             //重启终端
             commandList.put(CMD_INFO.REBO, new ICommand_REBO(getApplicationContext()));
             //截屏 - 定时和实时
-            commandList.put(CMD_INFO.SCRN,new Command_SCRN(getApplicationContext()));
+            commandList.put(CMD_INFO.SCRN, new Command_SCRN(getApplicationContext()));
             //更新apk
-            commandList.put(CMD_INFO.UPDC,new Command_UPDC(getApplicationContext()));
+            commandList.put(CMD_INFO.UPDC, new Command_UPDC(getApplicationContext()));
             //重启播放器
-            commandList.put(CMD_INFO.UIRE,new Command_UIRE(getApplicationContext()));
+            commandList.put(CMD_INFO.UIRE, new Command_UIRE(getApplicationContext()));
+            //电子报更新
+            commandList.put(CMD_INFO.REEP, new Command_REEP(getApplicationContext()));
         }else{
             Logs.e(TAG,"无\'root\'权限,无法执行 [时间同步][截屏][关闭终端]等操作.");
         }

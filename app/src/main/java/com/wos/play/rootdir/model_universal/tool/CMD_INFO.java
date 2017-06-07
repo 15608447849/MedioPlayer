@@ -247,4 +247,6 @@ public class CMD_INFO {
     public static final String DLIF = "DLIF:";
     //开机
     public static final String OPEN = "OPEN:";
+    //电子报更新
+    public static final String REEP = "REEP:";
 }
