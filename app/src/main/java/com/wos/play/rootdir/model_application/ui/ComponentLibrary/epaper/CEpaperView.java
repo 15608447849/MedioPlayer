@@ -1,7 +1,9 @@
 package com.wos.play.rootdir.model_application.ui.ComponentLibrary.epaper;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -14,6 +16,7 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
 import com.wos.play.rootdir.model_application.schedule.TimeOperator;
+import com.wos.play.rootdir.model_application.ui.UiFactory.UiLocalBroad;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.IComponentUpdate;
 import com.wos.play.rootdir.model_application.ui.UiThread.LoopMonitorFiles;
 import com.wos.play.rootdir.model_application.ui.UiThread.LoopSuccessInterfaces;
@@ -22,6 +25,8 @@ import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
 import com.wos.play.rootdir.model_application.viewlayer.EpaperActivity;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
+import com.wos.play.rootdir.model_universal.tool.Logs;
+import com.wos.play.rootdir.model_universal.tool.MD5Util;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -52,8 +57,16 @@ public class CEpaperView extends FrameLayout implements IComponentUpdate, LoopSu
 
     private int backgroundAlpha;
     private String backgroundColor;
-    private  String bgImageUrl;
-    private Bitmap bgImage;
+    private String bgImageUrl;
+    private boolean isRegisterBroad = false; //是否注册广播
+    public BroadcastReceiver br = new BroadcastReceiver(){
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Logs.e(TAG, "--->>  接收广播。。。");
+            String filePath = intent.getExtras().getString("filePath");
+            Logs.e(TAG, "--->>  接收广播。。。" + filePath);
+        }
+    };
 
     public CEpaperView(Context context, AbsoluteLayout layout, ComponentsBean component) {
         super(context);
@@ -203,6 +216,7 @@ public class CEpaperView extends FrameLayout implements IComponentUpdate, LoopSu
         //this.setAlpha(backgroundAlpha);
         this.setLayoutParams(layoutParams);
     }
+
     //设置布局
     @Override
     public void onLayouts() {
@@ -255,17 +269,42 @@ public class CEpaperView extends FrameLayout implements IComponentUpdate, LoopSu
             }
             setAttribute();
             onLayouts();
+            createBroad();
             loadContent();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    //注册广播
+    public void createBroad() {
+        if (!isRegisterBroad) {
+            IntentFilter filter = new IntentFilter();
+            filter.addAction("wos.dir.ui.epaper");
+            context.registerReceiver(br, filter);
+            isRegisterBroad = true;
+        }
+    }
+
+    //取消注册
+    public void cancelBroad() {
+        if (isRegisterBroad) {
+            try {
+                context.unregisterReceiver(br);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+             br = null;
+         }
+    }
+
     //停止工作
     @Override
     public void stopWork() {
         try {
             unLoadContent();
             unLayouts(); //移除布局
+            cancelBroad();
             LoopMonitorFiles.getInstance().clearMonitor(this);
         } catch (Exception e) {
             e.printStackTrace();
@@ -354,6 +393,7 @@ public class CEpaperView extends FrameLayout implements IComponentUpdate, LoopSu
     public void sourceExist(String data, boolean isFile) {
         if(isFile && data.endsWith(".zip")){
             String dir = data.replace(".zip","");
+            Logs.e(TAG, "----->  " + data);
             LoopMonitorFiles.getInstance().addMonitorFile(this, dir);
             unZipFiles(data, dir, false);
         }else if(!isFile){

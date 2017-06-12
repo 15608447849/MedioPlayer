@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.wos.play.rootdir.model_application.baselayer.SystemInfos;
-import com.wos.play.rootdir.model_application.ui.ComponentLibrary.epaper.CEpaperView;
 import com.wos.play.rootdir.model_application.ui.UiThread.LoopMonitorFiles;
 import com.wos.play.rootdir.model_application.ui.UiThread.LoopSuccessInterfaces;
 import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
@@ -13,9 +12,6 @@ import com.wos.play.rootdir.model_download.entity.TaskFactory;
 import com.wos.play.rootdir.model_download.entity.UrlList;
 import com.wos.play.rootdir.model_download.override_download_mode.Task;
 import com.wos.play.rootdir.model_universal.tool.Logs;
-import com.wos.play.rootdir.model_universal.tool.SdCardTools;
-
-import java.io.File;
 import java.util.ArrayList;
 import cn.trinea.android.common.util.FileUtils;
 import rx.android.schedulers.AndroidSchedulers;
@@ -73,11 +69,13 @@ public class Command_REEP implements iCommand, LoopSuccessInterfaces {
 
     private void sendMessage(String filePath) {
         try {
-            Logs.d(TAG,"发送REEP指令");
-            Intent intent = new Intent(context, CEpaperView.class);
+            Logs.d(TAG,"发送广播到电子报");
+            Intent intent = new Intent();
+            intent.setAction("wos.dir.ui.epaper");
+            intent.putExtra("filePath", filePath);
             context.sendBroadcast(intent);
         } catch (Exception e) {
-            Logs.e("REEP指令","========= REEP指令 ===========");
+            Logs.e(TAG, "========= 发送广播到电子报异常 ===========");
             e.printStackTrace();
         }
     }
@@ -89,8 +87,8 @@ public class Command_REEP implements iCommand, LoopSuccessInterfaces {
             @Override
             public void call() {
                 if (data != null) {
-                    Logs.e(TAG, data + " 下载完成");
-                    //sendMessage(data);
+                    Logs.i(TAG, data + " 下载完成");
+                    sendMessage(data);
                 }
             }
         });
