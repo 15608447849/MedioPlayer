@@ -1,16 +1,9 @@
 package com.wos.play.rootdir.model_command_.command_arr;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-
 import com.wos.play.rootdir.model_application.baselayer.SystemInfos;
-import com.wos.play.rootdir.model_application.viewlayer.MainActivity;
 import com.wos.play.rootdir.model_command_.kernel.iCommand;
-import com.wos.play.rootdir.model_communication.CommuniReceiverMsgBroadCasd;
-import com.wos.play.rootdir.model_communication.CommunicationServer;
 import com.wos.play.rootdir.model_universal.tool.Logs;
-
 import cn.trinea.android.common.util.ShellUtils;
 
 import static com.wos.play.rootdir.model_universal.tool.AppsTools.uriTransionString;

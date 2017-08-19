@@ -54,7 +54,7 @@ public class CEpaperView extends FrameLayout implements IComponentUpdate, LoopSu
     private ProgressBar progress;
     private boolean isInitData = false;
     private boolean isLayout = false;
-
+    private String remotePath;
     private int backgroundAlpha;
     private String backgroundColor;
     private String bgImageUrl;
@@ -67,6 +67,7 @@ public class CEpaperView extends FrameLayout implements IComponentUpdate, LoopSu
             Logs.e(TAG, "--->>  接收广播。。。" + filePath);
         }
     };
+
 
     public CEpaperView(Context context, AbsoluteLayout layout, ComponentsBean component) {
         super(context);
@@ -154,6 +155,7 @@ public class CEpaperView extends FrameLayout implements IComponentUpdate, LoopSu
     public void createContent(Object object) {
         try {
             ContentsBean content = (ContentsBean) object;
+            remotePath = content.getContentSource();
             epaperPathDir = UiTools.getEpapers() + content.getContentSource();
             itemNum = content.getDaysKeep();
             epaperName = content.getContentName();//电子报名字
@@ -197,7 +199,8 @@ public class CEpaperView extends FrameLayout implements IComponentUpdate, LoopSu
         //打开一个当前电子报的列表视图
         if (itemFileAbsPath!=null && context!=null){
             Intent intent =new Intent(context, EpaperActivity.class);
-            intent.putExtra(EpaperActivity.PATHKEY,itemFileAbsPath);
+            intent.putExtra(EpaperActivity.LOCAL,itemFileAbsPath);
+            intent.putExtra(EpaperActivity.REMOTE, remotePath);
             context.startActivity(intent);
         }
     }
@@ -288,7 +291,7 @@ public class CEpaperView extends FrameLayout implements IComponentUpdate, LoopSu
 
     //取消注册
     public void cancelBroad() {
-        if (isRegisterBroad) {
+        if (isRegisterBroad && br != null) {
             try {
                 context.unregisterReceiver(br);
             } catch (Exception e) {

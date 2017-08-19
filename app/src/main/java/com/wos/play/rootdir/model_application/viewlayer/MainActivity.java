@@ -16,7 +16,6 @@ import com.wos.play.rootdir.model_application.baselayer.BaseActivity;
 import com.wos.play.rootdir.model_application.baselayer.SystemInfos;
 import com.wos.play.rootdir.model_application.schedule.TimeOperator;
 import com.wos.play.rootdir.model_application.ui.ComponentLibrary.video.CVideoView;
-import com.wos.play.rootdir.model_communication.CommuniReceiverMsgBroadCasd;
 import com.wos.play.rootdir.model_download.entity.TaskFactory;
 import com.wos.play.rootdir.model_download.kernel.DownloadBroad;
 import com.wos.play.rootdir.model_download.override_download_mode.Task;
@@ -50,8 +49,7 @@ public class MainActivity extends BaseActivity {
         setIsOnBack(false);
         setStopOnDestroy(false);
         registerBroad(1);
-        //发送上线指令 ONLI
-        sendMsgCommServer("sendTerminalOnline", null);
+        sendMsgCommServer("online", null); // 通知通信服务上线
     }
 
     @Override
@@ -60,8 +58,7 @@ public class MainActivity extends BaseActivity {
         Logs.i("MainActivity","接收广播：result1->"+result1);
         if(CMD_INFO.UIRE.equals(result)){//重启播放器
             unInitUI();
-            //发送下线指令 OFLI
-            sendMsgCommServer("sendTerminalOffLine", null);
+            sendMsgCommServer("offline", null); //通知通信服务 发送下线指令
             System.exit(0);
             android.os.Process.killProcess(android.os.Process.myPid());
         }
@@ -72,9 +69,8 @@ public class MainActivity extends BaseActivity {
             } else {
                 String remotePath = "/Android/" + SystemInfos.get().getTerminalNo() + "/screen/";//设置 远程文件目录
                 String ftpUrl = getFTPUrls(remotePath + result1.substring(result1.lastIndexOf("/")+1));//设置响应服务器
-
                 uploadFTP(result1, remotePath);//上传
-                notifyServer(ftpUrl);//通知服务器
+                sendMsgCommServer("pointTimeScreen", ftpUrl);// 通知服务器,定时截图上传地址
             }
         }
     }
@@ -260,21 +256,6 @@ public class MainActivity extends BaseActivity {
         sendTaskToLocalServer(TaskFactory.gnrTaskUploadFTP(LocalFilePath,remoteFilePath));
     }
 
-    /**
-     * 上传截屏地址到服务器 -> pointTimeScreen();
-     * @param ftpUrl
-     */
-    private void notifyServer(String ftpUrl) {
-        if (getApplicationContext()!=null) {
-            Intent intent = new Intent();
-            Bundle bundle = new Bundle();
-            intent.setAction(CommuniReceiverMsgBroadCasd.ACTION);
-            bundle.putString(CommuniReceiverMsgBroadCasd.PARAM1, "pointTimeScreen");
-            bundle.putString(CommuniReceiverMsgBroadCasd.PARAM2, ftpUrl);
-            intent.putExtras(bundle);
-            getApplicationContext().sendBroadcast(intent);
-        }
-    }
 
     @Override
     protected void onStart() {
@@ -299,13 +280,11 @@ public class MainActivity extends BaseActivity {
     protected void onStop() {
         Logs.e("MainActivity","活动层-------------onStop----------------------");
         boolean flag = Stools.isRunningForeground(getApplicationContext(), WatchServer.activityList);
-
         if (!flag){
             unInitUI();
-            //发送下线指令 OFLI
-            sendMsgCommServer("sendTerminalOffLine", null);
+            sendMsgCommServer("offline", null); //通知通信服务 发送下线指令
+            finish(); // 关闭Act 避免下次进来无法启动onCreate
         }
-
         super.onStop();
     }
     @Override

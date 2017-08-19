@@ -97,6 +97,6 @@ public class Command_REEP implements iCommand, LoopSuccessInterfaces {
     //通知服务器 可以下载了
     private void notifyDownLoad(ArrayList<Task> list) {
         ICommand_DLIF.get(context).saveTaskList(list);
-        ICommand_DLIF.get(context).downloadStartNotifiy();
+        ICommand_DLIF.get(context).downloadStartNotify();
     }
 }

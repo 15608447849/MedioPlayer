@@ -25,6 +25,8 @@ import com.wos.play.rootdir.model_application.ui.UiThread.LoopSuccessInterfaces;
 import com.wos.play.rootdir.model_application.ui.Uitools.ImageAsyLoad;
 import com.wos.play.rootdir.model_application.ui.Uitools.ImageUtils;
 import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
+import com.wos.play.rootdir.model_report.Report;
+import com.wos.play.rootdir.model_report.ReportHelper;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.content_gallery.DataObjsBean;
@@ -264,12 +266,8 @@ public class CGallery extends FrameLayout implements IAdvancedComponent, ICompon
         //设置适配器
         adapter = new GalleryAdapter(context);
         gallery.setAdapter(adapter);
-
-        //---------设置图集背景----------
-        if (bgImageUrl==null){
-            //设置背景颜色
+        if (bgImageUrl==null){ //设置背景颜色
             gallery.setBackgroundColor(getColor(backgroundColor));
-            //gallery.setBackgroundColor(Color.parseColor(UiTools.TanslateColor(backgroundColor)));
         } else {
             loadBg();
         }
@@ -304,6 +302,7 @@ public class CGallery extends FrameLayout implements IAdvancedComponent, ICompon
             } else {
                 ImageAsyLoad.loadBitmap(adapter.getBitmapString(position), (MeImageView) iShow.getCurrentImageView());
             }
+            ReportHelper.onEpaperNews(context, 0 , (int) adapter.getItemId(position));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -375,7 +374,7 @@ public class CGallery extends FrameLayout implements IAdvancedComponent, ICompon
                         && galleryBean.getDataObjs().size() > 0) {
                     getImageFilename(galleryBean.getDataObjs());
                     //发送图集信息列表到适配器
-                    adapter.getDataObjsBean(galleryBean.getDataObjs());
+                    adapter.setDataObjsBean(galleryBean.getDataObjs());
                 }
             } catch (Exception e) {
                 e.printStackTrace();

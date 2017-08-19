@@ -15,6 +15,7 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.wos.play.rootdir.R;
 import com.wos.play.rootdir.model_application.baselayer.BaseActivity;
 import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
+import com.wos.play.rootdir.model_report.ReportHelper;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 
 import java.io.File;
@@ -29,7 +30,8 @@ public class EpaperActivity extends BaseActivity implements View.OnClickListener
     private ProgressBar tasksCompletedView;//进度条
 
     public static final String TAG = "EpaperActivity";
-    public static final String PATHKEY = "paperFilepath";
+    public static final String LOCAL = "local";
+    public static final String REMOTE = "remote";
     private ArrayList<String> sourceList;
     private ArrayList<String> sourceNameList;
     private SubsamplingScaleImageView imageView;
@@ -109,14 +111,15 @@ public class EpaperActivity extends BaseActivity implements View.OnClickListener
 
     //初始化路径
     private void initIntent() {
-        String path = this.getIntent().getStringExtra(PATHKEY);
+        String path = getIntent().getStringExtra(LOCAL);
         if (path == null || !FileUtils.isFolderExist(path)) {
             stopActivityOnArr(this);
             return;
         }
+        String remote = getIntent().getStringExtra(REMOTE);
+        ReportHelper.onEpaperData(this, 0, remote, path.substring(path.lastIndexOf("/")+1));
         Logs.i(TAG, "打开电子报 - [ " + path + " ]");
         File[] files = new File(path).listFiles();
-
         sourceList = new ArrayList<>();//电子报图片路径list
         sourceNameList = new ArrayList<>();
         for (File sFile : files) {

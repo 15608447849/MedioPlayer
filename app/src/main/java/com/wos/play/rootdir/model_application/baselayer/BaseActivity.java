@@ -17,7 +17,7 @@ import android.widget.Toast;
 import com.wos.play.rootdir.R;
 import com.wos.play.rootdir.model_application.ui.UiFactory.UiManager;
 import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
-import com.wos.play.rootdir.model_communication.CommuniReceiverMsgBroadCasd;
+import com.wos.play.rootdir.model_communication.CommunicationServer;
 import com.wos.play.rootdir.model_monitor.kernes.WatchServer;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 import java.util.ArrayList;
@@ -199,16 +199,14 @@ public class BaseActivity extends Activity {
     }
 
 
-    /**发送消息 到通讯服务 (如果要接受消息 -请打开 接受消息通知 -回调方法 :receiveService)*/
-    protected void sendMsgCommServer(String methodsName, String methodsParam) {
+    /**发送消息 到通讯服务 (如果要接受消息 -请打开 接受消息通知)*/
+    protected void sendMsgCommServer(String cmd, String param) {
         try{
-            Intent intent = new Intent();
-            Bundle bundle = new Bundle();
-            intent.setAction(CommuniReceiverMsgBroadCasd.ACTION);
-            bundle.putString(CommuniReceiverMsgBroadCasd.PARAM1, methodsName);
-            bundle.putString(CommuniReceiverMsgBroadCasd.PARAM2, methodsParam);
-            intent.putExtras(bundle);
-            getApplication().sendBroadcast(intent);
+            Logs.i(TAG, "--通过通讯服务，发送消息:" + cmd);
+            Intent intent = new Intent(getAppContext(), CommunicationServer.class);
+            intent.putExtra("cmd", cmd);
+            intent.putExtra("param", param);
+            getApplication().startService(intent);
         }catch (Exception e){
             e.printStackTrace();
         }

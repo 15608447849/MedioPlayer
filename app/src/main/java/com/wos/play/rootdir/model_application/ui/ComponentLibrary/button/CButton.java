@@ -12,6 +12,7 @@ import com.wos.play.rootdir.model_application.ui.UiFactory.UiManager;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.IView;
 import com.wos.play.rootdir.model_application.ui.Uitools.ImageUtils;
 import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
+import com.wos.play.rootdir.model_report.ReportHelper;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 
 /**
@@ -135,6 +136,7 @@ public class CButton extends MeImageButton implements View.OnClickListener,View.
     public void onClick(View v) {
         try {
             UiManager.getInstance().exeTask(linkId);
+            ReportHelper.onButton(context, 0 , componentId);
         } catch (Exception e) {
             e.printStackTrace();
         }

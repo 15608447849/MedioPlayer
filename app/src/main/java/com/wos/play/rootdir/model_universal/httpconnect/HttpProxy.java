@@ -131,8 +131,7 @@ public class HttpProxy {
         try{
             movieService.sendCMD(url)
                     .subscribeOn(Schedulers.io())
-                    .unsubscribeOn(Schedulers.io())
-//                    .observeOn(AndroidSchedulers.mainThread())
+                    .unsubscribeOn(Schedulers.io())//.observeOn(AndroidSchedulers.mainThread())
                     .subscribe(newSubscriber(onNext,onError));
         }catch (Exception e){
             Logs.e(TAG,e.getMessage());
@@ -149,11 +148,9 @@ public class HttpProxy {
      */
     public void sendCmd(String url,final Action1<String> onNext){
         try{
-
             movieService.sendCMD(encodeUrlParam("cmd",url))
                     .subscribeOn(Schedulers.io())
-                    .unsubscribeOn(Schedulers.io())
-                    //.observeOn(AndroidSchedulers.mainThread())
+                    .unsubscribeOn(Schedulers.io())//.observeOn(AndroidSchedulers.mainThread())
                     .subscribe(newSubscriber(onNext,null));
         }catch (Exception e){
             Logs.e(TAG,e.getMessage());

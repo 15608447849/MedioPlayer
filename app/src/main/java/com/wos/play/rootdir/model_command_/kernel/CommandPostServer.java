@@ -34,15 +34,15 @@ public class CommandPostServer extends Service implements iCommand{
     public void onCreate() {
         super.onCreate();
         Logs.e(TAG," 指令 - onCreate() ");
-        createThrad();
-        registBroad();
+        createThread();
+        registerBroad();
     }
     @Override
     public void onDestroy() {
         super.onDestroy();
         Logs.e(TAG,"指令 - onDestroy() ");
-        overThrad();
-        unregistBroad();
+        overThread();
+        unregisterBroad();
     }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -101,7 +101,7 @@ public class CommandPostServer extends Service implements iCommand{
     /**
      * 停止广播 destory call
      */
-    private void unregistBroad() {
+    private void unregisterBroad() {
         if (appReceive!=null){
             getApplicationContext().unregisterReceiver(appReceive);
             appReceive = null;
@@ -112,8 +112,8 @@ public class CommandPostServer extends Service implements iCommand{
     /**
      * 注册广播  create call
      */
-    private void registBroad() {
-        unregistBroad();
+    private void registerBroad() {
+        unregisterBroad();
         appReceive = new CommandPostBroad(this);
         IntentFilter filter=new IntentFilter();
         filter.addAction(CommandPostBroad.ACTION);
@@ -124,13 +124,13 @@ public class CommandPostServer extends Service implements iCommand{
 
    private CommandExecuterThread executer ;
 
-    private void createThrad(){
-       overThrad();
+    private void createThread(){
+        overThread();
         executer = new CommandExecuterThread(this);
         executer.mStart();
     }
 
-    private void overThrad() {
+    private void overThread() {
         if (executer!=null){
             executer.mStop();
             executer = null;
@@ -153,13 +153,13 @@ public class CommandPostServer extends Service implements iCommand{
 
     private LinkedList<CmdObj> cmdList ;
 
-    private synchronized void addCmds(String cmd,String param){
+    private synchronized void addCmdList(String cmd,String param){
         if (cmdList == null){
             cmdList = new LinkedList<>();
         }
         cmdList.add(new CmdObj(cmd,param));
     }
-    private synchronized void getCmds(){
+    private synchronized void getCmdList(){
         if (cmdList!=null){
             Iterator<CmdObj> iterator = cmdList.iterator();
             if (iterator.hasNext()){
@@ -167,29 +167,20 @@ public class CommandPostServer extends Service implements iCommand{
                 Logs.i("obj.param" + obj.cmd + "========");
                 executes(obj.cmd,obj.param);
                 iterator.remove();
-                obj = null;
             }
-
-
         }
     }
-
-
-
-
-
     /**
      * 收到一个命令 ->放入队列中 -> 轮询队列有命令 取出来 执行
      */
     public void reserveCmd(String cmd, String param){
 //        Logs.i(TAG,"命令 ["+cmd+ " ]  -  参数: [ "+ param +" ]");
-
         if (commandList==null){
             commandList = new HashMap<>();
             initData();
         }
         if (cmd!=null){
-            addCmds(cmd,param);
+            addCmdList(cmd,param);
         }
 
     }
@@ -204,7 +195,7 @@ public class CommandPostServer extends Service implements iCommand{
 
     @Override
     public void Execute(String param) {
-        getCmds();
+        getCmdList();
     }
 
     //ui 更新下载任务
@@ -212,7 +203,7 @@ public class CommandPostServer extends Service implements iCommand{
         if (parcelableArrayList!=null && parcelableArrayList.size()>0 ){
             Logs.i(TAG," UI - 更新下载任务 - 数量:" + parcelableArrayList.size());
             ICommand_DLIF.get(getApplicationContext()).saveTaskList(parcelableArrayList);
-            ICommand_DLIF.get(null).downloadStartNotifiy();
+            ICommand_DLIF.get(null).downloadStartNotify();
         }
     }
 

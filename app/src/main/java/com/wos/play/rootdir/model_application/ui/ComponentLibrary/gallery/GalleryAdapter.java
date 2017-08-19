@@ -43,7 +43,6 @@ public class GalleryAdapter extends BaseAdapter {
 
     //设置选择项
     public void setSelectItem(int selectItem) {
-
         if (this.selectItem != selectItem) {
             this.selectItem = selectItem;
             notifyDataSetChanged();
@@ -93,12 +92,14 @@ public class GalleryAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return position;
+        if(list == null) return null;
+        return list.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return position;
+        if(list == null) return 0;
+        return list.get(position).getId();
     }
 
     @Override
@@ -118,10 +119,10 @@ public class GalleryAdapter extends BaseAdapter {
 
         //---------图集缩略图修改----------
         String fileName = UiTools.getUrlTanslationFilename(list.get(position).getUrl());//图集文件
-        String thunName = UiTools.getUrlTanslationFilename(list.get(position).getImageUrl());//缩略图文件
+        String thumbName = UiTools.getUrlTanslationFilename(list.get(position).getImageUrl());//缩略图文件
         iv.setImageBitmap(ImageUtils.getBitmap(fileName));
-        if (thunName != null && !"".equals(thunName))
-            ImageAsyLoad.loadBitmap(thunName,iv);
+        if (thumbName != null && !"".equals(thumbName))
+            ImageAsyLoad.loadBitmap(thumbName,iv);
         else
             ImageAsyLoad.loadBitmap(fileName,iv);
 
@@ -137,10 +138,10 @@ public class GalleryAdapter extends BaseAdapter {
     }
 
     /**
-     * 获取图集列表信息
+     * 设置图集列表信息
      * @param dataObjs
      */
-    public void getDataObjsBean(List<DataObjsBean> dataObjs) {
+    public void setDataObjsBean(List<DataObjsBean> dataObjs) {
         list = dataObjs;
     }
 }

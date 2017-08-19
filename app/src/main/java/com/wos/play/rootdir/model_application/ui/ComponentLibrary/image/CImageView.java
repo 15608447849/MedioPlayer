@@ -8,6 +8,7 @@ import com.wos.play.rootdir.model_application.ui.UiInterfaces.IContentView;
 import com.wos.play.rootdir.model_application.ui.UiInterfaces.MediaInterface;
 import com.wos.play.rootdir.model_application.ui.Uitools.ImageUtils;
 import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
+import com.wos.play.rootdir.model_report.ReportHelper;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
 
 /**
@@ -18,15 +19,16 @@ import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
 
 public class CImageView extends MeImageView implements IContentView{
     private static final java.lang.String TAG = "CImageView";
-    private Context mCcontext;
+    private Context mContext;
     private FrameLayout layout ;
     private String imagePath;
-
+    private int imageId;
     private int length;
     private FrameLayout.LayoutParams layoutParams;
     private boolean isInitData;
     private boolean isLayout;
     private MediaInterface bridge;//与 上级 通讯 的桥梁
+    private long startTime;
 
     //设置 上级组件
     public void setMediaInterface(MediaInterface bridge) {
@@ -35,7 +37,7 @@ public class CImageView extends MeImageView implements IContentView{
 
     public CImageView(Context context, FrameLayout layout, ContentsBean content) {
         super(context);
-        mCcontext =context;
+        mContext =context;
         this.layout = layout;
         initData(content);
     }
@@ -48,6 +50,7 @@ public class CImageView extends MeImageView implements IContentView{
     public void initData(Object object) {
         try {
             ContentsBean content = ((ContentsBean)object);
+            this.imageId = content.getId();
             this.imagePath = UiTools.getUrlTanslationFilename(content.getContentSource());
             this.length = content.getTimeLength();
             isInitData = true;
@@ -96,6 +99,7 @@ public class CImageView extends MeImageView implements IContentView{
             if (!isInitData) return;
             setAttribute();
             onLayouts();
+            startTime = System.currentTimeMillis();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -105,6 +109,7 @@ public class CImageView extends MeImageView implements IContentView{
     public void stopWork() {
         try {
             unLayouts();
+            ReportHelper.onImage(mContext, imageId, imagePath, startTime);
         } catch (Exception e) {
             e.printStackTrace();
         }

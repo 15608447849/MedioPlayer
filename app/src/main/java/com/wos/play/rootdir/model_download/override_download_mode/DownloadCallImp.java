@@ -2,12 +2,9 @@ package com.wos.play.rootdir.model_download.override_download_mode;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-
-import com.wos.play.rootdir.model_communication.CommuniReceiverMsgBroadCasd;
+import com.wos.play.rootdir.model_communication.CommunicationServer;
 import com.wos.play.rootdir.model_universal.tool.AppsTools;
-
-import java.io.UnsupportedEncodingException;
+import com.wos.play.rootdir.model_universal.tool.Logs;
 import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.Iterator;
@@ -22,8 +19,6 @@ public class DownloadCallImp {
 
     private static final java.lang.String TAG = "下载回传实现类";
     private Context context;
-    private Intent intent = null;
-    private Bundle bundle = null;
     private List<String> msgSendingList;
 
 
@@ -81,19 +76,11 @@ public class DownloadCallImp {
             return;
         }
         if (context != null) {
-//            Logs.i(TAG, "send msg to server : " + param);
-            if (intent == null) {
-                intent = new Intent();
-            }
-            if (bundle == null) {
-                bundle = new Bundle();
-            }
-            bundle.clear();
-            intent.setAction(CommuniReceiverMsgBroadCasd.ACTION);
-            bundle.putString(CommuniReceiverMsgBroadCasd.PARAM1, "fileDownloadSpeedOrState");
-            bundle.putString(CommuniReceiverMsgBroadCasd.PARAM2, param);
-            intent.putExtras(bundle);
-            context.sendBroadcast(intent);
+            Logs.i(TAG, "send msg to server : " + param);
+            Intent intent = new Intent(context, CommunicationServer.class);
+            intent.putExtra("cmd", "fileDownloadSpeedOrState");
+            intent.putExtra("param", param);
+            context.startService(intent);
         }
     }
 
@@ -119,7 +106,7 @@ public class DownloadCallImp {
     /**
      * 生成进度
      */
-    public void nitifyMsg(String terminalNo, String filename, int type) {
+    public void notifyMsg(String terminalNo, String filename, int type) {
         addMsgToSend("FTPS:" + terminalNo + ";" + filename + ";" + type);
     }
 
@@ -145,10 +132,10 @@ public class DownloadCallImp {
      */
     public void downloadResult(Task task, int DownloadState) {
         if (DownloadState == 0) { //成功
-            nitifyMsg(task.getTerminalNo(), task.getFileName(), 3);
+            notifyMsg(task.getTerminalNo(), task.getFileName(), 3);
         }
         if (DownloadState == 1) {//失败
-            nitifyMsg(task.getTerminalNo(), task.getFileName(), 4);
+            notifyMsg(task.getTerminalNo(), task.getFileName(), 4);
         }
         if (DownloadState == -1){
             //文件上传

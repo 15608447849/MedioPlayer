@@ -17,6 +17,7 @@ import com.wos.play.rootdir.model_application.ui.UiInterfaces.MediaInterface;
 import com.wos.play.rootdir.model_application.ui.Uitools.GestureHelper;
 import com.wos.play.rootdir.model_application.ui.Uitools.ImageUtils;
 import com.wos.play.rootdir.model_application.ui.Uitools.UiTools;
+import com.wos.play.rootdir.model_report.ReportHelper;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ComponentsBean;
 import com.wos.play.rootdir.model_universal.jsonBeanArray.cmd_upsc.ContentsBean;
 import com.wos.play.rootdir.model_universal.tool.Logs;
@@ -34,7 +35,7 @@ import cn.trinea.android.common.util.FileUtils;
 public class CMedia extends FrameLayout implements IComponent,MediaInterface
         ,GestureHelper.OnSlidingListener{
     private static final java.lang.String TAG = "CMorePictures";
-    private int componentId;
+    //private int componentId;
     private int width,height;
     private int x,y;
     private Context context;
@@ -48,6 +49,9 @@ public class CMedia extends FrameLayout implements IComponent,MediaInterface
     private int length;
     private String fileName;
     private boolean isShowTopLayer;
+    private long startTime;
+    private ContentsBean content;
+
 
     public CMedia(Context context, AbsoluteLayout layout, ComponentsBean component) {
         super(context);
@@ -62,7 +66,7 @@ public class CMedia extends FrameLayout implements IComponent,MediaInterface
         try {
             ComponentsBean cb = ((ComponentsBean)object);
             mGestureHelper = new GestureHelper(cb.getTransition(),this);
-            this.componentId = cb.getId();
+            //this.componentId = cb.getId();
             this.width = (int)cb.getWidth();
             this.height = (int)cb.getHeight();
             this.x = (int)cb.getCoordX();
@@ -163,7 +167,6 @@ public class CMedia extends FrameLayout implements IComponent,MediaInterface
         }
     }
 
-
     private int currentIndex = 0;//当前循环的下标
     private Handler handler = null;
     private final Runnable mTask = new Runnable() {
@@ -181,8 +184,8 @@ public class CMedia extends FrameLayout implements IComponent,MediaInterface
                 handler = new Handler();
             }
             unLoadContent();
-
-            ContentsBean content = contentArr.get(currentIndex);
+            startTime = System.currentTimeMillis();
+            content = contentArr.get(currentIndex);
             length = content.getTimeLength();
             fileName = UiTools.getUrlTanslationFilename(content.getContentSource());
             if(isImage(content)){
@@ -224,9 +227,14 @@ public class CMedia extends FrameLayout implements IComponent,MediaInterface
         if (handler!=null){
             handler.removeCallbacks(mTask);
         }
-        if(mVideoView!=null) mVideoView.pause();
+        mVideoView.pause();
         mVideoView.setVisibility(View.GONE);
         mImageView.setVisibility(View.GONE);
+        if(content!=null && isImage(content)){
+            ReportHelper.onImage(context, content.getId(), fileName, startTime);
+        }else if(content!=null){
+            ReportHelper.onVideo(context, content.getId(), fileName, startTime);
+        }
     }
 
     private int playNumber = 0;

@@ -223,7 +223,7 @@ public class ToolsActivity extends BaseActivity {
         //设置不可点击
         btnGetID.setEnabled(false);
         terminalNo.setText("");
-        sendMsgCommServer("GetTerminalId", makeUri());//发送消息到通讯服务
+        sendMsgCommServer("getTerminalId", makeUri());//发送消息到通讯服务
     }
 
     private Map<String,String> param ;

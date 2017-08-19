@@ -465,6 +465,6 @@ public class Command_UPSC implements iCommand {
     //通知服务器 可以下载了
     private void notifyDownLoad() {
         ICommand_DLIF.get(context).saveTaskList(taskStore.getList());
-        ICommand_DLIF.get(context).downloadStartNotifiy();
+        ICommand_DLIF.get(context).downloadStartNotify();
     }
 }

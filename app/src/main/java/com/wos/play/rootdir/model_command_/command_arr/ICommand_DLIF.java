@@ -3,10 +3,9 @@ package com.wos.play.rootdir.model_command_.command_arr;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-
 import com.wos.play.rootdir.model_application.baselayer.SystemInfos;
 import com.wos.play.rootdir.model_command_.kernel.iCommand;
-import com.wos.play.rootdir.model_communication.CommuniReceiverMsgBroadCasd;
+import com.wos.play.rootdir.model_communication.CommunicationServer;
 import com.wos.play.rootdir.model_download.entity.UrlList;
 import com.wos.play.rootdir.model_download.override_download_mode.Task;
 import com.wos.play.rootdir.model_universal.tool.Logs;
@@ -33,14 +32,9 @@ import java.util.ArrayList;
  */
 public class ICommand_DLIF implements iCommand {
     public static final String TAG = "ICommand_DLIF";
-
-
     private boolean isInit = false;
-
     private Context context;
-
     private UrlList lister;
-
 
     private ICommand_DLIF(Context context) {
         if (!isInit) {
@@ -73,33 +67,22 @@ public class ICommand_DLIF implements iCommand {
         }
     }
 
-    private Intent intent;
-    private Bundle bundle;
-
     //发送广播 -> 告诉通讯服务 ->我要下载任务 fileDownloadNotifiy()
     private synchronized void sendNotifyToServer(String param) {
         if (context != null) {
             Logs.i(TAG, "下载通知 到 调度服务器 - >>>  " + (param.equals("DLRS:")?" DLRS - 开始下载任务命令":" DLRS - 下载任务完成命令"));
-            if (intent == null) {
-                intent = new Intent();
-            }
-            if (bundle == null) {
-                bundle = new Bundle();
-            }
-            bundle.clear();
-            intent.setAction(CommuniReceiverMsgBroadCasd.ACTION);
-            bundle.putString(CommuniReceiverMsgBroadCasd.PARAM1, "fileDownloadNotifiy");
-            bundle.putString(CommuniReceiverMsgBroadCasd.PARAM2, param);
-            intent.putExtras(bundle);
-            context.sendBroadcast(intent);
+            Intent intent = new Intent(context, CommunicationServer.class);
+            intent.putExtra("cmd", "fileDownloadNotify");
+            intent.putExtra("param", param);
+            context.startService(intent);
         }
     }
 
-    public void downloadStartNotifiy() {
+    public void downloadStartNotify() {
         sendNotifyToServer("DLRS:");//开始下载
     }
 
-    public void downloadEndNotifiy() {
+    public void downloadEndNotify() {
         sendNotifyToServer("DLOV:");//下载完成
     }
 
@@ -149,7 +132,7 @@ public class ICommand_DLIF implements iCommand {
             resetFTP(var[0], var[1], var[2], var[3]);
             //发送下载队列
             sendDownList();
-            downloadEndNotifiy();
+            downloadEndNotify();
         }
 
     }

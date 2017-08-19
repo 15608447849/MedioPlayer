@@ -15,6 +15,7 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.net.URI;
+import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.ExecutorService;
@@ -186,12 +187,12 @@ public class LoaderHelper implements Observer {//观察者
                                 Logs.i(TAG,"连接服务器 : ip:"+ ftpHost+" port:"+port  +"\nuser:"+userName+" password:"+ftpPassword);
                                 if (stateCode==FtpHelper.FTP_CONNECT_SUCCESSS){
                                     Logs.i(TAG,"ftp 连接成功");
-                                    caller.nitifyMsg(task.getTerminalNo(),fileName,1);
-                                    caller.nitifyMsg(task.getTerminalNo(),fileName,2);
+                                    caller.notifyMsg(task.getTerminalNo(),fileName,1);
+                                    caller.notifyMsg(task.getTerminalNo(),fileName,2);
                                 }
                                 if (stateCode==FtpHelper.FTP_CONNECT_FAIL){
                                     Logs.e(TAG,"ftp 连接失败");
-                                    caller.nitifyMsg(task.getTerminalNo(),fileName,4);
+                                    caller.notifyMsg(task.getTerminalNo(),fileName,4);
                                     caller.downloadResult(task,1,fileName,".md5");
                                 }
                             }
@@ -200,13 +201,13 @@ public class LoaderHelper implements Observer {//观察者
                             public void ftpNotFountFile(String remoteFileName, String fileName) {
                                 Logs.e(TAG,"ftp 服务器未发现文件 : "+remoteFileName+fileName);
                                 caller.downloadResult(task,1);
-                                caller.nitifyMsg(task.getTerminalNo(),fileName,4);
+                                caller.notifyMsg(task.getTerminalNo(),fileName,4);
                             }
 
                             @Override
                             public void localNotFountFile(String localFilePath, String fileName) {
                                 Logs.e(TAG,"本地文件不存在或无法创建 : "+localFilePath);
-                                caller.nitifyMsg(task.getTerminalNo(),fileName,4);
+                                caller.notifyMsg(task.getTerminalNo(),fileName,4);
                                 caller.downloadResult(task,1,fileName,".md5");
 
                             }
@@ -216,12 +217,10 @@ public class LoaderHelper implements Observer {//观察者
                                 caller.notifyProgress(task.getTerminalNo(),fileName,downProcess+"%",speed);
                             }
 
-
-
                             @Override
                             public void downLoadFailt(String remotePath, String fileName) {
                                 Logs.e(TAG,"ftp 下载失败 : "+fileName);
-                                caller.nitifyMsg(task.getTerminalNo(),fileName,4);
+                                caller.notifyMsg(task.getTerminalNo(),fileName,4);
                                 caller.downloadResult(task,1,fileName,".md5");
                             }
 
@@ -271,8 +270,8 @@ public class LoaderHelper implements Observer {//观察者
                   @Override
                   public void onStart() {
                       Logs.i(TAG,"启动http下载:"+ url+" on Thread : "+Thread.currentThread().getName());
-                      caller.nitifyMsg(task.getTerminalNo(),url.substring(url.lastIndexOf("/")+1),1);
-                      caller.nitifyMsg(task.getTerminalNo(),url.substring(url.lastIndexOf("/")+1),2);
+                      caller.notifyMsg(task.getTerminalNo(),url.substring(url.lastIndexOf("/")+1),1);
+                      caller.notifyMsg(task.getTerminalNo(),url.substring(url.lastIndexOf("/")+1),2);
                       currentTime = System.currentTimeMillis();
                   }
                   @Override
@@ -282,19 +281,20 @@ public class LoaderHelper implements Observer {//观察者
                       long temSize = current-oldLoadingSize;
                       oldLoadingSize = current;
                       double speedTem = (temSize/(1024 * 1.0))/((currentTime-oldTime)/(1000*1.0)) ;
-                      speed = String.format("%f",speedTem)+"kb/s";
-                      caller.notifyProgress(task.getTerminalNo(),url.substring(url.lastIndexOf("/")+1),(current/total)+"",(speedTem/(1024 * 1.0))+" kb");
+                      speed = String.format(Locale.CHINA, "%f",speedTem)+"kb/s";
+                      caller.notifyProgress(task.getTerminalNo(),url.substring(url.lastIndexOf("/")
+                              + 1),(current/total) + "",(speedTem/(1024 * 1.0)) + " kb");
                   }
                   @Override
                   public void onSuccess(ResponseInfo<File> responseInfo) {
                       final String path  =responseInfo.result.getPath();
                       caller.downloadResult(task,0);
-                      caller.nitifyMsg(task.getTerminalNo(),url.substring(url.lastIndexOf("/")+1),3);
+                      caller.notifyMsg(task.getTerminalNo(),url.substring(url.lastIndexOf("/")+1),3);
                   }
                   @Override
                   public void onFailure(HttpException e, String s) {
                       caller.downloadResult(task,1);
-                      caller.nitifyMsg(task.getTerminalNo(),url.substring(url.lastIndexOf("/")+1),4);
+                      caller.notifyMsg(task.getTerminalNo(),url.substring(url.lastIndexOf("/")+1),4);
                   }
               });
     }

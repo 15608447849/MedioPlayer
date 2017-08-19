@@ -24,8 +24,8 @@ import rx.functions.Action1;
 /**
  * 在 AndroidManifest.xml 里 Service 元素的常见选项
  * android:name　　-------------　　服务类名
- * android:label　　--------------　　服务的名字，如果此项不设置，那么默认显示的服务名则为类名
- * android:icon　　--------------　　服务的图标
+ * android:label　 -------------- 　服务的名字，如果此项不设置，那么默认显示的服务名则为类名
+ * android:icon　　--------------　 服务的图标
  * android:permission　　-------　　申明此服务的权限，这意味着只有提供了该权限的应用才能控制或连接此服务
  * android:process　　----------　　表示该服务是否运行在另外一个进程，如果设置了此项，那么将会在包名后面加上这段字符串表示另一进程的名字
  * android:enabled　　----------　　如果此项设置为 true，那么 Service 将会默认被系统启动，不设置默认此项为 false
@@ -33,40 +33,45 @@ import rx.functions.Action1;
  */
 public class CommunicationServer extends Service {
     private static String TAG = "_CommunicationServer";
-    public CommunicationServer() {
-    }
     @Override
     public void onCreate() {
         super.onCreate();
-        Logs.e(TAG, "----------------------------------------onCreate() pid: " + android.os.Process.myPid());
-        registerBroad();
+        Logs.e(TAG, "--onCreate() pid: " + android.os.Process.myPid());
     }
-
-
-
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
-        Logs.e(TAG, "----------------------------------------onBind() " );
+        Logs.e(TAG, "--onBind() " );
         return null;
     }
     @Override
     public boolean onUnbind(Intent intent) {
-        Logs.e(TAG, "----------------------------------------onUnbind()");
+        Logs.e(TAG, "--onUnbind()");
         return super.onUnbind(intent);
     }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Logs.e(TAG, "----------------------------------------onStartCommand() flags =" + flags);
+        Logs.e(TAG, "--onStartCommand() flags =" + flags);
+        if(intent != null && intent.hasExtra("cmd")){
+            String cmd = intent.getStringExtra("cmd");
+            String param = intent.getStringExtra("param");
+            Logs.e(TAG, "--onStartCommand() cmd =" + cmd+ " param = "+param);
+            switch (cmd){
+                case "online": sendTerminalOnline(); break;
+                case "offline": sendTerminalOffLine(); break;
+                case "getTerminalId":  getTerminalId(param);break;
+                case "pointTimeScreen" : pointTimeScreen(param);break;
+                case "fileDownloadNotify": fileDownloadNotify(param);break;
+                case "fileDownloadSpeedOrState": fileDownloadSpeedOrState(param);break;
+            }
+        }
         return super.onStartCommand(intent, flags, startId);
     }
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Logs.e(TAG, "----------------------------------------onDestroy()");
+        Logs.e(TAG, "--onDestroy()");
         stopHeartbeat();
-        unregisterBroad();
     }
 
     /**
@@ -76,17 +81,12 @@ public class CommunicationServer extends Service {
      */
     private void initParam() {//String otherPackage
         boolean isConfig = SystemInfos.get().isConfig();
-        Logs.e(TAG, " 服务器信息 配置完成 -> " + isConfig);
-        if (isConfig) {
-            // 已设置过服务器信息
+        Logs.e(TAG, "--服务器信息 配置完成 -> " + isConfig);
+        if (isConfig) { // 已设置过服务器信息
             initData();
             sendONLI(makeOnlineUri());//上线 -> 延时上线
-            //startLoopHeartbeat();//开始心跳 -> 改变开始位置 在收到上线信息之后 发送心跳
         }
     }
-
-
-
 
     private String ip = null;
     private String port = null;
@@ -98,42 +98,7 @@ public class CommunicationServer extends Service {
             terminalId = SystemInfos.get().getTerminalNo();//"10000090";//"10000141";//"10001110";//"10000125";;//dataList.GetStringDefualt("terminalNo","0000");
             heartBeatTime = Integer.parseInt(SystemInfos.get().getHeartBeatInterval());
     }
-    /**
-     * 通过 广播 接受 其他 进程 发来的消息的,
-     */
-    private CommuniReceiverMsgBroadCasd appReceive = null;
-    /**
-     * 停止广播 destory call
-     */
-    private void unregisterBroad() {
-        if (appReceive != null) {
-            try {
-                getApplicationContext().unregisterReceiver(appReceive);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            appReceive = null;
-            Logs.i(TAG, "注销 通讯 广播");
-        }
-    }
-    /**
-     * 注册广播  create call
-     */
-    private void registerBroad() {
-        unregisterBroad();
-        appReceive = new CommuniReceiverMsgBroadCasd(this);
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(CommuniReceiverMsgBroadCasd.ACTION);
-        getApplicationContext().registerReceiver(appReceive, filter); //只需要注册一次
-        Logs.i(TAG, "已注册 通讯 广播");
-    }
-    /**
-     * 收到一个app给我的消息到服务器
-     */
-    public void receiveAppMsg(String mothername, String msg) {
-//        Logs.e(TAG,"反射调用 >>> " + mothername+"("+ msg+"){...}");
-        invokeMother(mothername, msg);
-    }
+
     /**
      * 收到一个服务器给我的消息到app
      * <p>
@@ -145,8 +110,7 @@ public class CommunicationServer extends Service {
             case 1:
                 callBack(msg);
                 break;
-            case 2:
-                //处理字符串   >> 发送广播
+            case 2: //处理字符串   >> 发送广播
                 processingResults(msg);
                 break;
         }
@@ -166,30 +130,9 @@ public class CommunicationServer extends Service {
     }
 
     /**
-     * 反射调用方法
-     */
-    private void invokeMother(String motherName, String url) {
-        try {
-            Method method = null;
-            if (url == null) {
-//              Logs.d(TAG,"invoke not param");
-                method = this.getClass().getDeclaredMethod(motherName);
-                method.setAccessible(true);// 调用private方法的关键一句话
-                method.invoke(this);
-            } else {
-//              Logs.d(TAG,"invoke one param");
-                method = this.getClass().getDeclaredMethod(motherName, String.class);
-                method.setAccessible(true);//调用private方法的关键一句话
-                method.invoke(this, url);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    /**
      * 获取终端Id
      */
-    private void GetTerminalId(String url) {
+    private void getTerminalId(String url) {
         HttpProxy.getInstant().getTerminalId(url, new Action1<String>() {
             @Override
             public void call(String s) {
@@ -203,34 +146,41 @@ public class CommunicationServer extends Service {
         });
     }
 
-    private Thread layeThread = null;
+    private Thread delayThread = null;
     /**
      * 终端可以上线
      */
     private void sendTerminalOnline() {
-        if (layeThread!=null){
-            layeThread = null;
+        if (delayThread!=null){
+            delayThread = null;
         }
-        layeThread = new Thread(new Runnable() {
+        delayThread = new Thread(new Runnable() {
             @Override
-            public void run() {
-                Logs.i(TAG,"即将访问服务器 . . .");
+            public void run() { Logs.i(TAG,"即将访问服务器 . . .");
                 try {
                     Thread.sleep(AppsTools.randomNum(2,5)*1000);  //随机休眠5 - 10秒
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 initParam();
-                layeThread = null;
+                delayThread = null;
             }
         });
-        layeThread.start();
+        delayThread.start();
     }
     /**
      * 下线
      */
     private void sendTerminalOffLine(){
-        sendCmds(makeOffLineUri());
+        // sendCmd(makeOffLineUri()); 下线增加关闭心跳
+        HttpProxy.getInstant().sendCmd(makeOffLineUri(), new Action1<String>() {
+            @Override
+            public void call(String s) {
+                successAccessServer(s);
+                stopHeartbeat();
+            }
+        });
+
     }
 
 
@@ -246,45 +196,40 @@ public class CommunicationServer extends Service {
         return generateUri("OFLI:" + terminalId);
     }
 
-
     /**
      * 文件下载进度,状态
      */
     private void fileDownloadSpeedOrState(String url) {
-//        Logs.e(TAG,"call fileDownloadSpeedOrState() success ,param :"+url);
-        sendCmds(generateUri(url));
+        sendCmd(generateUri(url));
     }
 
-    //文件下载生成url
+    //文件下载生成url ｛ http://192.168.6.14:9000/terminal/heartBeat?cmd=HRBT%3A10000555｝
     private String generateUri(String param) {
-//        http://192.168.6.14:9000/terminal/heartBeat?cmd=HRBT%3A10000555
         return "http://" + ip + ":" + port + "/terminal/heartBeat?cmd=" + param;
     }
     //文件下载调度通知
-    private void fileDownloadNotifiy(String param) {
-        sendCmds(generateFileDownLoadUrl(param));
+    private void fileDownloadNotify(String param) {
+        sendCmd(generateFileDownLoadUrl(param));
     }
 
     //定时截屏通知
     private void pointTimeScreen(String param){
-        sendCmds(generateUri(param));
+        sendCmd(generateUri(param));
     }
 
     private String generateFileDownLoadUrl(String param) {
         return generateUri(param + terminalId);
     }
 
-
     /**
      * 终端上线特别处理
      */
     private void sendONLI(final String url) {
         HttpProxy.getInstant().getTerminalId(url, new Action1<String>() {
-
             @Override
             public void call(String s) {
                 successAccessServer(s);
-                startLoopHeartbeat();//开始心跳
+                startHeartbeat();//开始心跳
             }
         }, new Action1<Throwable>() {
             @Override
@@ -300,8 +245,7 @@ public class CommunicationServer extends Service {
      * 4. 发送 文件下载进度
      * 5. 发送 文件下载通知
      */
-    private void sendCmds(String url) {
-        //URLEncoder.encode
+    private void sendCmd(String url) {//URLEncoder.encode
         HttpProxy.getInstant().sendCmd(url, new Action1<String>() {
             @Override
             public void call(String s) {
@@ -311,7 +255,7 @@ public class CommunicationServer extends Service {
     }
     //成功接入服务器
     private void successAccessServer(String result) {
-        Logs.i(TAG, " 访问服务器 结果:\n" + result);
+        Logs.i(TAG, " 访问服务器 结果: \n" + result);
         if (result != null && !result.equals("")) {
             receiveServerMsg(2, result);
         }
@@ -324,7 +268,8 @@ public class CommunicationServer extends Service {
      * @param t 服务器返回值
      */
     private void processingResults(String t) {
-        if (t.trim().equals("cmd:error") || t.trim().equals("cmd:success") || t.trim().equals("cmd:sucess") || t.trim().equals("cmd:timeout") ) {
+        if (t.trim().equals("cmd:error") || t.trim().equals("cmd:success")
+                || t.trim().equals("cmd:sucess") || t.trim().equals("cmd:timeout") ) {
             return;
         }
         StringTokenizer stz = null;
@@ -361,14 +306,8 @@ public class CommunicationServer extends Service {
             e.printStackTrace();
         }
     }
-    /**
-     * 开始轮询
-     * 定时器
-     */
-    private void startLoopHeartbeat() {
-        startHeartbeat();
-    }
-    private String getHearbeatUri() {
+
+    private String getHearBeatUri() {
         //http://localhost:9000/terminal/heartBeat?cmd=HRBT%3A100000001
         return "http://" + ip + ":" + port + "/terminal/heartBeat?cmd=HRBT:" + terminalId;
     }
@@ -394,7 +333,7 @@ public class CommunicationServer extends Service {
         timertask = new TimerTask() {
             @Override
             public void run() {
-                sendHearbeating();
+                sendHearBeating();
             }
         };
         //创建定时器任务 发送心跳
@@ -403,8 +342,8 @@ public class CommunicationServer extends Service {
     /**
      * 发送心跳
      */
-    private void sendHearbeating() {
+    private void sendHearBeating() {
         Logs.i(TAG, "当前时间:" + Command_SYTI.getSystemTime(false) + " HRBT:" + terminalId);
-        sendCmds(getHearbeatUri());
+        sendCmd(getHearBeatUri());
     }
 }
