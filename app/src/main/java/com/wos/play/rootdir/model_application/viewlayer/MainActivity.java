@@ -70,7 +70,7 @@ public class MainActivity extends BaseActivity {
                 String remotePath = "/Android/" + SystemInfos.get().getTerminalNo() + "/screen/";//设置 远程文件目录
                 String ftpUrl = getFTPUrls(remotePath + result1.substring(result1.lastIndexOf("/")+1));//设置响应服务器
                 uploadFTP(result1, remotePath);//上传
-                sendMsgCommServer("pointTimeScreen", ftpUrl);// 通知服务器,定时截图上传地址
+                sendMsgCommServer("sendGenerateCmd", ftpUrl);// 通知服务器,定时截图上传地址
             }
         }
     }

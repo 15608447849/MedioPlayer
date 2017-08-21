@@ -78,7 +78,7 @@ public class DownloadCallImp {
         if (context != null) {
             Logs.i(TAG, "send msg to server : " + param);
             Intent intent = new Intent(context, CommunicationServer.class);
-            intent.putExtra("cmd", "fileDownloadSpeedOrState");
+            intent.putExtra("cmd", "sendGenerateCmd");
             intent.putExtra("param", param);
             context.startService(intent);
         }
@@ -110,6 +110,14 @@ public class DownloadCallImp {
         addMsgToSend("FTPS:" + terminalNo + ";" + filename + ";" + type);
     }
 
+
+    /**
+     * 生成进度
+     */
+    public void notifyReport(String terminalNo, String localPath, String remotePath) {
+        if(!remotePath.endsWith("/")) remotePath += "/";
+        addMsgToSend("UPLG:" + terminalNo + "," + remotePath + FileUtils.getFileName(localPath));
+    }
     /**
      * 生成状态
      */
@@ -137,8 +145,8 @@ public class DownloadCallImp {
         if (DownloadState == 1) {//失败
             notifyMsg(task.getTerminalNo(), task.getFileName(), 4);
         }
-        if (DownloadState == -1){
-            //文件上传
+        if (DownloadState == 2){ //上传成功
+
         }
         if (task.getCall() != null) {
             task.getCall().downloadResult(task);
@@ -146,8 +154,4 @@ public class DownloadCallImp {
         //删除任务
         TaskQueue.getInstants().finishTask(task);
     }
-
-
-
-
 }

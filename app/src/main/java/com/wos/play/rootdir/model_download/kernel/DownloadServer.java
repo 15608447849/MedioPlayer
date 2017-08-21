@@ -37,7 +37,7 @@ public class DownloadServer extends Service {
     public void onCreate() {
         super.onCreate();
         Logs.i(TAG,"下载 onCreate()");
-        registBroad();
+        registerBroad();
         TaskQueue.getInstants().init(getApplicationContext(), LoaderHelper.DOWNLOAD_MODE_CONCURRENT);
     }
 
@@ -45,11 +45,9 @@ public class DownloadServer extends Service {
     public void onDestroy() {
         super.onDestroy();
         Logs.i(TAG,"下载 onDestroy()");
-        unregistBroad();
+        unregisterBroad();
         TaskQueue.getInstants().unInit();
     }
-    /*--------------------------------------------------------------------------------------------------------------------------------*/
-
 
     // 接收全局 任务内容
     public void receiveContent(ArrayList<Task> taskList){
@@ -59,10 +57,6 @@ public class DownloadServer extends Service {
         }
     }
 
-
-
-
-
     /**
      *通过 广播 接受 其他 进程 发来的消息的,
      */
@@ -71,7 +65,7 @@ public class DownloadServer extends Service {
     /**
      * 停止广播 destory call
      */
-    private void unregistBroad() {
+    private void unregisterBroad() {
         if (appReceive!=null){
             getApplicationContext().unregisterReceiver(appReceive);
             appReceive = null;
@@ -81,8 +75,8 @@ public class DownloadServer extends Service {
     /**
      * 注册广播  create call
      */
-    private void registBroad() {
-        unregistBroad();
+    private void registerBroad() {
+        unregisterBroad();
         appReceive = new DownloadBroad(this);
         IntentFilter filter=new IntentFilter();
         filter.addAction(DownloadBroad.ACTION);

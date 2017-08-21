@@ -34,16 +34,10 @@
         android:sharedUserId="android.uid.system"
         android:supportsRtl="true">
 
-        <!-- 基础activity //Android:theme="@android:style/Theme.NoTitleBar" @android:style/Theme.NoTitleBar.Fullscreen -->
-        <!--<activity-->
-        <!--android:name=".model_application.baselayer.BaseActivity"-->
-        <!--android:launchMode="singleTask" />-->
-
         <!-- 配置服务器信息 activity -->
         <activity android:name=".model_application.viewlayer.ToolsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -60,7 +54,7 @@
         <!-- 通讯服务 -->
         <service
             android:name=".model_communication.CommunicationServer"
-            android:process="play.communticate" />
+            android:process="play.communicate" />
         <!-- 派发任务 服务 -->
         <service
             android:name=".model_command_.kernel.CommandPostServer"
@@ -92,13 +86,12 @@
         </receiver>
         <!-- sdcard 广播 -->
         <receiver android:name=".model_monitor.broads.SdcardBroad">
-            <action android:name="android.intent.action.MEDIA_MOUNTED" />
-            <action android:name="android.intent.action.MEDIA_UNMOUNTED" />
-
-            <data android:scheme="file" />
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_MOUNTED" />
+                <action android:name="android.intent.action.MEDIA_UNMOUNTED" />
+                <data android:scheme="file" />
+            </intent-filter>
         </receiver>
-
-
     </application>
 
 </manifest>

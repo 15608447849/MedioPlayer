@@ -20,8 +20,6 @@ public class DownloadBroad extends BroadcastReceiver {
      * 任务队列
      */
     public static final String PARAM1 = "taskList";
-
-
     private DownloadServer server ;
     public DownloadBroad(DownloadServer server){
         this.server = server;

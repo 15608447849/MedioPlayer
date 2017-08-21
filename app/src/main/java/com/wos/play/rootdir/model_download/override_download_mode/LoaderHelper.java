@@ -10,9 +10,6 @@ import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.wos.play.rootdir.model_universal.tool.AppsTools;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 import com.wos.play.rootdir.model_universal.tool.MD5Util;
-
-import org.apache.commons.io.FileUtils;
-
 import java.io.File;
 import java.net.URI;
 import java.util.Locale;
@@ -34,14 +31,13 @@ public class LoaderHelper implements Observer {//观察者
     private DownloadCallImp caller = null;
     private ExecutorService executor;
     private HttpUtils http = null;
-    public LoaderHelper() {
-    }
+
     public LoaderHelper(Context context,int downLoadType){
         initWord(context,downLoadType);
     }
     public void initWord(Context context,int downLoadType){
-//        singleThreadExecutor = Executors.newSingleThreadExecutor();
-        executor =downLoadType==DOWNLOAD_MODE_SERIAL? Executors.newSingleThreadExecutor(): Executors.newCachedThreadPool();
+        executor =downLoadType==DOWNLOAD_MODE_SERIAL? Executors.newSingleThreadExecutor()
+                : Executors.newCachedThreadPool();
         http = new HttpUtils();
         caller = new DownloadCallImp();
         caller.setContext(context);
@@ -72,41 +68,34 @@ public class LoaderHelper implements Observer {//观察者
     /**
      * 执行下载任务
      */
-    private void excuteDownLoad(final Task task) {
-
+    private void executeDownLoad(final Task task) {
         if (executor!=null && !executor.isShutdown()){
-//            Logs.i(TAG,"excuteDownLoad() "+ task.getUrl());
             executor.execute(new Runnable() {
                 public void run() {
-                    try {
-                        parseDatas(task);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                try {
+                    parseTask(task);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 }
             });
         }
-
     }
 
     /**
      * 解析数据
      * @param task
      */
-    private void parseDatas(Task task){
+    private void parseTask(Task task){
         Logs.i(TAG,"上传下载 中心 - 任务 :[ "+ task.printInfo()+" ]");
         int type = task.getType();
         if (type == Task.Type.HTTP_UPLOAD_SINGLE){
             httpFileUpload(task);
-        }else
-        if (type == Task.Type.FTP_UPLOAD_SINGLE){
-            //ftp文件上传
+        }else if (type == Task.Type.FTP_UPLOAD_SINGLE){ //ftp文件上传
             ftpFileUpload(task);
-        }else
-        if (cn.trinea.android.common.util.FileUtils.isFileExist(task.getSavePath()+task.getFileName())){
+        }else if (FileUtils.isFileExist(task.getSavePath()+task.getFileName())){
             caller.downloadResult(task,0);
         }else{
-
             if (type == Task.Type.HTTP){
                 httpDownload(task);
             }else
@@ -121,9 +110,6 @@ public class LoaderHelper implements Observer {//观察者
             }
         }
     }
-
-
-
 
     //复制本地文件到 -app 资源目录下
     private void cpFile(Task task) {
@@ -143,23 +129,6 @@ public class LoaderHelper implements Observer {//观察者
          caller.downloadResult(task,1);
     }
 
-    /**
-     * 获取fto 主机
-     * @param str
-     */
-    private String getHost(String str) {
-        return str.substring(0,str.indexOf(":"));
-    }
-    private int getPort(String str){
-        int port = 0;
-        str = str.substring(str.indexOf(":")+1);
-        try {
-            port = Integer.parseInt(str);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return port;
-    }
     //设置ftp值
     private void ftpDownloadSetting(final Task task) {
         String user = task.getFtpUser();
@@ -173,7 +142,8 @@ public class LoaderHelper implements Observer {//观察者
     }
 
     //Ftp 下载助手
-    private void ftpDownloadImp(final Task task, String host,int port,final String user, String pass, String remotePath, String fileName, String localPath) {
+    private void ftpDownloadImp(final Task task, String host,int port,final String user
+            , String pass, String remotePath, String fileName, String localPath) {
         new FtpHelper(host,port,user,pass)
                 .downloadSingleFile(
                         remotePath,
@@ -181,11 +151,12 @@ public class LoaderHelper implements Observer {//观察者
                         fileName,
                         3,
                         new FtpHelper.OnFtpListener() {
-
                             @Override
-                            public void ftpConnectState(int stateCode, String ftpHost, int port, String userName, String ftpPassword, String fileName) {
-                                Logs.i(TAG,"连接服务器 : ip:"+ ftpHost+" port:"+port  +"\nuser:"+userName+" password:"+ftpPassword);
-                                if (stateCode==FtpHelper.FTP_CONNECT_SUCCESSS){
+                            public void ftpConnectState(int stateCode, String ftpHost, int port
+                                    , String userName, String ftpPassword, String fileName) {
+                                Logs.i(TAG,"连接服务器 : ip:"+ ftpHost+" port:"+port
+                                        +"\nuser:"+userName+" password:"+ftpPassword);
+                                if (stateCode==FtpHelper.FTP_CONNECT_SUCCESS){
                                     Logs.i(TAG,"ftp 连接成功");
                                     caller.notifyMsg(task.getTerminalNo(),fileName,1);
                                     caller.notifyMsg(task.getTerminalNo(),fileName,2);
@@ -218,7 +189,7 @@ public class LoaderHelper implements Observer {//观察者
                             }
 
                             @Override
-                            public void downLoadFailt(String remotePath, String fileName) {
+                            public void downLoadFail(String remotePath, String fileName) {
                                 Logs.e(TAG,"ftp 下载失败 : "+fileName);
                                 caller.notifyMsg(task.getTerminalNo(),fileName,4);
                                 caller.downloadResult(task,1,fileName,".md5");
@@ -256,9 +227,9 @@ public class LoaderHelper implements Observer {//观察者
 
     // http xiazai
     private void httpDownload(final Task task) {
-       final String url = task.getUrl();
+        final String url = task.getUrl();
         final String filePath = task.getSavePath()+task.getFileName();
-      http.download(url,
+        http.download(url,
               filePath,
               false,
               false,
@@ -287,7 +258,6 @@ public class LoaderHelper implements Observer {//观察者
                   }
                   @Override
                   public void onSuccess(ResponseInfo<File> responseInfo) {
-                      final String path  =responseInfo.result.getPath();
                       caller.downloadResult(task,0);
                       caller.notifyMsg(task.getTerminalNo(),url.substring(url.lastIndexOf("/")+1),3);
                   }
@@ -299,27 +269,25 @@ public class LoaderHelper implements Observer {//观察者
               });
     }
 
-
-
     /**
-     * 被观察者
-     * 数据
+     * 被观察者数据
      */
     @Override
     public void update(Observable observable, Object data) {
-//        Logs.i(TAG,"update() - "+data);
         //获取到一个任务 -> 执行一个线程
         if (data!=null){
-            excuteDownLoad((Task) data);
+            executeDownLoad((Task) data);
         }
     }
-
-
-
     //ftp文件上传
     private void ftpFileUpload(Task task) {
         //ip port user pass  - 本地文件路径 远程路径
-        new FtpHelper(task.getFtpAddress(),task.getFtpPort(),task.getFtpUser(),task.getFtpPass()).uploadingSingle(task.getLocalPath(),null,task.getRemotePath());
+        boolean upload = new FtpHelper(task.getFtpAddress(),task.getFtpPort(),task.getFtpUser()
+                ,task.getFtpPass()).uploadingSingle(task.getLocalPath(),null,task.getRemotePath());
+        Log.d(TAG, "上传成功"+upload);
+        if(upload && task.getRemotePath().startsWith("/statistics")){  // 上传成功且为报表数据文件
+            caller.notifyReport(task.getTerminalNo(), task.getLocalPath(), task.getRemotePath());
+        }
         caller.downloadResult(task,-1);
     }
     // http 文件上传
@@ -332,8 +300,4 @@ public class LoaderHelper implements Observer {//观察者
         }
         caller.downloadResult(task,-1);
     }
-
-
-
-
 }

@@ -5,16 +5,23 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.wos.play.rootdir.model_application.baselayer.AppMessageBroad;
 import com.wos.play.rootdir.model_application.baselayer.SystemInfos;
 import com.wos.play.rootdir.model_command_.command_arr.Command_SYTI;
 import com.wos.play.rootdir.model_command_.kernel.CommandPostBroad;
+import com.wos.play.rootdir.model_download.entity.TaskFactory;
+import com.wos.play.rootdir.model_download.kernel.DownloadBroad;
+import com.wos.play.rootdir.model_download.override_download_mode.Task;
+import com.wos.play.rootdir.model_report.ReportHelper;
 import com.wos.play.rootdir.model_universal.httpconnect.HttpProxy;
 import com.wos.play.rootdir.model_universal.tool.AppsTools;
 import com.wos.play.rootdir.model_universal.tool.Logs;
 
+import java.io.File;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -60,9 +67,8 @@ public class CommunicationServer extends Service {
                 case "online": sendTerminalOnline(); break;
                 case "offline": sendTerminalOffLine(); break;
                 case "getTerminalId":  getTerminalId(param);break;
-                case "pointTimeScreen" : pointTimeScreen(param);break;
+                case "sendGenerateCmd": sendGenerateCmd(param);break;
                 case "fileDownloadNotify": fileDownloadNotify(param);break;
-                case "fileDownloadSpeedOrState": fileDownloadSpeedOrState(param);break;
             }
         }
         return super.onStartCommand(intent, flags, startId);
@@ -95,7 +101,7 @@ public class CommunicationServer extends Service {
     private void initData() {
             ip = SystemInfos.get().getServerip();
             port = SystemInfos.get().getServerport();
-            terminalId = SystemInfos.get().getTerminalNo();//"10000090";//"10000141";//"10001110";//"10000125";;//dataList.GetStringDefualt("terminalNo","0000");
+            terminalId = SystemInfos.get().getTerminalNo();
             heartBeatTime = Integer.parseInt(SystemInfos.get().getHeartBeatInterval());
     }
 
@@ -163,11 +169,36 @@ public class CommunicationServer extends Service {
                     e.printStackTrace();
                 }
                 initParam();
+                try {
+                    Thread.sleep(AppsTools.randomNum(2,5)*1000);  //随机休眠5 - 10秒
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                uploadReportDb();
                 delayThread = null;
             }
         });
         delayThread.start();
     }
+
+    private void uploadReportDb() {
+        ArrayList<Task> tasks = new ArrayList<>();
+        File dbFile;
+        for (int i= 1; i < 10; i++){
+            dbFile = getDatabasePath(ReportHelper.getDbName(i));
+            Log.d(TAG, "检查本地报表数据文件是否存在："+dbFile.getAbsolutePath());
+            if(dbFile.exists()){
+                tasks.add(TaskFactory.gnrTaskUploadFTP(dbFile.getAbsolutePath(),"/statistics/"));
+            }
+        }
+        if (getApplicationContext()!=null && tasks.size()>0 ){
+            Intent intent = new Intent();
+            intent.setAction(DownloadBroad.ACTION);
+            intent.putParcelableArrayListExtra(DownloadBroad.PARAM1, tasks);
+            getApplicationContext().sendBroadcast(intent);//发送广播
+        }
+    }
+
     /**
      * 下线
      */
@@ -196,11 +227,13 @@ public class CommunicationServer extends Service {
         return generateUri("OFLI:" + terminalId);
     }
 
+
     /**
-     * 文件下载进度,状态
+     * 发送通用指令
+     * @param cmd
      */
-    private void fileDownloadSpeedOrState(String url) {
-        sendCmd(generateUri(url));
+    private void sendGenerateCmd(String cmd) {
+        sendCmd(generateUri(cmd));
     }
 
     //文件下载生成url ｛ http://192.168.6.14:9000/terminal/heartBeat?cmd=HRBT%3A10000555｝
@@ -212,10 +245,6 @@ public class CommunicationServer extends Service {
         sendCmd(generateFileDownLoadUrl(param));
     }
 
-    //定时截屏通知
-    private void pointTimeScreen(String param){
-        sendCmd(generateUri(param));
-    }
 
     private String generateFileDownLoadUrl(String param) {
         return generateUri(param + terminalId);
@@ -269,13 +298,11 @@ public class CommunicationServer extends Service {
      */
     private void processingResults(String t) {
         if (t.trim().equals("cmd:error") || t.trim().equals("cmd:success")
-                || t.trim().equals("cmd:sucess") || t.trim().equals("cmd:timeout") ) {
+                || t.trim().equals("cmd:timeout") ) {
             return;
         }
-        StringTokenizer stz = null;
-        String message = null;
-        String cmd = null;
-        String param = null;
+        StringTokenizer stz;
+        String cmd ,param , message ;
         try {
             stz = new StringTokenizer(t, "\n\r");
             while (stz.hasMoreElements()) {

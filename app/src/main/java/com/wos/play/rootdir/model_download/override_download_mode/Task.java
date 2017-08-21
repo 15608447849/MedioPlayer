@@ -16,7 +16,7 @@ public class Task implements Parcelable {
         int FTP = 1;
         int FILE = 2;
         int FTP_UPLOAD_SINGLE = 5;
-       int HTTP_UPLOAD_SINGLE = 6;
+        int HTTP_UPLOAD_SINGLE = 6;
     }
 
     interface State {
@@ -253,10 +253,8 @@ public class Task implements Parcelable {
 
         if (type==Type.FTP){
             sb.append("当前类型 - ftp [");
-            sb.append(ftpAddress ).append(" ; ");
-            sb.append(ftpPort).append(" ; ");
-            sb.append(ftpUser).append(" ; ");
-            sb.append(ftpPass).append("]");
+            sb.append(ftpAddress ).append(" ; ").append(ftpPort).append(" ; ");
+            sb.append(ftpUser).append(" ; ").append(ftpPass).append("]");
             sb.append("资源远程路径 - [").append( remotePath).append(fileName).append("]");
             sb.append("资源本地路径 - [").append( savePath).append(fileName).append("]");
         }

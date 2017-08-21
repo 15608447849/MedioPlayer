@@ -11,7 +11,7 @@ class ResourceReport(reportId:Int, channelId:Int, val type:Int, val path:String,
                      , eventTime: Date = Date()): Report(reportId, channelId, eventTime) {
 
     override fun getCreateSql() :String = "CREATE TABLE IF NOT EXISTS RESOURCE_STATISTICS" +
-            " (CHANNEL_ID INTEGER, RESOURCE__ID INTEGER, RESOURCE_TYPE INTEGER" +
+            " (CHANNEL_ID INTEGER, RESOURCE_ID INTEGER, RESOURCE_TYPE INTEGER" +
             ", RESOURCE_PATH VARCHAR, RESOURCE_STARTTIME VARCHAR, RESOURCE_PLAYTIME INTEGER);"
 
     override fun getInsertSql() :String = "INSERT INTO RESOURCE_STATISTICS VALUES ($channelId" +

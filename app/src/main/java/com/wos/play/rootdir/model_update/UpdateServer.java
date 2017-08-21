@@ -161,7 +161,7 @@ public class UpdateServer extends IntentService {
             @Override
             public void ftpConnectState(int stateCode, String ftpHost, int port, String userName, String ftpPassword, String fileName) {
                 Logs.i(TAG,"连接服务器 : ip:"+ ftpHost+" port:"+port  +"\nuser:"+userName+" password:"+ftpPassword);
-                if (stateCode==FtpHelper.FTP_CONNECT_SUCCESSS){
+                if (stateCode==FtpHelper.FTP_CONNECT_SUCCESS){
                     Logs.i(TAG,"ftp 连接成功");
                 }
                 if (stateCode==FtpHelper.FTP_CONNECT_FAIL){
@@ -191,7 +191,7 @@ public class UpdateServer extends IntentService {
             }
 
             @Override
-            public void downLoadFailt(String remotePath, String fileName) {
+            public void downLoadFail(String remotePath, String fileName) {
                 Logs.e(TAG,"ftp 下载失败 : "+fileName);
             }
 

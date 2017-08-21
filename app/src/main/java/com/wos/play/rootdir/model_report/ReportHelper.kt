@@ -1,6 +1,7 @@
 package com.wos.play.rootdir.model_report
 
 import android.content.Context
+import com.wos.play.rootdir.model_application.baselayer.SystemInfos
 import com.wos.play.rootdir.model_report.impl.ButtonReport
 import com.wos.play.rootdir.model_report.impl.EpaperDataReport
 import com.wos.play.rootdir.model_report.impl.EpaperNewsReport
@@ -105,7 +106,8 @@ object ReportHelper{
     fun getDbName(day: Int):String {
         val calendar = Calendar.getInstance()
         calendar.add(Calendar.DATE, -1 * day)
-        return "report_${SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).format(calendar.time)}.db"
+        return "${SystemInfos.get().terminalNo}_${SimpleDateFormat("yyyy-MM-dd"
+                , Locale.CHINA).format(calendar.time)}.db"
     }
 
     /**
