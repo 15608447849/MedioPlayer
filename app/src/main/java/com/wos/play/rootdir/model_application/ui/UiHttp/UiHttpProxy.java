@@ -22,8 +22,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static com.wos.play.rootdir.model_universal.tool.AppsTools.uriTransionString;
-
 /**
  * Created by user on 2016/11/18.
  *  单例化
@@ -140,8 +138,8 @@ public class UiHttpProxy{
     }
 
     private void func1(String url, String action) {
-        try {
-            String result = uriTransionString(AppsTools.urlEncodeParam(url), null, null);//访问URL;
+        try { //访问URL;
+            String result = AppsTools.uriTransString(AppsTools.urlEncodeParam(url), null, null);
             if (result==null) return;
             result = AppsTools.justResultIsBase64decode(result);//base64 解密
             if (result==null) return;
@@ -191,7 +189,7 @@ public class UiHttpProxy{
     private void func2(String url, final String action) {
 
         try {
-            String result = uriTransionString(url, null, null);
+            String result = AppsTools.uriTransString(url, null, null);
             if (result==null) return;
             result = AppsTools.getJsonStringFromGZIP(result);
             OtWeatherBean obj = AppsTools.parseJsonWithGson(result, OtWeatherBean.class);

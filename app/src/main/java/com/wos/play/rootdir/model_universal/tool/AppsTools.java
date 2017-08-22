@@ -9,6 +9,7 @@ import android.net.wifi.WifiManager;
 import android.os.Looper;
 import android.util.Base64;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.WindowManager;
 
 import com.google.gson.Gson;
@@ -44,17 +45,14 @@ import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
 import cn.trinea.android.common.util.FileUtils;
 
-import static android.support.v7.widget.StaggeredGridLayoutManager.TAG;
 
 /**
  * Created by user on 2016/10/26.
  */
 public class AppsTools {
-
-
+    private static final String TAG = AppsTools.class.getSimpleName();
     //随机数
     public static int randomNum(int min, int max) {
         return (int) (min + Math.random() * max);
@@ -62,14 +60,12 @@ public class AppsTools {
 
     private static String callCmd(String cmd, String filter) {
         String result = null;
-
         try {
-
-            Process proc = Runtime.getRuntime().exec(cmd);
-            InputStreamReader is = new InputStreamReader(proc.getInputStream());
+            Process process = Runtime.getRuntime().exec(cmd);
+            InputStreamReader is = new InputStreamReader(process.getInputStream());
             BufferedReader br = new BufferedReader(is);
 
-            String line = null;
+            String line;
             //执行命令cmd，只取结果中含有filter的这一行
             while ((line = br.readLine()) != null && !line.contains(filter)) {
                 //result += line;
@@ -93,12 +89,12 @@ public class AppsTools {
 
     //本地以太网mac地址文件
     private static String getMacAddress() {
-        String strMacAddr = "";
+        String strMacAddress = "";
         byte[] b;
         try {
             NetworkInterface NIC = NetworkInterface.getByName("eth0");
             b = NIC.getHardwareAddress();
-            StringBuffer buffer = new StringBuffer();
+            StringBuilder buffer = new StringBuilder();
             for (int i = 0; i < b.length; i++) {
                 if (i != 0 || i != b.length - 1) {
                     buffer.append('-');
@@ -106,11 +102,11 @@ public class AppsTools {
                 String str = Integer.toHexString(b[i] & 0xFF);
                 buffer.append(str.length() == 1 ? 0 + str : str);
             }
-            strMacAddr = buffer.toString().toUpperCase();
+            strMacAddress = buffer.toString().toUpperCase();
         } catch (SocketException e) {
             e.printStackTrace();
         }
-        return strMacAddr;
+        return strMacAddress;
     }
 
     //根据Wifi信息获取本地Mac
@@ -130,14 +126,14 @@ public class AppsTools {
         try {
             for (Enumeration<NetworkInterface> en = NetworkInterface
                     .getNetworkInterfaces(); en.hasMoreElements(); ) {
-                NetworkInterface intf = en.nextElement();
-                for (Enumeration<InetAddress> enumIpAddr = intf
-                        .getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
-                    InetAddress inetAddress = enumIpAddr.nextElement();
+                NetworkInterface networkInterface = en.nextElement();
+                for (Enumeration<InetAddress> enumIpAddress = networkInterface
+                        .getInetAddresses(); enumIpAddress.hasMoreElements(); ) {
+                    InetAddress inetAddress = enumIpAddress.nextElement();
                     if (!inetAddress.isLoopbackAddress()
                             && (inetAddress instanceof Inet4Address)) {
-                        Logs.i("getLocalIpAddress() _ local IP : " + inetAddress.getHostAddress().toString());
-                        return inetAddress.getHostAddress().toString();
+                        Logs.i("getLocalIpAddress() _ local IP : " + inetAddress.getHostAddress());
+                        return inetAddress.getHostAddress();
                     }
                 }
             }
@@ -207,7 +203,7 @@ public class AppsTools {
      */
     public static String mapTanslationUri(String ip, String port, Map<String, String> map) {
 
-        StringBuffer sb = new StringBuffer("http://");
+        StringBuilder sb = new StringBuilder("http://");
         sb.append(ip).append(":").append(port).append("/").append("terminal/apply").append("?");
         for (Object o : map.entrySet()) {
             Map.Entry entry = (Map.Entry) o;
@@ -312,12 +308,14 @@ public class AppsTools {
                 try {
                     inputStream.close();
                 } catch (IOException e) {
+                    Log.w(TAG,e);
                 }
             }
             if (outStream != null) {
                 try {
                     outStream.close();
                 } catch (IOException e) {
+                    Log.w(TAG,e);
                 }
             }
         }
@@ -326,10 +324,10 @@ public class AppsTools {
     /**
      * 把url转化为文本格式数据
      *
-     * @param urlString
+     * @param urlString trans
      * @return the xml data or "" if catch Exception
      */
-    public static String uriTransionString(String urlString, Map<String, String> header, Map<String, String> ParamMap) {
+    public static String uriTransString(String urlString, Map<String, String> header, Map<String, String> ParamMap) {
         if (urlString == null) return null;
 
         URL url;
@@ -337,11 +335,11 @@ public class AppsTools {
         try {
             url = new URL(urlString);
         } catch (MalformedURLException e1) {
-            System.out.println("URL connect failt :" + urlString);
+            System.out.println("URL connect fail :" + urlString);
             System.err.println(e1.getMessage());
-            return result;
+            return null;
         }
-//        System.out.println("URL success :"+urlString);
+
         HttpURLConnection httpUrlConnection;
         OutputStream out = null;
         BufferedReader br = null;
@@ -349,11 +347,11 @@ public class AppsTools {
             httpUrlConnection = (HttpURLConnection) url.openConnection();
 
             if (header != null) {
-                Iterator iter = header.entrySet().iterator();
+                Iterator iterator = header.entrySet().iterator();
                 String key;
                 String val;
-                while (iter.hasNext()) {
-                    Map.Entry<String, String> entry = (Map.Entry) iter.next();
+                while (iterator.hasNext()) {
+                    Map.Entry<String, String> entry = (Map.Entry) iterator.next();
                     key = entry.getKey();
                     val = entry.getValue();
                     System.out.println(key + " = " + val);
@@ -462,11 +460,8 @@ public class AppsTools {
 
     //检查是不是ui线程
     public static boolean checkUiThread() {
-        if (Looper.myLooper() == Looper.getMainLooper()) { // UI主线程
-            return true;
-        } else { // 非UI主线程
-            return false;
-        }
+        // UI主线程 非UI主线程
+        return Looper.myLooper() == Looper.getMainLooper();
     }
 
     /**
@@ -699,10 +694,11 @@ public class AppsTools {
         try {
             var1 = url.substring(0, url.indexOf("?") + 1);
             String var3[] = url.substring(url.indexOf("?") + 1).split("&");
-            if (var3 != null && var3.length > 0) {
+            if (var3.length > 0) {
                 for (int i = 0; i < var3.length; i++) {
                     if (var3[i].contains("=")) {
-                        var1 = var1 + var3[i].substring(0, var3[i].indexOf("=") + 1) + mUrlEncode(var3[i].substring(var3[i].indexOf("=") + 1));
+                        var1 = var1 + var3[i].substring(0, var3[i].indexOf("=") + 1)
+                                + mUrlEncode(var3[i].substring(var3[i].indexOf("=") + 1));
                     }
                     if (i != var3.length - 1) {
                         var1 += "&";
@@ -718,12 +714,10 @@ public class AppsTools {
 
 
     public static String printTimes(long millisecond) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         sb.append("时间差约等-:");
-
         String val = "";
-
         if (millisecond < 1000) {
             val = " 毫秒";
         } else if ((millisecond = millisecond / 1000) > 0 && millisecond < 60) {
@@ -761,7 +755,7 @@ public class AppsTools {
 
     //获取短整形
     private static int getShort(byte[] data) {
-        return (int) ((data[0] << 8) | data[1] & 0xFF);
+        return  ((data[0] << 8) | data[1] & 0xFF);
     }
 
     //天气api结果解析
@@ -786,7 +780,7 @@ public class AppsTools {
             InputStreamReader reader = new InputStreamReader(is, "utf-8");
             char[] data = new char[100];
             int readSize;
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             while ((readSize = reader.read(data)) > 0) {
                 sb.append(data, 0, readSize);
             }

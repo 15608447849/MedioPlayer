@@ -29,12 +29,9 @@ import com.wos.play.rootdir.model_universal.tool.Logs;
 import com.wos.play.rootdir.model_universal.tool.MD5Util;
 import com.wos.play.rootdir.model_universal.tool.SdCardTools;
 import com.wos.play.rootdir.model_universal.tool.UnImpl;
-
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
-
-import static com.wos.play.rootdir.model_universal.tool.AppsTools.uriTransionString;
 import static com.wos.play.rootdir.model_universal.tool.CONTENT_TYPE.weather;
 
 /**
@@ -77,7 +74,7 @@ public class Command_UPSC implements iCommand {
         try {
             lock.lock();
             res = null;
-            res = uriTransionString(param, null, null);
+            res = AppsTools.uriTransString(param, null, null);
             if (res != null && !res.equals("") && !res.equals("[]")) {
                 if(check(res)) { Logs.i(TAG, "排期数据相同");return; }
                 //保存json数据
@@ -338,7 +335,7 @@ public class Command_UPSC implements iCommand {
         try {
             Logs.i(TAG, " content - url [ " + contentSource+" ]");
             res = null;
-            res = AppsTools.uriTransionString(AppsTools.urlEncodeParam(contentSource), null, null);
+            res = AppsTools.uriTransString(AppsTools.urlEncodeParam(contentSource), null, null);
             if (type.equals(CONTENT_TYPE.gallary) || type.equals(CONTENT_TYPE.news) || type.equals(CONTENT_TYPE.weather)) {  //咨询 图集 天气 ,base64解码
                 res = AppsTools.justResultIsBase64decode(res);
             }
@@ -373,7 +370,7 @@ public class Command_UPSC implements iCommand {
         //再次访问 百度 api 保存结果
         String baiduApiUrl = AppsTools.generWeateherContentUrl(currentCity);
         res = null;
-        res = AppsTools.uriTransionString(baiduApiUrl,null, null);
+        res = AppsTools.uriTransString(baiduApiUrl,null, null);
         if (res != null) {
             res = AppsTools.getJsonStringFromGZIP(res);
             OtWeatherBean obj = AppsTools.parseJsonWithGson(res, OtWeatherBean.class);
